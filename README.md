@@ -22,8 +22,7 @@ It only manages directories containing `SKILL.md`.
 
 Each run performs these steps:
 
-1. Ensures each source repo exists locally (clone if missing).
-2. Fast-forwards each local repo to latest upstream branch.
+1. Downloads fresh zip snapshots of each source repo from GitHub.
 3. Discovers all skill directories (`**/SKILL.md`) in source repos.
 4. Excludes system/built-in skill names (to avoid collisions).
 5. Resolves duplicate skill names with **first-repo-wins** precedence.
@@ -62,14 +61,17 @@ System names are hardcoded in `update-composio-skills.sh` and skipped intentiona
   - Single entrypoint.
   - Bash wrapper + embedded Python logic.
   - Source of truth for repo list, precedence, exclusions, and sync logic.
+  - Uses GitHub zip snapshots instead of persistent local git clones.
 
 ## Runtime Paths
 
-- Script path (this repo): `./update-composio-skills.sh`
-- Local source clones:
-  - `../awesome-codex-skills`
-  - `../awesome-claude-skills`
-  - `../composio-skills-repo`
+- Canonical script in this repo:
+  - `./update-composio-skills.sh`
+- Deployed cron-safe script path:
+  - `~/.codex/bin/update-composio-skills.sh`
+- Temporary repo snapshots:
+  - Created under system temp dir via Python `TemporaryDirectory`
+  - Deleted automatically after each successful or failed run
 - Target skills directory:
   - `${CODEX_HOME:-~/.codex}/skills`
 - Manifest:
@@ -81,7 +83,7 @@ Required:
 
 - `bash`
 - `python3`
-- `git`
+- outbound HTTPS access to `github.com` / `codeload.github.com`
 
 Optional:
 
@@ -92,6 +94,14 @@ Optional:
 ```bash
 chmod +x update-composio-skills.sh
 ./update-composio-skills.sh
+```
+
+To deploy the script where cron can execute it reliably on macOS:
+
+```bash
+mkdir -p ~/.codex/bin
+cp update-composio-skills.sh ~/.codex/bin/update-composio-skills.sh
+chmod +x ~/.codex/bin/update-composio-skills.sh
 ```
 
 To target a non-default Codex home:
@@ -116,7 +126,7 @@ When upstream removals happen:
 Current weekly schedule example:
 
 ```bash
-0 9 * * 1 /Users/kunanonjarat/Desktop/Skills/update-composio-skills.sh >> ~/.codex/skill-update.log 2>&1
+0 9 * * 1 /Users/kunanonjarat/.codex/bin/update-composio-skills.sh >> ~/.codex/skill-update.log 2>&1
 ```
 
 Inspect cron entry:
@@ -148,24 +158,25 @@ After changing the updater:
 
 ### GitHub auth failures
 
-- Ensure `git` can pull over configured protocol (HTTPS/SSH).
-- Re-authenticate if required:
-  - `gh auth login -h github.com`
+- This updater uses public GitHub archive downloads and does not require `gh`.
+- If corporate proxy or network policy blocks GitHub archive downloads, test:
+  - `curl -I https://codeload.github.com`
 
 ### Branch rename upstream
 
-If a source branch changes (for example `master` -> `main`), update the `branch` field in `repos` list in `update-composio-skills.sh`.
+If a source branch changes (for example `master` -> `main`), update the `ref` field in `repos` list in `update-composio-skills.sh`.
 
 ### Permission errors in cron
 
 - Confirm script is executable:
-  - `chmod +x /Users/kunanonjarat/Desktop/Skills/update-composio-skills.sh`
+  - `chmod +x ~/.codex/bin/update-composio-skills.sh`
+- Keep the cron-run script outside Desktop/Documents/Downloads to avoid macOS privacy restrictions on background processes.
 - Confirm `CODEX_HOME` target is writable by cron user.
 
 ### Slow run time
 
 - Install `rsync` if absent.
-- Keep local clone dirs on local disk (not remote mount).
+- Expect snapshot download time from three source repos on each run.
 
 ## Change Guide (For AI/Handoffs)
 
@@ -175,6 +186,7 @@ When extending behavior, keep these invariants:
 2. Keep sync idempotent (safe to run repeatedly).
 3. Preserve deterministic duplicate resolution.
 4. Avoid overriding built-in/system skills unless explicitly intended.
+5. Keep runtime independent from Desktop-only paths so cron can run unattended.
 
 Recommended modification order:
 
