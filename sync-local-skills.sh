@@ -28,12 +28,12 @@ def run(cmd: list[str]) -> None:
 def sync_dir(src: Path, dest: Path) -> None:
     if shutil.which("rsync"):
         dest.mkdir(parents=True, exist_ok=True)
-        run(["rsync", "-a", "--delete", f"{src}/", f"{dest}/"])
+        run(["rsync", "-a", "--delete", "--exclude=.git", f"{src}/", f"{dest}/"])
         return
 
     if dest.exists():
         shutil.rmtree(dest)
-    shutil.copytree(src, dest)
+    shutil.copytree(src, dest, ignore=shutil.ignore_patterns(".git"))
 
 
 source_dir = Path(os.environ["SOURCE_DIR"]).expanduser()

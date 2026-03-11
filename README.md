@@ -69,11 +69,13 @@ System names are hardcoded in `update-composio-skills.sh` and skipped intentiona
 - `sync-local-skills.sh`
   - Copies every locally installed skill from `~/.codex/skills` into this repo under `./skills/`.
   - Removes stale repo snapshots that no longer exist locally.
+  - Strips nested `.git` metadata so the snapshot stays portable across clones.
   - Writes `./skills-manifest.txt` as the canonical snapshot index.
 - `sync-listed-sources.sh`
   - Aggregates skills directly from configured external sources and catalog pages.
   - Prefers explicit and organization-backed sources before catalog-page discoveries, then keeps first-source-wins duplicate resolution.
   - Extracts GitHub repositories from supported pages, clones only what is needed, and falls back to GitHub archive downloads when a repo cannot be shallow-cloned cleanly.
+  - Strips nested `.git` metadata from root-level skill repos so the snapshot does not create embedded submodules.
   - Writes `./skills-manifest.txt` and `./skills-source-map.tsv`.
 
 ## Runtime Paths
