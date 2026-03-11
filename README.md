@@ -20,6 +20,8 @@ It only manages directories containing `SKILL.md`.
 
 This repo can also snapshot every locally installed skill into a checked-in `skills/` directory for backup, review, or publishing.
 
+It can also aggregate skills directly from listed external sources and GitHub-backed catalogs into the same checked-in `skills/` directory.
+
 ## Core Behavior
 
 Each run performs these steps:
@@ -68,6 +70,11 @@ System names are hardcoded in `update-composio-skills.sh` and skipped intentiona
   - Copies every locally installed skill from `~/.codex/skills` into this repo under `./skills/`.
   - Removes stale repo snapshots that no longer exist locally.
   - Writes `./skills-manifest.txt` as the canonical snapshot index.
+- `sync-listed-sources.sh`
+  - Aggregates skills directly from configured external sources and catalog pages.
+  - Prefers explicit and organization-backed sources before catalog-page discoveries, then keeps first-source-wins duplicate resolution.
+  - Extracts GitHub repositories from supported pages, clones only what is needed, and falls back to GitHub archive downloads when a repo cannot be shallow-cloned cleanly.
+  - Writes `./skills-manifest.txt` and `./skills-source-map.tsv`.
 
 ## Runtime Paths
 
@@ -86,6 +93,8 @@ System names are hardcoded in `update-composio-skills.sh` and skipped intentiona
   - `./skills/`
 - Repo snapshot manifest:
   - `./skills-manifest.txt`
+- Repo snapshot source map:
+  - `./skills-source-map.tsv`
 
 ## Dependencies
 
@@ -126,6 +135,39 @@ To sync the current local skill set into this repo:
 ./sync-local-skills.sh
 ```
 
+To sync from the configured external source list into this repo:
+
+```bash
+./sync-listed-sources.sh
+```
+
+To restore the checked-in snapshot onto another machine:
+
+```bash
+mkdir -p ~/.codex/skills
+rsync -a --delete skills/ ~/.codex/skills/
+```
+
+To clone this repo and recreate the external-source snapshot on another machine:
+
+```bash
+git clone https://github.com/KunanonJ/codex-skill-updater.git
+cd codex-skill-updater
+./sync-listed-sources.sh
+```
+
+`sync-listed-sources.sh` is configured for these inputs:
+
+- `https://awesomeclaude.ai/awesome-claude-skills`
+- `https://github.com/ComposioHQ/awesome-claude-skills`
+- `https://github.com/ComposioHQ`
+- `https://github.com/sickn33/antigravity-awesome-skills`
+- `https://www.aitmpl.com/`
+- `https://mcpservers.org/agent-skills`
+- `https://simonwillison.net/2025/Oct/16/claude-skills/`
+
+The target repo itself is intentionally excluded as a sync source to avoid recursive self-imports.
+
 ## Expected Output
 
 At minimum:
@@ -141,6 +183,14 @@ For repo snapshot runs:
 
 - `Synced skills: <count>`
 - `Manifest: <repo>/skills-manifest.txt`
+
+For listed-source sync runs:
+
+- `Input sources: <count>`
+- `Resolved GitHub sources: <count>`
+- `GitHub sources with skills: <count>`
+- `Synced skills: <count>`
+- `Source map: <repo>/skills-source-map.tsv`
 
 ## Scheduling (Cron)
 
@@ -182,6 +232,16 @@ After changing local snapshot behavior:
 2. Confirm manifest exists and count matches repo snapshot:
    - `wc -l skills-manifest.txt`
    - `find skills -mindepth 1 -maxdepth 1 -type d | wc -l`
+
+After changing listed-source sync behavior:
+
+1. Run once manually:
+   - `./sync-listed-sources.sh`
+2. Confirm manifests exist:
+   - `wc -l skills-manifest.txt`
+   - `wc -l skills-source-map.tsv`
+3. Spot-check duplicate resolution:
+   - `rg '^figma\t' skills-source-map.tsv`
 
 ## Troubleshooting
 

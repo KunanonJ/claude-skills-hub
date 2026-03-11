@@ -1,206 +1,97 @@
 ---
-name: composio
-description: Build AI agents and apps with Composio - access 200+ external tools with Tool Router or direct execution
+name: Composio Connect
+description: Connect and execute actions over 1000+ apps using Composio
 tags: [composio, tool-router, agents, mcp, tools, api, automation]
 ---
 
-# Composio
-
-Comprehensive guide to building AI agents and applications with Composio. Choose between:
-- **Tool Router** - Create isolated, secure MCP sessions for AI agents with automatic authentication
-- **Direct Execution** - Build traditional apps with manual tool execution and CRUD operations
-
-## Getting Started
-
-> 📖 **Prerequisites:** Before using Composio, set up your API keys. See [Setting Up API Keys](rules/setup-api-keys.md) for instructions on configuring Composio, OpenAI, and Anthropic API keys.
-
 ## When to use
-
 Use this skill when:
+- Authenticating and executing actions in external applications like (Slack, GitHub, Gmail, etc.)
+- Making API requests to external applications
+- Fetching data from external applications
+- Making changes in external applications
+- Analyzing data from external applications
+- Assisting users in answering questions about their data
 
-**Building AI Agents:**
-- Building chat-based or autonomous agents that need access to external tools (Gmail, Slack, GitHub, etc.)
-- Creating multi-user applications with isolated tool access per session
-- Implementing automatic authentication flows for external services
-- Integrating with AI frameworks (Vercel AI SDK, LangChain, OpenAI Agents, Claude)
-- Using MCP (Model Context Protocol) for dynamic tool discovery
-- Building event-driven agents with triggers
+## Prerequisites
+Make sure the below instructions are followed once. This is an optional requirement if all these are already followed.
 
-**Building Traditional Applications:**
-- Creating CRUD applications that execute tools directly
-- Building automation workflows without agent frameworks
-- Managing connected accounts and authentication configurations
-- Creating custom tools with specific authentication requirements
-- Implementing multi-tenant applications with session isolation
-- Building tools with pre/post-execution hooks and modifiers
-
-### 1. Building Agents
-
-Use **Tool Router** to build interactive chat-based agents or autonomous long-running task agents. Tool Router creates isolated MCP sessions for users with scoped access to toolkits and tools.
-
-**Key Features:**
-- Session-based isolation per user
-- Dynamic toolkit and tool configuration
-- Automatic authentication management
-- MCP-compatible server URLs for any AI framework
-- Connection state querying for UI building
-- Real-time event handling with triggers
-
-#### 1.1 Session Management & Configuration
-
-Essential patterns for creating agent sessions and configuring tools:
-
-- [User ID Best Practices](rules/tr-userid-best-practices.md) - Choose user IDs for security and isolation
-- [Creating Basic Sessions](rules/tr-session-basic.md) - Initialize Tool Router sessions
-- [Session Lifecycle Best Practices](rules/tr-session-lifecycle.md) - When to create new sessions vs reuse
-- [Session Configuration](rules/tr-session-config.md) - Configure toolkits, tools, and filters
-- [Using Native Tools](rules/tr-mcp-vs-native.md) - Prefer native tools for performance and control
-- [Framework Integration](rules/tr-framework-integration.md) - Connect with Vercel AI, LangChain, OpenAI Agents
-
-#### 1.2 Authentication Flows
-
-Authentication patterns for seamless user experiences:
-
-- [Auto Authentication in Chat](rules/tr-auth-auto.md) - Enable in-chat authentication flows
-- [Manual Authorization](rules/tr-auth-manual.md) - Use session.authorize() for explicit flows
-- [Connection Management](rules/tr-auth-connections.md) - Configure manageConnections, waitForConnections, and custom callback URLs
-
-#### 1.3 Toolkit Querying & UI Building
-
-Build connection UIs and check toolkit states:
-
-- [Building Chat UIs](rules/tr-building-chat-ui.md) - Build chat applications with toolkit selection, connection management, and session handling
-- [Query Toolkit States](rules/tr-toolkit-query.md) - Use session.toolkits() to check connections, filter toolkits, and build connection UIs
-
-#### 1.4 Framework-Specific Guides
-
-**When to use:** Use these guides when you're certain about the framework the user is working with, or when the user explicitly mentions the framework name.
-
-Detailed integration guides for specific AI frameworks:
-
-- [Vercel AI SDK Integration](rules/tr-framework-ai-sdk.md) - Complete guide for Vercel AI SDK with native tools, MCP, and React
-- [Mastra Integration](rules/tr-framework-mastra.md) - Complete guide for Mastra agents with native tools and MCP
-
-> **Note:** For general framework integration patterns (LangChain, OpenAI Agents), see [Framework Integration](rules/tr-framework-integration.md). Use framework-specific guides only when the framework is explicitly mentioned or clearly identified.
-
-#### 1.5 Event-Driven Agents (Triggers)
-
-Real-time event handling and webhook integration patterns:
-
-- [Creating Triggers](rules/triggers-create.md) - Set up trigger instances for real-time events
-- [Subscribing to Events](rules/triggers-subscribe.md) - Listen to trigger events in real-time
-- [Webhook Verification](rules/triggers-webhook.md) - Verify and process incoming webhook payloads
-- [Managing Triggers](rules/triggers-manage.md) - Enable, disable, update, and list triggers
-
-### 2. Building Apps with Composio Tools
-
-Use Composio for traditional applications where tools are executed manually without agent frameworks. This approach gives you full control over tool execution, authentication, and resource management.
-
-**Key Capabilities:**
-- Direct tool execution with manual control
-- CRUD operations on connected accounts, auth configs, and toolkits
-- Custom tool creation with authentication
-- Session isolation for multi-tenant apps
-- Pre/post-execution hooks and modifiers
-- Event-driven workflows with triggers
-
-#### 2.1 Core Operations
-
-Fundamental patterns for fetching and executing tools:
-
-- [Fetching Tools](rules/app-fetch-tools.md) - Get tools with filters and search
-- [Direct Tool Execution](rules/app-execute-tools.md) - Execute tools manually with parameters
-- [Tool Version Management](rules/app-tool-versions.md) - Version pinning strategies for stability
-
-#### 2.2 Resource Management (CRUD Patterns)
-
-Manage authentication and connections programmatically:
-
-- [Connected Accounts CRUD](rules/app-connected-accounts.md) - Create, read, update, delete connected accounts
-- [Auth Config Management](rules/app-auth-configs.md) - Manage authentication configurations
-- [Toolkit Management](rules/app-toolkits.md) - Query toolkits, categories, and auth requirements
-
-#### 2.3 Extensibility & Customization
-
-Extend Composio with custom tools and behavior:
-
-- [Creating Custom Tools](rules/app-custom-tools.md) - Build standalone and toolkit-based tools
-- [Tool Modifiers](rules/app-modifiers.md) - Schema modification and execution hooks
-
-#### 2.4 Event-Driven Applications
-
-Build reactive applications with triggers (shared with agents):
-
-- [Creating Triggers](rules/triggers-create.md) - Set up trigger instances for real-time events
-- [Subscribing to Events](rules/triggers-subscribe.md) - Listen to trigger events in real-time
-- [Webhook Verification](rules/triggers-webhook.md) - Verify and process incoming webhooks
-- [Managing Triggers](rules/triggers-manage.md) - Enable, disable, update, and list triggers
-
-#### 2.5 User Context & Multi-Tenancy
-
-Manage user context and multi-tenant isolation:
-
-- [User ID Patterns](rules/app-user-context.md) - User vs organization IDs, shared vs isolated connections
-
-## Quick Start Examples
-
-### Building an Agent with Tool Router
-
-```typescript
-import { Composio } from '@composio/core';
-
-const composio = new Composio();
-
-// Create a session with Gmail tools
-const session = await composio.create('user_123', {
-  toolkits: ['gmail'],
-  manageConnections: true
-});
-
-// Use MCP URL with any AI framework
-console.log('MCP URL:', session.mcp.url);
+### Installing the Composio CLI
+1. Make sure Composio CLI is installed, run it once or when you encounter an error saying command doesn't exist
+```bash
+curl -fsSL https://composio.dev/install | bash
 ```
 
-### Building an App with Direct Execution
+2. Verify the installation worked
+```bash
+composio --version
+```
+If it still says the command not found, you need to source the shell again. `source ~/.zshrc` for zsh, use relevant commands for other shells as well.
 
-```typescript
-import { Composio } from '@composio/core';
+### Authenticating the user to Composio
+1. Log the user in to Composio platform, this will return a URL which the user needs to authenticate.
+```bash
+composio login
+```
+2. Once the login is completed verify if the account is active.
+```bash
+composio whoami
+```
+> **Important**: This will display project_id, user_id, user_api_key etc. DO NOT use this to hardcode anything if you are writing code. 
+> Use the above only as a reference to verify if the user is logged in.
 
-const composio = new Composio({
-  apiKey: 'your-api-key',
-  toolkitVersions: { github: '12082025_00' }
-});
+## Using the Composio CLI to connect to 1000+ apps easily
+Composio CLI allows users to authenticate and execute actions across 1000+ apps easily and securely.
+It is very important to follow the below steps to achieve the best results.
 
-// Fetch tools
-const tools = await composio.tools.get('user_123', {
-  toolkits: ['github']
-});
+### Step 1: Search for the specific tools
+Given a usecase you have with connecting to external apps, and executing actions. Execute the `composio tools search` command to retrieve specific tools for the given use-case.
 
-// Execute a tool
-const result = await composio.tools.execute('GITHUB_GET_REPO', {
-  userId: 'user_123',
-  arguments: { owner: 'composio', repo: 'sdk' },
-});
-
-console.log(result.data);
+E.g., for sending emails
+```bash
+composio tools search "send emails"
+```
+E.g., for creating a Google Sheet
+```bash
+composio tools search "Create a new sheet in google sheet"
 ```
 
-## References
+### Step 2: Execute the tool with appropriate data
+E.g., once you have the tool information, you will know the input parameters required for executing the tool from the above command. Use the below `execute` command to run this tool.
 
-**Tool Router (Agents):**
-- [Tool Router Docs](https://docs.composio.dev/sdk/typescript/api/tool-router)
-- [MCP Protocol](https://modelcontextprotocol.io)
-- [Framework Integration Examples](https://github.com/composiohq/composio/tree/main/ts/examples/tool-router)
+> **Important** DO NOT make up the tool slugs, only use the tools returned by you from the `composio tools search` command.
 
-**Direct Execution (Apps):**
-- [Tools API](https://docs.composio.dev/sdk/typescript/api/tools)
-- [Connected Accounts API](https://docs.composio.dev/sdk/typescript/api/connected-accounts)
-- [Auth Configs API](https://docs.composio.dev/sdk/typescript/api/auth-configs)
-- [Toolkits API](https://docs.composio.dev/sdk/typescript/api/toolkits)
-- [Custom Tools Guide](https://docs.composio.dev/sdk/typescript/api/custom-tools)
-- [Modifiers](https://docs.composio.dev/sdk/typescript/advanced/modifiers)
-- [Core Concepts](https://docs.composio.dev/sdk/typescript/core-concepts)
+```bash
+composio tools execute "GMAIL_SEND_EMAIL" -d '{ "to": "hello@composio.dev", "body": "Hey, this is an email." }'
+```
 
-**Shared:**
-- [Triggers API](https://docs.composio.dev/sdk/typescript/api/triggers)
-- [Webhook Verification](https://docs.composio.dev/sdk/typescript/advanced/webhook-verification)
+### Step 3: Authenticating the users to apps
+If the above command fails stating no connected accounts, or the search returns the connection status as not connected, only then connect the user's account using the following command.
+
+
+```bash
+composio connected-accounts link "github"
+```
+
+> **Important** If you are unsure about the app name, use the `composio toolkits info 'gmail'`, or `composio tools info 'GMAIL_SEND_EMAIL'` to find the tool information and its toolkit information. DO NOT make up app names.
+
+## Best practices
+
+1. For reading json response from the CLI, pipe it to `jq`
+2. Control the output at source, if you are fetching large amounts of data limit the required data being outputted using the tool's filters if it supports them.
+3. If you are analysing data, after understanding the schema, offload the work to inline bash scripts or python scripts
+4. If you are executing tools/actions which are independent, always do it in parallel using `&` and `wait`
+5. Do not output large amount of data into the terminal, filter search and summarize with the right tools
+  - Quick text filtering: `grep -E`, `rg` (ripgrep), `awk`, `sed`
+  - Summarize instead of full dumps: `sort | uniq -c | sort -nr`, `wc -l`, `head`, `tail`
+  - For huge files, use purpose-built viewers: `less`, `lnav` (logs), `tail -f` for streaming logs.
+6. Do not create unnecessary cache files in the user's system, always use ephemeral files only when required, or create files only when the user explicitly asks.
+7. Be mindful of rate limits and pagination (APIs/CLIs)
+  - Parallelize carefully (`xargs -P`, `parallel`) only when you’re sure the backend can handle it.
+
+
+## Important Notice
+- Composio CLI contains a lot of other commands for developers. Do not use any other commands unless you are building apps.
+- Only use this skill and Composio CLI for adhering to user requests regarding external apps.
+- For an extensive guide on building apps and skills, refer to the documentation `https://docs.composio.dev`
+

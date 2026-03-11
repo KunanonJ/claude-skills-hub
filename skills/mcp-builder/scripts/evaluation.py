@@ -1,6 +1,6 @@
 """MCP Server Evaluation Harness
 
-This script evaluates MCP servers by running test questions against them using Codex-compatible models.
+This script evaluates MCP servers by running test questions against them using Claude.
 """
 
 import argparse
@@ -14,7 +14,7 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Any
 
-from openai import OpenAI
+from anthropic import Anthropic
 
 from connections import create_connection
 
@@ -83,111 +83,76 @@ def extract_xml_content(text: str, tag: str) -> str | None:
     return matches[-1].strip() if matches else None
 
 
-def format_tools_for_openai(tools: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    """Convert MCP tool schemas into OpenAI function tool definitions."""
-    formatted_tools = []
-    for tool in tools:
-        schema = tool.get("input_schema") or {"type": "object", "properties": {}}
-        # Ensure we always pass an object schema to OpenAI
-        if schema.get("type") != "object":
-            schema = {
-                "type": "object",
-                "properties": {
-                    "input": schema,
-                },
-            }
-        formatted_tools.append({
-            "type": "function",
-            "function": {
-                "name": tool.get("name"),
-                "description": tool.get("description", ""),
-                "parameters": schema,
-            },
-        })
-    return formatted_tools
-
-
 async def agent_loop(
-    client: OpenAI,
+    client: Anthropic,
     model: str,
     question: str,
     tools: list[dict[str, Any]],
     connection: Any,
 ) -> tuple[str, dict[str, Any]]:
     """Run the agent loop with MCP tools."""
-    messages: list[dict[str, Any]] = [{"role": "user", "content": question}]
-    tool_metrics: dict[str, dict[str, Any]] = {}
+    messages = [{"role": "user", "content": question}]
 
-    while True:
+    response = await asyncio.to_thread(
+        client.messages.create,
+        model=model,
+        max_tokens=4096,
+        system=EVALUATION_PROMPT,
+        messages=messages,
+        tools=tools,
+    )
+
+    messages.append({"role": "assistant", "content": response.content})
+
+    tool_metrics = {}
+
+    while response.stop_reason == "tool_use":
+        tool_use = next(block for block in response.content if block.type == "tool_use")
+        tool_name = tool_use.name
+        tool_input = tool_use.input
+
+        tool_start_ts = time.time()
+        try:
+            tool_result = await connection.call_tool(tool_name, tool_input)
+            tool_response = json.dumps(tool_result) if isinstance(tool_result, (dict, list)) else str(tool_result)
+        except Exception as e:
+            tool_response = f"Error executing tool {tool_name}: {str(e)}\n"
+            tool_response += traceback.format_exc()
+        tool_duration = time.time() - tool_start_ts
+
+        if tool_name not in tool_metrics:
+            tool_metrics[tool_name] = {"count": 0, "durations": []}
+        tool_metrics[tool_name]["count"] += 1
+        tool_metrics[tool_name]["durations"].append(tool_duration)
+
+        messages.append({
+            "role": "user",
+            "content": [{
+                "type": "tool_result",
+                "tool_use_id": tool_use.id,
+                "content": tool_response,
+            }]
+        })
+
         response = await asyncio.to_thread(
-            client.chat.completions.create,
+            client.messages.create,
             model=model,
+            max_tokens=4096,
+            system=EVALUATION_PROMPT,
             messages=messages,
             tools=tools,
-            tool_choice="auto",
         )
+        messages.append({"role": "assistant", "content": response.content})
 
-        message = response.choices[0].message
-
-        if message.tool_calls:
-            messages.append({
-                "role": "assistant",
-                "tool_calls": [
-                    {
-                        "id": tc.id,
-                        "type": tc.type or "function",
-                        "function": {
-                            "name": tc.function.name,
-                            "arguments": tc.function.arguments,
-                        },
-                    }
-                    for tc in message.tool_calls
-                ],
-            })
-
-            for tc in message.tool_calls:
-                tool_name = tc.function.name
-                raw_args = tc.function.arguments or "{}"
-                try:
-                    tool_input = json.loads(raw_args)
-                except Exception:
-                    tool_input = {}
-
-                tool_start_ts = time.time()
-                try:
-                    tool_result = await connection.call_tool(tool_name, tool_input)
-                    tool_response = json.dumps(tool_result) if isinstance(tool_result, (dict, list)) else str(tool_result)
-                except Exception as e:
-                    tool_response = f"Error executing tool {tool_name}: {str(e)}\n"
-                    tool_response += traceback.format_exc()
-                tool_duration = time.time() - tool_start_ts
-
-                if tool_name not in tool_metrics:
-                    tool_metrics[tool_name] = {"count": 0, "durations": []}
-                tool_metrics[tool_name]["count"] += 1
-                tool_metrics[tool_name]["durations"].append(tool_duration)
-
-                messages.append({
-                    "role": "tool",
-                    "tool_call_id": tc.id,
-                    "content": tool_response,
-                })
-            continue
-
-        content = message.content or ""
-        if isinstance(content, list):
-            response_text = "".join(
-                part.get("text", "") if isinstance(part, dict) else str(part)
-                for part in content
-            )
-        else:
-            response_text = str(content)
-
-        return response_text, tool_metrics
+    response_text = next(
+        (block.text for block in response.content if hasattr(block, "text")),
+        None,
+    )
+    return response_text, tool_metrics
 
 
 async def evaluate_single_task(
-    client: OpenAI,
+    client: Anthropic,
     model: str,
     qa_pair: dict[str, Any],
     tools: list[dict[str, Any]],
@@ -255,16 +220,15 @@ TASK_TEMPLATE = """
 async def run_evaluation(
     eval_path: Path,
     connection: Any,
-    model: str = "gpt-4.1",
+    model: str = "claude-3-7-sonnet-20250219",
 ) -> str:
     """Run evaluation with MCP server tools."""
     print("🚀 Starting Evaluation")
 
-    client = OpenAI()
+    client = Anthropic()
 
     tools = await connection.list_tools()
-    tool_definitions = format_tools_for_openai(tools)
-    print(f"📋 Loaded {len(tool_definitions)} tools from MCP server")
+    print(f"📋 Loaded {len(tools)} tools from MCP server")
 
     qa_pairs = parse_evaluation_file(eval_path)
     print(f"📋 Loaded {len(qa_pairs)} evaluation tasks")
@@ -272,7 +236,7 @@ async def run_evaluation(
     results = []
     for i, qa_pair in enumerate(qa_pairs):
         print(f"Processing task {i + 1}/{len(qa_pairs)}")
-        result = await evaluate_single_task(client, model, qa_pair, tool_definitions, connection, i)
+        result = await evaluate_single_task(client, model, qa_pair, tools, connection, i)
         results.append(result)
 
     correct = sum(r["score"] for r in results)
@@ -351,13 +315,13 @@ Examples:
   python evaluation.py -t sse -u https://example.com/mcp -H "Authorization: Bearer token" eval.xml
 
   # Evaluate an HTTP MCP server with custom model
-  python evaluation.py -t http -u https://example.com/mcp -m gpt-4.1 eval.xml
+  python evaluation.py -t http -u https://example.com/mcp -m claude-3-5-sonnet-20241022 eval.xml
         """,
     )
 
     parser.add_argument("eval_file", type=Path, help="Path to evaluation XML file")
     parser.add_argument("-t", "--transport", choices=["stdio", "sse", "http"], default="stdio", help="Transport type (default: stdio)")
-    parser.add_argument("-m", "--model", default="gpt-4.1", help="Model to use (default: gpt-4.1)")
+    parser.add_argument("-m", "--model", default="claude-3-7-sonnet-20250219", help="Claude model to use (default: claude-3-7-sonnet-20250219)")
 
     stdio_group = parser.add_argument_group("stdio options")
     stdio_group.add_argument("-c", "--command", help="Command to run MCP server (stdio only)")
