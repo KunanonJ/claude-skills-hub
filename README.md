@@ -1,6 +1,6 @@
 # Codex Skill Updater
 
-Automated sync of Composio skill repositories into local Codex skills (`~/.codex/skills`).
+Automated sync of upstream skill sources into local Codex skills (`~/.codex/skills`), plus a repo snapshot of the current local skill set.
 
 This repo is designed so a human or another AI can continue operations without reverse engineering the script.
 
@@ -17,6 +17,8 @@ The updater currently manages skills from:
 - `ComposioHQ/skills` (`main`)
 
 It only manages directories containing `SKILL.md`.
+
+This repo can also snapshot every locally installed skill into a checked-in `skills/` directory for backup, review, or publishing.
 
 ## Core Behavior
 
@@ -62,6 +64,10 @@ System names are hardcoded in `update-composio-skills.sh` and skipped intentiona
   - Bash wrapper + embedded Python logic.
   - Source of truth for repo list, precedence, exclusions, and sync logic.
   - Uses GitHub zip snapshots instead of persistent local git clones.
+- `sync-local-skills.sh`
+  - Copies every locally installed skill from `~/.codex/skills` into this repo under `./skills/`.
+  - Removes stale repo snapshots that no longer exist locally.
+  - Writes `./skills-manifest.txt` as the canonical snapshot index.
 
 ## Runtime Paths
 
@@ -76,6 +82,10 @@ System names are hardcoded in `update-composio-skills.sh` and skipped intentiona
   - `${CODEX_HOME:-~/.codex}/skills`
 - Manifest:
   - `${CODEX_HOME:-~/.codex}/skills/.composio-managed-skills.txt`
+- Repo snapshot destination:
+  - `./skills/`
+- Repo snapshot manifest:
+  - `./skills-manifest.txt`
 
 ## Dependencies
 
@@ -110,6 +120,12 @@ To target a non-default Codex home:
 CODEX_HOME=/path/to/codex-home ./update-composio-skills.sh
 ```
 
+To sync the current local skill set into this repo:
+
+```bash
+./sync-local-skills.sh
+```
+
 ## Expected Output
 
 At minimum:
@@ -120,6 +136,11 @@ At minimum:
 When upstream removals happen:
 
 - `Removed <skill-name>`
+
+For repo snapshot runs:
+
+- `Synced skills: <count>`
+- `Manifest: <repo>/skills-manifest.txt`
 
 ## Scheduling (Cron)
 
@@ -153,6 +174,14 @@ After changing the updater:
    - `wc -l ~/.codex/skills/.composio-managed-skills.txt`
 4. Spot-check one synced skill:
    - `ls ~/.codex/skills | head`
+
+After changing local snapshot behavior:
+
+1. Run once manually:
+   - `./sync-local-skills.sh`
+2. Confirm manifest exists and count matches repo snapshot:
+   - `wc -l skills-manifest.txt`
+   - `find skills -mindepth 1 -maxdepth 1 -type d | wc -l`
 
 ## Troubleshooting
 
