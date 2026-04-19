@@ -63,6 +63,7 @@ SOURCE_INPUTS = [
     {"kind": "repo", "repo": "shanraisshan/claude-code-best-practice"},
     {"kind": "repo", "repo": "juliusbrussee/caveman"},
     {"kind": "repo", "repo": "addyosmani/agent-skills"},
+    {"kind": "repo", "repo": "expo/skills"},
 
     # ── Awesome-list discovery pages ─────────────────────────────────────────
     {"kind": "page", "url": "https://github.com/hesreallyhim/awesome-claude-code"},

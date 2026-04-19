@@ -132,6 +132,7 @@ pie title Source Repo Breakdown
 | [obra/superpowers](https://github.com/obra/superpowers) | Workflow orchestration | ~40 |
 | [sickn33/antigravity-awesome-skills](https://github.com/sickn33/antigravity-awesome-skills) | Community | ~200 |
 | [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) | Dev lifecycle | ~20 |
+| [expo/skills](https://github.com/expo/skills) | React Native / Expo | 12 |
 | [juliusbrussee/caveman](https://github.com/juliusbrussee/caveman) | Token compression | 5 |
 | [forrestchang/andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills) | Best practices | 1 |
 | [shanraisshan/claude-code-best-practice](https://github.com/shanraisshan/claude-code-best-practice) | Best practices | 4 |
