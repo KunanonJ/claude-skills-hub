@@ -21,7 +21,7 @@ Skills are synced from the source repos listed below. Browse [`skills/`](./skill
 ### Install all skills at once
 
 ```bash
-npx skills add KunanonJ/codex-skill-updater -g -y
+npx skills add KunanonJ/claude-skills-hub -g -y
 ```
 
 > This installs every skill in the `skills/` directory globally into your agent's skills folder (`~/.agents/skills/` for Claude Code).
@@ -31,9 +31,9 @@ npx skills add KunanonJ/codex-skill-updater -g -y
 Browse [`skills/`](./skills/), pick what you want, then:
 
 ```bash
-npx skills add KunanonJ/codex-skill-updater/<skill-name> -g -y
+npx skills add KunanonJ/claude-skills-hub/<skill-name> -g -y
 # example:
-npx skills add KunanonJ/codex-skill-updater/karpathy-guidelines -g -y
+npx skills add KunanonJ/claude-skills-hub/karpathy-guidelines -g -y
 ```
 
 ### Full environment setup (skills + plugins + MCPs)
