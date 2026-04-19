@@ -26,15 +26,51 @@ from pathlib import Path
 USER_AGENT = "codex-skill-updater/1.0"
 SKIP_REPOS = {"KunanonJ/codex-skill-updater"}
 
+# Skills that are excluded after sync due to security flags or trust issues.
+# First-source-wins precedence still applies; these names are simply deleted
+# from the dest_dir after the full sync completes.
+SKIP_SKILLS: set[str] = {
+    "agent-browser",  # shanraisshan/claude-code-best-practice — Snyk High Risk
+}
+
 SOURCE_INPUTS = [
+    # ── Composio ecosystem ────────────────────────────────────────────────────
     {"kind": "repo", "repo": "ComposioHQ/awesome-claude-skills"},
-    {"kind": "org", "org": "ComposioHQ"},
+    {"kind": "org",  "org":  "ComposioHQ"},
+
+    # ── Curated community packs (from setup-claude.sh) ────────────────────────
+    {"kind": "repo", "repo": "obra/superpowers"},
+    {"kind": "repo", "repo": "FlorianBruniaux/claude-code-ultimate-guide"},
     {"kind": "repo", "repo": "sickn33/antigravity-awesome-skills"},
+    {"kind": "repo", "repo": "nextlevelbuilder/ui-ux-pro-max-skill"},
+    {"kind": "repo", "repo": "thedotmack/claude-mem"},
+    {"kind": "repo", "repo": "affaan-m/everything-claude-code"},
+    {"kind": "repo", "repo": "anthropics/skills"},
+    {"kind": "repo", "repo": "rtk-ai/rtk"},
+    {"kind": "repo", "repo": "ericvtheg/solo-founder-toolkit"},
+    {"kind": "repo", "repo": "ognjengt/founder-skills"},
+    {"kind": "repo", "repo": "dazuck/operator-skills"},
+    {"kind": "repo", "repo": "alirezarezvani/claude-skills"},
+    {"kind": "repo", "repo": "emotixco/claude-skills-founder"},
+    {"kind": "repo", "repo": "Exploration-labs/Nates-Substack-Skills"},
+    {"kind": "repo", "repo": "kubony/claude-session-wrap"},
+    {"kind": "repo", "repo": "team-attention/plugins-for-claude-natives"},
+    {"kind": "repo", "repo": "czlonkowski/n8n-skills"},
+    {"kind": "repo", "repo": "mylukin/agent-foreman"},
+    {"kind": "repo", "repo": "muratcankoylan/ralph-wiggum-marketer"},
+    {"kind": "repo", "repo": "ruvnet/ruflo"},
+    {"kind": "repo", "repo": "forrestchang/andrej-karpathy-skills"},
+    {"kind": "repo", "repo": "shanraisshan/claude-code-best-practice"},
+    {"kind": "repo", "repo": "juliusbrussee/caveman"},
+    {"kind": "repo", "repo": "addyosmani/agent-skills"},
+
+    # ── Awesome-list discovery pages ─────────────────────────────────────────
+    {"kind": "page", "url": "https://github.com/hesreallyhim/awesome-claude-code"},
+    {"kind": "page", "url": "https://github.com/VoltAgent/awesome-agent-skills"},
     {"kind": "page", "url": "https://awesomeclaude.ai/awesome-claude-skills"},
     {"kind": "page", "url": "https://www.aitmpl.com/"},
     {"kind": "page", "url": "https://simonwillison.net/2025/Oct/16/claude-skills/"},
     {"kind": "page", "url": "https://mcpservers.org/agent-skills"},
-    {"kind": "repo", "repo": "KunanonJ/codex-skill-updater"},
 ]
 
 
@@ -275,6 +311,12 @@ with tempfile.TemporaryDirectory(prefix="codex-listed-source-sync-") as tmp_root
             if skill_name not in owned:
                 owned[skill_name] = (spec, clone_root, rel_skill_dir)
 
+    # Apply exclusion list — remove skills flagged as untrusted or high-risk
+    for skill_name in list(owned.keys()):
+        if skill_name in SKIP_SKILLS:
+            del owned[skill_name]
+            print(f"Excluded (untrusted): {skill_name}")
+
     current_names = sorted(owned)
     current_name_set = set(current_names)
 
@@ -300,6 +342,7 @@ with tempfile.TemporaryDirectory(prefix="codex-listed-source-sync-") as tmp_root
     print(f"Input sources: {len(SOURCE_INPUTS)}")
     print(f"Resolved GitHub sources: {len(ordered_specs)}")
     print(f"GitHub sources with skills: {len(repos_with_skills)}")
+    print(f"Excluded (untrusted): {len(SKIP_SKILLS)}")
     print(f"Synced skills: {len(current_names)}")
     print(f"Manifest: {manifest}")
     print(f"Source map: {source_map}")

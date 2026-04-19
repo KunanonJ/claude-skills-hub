@@ -1,294 +1,181 @@
 # Codex Skill Updater
 
-Automated sync of upstream skill sources into local Codex skills (`~/.codex/skills`), plus a repo snapshot of the current local skill set.
+A community-curated collection of **3,000+ AI coding skills** for Claude Code, Codex, Cursor, Gemini CLI, and other coding agents — plus the automation that keeps it fresh.
 
-This repo is designed so a human or another AI can continue operations without reverse engineering the script.
+## What's inside
 
-## Goal
+| Resource | Count |
+|---|---|
+| Skills (browsable in [`skills/`](./skills/)) | 3,000+ |
+| Source repos tracked | 24+ |
+| Discovery pages crawled | 6 |
+| Plugins (Claude Code marketplace) | 8 |
+| MCP servers | 9 |
 
-Keep locally installed Codex skills aligned with upstream Composio repos, while preserving predictable ownership and safe cleanup behavior.
+Skills are synced from the source repos listed below. Browse [`skills/`](./skills/) to see everything, or use [`skills-source-map.tsv`](./skills-source-map.tsv) to trace any skill back to its origin repo.
 
-## Scope
+---
 
-The updater currently manages skills from:
+## Quick install
 
-- `ComposioHQ/awesome-codex-skills` (`master`)
-- `ComposioHQ/awesome-claude-skills` (`master`)
-- `ComposioHQ/skills` (`main`)
-
-It only manages directories containing `SKILL.md`.
-
-This repo can also snapshot every locally installed skill into a checked-in `skills/` directory for backup, review, or publishing.
-
-It can also aggregate skills directly from listed external sources and GitHub-backed catalogs into the same checked-in `skills/` directory.
-
-## Core Behavior
-
-Each run performs these steps:
-
-1. Downloads fresh zip snapshots of each source repo from GitHub.
-3. Discovers all skill directories (`**/SKILL.md`) in source repos.
-4. Excludes system/built-in skill names (to avoid collisions).
-5. Resolves duplicate skill names with **first-repo-wins** precedence.
-6. Syncs current managed skills into `~/.codex/skills/<skill-name>`.
-7. Removes previously managed skills that are no longer present upstream.
-8. Writes a manifest file of currently managed skills.
-
-## Deterministic Rules
-
-### Precedence Rule
-
-When two repos contain the same skill folder name:
-
-- Winner is whichever repo appears first in `repos` list in script.
-- Current order:
-  1. `awesome-codex-skills`
-  2. `awesome-claude-skills`
-  3. `skills` (`composio-skills-repo`)
-
-### Managed vs Unmanaged
-
-- Managed skills are tracked in:
-  - `~/.codex/skills/.composio-managed-skills.txt`
-- A skill is deleted only if:
-  - It existed in previous manifest, and
-  - It no longer exists in current discovered set.
-- Skills never managed by this script are not deleted by manifest cleanup.
-
-### System Skill Exclusion
-
-System names are hardcoded in `update-composio-skills.sh` and skipped intentionally to avoid overriding built-in behavior.
-
-## Files and Responsibilities
-
-- `update-composio-skills.sh`
-  - Single entrypoint.
-  - Bash wrapper + embedded Python logic.
-  - Source of truth for repo list, precedence, exclusions, and sync logic.
-  - Uses GitHub zip snapshots instead of persistent local git clones.
-- `sync-local-skills.sh`
-  - Copies every locally installed skill from `~/.codex/skills` into this repo under `./skills/`.
-  - Removes stale repo snapshots that no longer exist locally.
-  - Strips nested `.git` metadata so the snapshot stays portable across clones.
-  - Writes `./skills-manifest.txt` as the canonical snapshot index.
-- `sync-listed-sources.sh`
-  - Aggregates skills directly from configured external sources and catalog pages.
-  - Prefers explicit and organization-backed sources before catalog-page discoveries, then keeps first-source-wins duplicate resolution.
-  - Extracts GitHub repositories from supported pages, clones only what is needed, and falls back to GitHub archive downloads when a repo cannot be shallow-cloned cleanly.
-  - Strips nested `.git` metadata from root-level skill repos so the snapshot does not create embedded submodules.
-  - Writes `./skills-manifest.txt` and `./skills-source-map.tsv`.
-
-## Runtime Paths
-
-- Canonical script in this repo:
-  - `./update-composio-skills.sh`
-- Deployed cron-safe script path:
-  - `~/.codex/bin/update-composio-skills.sh`
-- Temporary repo snapshots:
-  - Created under system temp dir via Python `TemporaryDirectory`
-  - Deleted automatically after each successful or failed run
-- Target skills directory:
-  - `${CODEX_HOME:-~/.codex}/skills`
-- Manifest:
-  - `${CODEX_HOME:-~/.codex}/skills/.composio-managed-skills.txt`
-- Repo snapshot destination:
-  - `./skills/`
-- Repo snapshot manifest:
-  - `./skills-manifest.txt`
-- Repo snapshot source map:
-  - `./skills-source-map.tsv`
-
-## Dependencies
-
-Required:
-
-- `bash`
-- `python3`
-- outbound HTTPS access to `github.com` / `codeload.github.com`
-
-Optional:
-
-- `rsync` (preferred for sync; falls back to delete+copy when unavailable)
-
-## Usage
+### Install all skills at once
 
 ```bash
-chmod +x update-composio-skills.sh
-./update-composio-skills.sh
+npx skills add KunanonJ/codex-skill-updater -g -y
 ```
 
-To deploy the script where cron can execute it reliably on macOS:
+> This installs every skill in the `skills/` directory globally into your agent's skills folder (`~/.agents/skills/` for Claude Code).
+
+### Install a specific skill
+
+Browse [`skills/`](./skills/), pick what you want, then:
 
 ```bash
-mkdir -p ~/.codex/bin
-cp update-composio-skills.sh ~/.codex/bin/update-composio-skills.sh
-chmod +x ~/.codex/bin/update-composio-skills.sh
+npx skills add KunanonJ/codex-skill-updater/<skill-name> -g -y
+# example:
+npx skills add KunanonJ/codex-skill-updater/karpathy-guidelines -g -y
 ```
 
-To target a non-default Codex home:
+### Full environment setup (skills + plugins + MCPs)
+
+To replicate the complete environment — all 24 skill repos, 8 plugins, and 9 MCP servers — use the companion setup script:
 
 ```bash
-CODEX_HOME=/path/to/codex-home ./update-composio-skills.sh
+bash <(curl -fsSL https://gist.githubusercontent.com/KunanonJ/f7e7c9b8c45d927ae03b84b1879d384d/raw/setup-claude.sh)
 ```
 
-To sync the current local skill set into this repo:
+---
+
+## Skill sources
+
+Skills are pulled from these repos (first-source-wins on name conflicts):
+
+| Repo | Category |
+|---|---|
+| [ComposioHQ/awesome-claude-skills](https://github.com/ComposioHQ/awesome-claude-skills) | Composio ecosystem |
+| [ComposioHQ org repos](https://github.com/ComposioHQ) | Composio ecosystem |
+| [obra/superpowers](https://github.com/obra/superpowers) | Workflow orchestration |
+| [FlorianBruniaux/claude-code-ultimate-guide](https://github.com/FlorianBruniaux/claude-code-ultimate-guide) | General |
+| [sickn33/antigravity-awesome-skills](https://github.com/sickn33/antigravity-awesome-skills) | Community |
+| [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | UI/UX |
+| [thedotmack/claude-mem](https://github.com/thedotmack/claude-mem) | Memory / context |
+| [affaan-m/everything-claude-code](https://github.com/affaan-m/everything-claude-code) | General |
+| [anthropics/skills](https://github.com/anthropics/skills) | Official Anthropic |
+| [rtk-ai/rtk](https://github.com/rtk-ai/rtk) | Token efficiency |
+| [ericvtheg/solo-founder-toolkit](https://github.com/ericvtheg/solo-founder-toolkit) | Founder |
+| [ognjengt/founder-skills](https://github.com/ognjengt/founder-skills) | Founder |
+| [dazuck/operator-skills](https://github.com/dazuck/operator-skills) | Operator |
+| [alirezarezvani/claude-skills](https://github.com/alirezarezvani/claude-skills) | General |
+| [emotixco/claude-skills-founder](https://github.com/emotixco/claude-skills-founder) | Founder |
+| [Exploration-labs/Nates-Substack-Skills](https://github.com/Exploration-labs/Nates-Substack-Skills) | Writing |
+| [kubony/claude-session-wrap](https://github.com/kubony/claude-session-wrap) | Session management |
+| [team-attention/plugins-for-claude-natives](https://github.com/team-attention/plugins-for-claude-natives) | Plugins |
+| [czlonkowski/n8n-skills](https://github.com/czlonkowski/n8n-skills) | Automation |
+| [mylukin/agent-foreman](https://github.com/mylukin/agent-foreman) | Agent orchestration |
+| [muratcankoylan/ralph-wiggum-marketer](https://github.com/muratcankoylan/ralph-wiggum-marketer) | Marketing |
+| [ruvnet/ruflo](https://github.com/ruvnet/ruflo) | Orchestration |
+| [forrestchang/andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills) | Best practices |
+| [shanraisshan/claude-code-best-practice](https://github.com/shanraisshan/claude-code-best-practice) | Best practices |
+| [juliusbrussee/caveman](https://github.com/juliusbrussee/caveman) | Token compression |
+| [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) | Dev lifecycle |
+
+Plus skills discovered from curated pages: [hesreallyhim/awesome-claude-code](https://github.com/hesreallyhim/awesome-claude-code), [VoltAgent/awesome-agent-skills](https://github.com/VoltAgent/awesome-agent-skills), [awesomeclaude.ai](https://awesomeclaude.ai/awesome-claude-skills), and more.
+
+---
+
+## Claude Code plugins
+
+Install these from the Claude Code marketplace:
 
 ```bash
-./sync-local-skills.sh
+claude plugin install typescript-lsp
+claude plugin install security-guidance
+claude plugin install code-review
+claude plugin install playwright
+claude plugin install context7
+claude plugin install pr-review-toolkit
+claude plugin install feature-dev
+claude plugin install ralph-loop
 ```
 
-To sync from the configured external source list into this repo:
+---
+
+## MCP servers
+
+Add these to Claude Code (no API key required):
 
 ```bash
-./sync-listed-sources.sh
+claude mcp add --transport stdio investor-agent -- npx -y investor-agent
+claude mcp add --transport stdio exa            -- npx -y exa-mcp-server
+claude mcp add --transport stdio context7       -- npx -y @upstash/context7-mcp
+claude mcp add --transport stdio context-mode   -- npx -y context-mode
+claude mcp add --transport stdio token-savior   -- uvx token-savior-recall
 ```
 
-To restore the checked-in snapshot onto another machine:
+Install `code-review-graph` (Tree-sitter knowledge graph — run once per repo):
 
 ```bash
-mkdir -p ~/.codex/skills
-rsync -a --delete skills/ ~/.codex/skills/
+uv tool install code-review-graph
+code-review-graph install --platform claude-code   # run inside your project
+code-review-graph build
 ```
 
-To clone this repo and recreate the external-source snapshot on another machine:
+Servers requiring API keys (configure manually after adding):
 
 ```bash
-git clone https://github.com/KunanonJ/codex-skill-updater.git
-cd codex-skill-updater
-./sync-listed-sources.sh
+claude mcp add --transport stdio 2slides     -- npx -y mcp-2slides
+claude mcp add --transport http  slidespeak  https://mcp.slidespeak.co/mcp
+claude mcp add --transport http  plusai      https://mcp.plusai.com/
+claude mcp add --transport http  CustomerIO  https://mcp.customer.io/mcp
 ```
 
-`sync-listed-sources.sh` is configured for these inputs:
+---
 
-- `https://awesomeclaude.ai/awesome-claude-skills`
-- `https://github.com/ComposioHQ/awesome-claude-skills`
-- `https://github.com/ComposioHQ`
-- `https://github.com/sickn33/antigravity-awesome-skills`
-- `https://www.aitmpl.com/`
-- `https://mcpservers.org/agent-skills`
-- `https://simonwillison.net/2025/Oct/16/claude-skills/`
+## Keep skills up to date
 
-The target repo itself is intentionally excluded as a sync source to avoid recursive self-imports.
-
-## Expected Output
-
-At minimum:
-
-- `Managed skills: <count>`
-- `Manifest: <path>`
-
-When upstream removals happen:
-
-- `Removed <skill-name>`
-
-For repo snapshot runs:
-
-- `Synced skills: <count>`
-- `Manifest: <repo>/skills-manifest.txt`
-
-For listed-source sync runs:
-
-- `Input sources: <count>`
-- `Resolved GitHub sources: <count>`
-- `GitHub sources with skills: <count>`
-- `Synced skills: <count>`
-- `Source map: <repo>/skills-source-map.tsv`
-
-## Scheduling (Cron)
-
-Current weekly schedule example:
+Run this inside the repo to pull the latest skills from all source repos:
 
 ```bash
-0 9 * * 1 /Users/kunanonjarat/.codex/bin/update-composio-skills.sh >> ~/.codex/skill-update.log 2>&1
+bash sync-listed-sources.sh
 ```
 
-Inspect cron entry:
+Then commit the result:
 
 ```bash
-crontab -l
+git add skills/ skills-manifest.txt skills-source-map.tsv
+git commit -m "chore: sync skills $(date +%Y-%m-%d)"
+git push
 ```
 
-Inspect updater logs:
+---
 
-```bash
-tail -n 200 ~/.codex/skill-update.log
+## How it works
+
+```
+sync-listed-sources.sh
+  ↓ clones / zip-downloads each source repo
+  ↓ discovers all SKILL.md directories
+  ↓ first-source-wins deduplication
+  ↓ removes untrusted skills (SKIP_SKILLS list)
+  ↓ writes skills/   skills-manifest.txt   skills-source-map.tsv
 ```
 
-## Validation Checklist
+- **Precedence**: when two repos define the same skill name, the repo listed earlier in `SOURCE_INPUTS` wins.
+- **Exclusions**: skills in `SKIP_SKILLS` are removed after sync (currently: `agent-browser` — Snyk High Risk flag).
+- **Traceability**: every skill in `skills/` has a matching row in `skills-source-map.tsv` showing its origin repo and discovery source.
 
-After changing the updater:
+---
 
-1. Syntax check:
-   - `bash -n update-composio-skills.sh`
-2. Run once manually:
-   - `./update-composio-skills.sh`
-3. Confirm manifest exists and non-empty:
-   - `wc -l ~/.codex/skills/.composio-managed-skills.txt`
-4. Spot-check one synced skill:
-   - `ls ~/.codex/skills | head`
+## Contributing
 
-After changing local snapshot behavior:
+To add a new skill source:
 
-1. Run once manually:
-   - `./sync-local-skills.sh`
-2. Confirm manifest exists and count matches repo snapshot:
-   - `wc -l skills-manifest.txt`
-   - `find skills -mindepth 1 -maxdepth 1 -type d | wc -l`
+1. Open `sync-listed-sources.sh`
+2. Add a line to `SOURCE_INPUTS`:
+   ```python
+   {"kind": "repo", "repo": "owner/repo-name"},
+   ```
+3. Run `bash sync-listed-sources.sh` to pull and sync
+4. Open a PR with the updated `skills/`, `skills-manifest.txt`, and `skills-source-map.tsv`
 
-After changing listed-source sync behavior:
-
-1. Run once manually:
-   - `./sync-listed-sources.sh`
-2. Confirm manifests exist:
-   - `wc -l skills-manifest.txt`
-   - `wc -l skills-source-map.tsv`
-3. Spot-check duplicate resolution:
-   - `rg '^figma\t' skills-source-map.tsv`
-
-## Troubleshooting
-
-### GitHub auth failures
-
-- This updater uses public GitHub archive downloads and does not require `gh`.
-- If corporate proxy or network policy blocks GitHub archive downloads, test:
-  - `curl -I https://codeload.github.com`
-
-### Branch rename upstream
-
-If a source branch changes (for example `master` -> `main`), update the `ref` field in `repos` list in `update-composio-skills.sh`.
-
-### Permission errors in cron
-
-- Confirm script is executable:
-  - `chmod +x ~/.codex/bin/update-composio-skills.sh`
-- Keep the cron-run script outside Desktop/Documents/Downloads to avoid macOS privacy restrictions on background processes.
-- Confirm `CODEX_HOME` target is writable by cron user.
-
-### Slow run time
-
-- Install `rsync` if absent.
-- Expect snapshot download time from three source repos on each run.
-
-## Change Guide (For AI/Handoffs)
-
-When extending behavior, keep these invariants:
-
-1. Maintain manifest-based cleanup contract.
-2. Keep sync idempotent (safe to run repeatedly).
-3. Preserve deterministic duplicate resolution.
-4. Avoid overriding built-in/system skills unless explicitly intended.
-5. Keep runtime independent from Desktop-only paths so cron can run unattended.
-
-Recommended modification order:
-
-1. Update `repos` and/or `system_names` in script.
-2. Run local validation checklist.
-3. Commit script and README together.
-4. Run one manual sync and include result in commit/PR notes.
-
-## Suggested Future Improvements
-
-- Add dry-run mode (`--dry-run`) to preview changes.
-- Add summary JSON output for machine parsing.
-- Add lock file to avoid overlapping cron runs.
-- Add optional alerts on sync failures.
+To flag a skill as unsafe, add its name to `SKIP_SKILLS` in `sync-listed-sources.sh` with a comment explaining why.
