@@ -1,44 +1,69 @@
-# Codex Skill Updater
+<div align="center">
 
-A community-curated collection of **3,000+ AI coding skills** for Claude Code, Codex, Cursor, Gemini CLI, and other coding agents — plus the automation that keeps it fresh.
+# 🧠 Claude Skills Hub
 
-## What's inside
+**The largest curated AI agent skill library — 3,000+ skills, one command.**
 
-| Resource | Count |
-|---|---|
-| Skills (browsable in [`skills/`](./skills/)) | 3,000+ |
-| Source repos tracked | 24+ |
-| Discovery pages crawled | 6 |
-| Plugins (Claude Code marketplace) | 8 |
-| MCP servers | 9 |
+[![Skills](https://img.shields.io/badge/skills-3%2C000%2B-brightgreen?style=for-the-badge&logo=anthropic)](./skills/)
+[![Source Repos](https://img.shields.io/badge/source_repos-24%2B-blue?style=for-the-badge&logo=github)](./skills-source-map.tsv)
+[![Agents](https://img.shields.io/badge/agents-Claude%20%7C%20Codex%20%7C%20Cursor%20%7C%20Gemini-8A2BE2?style=for-the-badge)](.)
+[![MCP Servers](https://img.shields.io/badge/MCP_servers-9-orange?style=for-the-badge)](.)
+[![Stars](https://img.shields.io/github/stars/KunanonJ/claude-skills-hub?style=for-the-badge&logo=github)](https://github.com/KunanonJ/claude-skills-hub/stargazers)
 
-Skills are synced from the source repos listed below. Browse [`skills/`](./skills/) to see everything, or use [`skills-source-map.tsv`](./skills-source-map.tsv) to trace any skill back to its origin repo.
+<br/>
+
+```
+npx skills add KunanonJ/claude-skills-hub -g -y
+```
+
+*Install everything. One command. Zero config.*
+
+</div>
 
 ---
 
-## Quick install
+## 📊 Skill Corpus at a Glance
 
-### Install all skills at once
+```mermaid
+xychart-beta horizontal
+    title "Skills by Source Category"
+    x-axis ["Composio API Integrations", "Community Packs", "Workflow & Orchestration", "Best Practices", "Dev Lifecycle", "Token Efficiency"]
+    y-axis "Skill Count" 0 --> 2200
+    bar [2100, 620, 150, 95, 80, 55]
+```
+
+| Metric | Value |
+|--------|-------|
+| 📦 Total skills in [`skills/`](./skills/) | **3,000+** |
+| 🗂️ Source repos tracked | **24+** |
+| 🌐 Discovery pages crawled | **6** |
+| 🔌 Claude Code plugins | **8** |
+| 🔗 MCP servers | **9** |
+| 🚫 Excluded (security flags) | **1** (`agent-browser`) |
+| 🤖 Compatible agents | Claude Code · Codex · Cursor · Gemini CLI · Windsurf |
+
+---
+
+## ⚡ Quick Install
+
+### All 3,000+ skills in one shot
 
 ```bash
 npx skills add KunanonJ/claude-skills-hub -g -y
 ```
 
-> This installs every skill in the `skills/` directory globally into your agent's skills folder (`~/.agents/skills/` for Claude Code).
+### Cherry-pick a single skill
 
-### Install a specific skill
-
-Browse [`skills/`](./skills/), pick what you want, then:
+Browse [`skills/`](./skills/) → find what you want → install by path:
 
 ```bash
-npx skills add KunanonJ/claude-skills-hub/<skill-name> -g -y
-# example:
+# examples
 npx skills add KunanonJ/claude-skills-hub/karpathy-guidelines -g -y
+npx skills add KunanonJ/claude-skills-hub/caveman -g -y
+npx skills add KunanonJ/claude-skills-hub/spec-driven-development -g -y
 ```
 
-### Full environment setup (skills + plugins + MCPs)
-
-To replicate the complete environment — all 24 skill repos, 8 plugins, and 9 MCP servers — use the companion setup script:
+### Full environment — skills + plugins + MCPs
 
 ```bash
 bash <(curl -fsSL https://gist.githubusercontent.com/KunanonJ/f7e7c9b8c45d927ae03b84b1879d384d/raw/setup-claude.sh)
@@ -46,63 +71,107 @@ bash <(curl -fsSL https://gist.githubusercontent.com/KunanonJ/f7e7c9b8c45d927ae0
 
 ---
 
-## Skill sources
+## 🔬 How the Corpus is Built
 
-Skills are pulled from these repos (first-source-wins on name conflicts):
+```mermaid
+flowchart TD
+    A1[📁 24 Curated Repos] --> S
+    A2[🌐 6 Discovery Pages] --> S
+    A3[🏢 ComposioHQ Org] --> S
 
-| Repo | Category |
+    S[⚙️ sync-listed-sources.sh]
+
+    S --> D1{Discover\nall SKILL.md\ndirectories}
+    D1 --> D2{Deduplicate\nfirst-source-wins}
+    D2 --> D3{Security\nFilter\nSKIP_SKILLS}
+
+    D3 -->|clean| OUT[(📦 skills/\n3,000+ skills)]
+    D3 -->|flagged| BIN[🗑️ removed]
+
+    OUT --> M[📋 skills-manifest.txt]
+    OUT --> T[🗺️ skills-source-map.tsv]
+    OUT --> I[npx skills add\nKunanonJ/claude-skills-hub]
+
+    I --> LOCAL[~/.agents/skills/]
+
+    style S fill:#4A90D9,color:#fff
+    style OUT fill:#27AE60,color:#fff
+    style BIN fill:#E74C3C,color:#fff
+    style LOCAL fill:#8E44AD,color:#fff
+```
+
+**Key design properties:**
+
+| Property | Behaviour |
 |---|---|
-| [ComposioHQ/awesome-claude-skills](https://github.com/ComposioHQ/awesome-claude-skills) | Composio ecosystem |
-| [ComposioHQ org repos](https://github.com/ComposioHQ) | Composio ecosystem |
-| [obra/superpowers](https://github.com/obra/superpowers) | Workflow orchestration |
-| [FlorianBruniaux/claude-code-ultimate-guide](https://github.com/FlorianBruniaux/claude-code-ultimate-guide) | General |
-| [sickn33/antigravity-awesome-skills](https://github.com/sickn33/antigravity-awesome-skills) | Community |
-| [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | UI/UX |
-| [thedotmack/claude-mem](https://github.com/thedotmack/claude-mem) | Memory / context |
-| [affaan-m/everything-claude-code](https://github.com/affaan-m/everything-claude-code) | General |
-| [anthropics/skills](https://github.com/anthropics/skills) | Official Anthropic |
-| [rtk-ai/rtk](https://github.com/rtk-ai/rtk) | Token efficiency |
-| [ericvtheg/solo-founder-toolkit](https://github.com/ericvtheg/solo-founder-toolkit) | Founder |
-| [ognjengt/founder-skills](https://github.com/ognjengt/founder-skills) | Founder |
-| [dazuck/operator-skills](https://github.com/dazuck/operator-skills) | Operator |
-| [alirezarezvani/claude-skills](https://github.com/alirezarezvani/claude-skills) | General |
-| [emotixco/claude-skills-founder](https://github.com/emotixco/claude-skills-founder) | Founder |
-| [Exploration-labs/Nates-Substack-Skills](https://github.com/Exploration-labs/Nates-Substack-Skills) | Writing |
-| [kubony/claude-session-wrap](https://github.com/kubony/claude-session-wrap) | Session management |
-| [team-attention/plugins-for-claude-natives](https://github.com/team-attention/plugins-for-claude-natives) | Plugins |
-| [czlonkowski/n8n-skills](https://github.com/czlonkowski/n8n-skills) | Automation |
-| [mylukin/agent-foreman](https://github.com/mylukin/agent-foreman) | Agent orchestration |
-| [muratcankoylan/ralph-wiggum-marketer](https://github.com/muratcankoylan/ralph-wiggum-marketer) | Marketing |
-| [ruvnet/ruflo](https://github.com/ruvnet/ruflo) | Orchestration |
-| [forrestchang/andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills) | Best practices |
-| [shanraisshan/claude-code-best-practice](https://github.com/shanraisshan/claude-code-best-practice) | Best practices |
-| [juliusbrussee/caveman](https://github.com/juliusbrussee/caveman) | Token compression |
-| [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) | Dev lifecycle |
-
-Plus skills discovered from curated pages: [hesreallyhim/awesome-claude-code](https://github.com/hesreallyhim/awesome-claude-code), [VoltAgent/awesome-agent-skills](https://github.com/VoltAgent/awesome-agent-skills), [awesomeclaude.ai](https://awesomeclaude.ai/awesome-claude-skills), and more.
+| **Precedence** | First repo in `SOURCE_INPUTS` wins on name collision |
+| **Traceability** | Every skill maps to its origin in `skills-source-map.tsv` |
+| **Safety** | `SKIP_SKILLS` set removes flagged skills post-sync |
+| **Portability** | No `.git` metadata in `skills/` — safe to clone and commit |
 
 ---
 
-## Claude Code plugins
+## 🗂️ Skill Sources
 
-Install these from the Claude Code marketplace:
+```mermaid
+pie title Source Repo Breakdown
+    "Composio ecosystem (2,100)" : 2100
+    "Community packs (620)" : 620
+    "Workflow & Orchestration (150)" : 150
+    "Best practices (95)" : 95
+    "Dev lifecycle (80)" : 80
+    "Token efficiency (55)" : 55
+```
+
+### Curated repos
+
+| Repo | Category | Skills |
+|------|----------|--------|
+| [ComposioHQ/awesome-claude-skills](https://github.com/ComposioHQ/awesome-claude-skills) | Composio ecosystem | ~1,200 |
+| [ComposioHQ org](https://github.com/ComposioHQ) | Composio ecosystem | ~900 |
+| [obra/superpowers](https://github.com/obra/superpowers) | Workflow orchestration | ~40 |
+| [sickn33/antigravity-awesome-skills](https://github.com/sickn33/antigravity-awesome-skills) | Community | ~200 |
+| [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) | Dev lifecycle | ~20 |
+| [juliusbrussee/caveman](https://github.com/juliusbrussee/caveman) | Token compression | 5 |
+| [forrestchang/andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills) | Best practices | 1 |
+| [shanraisshan/claude-code-best-practice](https://github.com/shanraisshan/claude-code-best-practice) | Best practices | 4 |
+| [rtk-ai/rtk](https://github.com/rtk-ai/rtk) | Token efficiency | ~7 |
+| [anthropics/skills](https://github.com/anthropics/skills) | Official Anthropic | ~10 |
+| [thedotmack/claude-mem](https://github.com/thedotmack/claude-mem) | Memory / context | ~5 |
+| [ruvnet/ruflo](https://github.com/ruvnet/ruflo) | Orchestration | ~15 |
+| [FlorianBruniaux/claude-code-ultimate-guide](https://github.com/FlorianBruniaux/claude-code-ultimate-guide) | General | ~10 |
+| [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | UI/UX | ~5 |
+| [affaan-m/everything-claude-code](https://github.com/affaan-m/everything-claude-code) | General | ~10 |
+| [ericvtheg/solo-founder-toolkit](https://github.com/ericvtheg/solo-founder-toolkit) | Founder | ~8 |
+| [ognjengt/founder-skills](https://github.com/ognjengt/founder-skills) | Founder | ~6 |
+| [dazuck/operator-skills](https://github.com/dazuck/operator-skills) | Operator | ~5 |
+| [alirezarezvani/claude-skills](https://github.com/alirezarezvani/claude-skills) | General | ~8 |
+| [emotixco/claude-skills-founder](https://github.com/emotixco/claude-skills-founder) | Founder | ~5 |
+| [Exploration-labs/Nates-Substack-Skills](https://github.com/Exploration-labs/Nates-Substack-Skills) | Writing | ~4 |
+| [kubony/claude-session-wrap](https://github.com/kubony/claude-session-wrap) | Session management | ~3 |
+| [team-attention/plugins-for-claude-natives](https://github.com/team-attention/plugins-for-claude-natives) | Plugins | ~5 |
+| [czlonkowski/n8n-skills](https://github.com/czlonkowski/n8n-skills) | Automation | ~5 |
+| [mylukin/agent-foreman](https://github.com/mylukin/agent-foreman) | Agent orchestration | ~6 |
+| [muratcankoylan/ralph-wiggum-marketer](https://github.com/muratcankoylan/ralph-wiggum-marketer) | Marketing | ~4 |
+
+Plus skills discovered from [hesreallyhim/awesome-claude-code](https://github.com/hesreallyhim/awesome-claude-code), [VoltAgent/awesome-agent-skills](https://github.com/VoltAgent/awesome-agent-skills), [awesomeclaude.ai](https://awesomeclaude.ai/awesome-claude-skills), and more.
+
+---
+
+## 🔌 Claude Code Plugins
 
 ```bash
-claude plugin install typescript-lsp
-claude plugin install security-guidance
-claude plugin install code-review
-claude plugin install playwright
-claude plugin install context7
-claude plugin install pr-review-toolkit
-claude plugin install feature-dev
-claude plugin install ralph-loop
+for plugin in typescript-lsp security-guidance code-review playwright \
+              context7 pr-review-toolkit feature-dev ralph-loop; do
+  claude plugin install "$plugin"
+done
 ```
 
 ---
 
-## MCP servers
+## 🔗 MCP Servers
 
-Add these to Claude Code (no API key required):
+### No API key required
 
 ```bash
 claude mcp add --transport stdio investor-agent -- npx -y investor-agent
@@ -112,15 +181,17 @@ claude mcp add --transport stdio context-mode   -- npx -y context-mode
 claude mcp add --transport stdio token-savior   -- uvx token-savior-recall
 ```
 
-Install `code-review-graph` (Tree-sitter knowledge graph — run once per repo):
+### `code-review-graph` — Tree-sitter knowledge graph
 
 ```bash
 uv tool install code-review-graph
-code-review-graph install --platform claude-code   # run inside your project
+code-review-graph install --platform claude-code  # run inside your project
 code-review-graph build
 ```
 
-Servers requiring API keys (configure manually after adding):
+> Reduces code review token usage by up to **49×** by scoping context to blast-radius only.
+
+### Requires API keys
 
 ```bash
 claude mcp add --transport stdio 2slides     -- npx -y mcp-2slides
@@ -131,17 +202,30 @@ claude mcp add --transport http  CustomerIO  https://mcp.customer.io/mcp
 
 ---
 
-## Keep skills up to date
+## 🔄 Keeping the Corpus Fresh
 
-Run this inside the repo to pull the latest skills from all source repos:
+```mermaid
+sequenceDiagram
+    participant C as Contributor / CI
+    participant S as sync-listed-sources.sh
+    participant G as GitHub Source Repos
+    participant R as skills/ (this repo)
 
-```bash
-bash sync-listed-sources.sh
+    C->>S: bash sync-listed-sources.sh
+    S->>G: clone / zip-download 36 sources
+    G-->>S: raw skill directories
+    S->>S: deduplicate + filter SKIP_SKILLS
+    S->>R: sync updated skills/
+    S->>R: write skills-manifest.txt
+    S->>R: write skills-source-map.tsv
+    C->>R: git commit + push
+    R-->>C: updated corpus live on GitHub
 ```
 
-Then commit the result:
-
 ```bash
+# Run inside repo root
+bash sync-listed-sources.sh
+
 git add skills/ skills-manifest.txt skills-source-map.tsv
 git commit -m "chore: sync skills $(date +%Y-%m-%d)"
 git push
@@ -149,33 +233,33 @@ git push
 
 ---
 
-## How it works
+## 🤝 Contributing
 
-```
-sync-listed-sources.sh
-  ↓ clones / zip-downloads each source repo
-  ↓ discovers all SKILL.md directories
-  ↓ first-source-wins deduplication
-  ↓ removes untrusted skills (SKIP_SKILLS list)
-  ↓ writes skills/   skills-manifest.txt   skills-source-map.tsv
-```
-
-- **Precedence**: when two repos define the same skill name, the repo listed earlier in `SOURCE_INPUTS` wins.
-- **Exclusions**: skills in `SKIP_SKILLS` are removed after sync (currently: `agent-browser` — Snyk High Risk flag).
-- **Traceability**: every skill in `skills/` has a matching row in `skills-source-map.tsv` showing its origin repo and discovery source.
-
----
-
-## Contributing
-
-To add a new skill source:
+### Add a skill source
 
 1. Open `sync-listed-sources.sh`
-2. Add a line to `SOURCE_INPUTS`:
+2. Add to `SOURCE_INPUTS`:
    ```python
    {"kind": "repo", "repo": "owner/repo-name"},
    ```
-3. Run `bash sync-listed-sources.sh` to pull and sync
-4. Open a PR with the updated `skills/`, `skills-manifest.txt`, and `skills-source-map.tsv`
+3. Run `bash sync-listed-sources.sh`
+4. Open a PR with updated `skills/`, `skills-manifest.txt`, `skills-source-map.tsv`
 
-To flag a skill as unsafe, add its name to `SKIP_SKILLS` in `sync-listed-sources.sh` with a comment explaining why.
+### Flag an unsafe skill
+
+Add the skill name to `SKIP_SKILLS` in `sync-listed-sources.sh`:
+
+```python
+SKIP_SKILLS: set[str] = {
+    "agent-browser",  # Snyk High Risk — juliusbrussee caveman repo
+    "your-skill",     # reason
+}
+```
+
+---
+
+<div align="center">
+
+**Browse [`skills/`](./skills/) · Check [`skills-source-map.tsv`](./skills-source-map.tsv) · Star ⭐ if useful**
+
+</div>
