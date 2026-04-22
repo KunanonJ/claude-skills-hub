@@ -235,6 +235,7 @@ avalonia-layout-zafiro
 avalonia-viewmodels-zafiro
 avalonia-zafiro-development
 avoid-ai-writing
+awesome-claude-design
 aws-agentic-ai
 aws-ami-builder
 aws-cdk-development
