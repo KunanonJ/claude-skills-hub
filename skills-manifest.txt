@@ -616,6 +616,7 @@ cloudflare-api-key-automation
 cloudflare-automation
 cloudflare-browser-rendering-automation
 cloudflare-deploy
+cloudflare-plugin
 cloudflare-workers-expert
 cloudformation-best-practices
 cloudinary-automation
@@ -1363,6 +1364,7 @@ groqcloud-automation
 growth-engine
 growth-loops
 grpc-golang
+gstack
 gtars
 gtex-database
 guidelines-advisor

@@ -616,6 +616,7 @@ cloudflare-api-key-automation	ComposioHQ/awesome-claude-skills	composio-skills/c
 cloudflare-automation	ComposioHQ/awesome-claude-skills	composio-skills/cloudflare-automation	https://github.com/ComposioHQ/awesome-claude-skills
 cloudflare-browser-rendering-automation	ComposioHQ/awesome-claude-skills	composio-skills/cloudflare-browser-rendering-automation	https://github.com/ComposioHQ/awesome-claude-skills
 cloudflare-deploy	davila7/claude-code-templates	cli-tool/components/skills/development/cloudflare-deploy	https://www.aitmpl.com/
+cloudflare-plugin	KunanonJ/claude-skills-hub	skills/cloudflare-plugin	https://github.com/cloudflare/skills
 cloudflare-workers-expert	sickn33/antigravity-awesome-skills	skills/cloudflare-workers-expert	https://github.com/sickn33/antigravity-awesome-skills
 cloudformation-best-practices	sickn33/antigravity-awesome-skills	skills/cloudformation-best-practices	https://github.com/sickn33/antigravity-awesome-skills
 cloudinary-automation	ComposioHQ/awesome-claude-skills	composio-skills/cloudinary-automation	https://github.com/ComposioHQ/awesome-claude-skills
@@ -1363,6 +1364,7 @@ groqcloud-automation	ComposioHQ/awesome-claude-skills	composio-skills/groqcloud-
 growth-engine	sickn33/antigravity-awesome-skills	skills/growth-engine	https://github.com/sickn33/antigravity-awesome-skills
 growth-loops	guia-matthieu/clawfu-skills	skills/growth/growth-loops	https://awesomeclaude.ai/awesome-claude-skills
 grpc-golang	sickn33/antigravity-awesome-skills	skills/grpc-golang	https://github.com/sickn33/antigravity-awesome-skills
+gstack	KunanonJ/claude-skills-hub	skills/gstack	https://github.com/garrytan/gstack
 gtars	K-Dense-AI/claude-scientific-skills	scientific-skills/gtars	https://awesomeclaude.ai/awesome-claude-skills
 gtex-database	K-Dense-AI/claude-scientific-skills	scientific-skills/gtex-database	https://awesomeclaude.ai/awesome-claude-skills
 guidelines-advisor	trailofbits/skills	plugins/building-secure-contracts/skills/guidelines-advisor	https://awesomeclaude.ai/awesome-claude-skills
