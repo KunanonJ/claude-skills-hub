@@ -1500,6 +1500,11 @@ inspired-product
 instacart-automation
 instagram
 instagram-automation
+instagram-reel-automation-blueprint
+instagram-reel-hook-engineer
+instagram-reel-niche-validator
+instagram-reel-pipeline
+instagram-reel-script-writer
 instantly-automation
 intelliprint-automation
 interactive-portfolio
