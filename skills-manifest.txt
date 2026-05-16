@@ -3148,3 +3148,9 @@ github-release-workflow
 copilot-custom-instructions
 copilot-coding-agent
 copilot-spaces
+litreview-intake-protocol
+litreview-contradiction-finder
+litreview-citation-chain
+litreview-gap-scanner
+litreview-knowledge-map
+litreview-so-what-test
