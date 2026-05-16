@@ -3132,3 +3132,15 @@ option-vol-analysis	anthropics/financial-services@main:plugins	plugins/partner-b
 funding-digest	anthropics/financial-services@main:plugins	plugins/partner-built/spglobal/skills/funding-digest	https://github.com/anthropics/financial-services
 earnings-preview-beta	anthropics/financial-services@main:plugins	plugins/partner-built/spglobal/skills/earnings-preview-beta	https://github.com/anthropics/financial-services
 tear-sheet	anthropics/financial-services@main:plugins	plugins/partner-built/spglobal/skills/tear-sheet	https://github.com/anthropics/financial-services
+github-codespaces-dev	KunanonJ/claude-skills-hub	skills/github-codespaces-dev	https://github.com/skills/code-with-codespaces
+github-reusable-workflows	KunanonJ/claude-skills-hub	skills/github-reusable-workflows	https://github.com/skills/reusable-workflows
+github-workflow-artifacts	KunanonJ/claude-skills-hub	skills/github-workflow-artifacts	https://github.com/skills/workflow-artifacts
+github-actions-javascript	KunanonJ/claude-skills-hub	skills/github-actions-javascript	https://github.com/skills/write-javascript-actions
+github-actions-docker-publish	KunanonJ/claude-skills-hub	skills/github-actions-docker-publish	https://github.com/skills/publish-docker-images
+github-actions-azure-deploy	KunanonJ/claude-skills-hub	skills/github-actions-azure-deploy	https://github.com/skills/deploy-to-azure
+github-secret-scanning	KunanonJ/claude-skills-hub	skills/github-secret-scanning	https://github.com/skills/introduction-to-secret-scanning
+github-models-in-actions	KunanonJ/claude-skills-hub	skills/github-models-in-actions	https://github.com/skills/ai-in-actions
+github-release-workflow	KunanonJ/claude-skills-hub	skills/github-release-workflow	https://github.com/skills/release-based-workflow
+copilot-custom-instructions	KunanonJ/claude-skills-hub	skills/copilot-custom-instructions	https://github.com/skills/customize-your-github-copilot-experience
+copilot-coding-agent	KunanonJ/claude-skills-hub	skills/copilot-coding-agent	https://github.com/skills/expand-your-team-with-copilot
+copilot-spaces	KunanonJ/claude-skills-hub	skills/copilot-spaces	https://github.com/skills/scale-institutional-knowledge-using-copilot-spaces
