@@ -13,7 +13,7 @@
 <br/>
 
 ```
-npx skills add KunanonJ/claude-skills-hub -g -y
+npx skills add KunanonJ/claude-skills-hub -g -a codex -s '*' --copy -y
 ```
 
 *One portable skill corpus. Use it from ChatGPT Codex, OpenAI Codex, Claude Code, Cursor, Gemini CLI, and more.*
@@ -62,6 +62,16 @@ xychart-beta horizontal
 
 ### ChatGPT Codex / OpenAI Codex
 
+Install all skills for Codex with the `skills` CLI:
+
+```bash
+npx skills add KunanonJ/claude-skills-hub -g -a codex -s '*' --copy -y
+```
+
+This installs the corpus into the Codex-compatible global skills location used by the `skills` CLI.
+
+#### Manual Codex sync
+
 Codex-compatible skills live under `~/.codex/skills`. Sync the bundled `skills/` directory there:
 
 ```bash
@@ -78,7 +88,7 @@ Restart Codex after syncing so the new skills are discovered.
 #### All 3,000+ skills in one shot
 
 ```bash
-npx skills add KunanonJ/claude-skills-hub -g -y
+npx skills add KunanonJ/claude-skills-hub -g -a claude-code -s '*' --copy -y
 ```
 
 #### Cherry-pick a single skill
