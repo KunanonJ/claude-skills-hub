@@ -1,12 +1,12 @@
 <div align="center">
 
-# 🧠 Claude Skills Hub
+# 🧠 AI Skills Hub for ChatGPT Codex
 
-**The largest curated AI agent skill library — 3,000+ skills, one command.**
+**3,000+ portable `SKILL.md` skills for ChatGPT Codex, OpenAI Codex, Claude Code, Cursor, Gemini CLI, and other AI coding agents.**
 
-[![Skills](https://img.shields.io/badge/skills-3%2C000%2B-brightgreen?style=for-the-badge&logo=anthropic)](./skills/)
+[![Skills](https://img.shields.io/badge/skills-3%2C000%2B-brightgreen?style=for-the-badge&logo=openai)](./skills/)
 [![Source Repos](https://img.shields.io/badge/source_repos-24%2B-blue?style=for-the-badge&logo=github)](./skills-source-map.tsv)
-[![Agents](https://img.shields.io/badge/agents-Claude%20%7C%20Codex%20%7C%20Cursor%20%7C%20Gemini-8A2BE2?style=for-the-badge)](.)
+[![Agents](https://img.shields.io/badge/agents-ChatGPT%20%7C%20Codex%20%7C%20Claude%20%7C%20Cursor%20%7C%20Gemini-8A2BE2?style=for-the-badge)](.)
 [![MCP Servers](https://img.shields.io/badge/MCP_servers-9-orange?style=for-the-badge)](.)
 [![Stars](https://img.shields.io/github/stars/KunanonJ/claude-skills-hub?style=for-the-badge&logo=github)](https://github.com/KunanonJ/claude-skills-hub/stargazers)
 
@@ -16,11 +16,25 @@
 npx skills add KunanonJ/claude-skills-hub -g -y
 ```
 
-*Install everything. One command. Zero config.*
+*One portable skill corpus. Use it from ChatGPT Codex, OpenAI Codex, Claude Code, Cursor, Gemini CLI, and more.*
 
 </div>
 
 ---
+
+## 🤖 Why This Exists
+
+`claude-skills-hub` started as a Claude skills collection, but the underlying format is simple and portable: each skill is a directory with a `SKILL.md` entrypoint. That makes the corpus useful beyond Claude Code, especially for ChatGPT/Codex environments that load local skills from `~/.codex/skills`.
+
+Use this repo as:
+
+| Agent / Client | Recommended install target | Notes |
+|---|---|---|
+| **ChatGPT Codex / OpenAI Codex** | `~/.codex/skills` | Direct local skill loading for Codex Desktop / CLI style environments |
+| **Claude Code** | `npx skills add ...` or `~/.agents/skills` | Original Claude-compatible skill workflow |
+| **Cursor / Windsurf / Gemini CLI** | Agent-specific skill or MCP configuration | Use the same `SKILL.md` bodies as reusable agent instructions |
+
+The repository name remains `claude-skills-hub` so existing install commands and links keep working.
 
 ## 📊 Skill Corpus at a Glance
 
@@ -40,19 +54,34 @@ xychart-beta horizontal
 | 🔌 Claude Code plugins | **8** |
 | 🔗 MCP servers | **9** |
 | 🚫 Excluded (security flags) | **1** (`agent-browser`) |
-| 🤖 Compatible agents | Claude Code · Codex · Cursor · Gemini CLI · Windsurf |
+| 🤖 Compatible agents | ChatGPT Codex · OpenAI Codex · Claude Code · Cursor · Gemini CLI · Windsurf |
 
 ---
 
 ## ⚡ Quick Install
 
-### All 3,000+ skills in one shot
+### ChatGPT Codex / OpenAI Codex
+
+Codex-compatible skills live under `~/.codex/skills`. Sync the bundled `skills/` directory there:
+
+```bash
+git clone --depth 1 https://github.com/KunanonJ/claude-skills-hub.git /tmp/claude-skills-hub
+cd /tmp/claude-skills-hub
+mkdir -p ~/.codex/skills
+rsync -a skills/ ~/.codex/skills/
+```
+
+Restart Codex after syncing so the new skills are discovered.
+
+### Claude Code / skills CLI
+
+#### All 3,000+ skills in one shot
 
 ```bash
 npx skills add KunanonJ/claude-skills-hub -g -y
 ```
 
-### Cherry-pick a single skill
+#### Cherry-pick a single skill
 
 Browse [`skills/`](./skills/) → find what you want → install by path:
 
@@ -63,7 +92,7 @@ npx skills add KunanonJ/claude-skills-hub/caveman -g -y
 npx skills add KunanonJ/claude-skills-hub/spec-driven-development -g -y
 ```
 
-### Full environment — skills + plugins + MCPs
+#### Full environment — skills + plugins + MCPs
 
 ```bash
 bash <(curl -fsSL https://gist.githubusercontent.com/KunanonJ/f7e7c9b8c45d927ae03b84b1879d384d/raw/setup-claude.sh)
@@ -92,7 +121,7 @@ flowchart TD
     OUT --> T[🗺️ skills-source-map.tsv]
     OUT --> I[npx skills add\nKunanonJ/claude-skills-hub]
 
-    I --> LOCAL[~/.agents/skills/]
+    I --> LOCAL[~/.agents/skills/\nor ~/.codex/skills/]
 
     style S fill:#4A90D9,color:#fff
     style OUT fill:#27AE60,color:#fff
@@ -159,7 +188,9 @@ Plus skills discovered from [hesreallyhim/awesome-claude-code](https://github.co
 
 ---
 
-## 🔌 Claude Code Plugins
+## 🔌 Optional Claude Code Plugins
+
+These plugin commands are Claude Code-specific. Codex users can still use the skill corpus directly from `~/.codex/skills` and configure MCP servers in `~/.codex/config.toml`.
 
 ```bash
 for plugin in typescript-lsp security-guidance code-review playwright \
@@ -170,7 +201,9 @@ done
 
 ---
 
-## 🔗 MCP Servers
+## 🔗 MCP Server Recipes
+
+The examples below use Claude Code's `claude mcp add` syntax. For Codex, add equivalent entries under `[mcp_servers.<name>]` in `~/.codex/config.toml`.
 
 ### No API key required
 
