@@ -1,0 +1,4 @@
+interface:
+  display_name: "Sales Account Ops"
+  short_description: "Build scheduled account-book workflows"
+  default_prompt: "Use $sales-account-ops to design a scheduled account-book workflow with source data, approvals, and report outputs."

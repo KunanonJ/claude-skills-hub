@@ -3154,3 +3154,7 @@ litreview-citation-chain
 litreview-gap-scanner
 litreview-knowledge-map
 litreview-so-what-test
+large-codebase-codex
+founder-ai-native-startup
+sales-account-ops
+security-agentic-triage

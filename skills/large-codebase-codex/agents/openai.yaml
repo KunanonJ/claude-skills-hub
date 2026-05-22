@@ -1,0 +1,4 @@
+interface:
+  display_name: "Large Codebase Codex"
+  short_description: "Navigate and change large repos safely"
+  default_prompt: "Use $large-codebase-codex to map this repository and plan a safe verified change."

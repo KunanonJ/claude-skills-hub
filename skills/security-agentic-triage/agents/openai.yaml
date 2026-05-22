@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agentic Security Triage"
+  short_description: "Design auditable AI security triage"
+  default_prompt: "Use $security-agentic-triage to design a bounded, auditable AI-assisted security investigation workflow."
