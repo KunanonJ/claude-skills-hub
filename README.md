@@ -8,12 +8,12 @@
 [![Source Repos](https://img.shields.io/badge/source_repos-24%2B-blue?style=for-the-badge&logo=github)](./skills-source-map.tsv)
 [![Agents](https://img.shields.io/badge/agents-ChatGPT%20%7C%20Codex%20%7C%20Claude%20%7C%20Cursor%20%7C%20Gemini-8A2BE2?style=for-the-badge)](.)
 [![MCP Servers](https://img.shields.io/badge/MCP_servers-9-orange?style=for-the-badge)](.)
-[![Stars](https://img.shields.io/github/stars/KunanonJ/claude-skills-hub?style=for-the-badge&logo=github)](https://github.com/KunanonJ/claude-skills-hub/stargazers)
+[![Stars](https://img.shields.io/github/stars/KunanonJ/codex-skills-hub?style=for-the-badge&logo=github)](https://github.com/KunanonJ/codex-skills-hub/stargazers)
 
 <br/>
 
 ```
-npx skills add KunanonJ/claude-skills-hub -g -a codex -s '*' --copy -y
+npx skills add KunanonJ/codex-skills-hub -g -a codex -s '*' --copy -y
 ```
 
 *One portable skill corpus. Use it from ChatGPT Codex, OpenAI Codex, Claude Code, Cursor, Gemini CLI, and more.*
@@ -24,7 +24,7 @@ npx skills add KunanonJ/claude-skills-hub -g -a codex -s '*' --copy -y
 
 ## 🤖 Why This Exists
 
-`claude-skills-hub` started as a Claude skills collection, but the underlying format is simple and portable: each skill is a directory with a `SKILL.md` entrypoint. That makes the corpus useful beyond Claude Code, especially for ChatGPT/Codex environments that load local skills from `~/.codex/skills`.
+`codex-skills-hub` started as `claude-skills-hub`, but the underlying format is simple and portable: each skill is a directory with a `SKILL.md` entrypoint. That makes the corpus useful beyond Claude Code, especially for ChatGPT/Codex environments that load local skills from `~/.codex/skills`.
 
 Use this repo as:
 
@@ -34,7 +34,7 @@ Use this repo as:
 | **Claude Code** | `npx skills add ...` or `~/.agents/skills` | Original Claude-compatible skill workflow |
 | **Cursor / Windsurf / Gemini CLI** | Agent-specific skill or MCP configuration | Use the same `SKILL.md` bodies as reusable agent instructions |
 
-The repository name remains `claude-skills-hub` so existing install commands and links keep working.
+The previous `claude-skills-hub` URL redirects here, but new installs should use `KunanonJ/codex-skills-hub`.
 
 ## 📊 Skill Corpus at a Glance
 
@@ -65,7 +65,7 @@ xychart-beta horizontal
 Install all skills for Codex with the `skills` CLI:
 
 ```bash
-npx skills add KunanonJ/claude-skills-hub -g -a codex -s '*' --copy -y
+npx skills add KunanonJ/codex-skills-hub -g -a codex -s '*' --copy -y
 ```
 
 This installs the corpus into the Codex-compatible global skills location used by the `skills` CLI.
@@ -75,8 +75,8 @@ This installs the corpus into the Codex-compatible global skills location used b
 Codex-compatible skills live under `~/.codex/skills`. Sync the bundled `skills/` directory there:
 
 ```bash
-git clone --depth 1 https://github.com/KunanonJ/claude-skills-hub.git /tmp/claude-skills-hub
-cd /tmp/claude-skills-hub
+git clone --depth 1 https://github.com/KunanonJ/codex-skills-hub.git /tmp/codex-skills-hub
+cd /tmp/codex-skills-hub
 mkdir -p ~/.codex/skills
 rsync -a skills/ ~/.codex/skills/
 ```
@@ -88,7 +88,7 @@ Restart Codex after syncing so the new skills are discovered.
 #### All 3,000+ skills in one shot
 
 ```bash
-npx skills add KunanonJ/claude-skills-hub -g -a claude-code -s '*' --copy -y
+npx skills add KunanonJ/codex-skills-hub -g -a claude-code -s '*' --copy -y
 ```
 
 #### Cherry-pick a single skill
@@ -97,9 +97,9 @@ Browse [`skills/`](./skills/) → find what you want → install by path:
 
 ```bash
 # examples
-npx skills add KunanonJ/claude-skills-hub/karpathy-guidelines -g -y
-npx skills add KunanonJ/claude-skills-hub/caveman -g -y
-npx skills add KunanonJ/claude-skills-hub/spec-driven-development -g -y
+npx skills add KunanonJ/codex-skills-hub/karpathy-guidelines -g -y
+npx skills add KunanonJ/codex-skills-hub/caveman -g -y
+npx skills add KunanonJ/codex-skills-hub/spec-driven-development -g -y
 ```
 
 #### Full environment — skills + plugins + MCPs
@@ -129,7 +129,7 @@ flowchart TD
 
     OUT --> M[📋 skills-manifest.txt]
     OUT --> T[🗺️ skills-source-map.tsv]
-    OUT --> I[npx skills add\nKunanonJ/claude-skills-hub]
+    OUT --> I[npx skills add\nKunanonJ/codex-skills-hub]
 
     I --> LOCAL[~/.agents/skills/\nor ~/.codex/skills/]
 
