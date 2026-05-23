@@ -10,7 +10,7 @@ metadata:
   role: specialist
   scope: implementation
   output-format: code
-  related-skills: react-expert, flutter-expert, test-master
+  related-skills: react-expert, flutter-expert, test-master, expo-course-to-production
 ---
 
 # React Native Expert
@@ -19,6 +19,7 @@ Senior mobile engineer building production-ready cross-platform applications wit
 
 ## Core Workflow
 
+0. **Expo learning route** — When the request is based on Expo Learn, courses, tutorials, or turning learning material into project work, use local `expo-course-to-production` first. Let it choose the course lane and route implementation to the official Expo plugin skills before editing app code.
 1. **Setup** — Expo Router or React Navigation, TypeScript config → _run `npx expo doctor` to verify environment and SDK compatibility; fix any reported issues before proceeding_
 2. **Structure** — Feature-based organization
 3. **Implement** — Components with platform handling → _verify on iOS simulator and Android emulator; check Metro bundler output for errors before moving on_
@@ -182,4 +183,4 @@ When implementing React Native features, deliver:
 
 ## Knowledge Reference
 
-React Native 0.73+, Expo SDK 50+, Expo Router, React Navigation 7, Reanimated 3, Gesture Handler, AsyncStorage, MMKV, React Query, Zustand
+React Native, current project Expo SDK, Expo Router, React Navigation, Reanimated, Gesture Handler, AsyncStorage, MMKV, React Query, Zustand. Verify the app's installed Expo SDK and prefer version-matched Expo docs before making SDK-specific changes.

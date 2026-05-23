@@ -1,0 +1,4 @@
+interface:
+  display_name: "Expo Course To Production"
+  short_description: "Turn Expo learning resources into app tasks"
+  default_prompt: "Use $expo-course-to-production to convert this Expo learning goal into project-specific issues, implementation routes, and verification steps."
