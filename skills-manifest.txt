@@ -3158,3 +3158,4 @@ large-codebase-codex
 founder-ai-native-startup
 sales-account-ops
 security-agentic-triage
+advanced-automation-architect
