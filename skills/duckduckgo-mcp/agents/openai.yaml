@@ -1,0 +1,4 @@
+interface:
+  display_name: "DuckDuckGo MCP"
+  short_description: "Use DuckDuckGo search and page fetch tools safely."
+  default_prompt: "Search the web with DuckDuckGo MCP and fetch selected result content when useful."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Awesome MCP Servers"
+  short_description: "Search and evaluate MCP server candidates safely."
+  default_prompt: "Find suitable MCP server candidates for this use case and recommend a safe install path."

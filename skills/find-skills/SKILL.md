@@ -1,137 +1,106 @@
 ---
 name: find-skills
-description: |
-   Helps users discover, search and install agent skills from the marketplace. 
-   Use when the user wants to find a skill, discover new capabilities, find specific tools (especially sandboxes) or install a skill.
-   This skill should be used when the user is looking for functionality that might exist as an installable skill.
-   Also supports progressive disclosure to recommend sandbox-related skills when relevant.
-   用于帮助用户在市场中搜索、发现和安装 Agent 插件（Skills）。
-   当用户想要查找功能、安装特定工具或寻找沙箱（sandbox）时使用。
-   Triggers: "查找插件","搜索技能","搜索 X 技能","安装技能","安装 X 技能","如何做 X","沙箱","安全沙箱","find a skill for X", "how do i do X", "search for skill", "install skill", "I need a skill for X", "sandbox", "aio sandbox"
+description: Helps users discover and install agent skills when they ask questions like "how do I do X", "find a skill for X", "is there a skill that can...", or express interest in extending capabilities. This skill should be used when the user is looking for functionality that might exist as an installable skill.
 ---
 
-# Find Skills - Skill Marketplace
+# Find Skills
 
-This skill allows you to explore and install new capabilities into the agent environment. It acts as the "package manager" for your agent's skills.
+This skill helps you discover and install skills from the open agent skills ecosystem.
 
 ## When to Use This Skill
 
 Use this skill when the user:
-- Asks: "How can I do X?", "Find a skill for X", or "What skills are available?"
-- Wants to install skills by name or from search results ("install skill web-search")
-- Wants to extend capabilities with specialized tools or workflows
-- Expresses needs for specific capabilities that might exist as skills
-- Is interested in sandbox or secure execution ("I want to safely run bash commands")
-- Mentions specific capabilities like "sandbox", "automation", "testing"
 
-## Core Tools
+- Asks "how do I do X" where X might be a common task with an existing skill
+- Says "find a skill for X" or "is there a skill for X"
+- Asks "can you do X" where X is a specialized capability
+- Expresses interest in extending agent capabilities
+- Wants to search for tools, templates, or workflows
+- Mentions they wish they had help with a specific domain (design, testing, deployment, etc.)
 
-1. **Search**: Python script `scripts/request.py` with POPRequest class
-   - Makes authenticated API calls to Alibaba Cloud skill marketplace
-   - Parameters: `UserQuery` (search term), `TopK` (number of results)
-   - Returns: JSON response with skill details including name, description, repository info
-2. **Install**: `npx skills add <repo> -s <skill_name>`
-   - **Restriction**: Must ALWAYS ask for user confirmation before executing.
-   - Use `-s, --skill <skills...>` to specify which skill(s) to install from the repo
-   - Supports multiple repo formats:
-     - GitHub shorthand: `npx skills add owner/repo -s skill_name`
-     - Full GitHub URL: `npx skills add https://github.com/owner/repo -s skill_name`
-     - Direct path to skill: `npx skills add https://github.com/owner/repo/tree/main/skills/skill_name`
-     - GitLab URL: `npx skills add https://gitlab.com/org/repo -s skill_name`
-     - Git URL: `npx skills add git@github.com:owner/repo.git -s skill_name`
-     - Local path: `npx skills add ./my-local-skills -s skill_name`
-   - Use `-s '*'` to install all skills from the repo
+## What is the Skills CLI?
 
-## Workflow
+The Skills CLI (`npx skills`) is the package manager for the open agent skills ecosystem. Skills are modular packages that extend agent capabilities with specialized knowledge, workflows, and tools.
 
-### Step 1: Understand the Need & Search
+**Key commands:**
+
+- `npx skills find [query]` - Search for skills interactively or by keyword
+- `npx skills add <package>` - Install a skill from GitHub or other sources
+- `npx skills update` - Update all installed skills
+
+**Browse skills at:** https://skills.sh/
+
+## How to Help Users Find Skills
+
+### Step 1: Understand What They Need
 
 When a user asks for help with something, identify:
 
-1. The domain or task (e.g., running code safely, automation, testing)
-2. Whether this is a common enough need that a skill likely exists
-3. Does the query fit common sandbox/secure execution needs?
+1. The domain (e.g., React, testing, design, deployment)
+2. The specific task (e.g., writing tests, creating animations, reviewing PRs)
+3. Whether this is a common enough task that a skill likely exists
 
-### Step 2: Search for Skills via Python API
+### Step 2: Check the Leaderboard First
 
-The search process uses the Python request module to query the skill marketplace:
+Before running a CLI search, check the [skills.sh leaderboard](https://skills.sh/) to see if a well-known skill already exists for the domain. The leaderboard ranks skills by total installs, surfacing the most popular and battle-tested options.
 
-1. Import the POPRequest class from scripts/request.py
-2. Create a request with the SearchPublicMarketSkill action
-3. Set query parameters: UserQuery (search term) and TopK (max results)
-4. Execute the request and parse JSON response
-5. Extract skill information: name, owner, repository, description
+For example, top skills for web development include:
+- `vercel-labs/agent-skills` — React, Next.js, web design (100K+ installs each)
+- `anthropics/skills` — Frontend design, document processing (100K+ installs)
 
-Convert user's natural language intent into a concise search keyword (maintaining the original language).
+### Step 3: Search for Skills
 
-```python
-from scripts.request import POPRequest
-import json
+If the leaderboard doesn't cover the user's need, run the find command:
 
-# Create request
-request = POPRequest(
-    http_method='GET',
-    canonical_uri='/',
-    x_acs_action='SearchPublicMarketSkill',
-    host='wuyingai.cn-shanghai.aliyuncs.com',
-    base_url='wuyingai.cn-shanghai.aliyuncs.com',
-    x_acs_version='2026-01-08',
-    signature_version='1.0'
-)
-
-# Search for skills
-request.set_query_params({
-    'UserQuery': 'sandbox',  # User's search query
-    'TopK': '10'
-})
-
-# Execute and parse
-response = request.call()
-results = json.loads(response)
+```bash
+npx skills find [query]
 ```
 
-**Example Searches:**
-- "我需要一个沙箱" -> UserQuery: "sandbox"
-- "如何处理 PDF？" -> UserQuery: "pdf"
-- "帮我找个代码审查的插件" -> UserQuery: "code review"
-- "I need a sandbox" -> UserQuery: "sandbox"
-- "How to handle PDF?" -> UserQuery: "pdf"
-- "Can you help me with code review?" -> UserQuery: "code review"
+For example:
 
-### Step 3: Present Options to the User
+- User asks "how do I make my React app faster?" → `npx skills find react performance`
+- User asks "can you help me with PR reviews?" → `npx skills find pr review`
+- User asks "I need to create a changelog" → `npx skills find changelog`
+
+### Step 4: Verify Quality Before Recommending
+
+**Do not recommend a skill based solely on search results.** Always verify:
+
+1. **Install count** — Prefer skills with 1K+ installs. Be cautious with anything under 100.
+2. **Source reputation** — Official sources (`vercel-labs`, `anthropics`, `microsoft`) are more trustworthy than unknown authors.
+3. **GitHub stars** — Check the source repository. A skill from a repo with <100 stars should be treated with skepticism.
+
+### Step 5: Present Options to the User
 
 When you find relevant skills, present them to the user with:
 
-1. **skill_name**: The identifier for the skill
-2. **skill_id**: The hash code for the skill
-3. **skill_repo**: Owner/organization for the GitHub repo
-4. **description**: Brief description of skill
-5. **source_url**: Direct path to a skill in a repo (use this for installation)
-
-Use the returned `SourceUrl` (repo URL) and `SkillName` from the search results to format the install command:
-```bash
-npx skills add <source_url> -s <skill_name>
-```
+1. The skill name and what it does
+2. The install count and source
+3. The install command they can run
+4. A link to learn more at skills.sh
 
 Example response:
 
 ```
-I found a skill that might help! The "vercel-react-best-practices" skill provides
+I found a skill that might help! The "react-best-practices" skill provides
 React and Next.js performance optimization guidelines from Vercel Engineering.
+(185K installs)
 
 To install it:
-npx skills add https://github.com/vercel-labs/agent-skills -s vercel-react-best-practices
+npx skills add vercel-labs/agent-skills -g -a codex -s react-best-practices --copy -y
 
-Learn more: https://pre-agentbay.console.aliyun.com/agentbay-skills/skill-detail?skillId=hw8edas7skphamvk
+Learn more: https://skills.sh/vercel-labs/agent-skills/react-best-practices
 ```
 
-### Step 4: Offer to Install
+### Step 6: Offer to Install
 
-Only after user says "yes", "install", or similar confirmation, install the skill:
+If the user wants to proceed, you can install the skill for them:
 
 ```bash
-npx skills add <source_url> -s <skill_name>
+npx skills add <owner/repo> -g -a codex -s <skill> --copy -y
 ```
+
+The `-g` flag installs globally (user-level), `-a codex` targets Codex, `-s` selects the skill, `--copy` avoids symlink surprises across agents, and `-y` skips confirmation prompts.
 
 ## Common Skill Categories
 
@@ -146,7 +115,6 @@ When searching, consider these common categories:
 | Code Quality    | review, lint, refactor, best-practices   |
 | Design          | ui, ux, design-system, accessibility     |
 | Productivity    | workflow, automation, git                |
-| Sandbox         | agentbay-aio-skills                      |
 
 ## Tips for Effective Searches
 
@@ -160,6 +128,7 @@ If no relevant skills exist:
 
 1. Acknowledge that no existing skill was found
 2. Offer to help with the task directly using your general capabilities
+3. Suggest the user could create their own skill with `npx skills init`
 
 Example:
 
@@ -170,7 +139,3 @@ I can still help you with this task directly! Would you like me to proceed?
 If this is something you do often, you could create your own skill:
 npx skills init my-xyz-skill
 ```
-
-## Safety Guidelines
-- Do not hallucinate skill names. Only recommend what the Python search API returns.
-- Ensure the user understands that installing a skill grants the agent new permissions.

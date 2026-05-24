@@ -1135,7 +1135,7 @@ finance-based-pricing-advisor	deanpeters/Product-Manager-Skills	skills/finance-b
 finance-metrics-quickref	deanpeters/Product-Manager-Skills	skills/finance-metrics-quickref	https://awesomeclaude.ai/awesome-claude-skills
 find-bugs	sickn33/antigravity-awesome-skills	skills/find-bugs	https://github.com/sickn33/antigravity-awesome-skills
 find-scene-skill	uriva/find-scene-skill	.	https://awesomeclaude.ai/awesome-claude-skills
-find-skills	agentbay-ai/agentbay-skills	find-skills	https://awesomeclaude.ai/awesome-claude-skills
+find-skills	vercel-labs/skills	skills/find-skills	https://www.skills.sh/vercel-labs/skills/find-skills
 findymail-automation	ComposioHQ/awesome-claude-skills	composio-skills/findymail-automation	https://github.com/ComposioHQ/awesome-claude-skills
 fine-tuning-axolotl	davila7/claude-code-templates	cli-tool/components/skills/ai-research/fine-tuning-axolotl	https://www.aitmpl.com/
 fine-tuning-expert	jeffallan/claude-skills	skills/fine-tuning-expert	https://awesomeclaude.ai/awesome-claude-skills
@@ -3155,3 +3155,7 @@ founder-ai-native-startup	KunanonJ/codex-skills-hub	skills/founder-ai-native-sta
 sales-account-ops	KunanonJ/codex-skills-hub	skills/sales-account-ops	https://claude.com/blog/how-an-anthropic-sales-leader-uses-claude-cowork-to-run-a-4-000-account-book
 security-agentic-triage	KunanonJ/codex-skills-hub	skills/security-agentic-triage	https://claude.com/blog/how-anthropic-uses-claude-cybersecurity
 advanced-automation-architect	KunanonJ/codex-skills-hub	skills/advanced-automation-architect	user-provided-meta-prompt
+awesome-mcp-servers	KunanonJ/codex-skills-hub	skills/awesome-mcp-servers	https://github.com/punkpeye/awesome-mcp-servers
+duckduckgo-mcp	KunanonJ/codex-skills-hub	skills/duckduckgo-mcp	https://github.com/nickclyde/duckduckgo-mcp-server
+postgres-mcp	KunanonJ/codex-skills-hub	skills/postgres-mcp	https://github.com/crystaldba/postgres-mcp
+puppeteer-mcp-server	KunanonJ/codex-skills-hub	skills/puppeteer-mcp-server	https://github.com/merajmehrabi/puppeteer-mcp-server

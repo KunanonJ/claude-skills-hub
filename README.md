@@ -5,9 +5,9 @@
 **3,000+ portable `SKILL.md` skills for ChatGPT Codex, OpenAI Codex, Claude Code, Cursor, Gemini CLI, and other AI coding agents.**
 
 [![Skills](https://img.shields.io/badge/skills-3%2C000%2B-brightgreen?style=for-the-badge&logo=openai)](./skills/)
-[![Source Repos](https://img.shields.io/badge/source_repos-24%2B-blue?style=for-the-badge&logo=github)](./skills-source-map.tsv)
+[![Source Repos](https://img.shields.io/badge/source_repos-29%2B-blue?style=for-the-badge&logo=github)](./skills-source-map.tsv)
 [![Agents](https://img.shields.io/badge/agents-ChatGPT%20%7C%20Codex%20%7C%20Claude%20%7C%20Cursor%20%7C%20Gemini-8A2BE2?style=for-the-badge)](.)
-[![MCP Servers](https://img.shields.io/badge/MCP_servers-9-orange?style=for-the-badge)](.)
+[![MCP Servers](https://img.shields.io/badge/MCP_servers-13-orange?style=for-the-badge)](.)
 [![Stars](https://img.shields.io/github/stars/KunanonJ/codex-skills-hub?style=for-the-badge&logo=github)](https://github.com/KunanonJ/codex-skills-hub/stargazers)
 
 <br/>
@@ -49,10 +49,10 @@ xychart-beta horizontal
 | Metric | Value |
 |--------|-------|
 | 📦 Total skills in [`skills/`](./skills/) | **3,000+** |
-| 🗂️ Source repos tracked | **24+** |
+| 🗂️ Source repos tracked | **29+** |
 | 🌐 Discovery pages crawled | **6** |
 | 🔌 Claude Code plugins | **8** |
-| 🔗 MCP servers | **9** |
+| 🔗 MCP servers | **13** |
 | 🚫 Excluded (security flags) | **1** (`agent-browser`) |
 | 🤖 Compatible agents | ChatGPT Codex · OpenAI Codex · Claude Code · Cursor · Gemini CLI · Windsurf |
 
@@ -193,6 +193,11 @@ pie title Source Repo Breakdown
 | [czlonkowski/n8n-skills](https://github.com/czlonkowski/n8n-skills) | Automation | ~5 |
 | [mylukin/agent-foreman](https://github.com/mylukin/agent-foreman) | Agent orchestration | ~6 |
 | [muratcankoylan/ralph-wiggum-marketer](https://github.com/muratcankoylan/ralph-wiggum-marketer) | Marketing | ~4 |
+| [vercel-labs/skills](https://github.com/vercel-labs/skills) | skills.sh discovery | 1 |
+| [punkpeye/awesome-mcp-servers](https://github.com/punkpeye/awesome-mcp-servers) | MCP discovery | 1 |
+| [nickclyde/duckduckgo-mcp-server](https://github.com/nickclyde/duckduckgo-mcp-server) | MCP / search | 1 |
+| [crystaldba/postgres-mcp](https://github.com/crystaldba/postgres-mcp) | MCP / database | 1 |
+| [merajmehrabi/puppeteer-mcp-server](https://github.com/merajmehrabi/puppeteer-mcp-server) | MCP / browser automation | 1 |
 
 Plus skills discovered from [hesreallyhim/awesome-claude-code](https://github.com/hesreallyhim/awesome-claude-code), [VoltAgent/awesome-agent-skills](https://github.com/VoltAgent/awesome-agent-skills), [awesomeclaude.ai](https://awesomeclaude.ai/awesome-claude-skills), and more.
 

@@ -1,0 +1,14 @@
+name: postgres-mcp
+description: Local Codex guidance for using Crystal DBA Postgres MCP Pro safely.
+version: 1.0.0
+source: https://github.com/crystaldba/postgres-mcp
+capabilities:
+  - postgresql-schema-inspection
+  - read-only-sql
+  - explain-plans
+  - index-tuning
+  - database-health-analysis
+safety:
+  default_access_mode: restricted
+  credentials_policy: env-only
+  production_access: explicit-approval-required
