@@ -3187,3 +3187,7 @@ writing-beats	mattpocock/skills	skills/in-progress/writing-beats	https://github.
 writing-fragments	mattpocock/skills	skills/in-progress/writing-fragments	https://github.com/mattpocock/skills
 writing-shape	mattpocock/skills	skills/in-progress/writing-shape	https://github.com/mattpocock/skills
 zoom-out	mattpocock/skills	skills/engineering/zoom-out	https://github.com/mattpocock/skills
+react-doctor	millionco/react-doctor	.agents/skills/react-doctor	https://github.com/millionco/react-doctor
+rule-research	millionco/react-doctor	.agents/skills/rule-research	https://github.com/millionco/react-doctor
+rule-validate	millionco/react-doctor	.agents/skills/rule-validate	https://github.com/millionco/react-doctor
+rule-writing	millionco/react-doctor	.agents/skills/rule-writing	https://github.com/millionco/react-doctor

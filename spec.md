@@ -56,3 +56,20 @@
   - `spec.md`
 - Risk tier: R2, because this is a patch dependency bump inside a vendored skill requirements file.
 - Rollback strategy: revert the dependency line and remove the focused regression test if the upstream skill requires a different mitigation.
+
+### Task 3: Register and install `millionco/react-doctor`
+
+- Intended behavior: the corpus includes the unique skills published by `millionco/react-doctor` and preserves the canonical React Doctor workflow guidance.
+- Test names:
+  - `test_react_doctor_source_is_registered`
+  - `test_react_doctor_skills_are_installed_and_traceable`
+  - `test_react_doctor_skill_keeps_canonical_command_and_playbook`
+- Affected files:
+  - `sync-listed-sources.sh`
+  - `skills/`
+  - `skills-manifest.txt`
+  - `skills-source-map.tsv`
+  - `tests/test_react_doctor_skills.py`
+  - `spec.md`
+- Risk tier: R2, because this is a reversible source-list and generated-corpus update.
+- Rollback strategy: remove the source entry and React Doctor skill directories, remove their manifest/source-map rows and tests, then recommit.

@@ -2390,6 +2390,7 @@ rdkit
 re-amaze-automation
 react-best-practices
 react-dev
+react-doctor
 react-expert
 react-flow-architect
 react-flow-node-ts
@@ -2487,6 +2488,9 @@ rosette-text-analytics-automation
 route4me-automation
 rowan
 ruby-pro
+rule-research
+rule-validate
+rule-writing
 run-acceptance-tests
 runpod
 rust-async-patterns

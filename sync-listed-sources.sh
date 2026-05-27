@@ -65,6 +65,7 @@ SOURCE_INPUTS = [
     {"kind": "repo", "repo": "addyosmani/agent-skills"},
     {"kind": "repo", "repo": "expo/skills"},
     {"kind": "repo", "repo": "mattpocock/skills"},
+    {"kind": "repo", "repo": "millionco/react-doctor"},
 
     # ── Awesome-list discovery pages ─────────────────────────────────────────
     {"kind": "page", "url": "https://github.com/hesreallyhim/awesome-claude-code"},
