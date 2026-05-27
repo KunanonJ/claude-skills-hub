@@ -44,3 +44,15 @@
   - `tests/test_mattpocock_skills.py`
 - Risk tier: R2, because this is a reversible source-list and generated-corpus update.
 - Rollback strategy: remove the source entry, rerun `bash sync-listed-sources.sh`, delete the tests/spec if no longer needed, and recommit.
+
+### Task 2: Fix Dependabot alert #17 for `Pygments`
+
+- Intended behavior: `skills/markdown-to-epub/requirements.txt` pins `Pygments` to the patched version for GHSA-5239-wwwm-4pmq.
+- Test names:
+  - `test_markdown_to_epub_requirements_pins_pygments_to_patched_version`
+- Affected files:
+  - `skills/markdown-to-epub/requirements.txt`
+  - `tests/test_security_requirements.py`
+  - `spec.md`
+- Risk tier: R2, because this is a patch dependency bump inside a vendored skill requirements file.
+- Rollback strategy: revert the dependency line and remove the focused regression test if the upstream skill requires a different mitigation.
