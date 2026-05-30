@@ -706,6 +706,7 @@ business-growth-skills
 business-health-diagnostic
 business-investment-advisor
 business-operations-skills
+business-strategy-planning
 busybox-on-windows
 buyer-list
 buyer-personas
