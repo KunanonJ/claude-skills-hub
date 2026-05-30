@@ -36,6 +36,7 @@ activecampaign-automation
 ad-creative
 ad-spend-optimizer
 adaptyv
+add-app-clip
 address-github-comments
 address-sanitizer
 addresszen-automation
@@ -64,6 +65,7 @@ agent-analyze-code-quality
 agent-app-store
 agent-arch-system-design
 agent-architecture
+agent-architecture-audit
 agent-authentication
 agent-automation-smart-agent
 agent-base-template-generator
@@ -181,6 +183,7 @@ agentic-actions-auditor
 agentic-development
 agentic-engineering
 agentic-jujutsu
+agentic-os
 agentmail
 agentphone
 agentql-automation
@@ -258,6 +261,7 @@ android_ui_verification
 angular
 angular-architect
 angular-best-practices
+angular-developer
 angular-migration
 angular-state-management
 angular-ui-patterns
@@ -567,7 +571,9 @@ beeminder-automation
 behavioral-modes
 bench-automation
 benchling-integration
+benchmark
 benchmark-email-automation
+benchmark-optimization-loop
 benzinga-automation
 best-practices
 bestbuy-automation
@@ -594,6 +600,7 @@ bitquery-automation
 bitwarden-automation
 blackbaud-automation
 blackboard-automation
+blender-motion-state-inspection
 blip-2-vision-language
 blockchain-developer
 blocknative-automation
@@ -761,6 +768,7 @@ cim-builder
 cincopa-automation
 circleci-automation
 cirq
+cisco-ios-patterns
 citation-management
 ck
 ckm-banner-design
@@ -984,6 +992,7 @@ cosmos-vulnerability-scanner
 cost
 cost-aware-llm-pipeline
 cost-optimization
+cost-tracking
 council
 countdown-api-automation
 coupa-automation
@@ -1061,6 +1070,7 @@ data-scientist
 data-scraper-agent
 data-storytelling
 data-structure-protocol
+data-throughput-accelerator
 data-visualizer
 database
 database-admin
@@ -1207,6 +1217,7 @@ distributed-training-pytorch-lightning
 distributed-training-ray-train
 distribution-engine
 django-access-review
+django-celery
 django-expert
 django-patterns
 django-perf-review
@@ -1289,6 +1300,8 @@ earnings-preview-beta
 earnings-preview-single
 eas-build
 eas-update
+eas-update-insights
+ecc-guide
 ecc-tools-cost-audit
 echtpost-automation
 edgartools
@@ -1356,6 +1369,7 @@ error-detective
 error-diagnostics-error-analysis
 error-diagnostics-error-trace
 error-diagnostics-smart-debug
+error-handling
 error-handling-patterns
 error-resolver
 esignatures-io-automation
@@ -1400,6 +1414,7 @@ explain-like-socrates
 exploratory-data-analysis
 expo
 expo-api-routes
+expo-brownfield
 expo-cicd-workflows
 expo-course-to-production
 expo-deployment
@@ -1408,6 +1423,7 @@ expo-eas-build-expert
 expo-eas-update-expert
 expo-expert
 expo-module
+expo-observe
 expo-router
 expo-router-expert
 expo-tailwind-setup
@@ -1433,6 +1449,7 @@ family-health-analyzer
 family-history-planning
 fastapi-endpoint
 fastapi-expert
+fastapi-patterns
 fastapi-pro
 fastapi-router-py
 fastapi-templates
@@ -1516,6 +1533,7 @@ flow-nexus-platform
 flow-nexus-swarm
 flowio
 flowiseai-automation
+flox-environments
 fluidsim
 flutter-dart-code-review
 flutter-expert
@@ -1566,7 +1584,9 @@ freshbooks-automation
 freshdesk-automation
 freshservice-automation
 front-automation
+frontend-a11y
 frontend-design
+frontend-design-direction
 frontend-dev-guidelines
 frontend-developer
 frontend-mobile-development-component-scaffold
@@ -1577,6 +1597,7 @@ frontend-slides
 frontend-to-backend-requirements
 frontend-ui-dark-ts
 frontend-ui-engineering
+fsharp-testing
 full-stack-orchestration-full-stack-feature
 fullenrich-automation
 fullstack-guardian
@@ -1800,6 +1821,7 @@ helm-chart-scaffolding
 helpdesk-automation
 helpwise-automation
 here-automation
+hermes-imports
 hexagonal-architecture
 heygen-automation
 heygen-best-practices
@@ -1832,6 +1854,11 @@ history-insight
 hive-mind
 hive-mind-advanced
 hmdb-database
+homelab-network-readiness
+homelab-network-setup
+homelab-pihole-dns
+homelab-vlan-segmentation
+homelab-wireguard-vpn
 honeybadger-automation
 honeyhive-automation
 hono
@@ -1984,6 +2011,7 @@ ios-debugger-agent
 ios-developer
 ios-expert
 ios-hig-design
+ios-icon-gen
 ip2location-automation
 ip2location-io-automation
 ip2proxy-automation
@@ -2003,6 +2031,10 @@ iterate-pr
 iterate-refinement-notes
 iterate-retrospective
 iterative-retrieval
+ito-basket-compare
+ito-data-atlas-agent
+ito-market-intelligence
+ito-trade-planner
 jaspar-database
 java-architect
 java-coding-standards
@@ -2098,6 +2130,7 @@ large-codebase-codex
 last30days
 lastpass-automation
 latchbio-integration
+latency-critical-systems
 latex-paper-conversion
 latex-posters
 launch
@@ -2223,6 +2256,7 @@ mails-so-automation
 mailsoftly-automation
 maintainx-automation
 make-automation
+make-interfaces-feel-better
 make-plan
 makepad-animation
 makepad-basics
@@ -2254,6 +2288,7 @@ markdown-to-epub-converter
 market-research
 market-research-reports
 market-sizing-analysis
+marketing-campaign
 marketing-demand-acquisition
 marketing-ideas
 marketing-psychology
@@ -2339,6 +2374,7 @@ ml-engineer
 ml-paper-writing
 ml-pipeline
 ml-pipeline-workflow
+mle-workflow
 mlflow
 mlops-engineer
 mlops-mlflow
@@ -2394,7 +2430,11 @@ moosend-automation
 mopinion-automation
 more-trees-automation
 morning-note
+motion-advanced
 motion-canvas
+motion-foundations
+motion-patterns
+motion-ui
 move-code-quality
 move-code-quality-skill
 move-language
@@ -2425,6 +2465,7 @@ mural-automation
 mx-technologies-automation
 mx-toolbox-automation
 mysql
+mysql-patterns
 n8n-code-javascript
 n8n-code-python
 n8n-expression-syntax
@@ -2458,9 +2499,13 @@ nerdzao-elite-gemini-high
 nestjs-expert
 nestjs-patterns
 netlify-deploy
+netmiko-ssh-automation
 netsuite-automation
 network-101
+network-bgp-diagnostics
+network-config-validation
 network-engineer
+network-interface-health
 network-rpc
 networkx
 neural-training
@@ -2630,6 +2675,7 @@ paper-2-web
 paradym-automation
 parallel-agents
 parallel-automation
+parallel-execution-optimizer
 parallel-web
 parameter-optimization
 parma-automation
@@ -2722,6 +2768,7 @@ plaid-expert
 plaid-fintech
 plaid-identity-expert
 plain-automation
+plan-orchestrate
 plan-writing
 plankton-code-quality
 planning
@@ -2803,6 +2850,8 @@ prd-generator
 pre-mortem
 precoro-automation
 predictable-revenue
+prediction-market-oracle-research
+prediction-market-risk-review
 prerender-automation
 press-release
 price-psychology-strategist
@@ -2814,6 +2863,7 @@ printautopilot-automation
 prioritization-advisor
 prisma-automation
 prisma-expert
+prisma-patterns
 prismic-automation
 privacy-by-design
 privilege-escalation-methods
@@ -2838,6 +2888,7 @@ product-skills
 product-strategist
 product-strategy-session
 productboard-automation
+production-audit
 production-code-audit
 production-fn
 production-scheduling
@@ -2933,6 +2984,10 @@ quality-manager-qms-iso13485
 quality-nonconformance
 quant-analyst
 quantizing-models-bitsandbytes
+quarkus-patterns
+quarkus-security
+quarkus-tdd
+quarkus-verification
 quickbooks-automation
 qutip
 qwen-edit
@@ -2984,7 +3039,9 @@ react-native-architecture
 react-native-expert
 react-nextjs-development
 react-patterns
+react-performance
 react-state-management
+react-testing
 react-ui-patterns
 react-useeffect
 reactome-database
@@ -2999,9 +3056,12 @@ receiving-code-review
 recommendation-canvas
 recommendations
 recruitee-automation
+recsys-pipeline-architect
+recursive-decision-ledger
 red-team-tactics
 red-team-tools
 reddit-automation
+redis-patterns
 reducing-entropy
 refactor-module
 refactor-safe
@@ -3151,8 +3211,13 @@ schema-markup
 scholar-evaluation
 scientific-brainstorming
 scientific-critical-thinking
+scientific-db-pubmed-database
+scientific-db-uspto-database
+scientific-pkg-gget
 scientific-schematics
 scientific-slides
+scientific-thinking-literature-review
+scientific-thinking-scholar-evaluation
 scientific-visualization
 scientific-writing
 scikit-bio
@@ -3370,6 +3435,7 @@ skill-performance-profiler
 skill-rails-upgrade
 skill-router
 skill-scanner
+skill-scout
 skill-security-analyzer
 skill-seekers
 skill-sentinel
@@ -3406,6 +3472,7 @@ social-graph-ranker
 social-listening
 social-orchestrator
 social-proof-architect
+social-publisher
 software-architecture
 software-design-philosophy
 solana-vulnerability-scanner
@@ -3657,6 +3724,7 @@ timelinesai-automation
 timelink-automation
 timely-automation
 timesfm-forecasting
+tinystruct-patterns
 tinyurl-automation
 tisane-automation
 tmux
@@ -3731,12 +3799,14 @@ ui-pattern
 ui-review
 ui-setup
 ui-skills
+ui-to-vue
 ui-tokens
 ui-ux-designer
 ui-ux-pro-max
 ui-visual-validator
 umap-learn
 uncle-bob-craft
+uncloud
 unified-notifications-ops
 unione-automation
 uniprot-database
@@ -3836,6 +3906,7 @@ visa-doc-translate
 visme-automation
 visual-diff
 visual-emotion-engineer
+vite-patterns
 vizcom
 voice-agents
 voice-ai-development
@@ -3897,6 +3968,7 @@ wiki-qa
 wiki-researcher
 wiki-vitepress
 windows-builder
+windows-desktop-e2e
 windows-path
 windows-privilege-escalation
 windows-shell-reliability
