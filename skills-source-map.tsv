@@ -4079,3 +4079,4 @@ add-app-clip	expo/skills	plugins/expo/skills/add-app-clip	https://github.com/exp
 eas-update-insights	expo/skills	plugins/expo/skills/eas-update-insights	https://github.com/expo/skills
 expo-brownfield	expo/skills	plugins/expo/skills/expo-brownfield	https://github.com/expo/skills
 expo-observe	expo/skills	plugins/expo/skills/expo-observe	https://github.com/expo/skills
+lighthouse-agentic-browsing	KunanonJ/claude-skills-hub	skills/lighthouse-agentic-browsing	https://developer.chrome.com/docs/lighthouse/agentic-browsing/scoring

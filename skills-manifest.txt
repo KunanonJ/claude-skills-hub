@@ -2175,6 +2175,7 @@ lex
 lexoffice-automation
 libafl
 libfuzzer
+lighthouse-agentic-browsing
 lighthouse-audit
 lightning-architecture-review
 lightning-channel-factories
