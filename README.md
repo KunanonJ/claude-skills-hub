@@ -2,10 +2,10 @@
 
 # 🧠 Claude Skills Hub
 
-**4,009 portable `SKILL.md` skills for Claude Code, ChatGPT Codex, Cursor, Gemini CLI, Windsurf, and other AI coding agents.**
+**4,366 portable `SKILL.md` skills for Claude Code, ChatGPT Codex, Cursor, Gemini CLI, Windsurf, and other AI coding agents.**
 
-[![Skills](https://img.shields.io/badge/skills-4%2C009-brightgreen?style=for-the-badge&logo=anthropic)](./skills/)
-[![Source Repos](https://img.shields.io/badge/source_repos-32%2B-blue?style=for-the-badge&logo=github)](./skills-source-map.tsv)
+[![Skills](https://img.shields.io/badge/skills-4%2C366-brightgreen?style=for-the-badge&logo=anthropic)](./skills/)
+[![Source Repos](https://img.shields.io/badge/source_repos-37%2B-blue?style=for-the-badge&logo=github)](./skills-source-map.tsv)
 [![Agents](https://img.shields.io/badge/agents-Claude%20%7C%20Codex%20%7C%20Cursor%20%7C%20Gemini%20%7C%20Windsurf-8A2BE2?style=for-the-badge)](.)
 [![MCP Servers](https://img.shields.io/badge/MCP_servers-14-orange?style=for-the-badge)](.)
 [![Stars](https://img.shields.io/github/stars/KunanonJ/claude-skills-hub?style=for-the-badge&logo=github)](https://github.com/KunanonJ/claude-skills-hub/stargazers)
@@ -41,18 +41,18 @@ Use this repo as:
 ```mermaid
 xychart-beta horizontal
     title "Skills by Source Category"
-    x-axis ["Composio API Integrations", "Claude Ecosystem", "Agent & AI Patterns", "Dev Lifecycle & Best Practices", "Workflow & Orchestration", "UI/Design", "Token Efficiency"]
+    x-axis ["Composio API Integrations", "Claude & Agent Ecosystem", "Business & Marketing", "Dev Lifecycle & Best Practices", "Workflow & Orchestration", "UI/Design", "Token Efficiency"]
     y-axis "Skill Count" 0 --> 2200
-    bar [2100, 900, 400, 300, 200, 55, 54]
+    bar [2100, 1200, 570, 300, 200, 55, 54]
 ```
 
 | Metric | Value |
 |--------|-------|
-| 📦 Total skills in [`skills/`](./skills/) | **4,009** |
-| 🗂️ Source repos tracked | **32+** |
+| 📦 Total skills in [`skills/`](./skills/) | **4,366** |
+| 🗂️ Source repos tracked | **37+** |
 | 🌐 Discovery pages crawled | **6** |
-| 🔌 Claude Code plugins | **8** |
-| 🔗 MCP servers | **14** |
+| 🔌 Claude Code plugins | **49** |
+| 🔗 MCP servers | **15** |
 | 🚫 Excluded (security flags) | **1** (`agent-browser`) |
 | 🤖 Compatible agents | Claude Code · ChatGPT Codex · OpenAI Codex · Cursor · Gemini CLI · Windsurf |
 
@@ -62,7 +62,7 @@ xychart-beta horizontal
 
 ### Claude Code
 
-#### All 4,009 skills in one shot
+#### All 4,366 skills in one shot
 
 ```bash
 npx skills add KunanonJ/claude-skills-hub -g -a claude-code -s '*' --copy -y
@@ -73,10 +73,24 @@ npx skills add KunanonJ/claude-skills-hub -g -a claude-code -s '*' --copy -y
 Browse [`skills/`](./skills/) → find what you want → install by path:
 
 ```bash
+# Engineering
 npx skills add KunanonJ/claude-skills-hub/karpathy-guidelines -g -y
+npx skills add KunanonJ/claude-skills-hub/spec-driven-development -g -y
+npx skills add KunanonJ/claude-skills-hub/lighthouse-agentic-browsing -g -y
+
+# UI/Design
 npx skills add KunanonJ/claude-skills-hub/ui-ux-pro-max -g -y
 npx skills add KunanonJ/claude-skills-hub/taste-skill -g -y
-npx skills add KunanonJ/claude-skills-hub/spec-driven-development -g -y
+
+# Business & Strategy
+npx skills add KunanonJ/claude-skills-hub/business-strategy-planning -g -y
+npx skills add KunanonJ/claude-skills-hub/startup-cto -g -y
+npx skills add KunanonJ/claude-skills-hub/competitive-intel -g -y
+
+# Marketing & SEO
+npx skills add KunanonJ/claude-skills-hub/aeo -g -y
+npx skills add KunanonJ/claude-skills-hub/seo-strategy -g -y
+npx skills add KunanonJ/claude-skills-hub/content-strategist -g -y
 ```
 
 #### Full environment — skills + plugins + MCPs
@@ -121,7 +135,7 @@ flowchart TD
     D1 --> D2{Deduplicate\nfirst-source-wins}
     D2 --> D3{Security\nFilter\nSKIP_SKILLS}
 
-    D3 -->|clean| OUT[(📦 skills/\n4,009 skills)]
+    D3 -->|clean| OUT[(📦 skills/\n4,366 skills)]
     D3 -->|flagged| BIN[🗑️ removed]
 
     OUT --> M[📋 skills-manifest.txt]
@@ -150,10 +164,10 @@ flowchart TD
 ## 🗂️ Skill Sources
 
 ```mermaid
-pie title Source Repo Breakdown (4,009 skills)
+pie title Source Repo Breakdown (4,366 skills)
     "Composio ecosystem (2,100)" : 2100
-    "Claude ecosystem & agents (900)" : 900
-    "Agent & AI patterns (400)" : 400
+    "Claude & agent ecosystem (1,200)" : 1200
+    "Business & marketing (570)" : 570
     "Dev lifecycle & best practices (300)" : 300
     "Workflow & Orchestration (200)" : 200
     "UI/Design (55)" : 55
@@ -185,7 +199,8 @@ pie title Source Repo Breakdown (4,009 skills)
 | [ericvtheg/solo-founder-toolkit](https://github.com/ericvtheg/solo-founder-toolkit) | Founder | ~8 |
 | [ognjengt/founder-skills](https://github.com/ognjengt/founder-skills) | Founder | ~6 |
 | [dazuck/operator-skills](https://github.com/dazuck/operator-skills) | Operator | ~5 |
-| [alirezarezvani/claude-skills](https://github.com/alirezarezvani/claude-skills) | General | ~8 |
+| [alirezarezvani/claude-skills](https://github.com/alirezarezvani/claude-skills) | C-suite, engineering, marketing, compliance | ~283 |
+| [ShunsukeHayashi/miyabi](https://mcpmarket.com/tools/skills/business-strategy-planning-1) | Business strategy (Miyabi 8-phase) | 1 |
 | [emotixco/claude-skills-founder](https://github.com/emotixco/claude-skills-founder) | Founder | ~5 |
 | [Exploration-labs/Nates-Substack-Skills](https://github.com/Exploration-labs/Nates-Substack-Skills) | Writing | ~4 |
 | [kubony/claude-session-wrap](https://github.com/kubony/claude-session-wrap) | Session management | ~3 |
@@ -207,9 +222,25 @@ Plus skills discovered from [hesreallyhim/awesome-claude-code](https://github.co
 
 These plugin commands are Claude Code-specific. Codex users can use the skill corpus directly from `~/.codex/skills` and configure MCP servers in `~/.codex/config.toml`.
 
+**49 plugins installed** across 3 marketplaces: `claude-plugins-official`, `cloudflare`, `claude-code-warp`.
+
 ```bash
+# Core workflow plugins
 for plugin in typescript-lsp security-guidance code-review playwright \
-              context7 pr-review-toolkit feature-dev ralph-loop; do
+              context7 pr-review-toolkit feature-dev ralph-loop \
+              session-report hookify skill-creator; do
+  claude plugin install "$plugin"
+done
+
+# LSP plugins (language intelligence)
+for plugin in clangd-lsp csharp-lsp gopls-lsp jdtls-lsp kotlin-lsp \
+              lua-lsp php-lsp pyright-lsp ruby-lsp rust-analyzer-lsp swift-lsp; do
+  claude plugin install "$plugin"
+done
+
+# Service integrations
+for plugin in github mongodb notion railway sentry stripe telegram \
+              postman sanity resend; do
   claude plugin install "$plugin"
 done
 ```
