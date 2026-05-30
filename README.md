@@ -2,9 +2,9 @@
 
 # 🧠 AI Skills Hub for ChatGPT Codex
 
-**3,000+ portable `SKILL.md` skills for ChatGPT Codex, OpenAI Codex, Claude Code, Cursor, Gemini CLI, and other AI coding agents.**
+**4,000+ portable `SKILL.md` skills for ChatGPT Codex, OpenAI Codex, Claude Code, Cursor, Gemini CLI, and other AI coding agents.**
 
-[![Skills](https://img.shields.io/badge/skills-3%2C000%2B-brightgreen?style=for-the-badge&logo=openai)](./skills/)
+[![Skills](https://img.shields.io/badge/skills-4%2C000%2B-brightgreen?style=for-the-badge&logo=openai)](./skills/)
 [![Source Repos](https://img.shields.io/badge/source_repos-29%2B-blue?style=for-the-badge&logo=github)](./skills-source-map.tsv)
 [![Agents](https://img.shields.io/badge/agents-ChatGPT%20%7C%20Codex%20%7C%20Claude%20%7C%20Cursor%20%7C%20Gemini-8A2BE2?style=for-the-badge)](.)
 [![MCP Servers](https://img.shields.io/badge/MCP_servers-13-orange?style=for-the-badge)](.)
@@ -48,7 +48,7 @@ xychart-beta horizontal
 
 | Metric | Value |
 |--------|-------|
-| 📦 Total skills in [`skills/`](./skills/) | **3,000+** |
+| 📦 Total skills in [`skills/`](./skills/) | **4,009** |
 | 🗂️ Source repos tracked | **29+** |
 | 🌐 Discovery pages crawled | **6** |
 | 🔌 Claude Code plugins | **8** |
@@ -85,7 +85,7 @@ Restart Codex after syncing so the new skills are discovered.
 
 ### Claude Code / skills CLI
 
-#### All 3,000+ skills in one shot
+#### All 4,000+ skills in one shot
 
 ```bash
 npx skills add KunanonJ/codex-skills-hub -g -a claude-code -s '*' --copy -y
