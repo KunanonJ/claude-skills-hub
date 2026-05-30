@@ -1,22 +1,22 @@
 <div align="center">
 
-# 🧠 AI Skills Hub for ChatGPT Codex
+# 🧠 Claude Skills Hub
 
-**4,000+ portable `SKILL.md` skills for ChatGPT Codex, OpenAI Codex, Claude Code, Cursor, Gemini CLI, and other AI coding agents.**
+**4,009 portable `SKILL.md` skills for Claude Code, ChatGPT Codex, Cursor, Gemini CLI, Windsurf, and other AI coding agents.**
 
-[![Skills](https://img.shields.io/badge/skills-4%2C000%2B-brightgreen?style=for-the-badge&logo=openai)](./skills/)
-[![Source Repos](https://img.shields.io/badge/source_repos-29%2B-blue?style=for-the-badge&logo=github)](./skills-source-map.tsv)
-[![Agents](https://img.shields.io/badge/agents-ChatGPT%20%7C%20Codex%20%7C%20Claude%20%7C%20Cursor%20%7C%20Gemini-8A2BE2?style=for-the-badge)](.)
-[![MCP Servers](https://img.shields.io/badge/MCP_servers-13-orange?style=for-the-badge)](.)
-[![Stars](https://img.shields.io/github/stars/KunanonJ/codex-skills-hub?style=for-the-badge&logo=github)](https://github.com/KunanonJ/codex-skills-hub/stargazers)
+[![Skills](https://img.shields.io/badge/skills-4%2C009-brightgreen?style=for-the-badge&logo=anthropic)](./skills/)
+[![Source Repos](https://img.shields.io/badge/source_repos-32%2B-blue?style=for-the-badge&logo=github)](./skills-source-map.tsv)
+[![Agents](https://img.shields.io/badge/agents-Claude%20%7C%20Codex%20%7C%20Cursor%20%7C%20Gemini%20%7C%20Windsurf-8A2BE2?style=for-the-badge)](.)
+[![MCP Servers](https://img.shields.io/badge/MCP_servers-14-orange?style=for-the-badge)](.)
+[![Stars](https://img.shields.io/github/stars/KunanonJ/claude-skills-hub?style=for-the-badge&logo=github)](https://github.com/KunanonJ/claude-skills-hub/stargazers)
 
 <br/>
 
 ```
-npx skills add KunanonJ/codex-skills-hub -g -a codex -s '*' --copy -y
+npx skills add KunanonJ/claude-skills-hub -g -a claude-code -s '*' --copy -y
 ```
 
-*One portable skill corpus. Use it from ChatGPT Codex, OpenAI Codex, Claude Code, Cursor, Gemini CLI, and more.*
+*One portable skill corpus. Use it from Claude Code, ChatGPT Codex, Cursor, Gemini CLI, Windsurf, and more.*
 
 </div>
 
@@ -24,71 +24,48 @@ npx skills add KunanonJ/codex-skills-hub -g -a codex -s '*' --copy -y
 
 ## 🤖 Why This Exists
 
-`codex-skills-hub` started as `claude-skills-hub`, but the underlying format is simple and portable: each skill is a directory with a `SKILL.md` entrypoint. That makes the corpus useful beyond Claude Code, especially for ChatGPT/Codex environments that load local skills from `~/.codex/skills`.
+`claude-skills-hub` is a curated, constantly-growing corpus of `SKILL.md` skills for every major AI coding agent. Each skill is a directory with a `SKILL.md` entrypoint — the same format works across Claude Code, Codex, Cursor, and Gemini CLI without modification.
 
 Use this repo as:
 
 | Agent / Client | Recommended install target | Notes |
 |---|---|---|
-| **ChatGPT Codex / OpenAI Codex** | `~/.codex/skills` | Direct local skill loading for Codex Desktop / CLI style environments |
-| **Claude Code** | `npx skills add ...` or `~/.agents/skills` | Original Claude-compatible skill workflow |
-| **Cursor / Windsurf / Gemini CLI** | Agent-specific skill or MCP configuration | Use the same `SKILL.md` bodies as reusable agent instructions |
+| **Claude Code** | `npx skills add ...` or `~/.claude/skills` | Primary target — full plugin + MCP ecosystem |
+| **ChatGPT Codex / OpenAI Codex** | `~/.codex/skills` | Direct local skill loading for Codex Desktop / CLI |
+| **Cursor / Windsurf / Gemini CLI** | Agent-specific skill or MCP configuration | Same `SKILL.md` bodies work as reusable instructions |
 
-The previous `claude-skills-hub` URL redirects here, but new installs should use `KunanonJ/codex-skills-hub`.
+> The previous `codex-skills-hub` URL automatically redirects here.
 
 ## 📊 Skill Corpus at a Glance
 
 ```mermaid
 xychart-beta horizontal
     title "Skills by Source Category"
-    x-axis ["Composio API Integrations", "Community Packs", "Workflow & Orchestration", "Best Practices", "Dev Lifecycle", "Token Efficiency"]
+    x-axis ["Composio API Integrations", "Claude Ecosystem", "Agent & AI Patterns", "Dev Lifecycle & Best Practices", "Workflow & Orchestration", "UI/Design", "Token Efficiency"]
     y-axis "Skill Count" 0 --> 2200
-    bar [2100, 620, 150, 95, 80, 55]
+    bar [2100, 900, 400, 300, 200, 55, 54]
 ```
 
 | Metric | Value |
 |--------|-------|
 | 📦 Total skills in [`skills/`](./skills/) | **4,009** |
-| 🗂️ Source repos tracked | **29+** |
+| 🗂️ Source repos tracked | **32+** |
 | 🌐 Discovery pages crawled | **6** |
 | 🔌 Claude Code plugins | **8** |
-| 🔗 MCP servers | **13** |
+| 🔗 MCP servers | **14** |
 | 🚫 Excluded (security flags) | **1** (`agent-browser`) |
-| 🤖 Compatible agents | ChatGPT Codex · OpenAI Codex · Claude Code · Cursor · Gemini CLI · Windsurf |
+| 🤖 Compatible agents | Claude Code · ChatGPT Codex · OpenAI Codex · Cursor · Gemini CLI · Windsurf |
 
 ---
 
 ## ⚡ Quick Install
 
-### ChatGPT Codex / OpenAI Codex
+### Claude Code
 
-Install all skills for Codex with the `skills` CLI:
-
-```bash
-npx skills add KunanonJ/codex-skills-hub -g -a codex -s '*' --copy -y
-```
-
-This installs the corpus into the Codex-compatible global skills location used by the `skills` CLI.
-
-#### Manual Codex sync
-
-Codex-compatible skills live under `~/.codex/skills`. Sync the bundled `skills/` directory there:
+#### All 4,009 skills in one shot
 
 ```bash
-git clone --depth 1 https://github.com/KunanonJ/codex-skills-hub.git /tmp/codex-skills-hub
-cd /tmp/codex-skills-hub
-mkdir -p ~/.codex/skills
-rsync -a skills/ ~/.codex/skills/
-```
-
-Restart Codex after syncing so the new skills are discovered.
-
-### Claude Code / skills CLI
-
-#### All 4,000+ skills in one shot
-
-```bash
-npx skills add KunanonJ/codex-skills-hub -g -a claude-code -s '*' --copy -y
+npx skills add KunanonJ/claude-skills-hub -g -a claude-code -s '*' --copy -y
 ```
 
 #### Cherry-pick a single skill
@@ -96,10 +73,10 @@ npx skills add KunanonJ/codex-skills-hub -g -a claude-code -s '*' --copy -y
 Browse [`skills/`](./skills/) → find what you want → install by path:
 
 ```bash
-# examples
-npx skills add KunanonJ/codex-skills-hub/karpathy-guidelines -g -y
-npx skills add KunanonJ/codex-skills-hub/caveman -g -y
-npx skills add KunanonJ/codex-skills-hub/spec-driven-development -g -y
+npx skills add KunanonJ/claude-skills-hub/karpathy-guidelines -g -y
+npx skills add KunanonJ/claude-skills-hub/ui-ux-pro-max -g -y
+npx skills add KunanonJ/claude-skills-hub/taste-skill -g -y
+npx skills add KunanonJ/claude-skills-hub/spec-driven-development -g -y
 ```
 
 #### Full environment — skills + plugins + MCPs
@@ -108,30 +85,50 @@ npx skills add KunanonJ/codex-skills-hub/spec-driven-development -g -y
 bash <(curl -fsSL https://gist.githubusercontent.com/KunanonJ/f7e7c9b8c45d927ae03b84b1879d384d/raw/setup-claude.sh)
 ```
 
+### ChatGPT Codex / OpenAI Codex
+
+Install all skills for Codex with the `skills` CLI:
+
+```bash
+npx skills add KunanonJ/claude-skills-hub -g -a codex -s '*' --copy -y
+```
+
+#### Manual Codex sync
+
+```bash
+git clone --depth 1 https://github.com/KunanonJ/claude-skills-hub.git /tmp/claude-skills-hub
+cd /tmp/claude-skills-hub
+mkdir -p ~/.codex/skills
+rsync -a skills/ ~/.codex/skills/
+```
+
+Restart Codex after syncing so the new skills are discovered.
+
 ---
 
 ## 🔬 How the Corpus is Built
 
 ```mermaid
 flowchart TD
-    A1[📁 24 Curated Repos] --> S
+    A1[📁 29+ Curated Repos] --> S
     A2[🌐 6 Discovery Pages] --> S
     A3[🏢 ComposioHQ Org] --> S
+    A4[🖥️ Local ~/.claude/skills] --> S
 
-    S[⚙️ sync-listed-sources.sh]
+    S[⚙️ sync-listed-sources.sh\n+ sync-local-skills.sh]
 
     S --> D1{Discover\nall SKILL.md\ndirectories}
     D1 --> D2{Deduplicate\nfirst-source-wins}
     D2 --> D3{Security\nFilter\nSKIP_SKILLS}
 
-    D3 -->|clean| OUT[(📦 skills/\n3,000+ skills)]
+    D3 -->|clean| OUT[(📦 skills/\n4,009 skills)]
     D3 -->|flagged| BIN[🗑️ removed]
 
     OUT --> M[📋 skills-manifest.txt]
     OUT --> T[🗺️ skills-source-map.tsv]
-    OUT --> I[npx skills add\nKunanonJ/codex-skills-hub]
+    OUT --> I[npx skills add\nKunanonJ/claude-skills-hub]
 
-    I --> LOCAL[~/.agents/skills/\nor ~/.codex/skills/]
+    I --> LOCAL[~/.claude/skills/\nor ~/.codex/skills/]
 
     style S fill:#4A90D9,color:#fff
     style OUT fill:#27AE60,color:#fff
@@ -153,13 +150,14 @@ flowchart TD
 ## 🗂️ Skill Sources
 
 ```mermaid
-pie title Source Repo Breakdown
+pie title Source Repo Breakdown (4,009 skills)
     "Composio ecosystem (2,100)" : 2100
-    "Community packs (620)" : 620
-    "Workflow & Orchestration (150)" : 150
-    "Best practices (95)" : 95
-    "Dev lifecycle (80)" : 80
-    "Token efficiency (55)" : 55
+    "Claude ecosystem & agents (900)" : 900
+    "Agent & AI patterns (400)" : 400
+    "Dev lifecycle & best practices (300)" : 300
+    "Workflow & Orchestration (200)" : 200
+    "UI/Design (55)" : 55
+    "Token efficiency (54)" : 54
 ```
 
 ### Curated repos
@@ -168,10 +166,14 @@ pie title Source Repo Breakdown
 |------|----------|--------|
 | [ComposioHQ/awesome-claude-skills](https://github.com/ComposioHQ/awesome-claude-skills) | Composio ecosystem | ~1,200 |
 | [ComposioHQ org](https://github.com/ComposioHQ) | Composio ecosystem | ~900 |
-| [obra/superpowers](https://github.com/obra/superpowers) | Workflow orchestration | ~40 |
 | [sickn33/antigravity-awesome-skills](https://github.com/sickn33/antigravity-awesome-skills) | Community | ~200 |
+| [affaan-m/everything-claude-code](https://github.com/affaan-m/everything-claude-code) | Claude ecosystem | ~229 |
+| [obra/superpowers](https://github.com/obra/superpowers) | Workflow orchestration | ~40 |
 | [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) | Dev lifecycle | ~20 |
 | [expo/skills](https://github.com/expo/skills) | React Native / Expo | 12 |
+| [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | UI/UX design | 1 (67 styles, 161 palettes) |
+| [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill) | UI/Design aesthetics | 13 |
+| [ParthJadhav/app-store-screenshots](https://github.com/ParthJadhav/app-store-screenshots) | App Store assets | 1 |
 | [juliusbrussee/caveman](https://github.com/juliusbrussee/caveman) | Token compression | 5 |
 | [forrestchang/andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills) | Best practices | 1 |
 | [shanraisshan/claude-code-best-practice](https://github.com/shanraisshan/claude-code-best-practice) | Best practices | 4 |
@@ -180,8 +182,6 @@ pie title Source Repo Breakdown
 | [thedotmack/claude-mem](https://github.com/thedotmack/claude-mem) | Memory / context | ~5 |
 | [ruvnet/ruflo](https://github.com/ruvnet/ruflo) | Orchestration | ~15 |
 | [FlorianBruniaux/claude-code-ultimate-guide](https://github.com/FlorianBruniaux/claude-code-ultimate-guide) | General | ~10 |
-| [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | UI/UX | ~5 |
-| [affaan-m/everything-claude-code](https://github.com/affaan-m/everything-claude-code) | General | ~10 |
 | [ericvtheg/solo-founder-toolkit](https://github.com/ericvtheg/solo-founder-toolkit) | Founder | ~8 |
 | [ognjengt/founder-skills](https://github.com/ognjengt/founder-skills) | Founder | ~6 |
 | [dazuck/operator-skills](https://github.com/dazuck/operator-skills) | Operator | ~5 |
@@ -205,7 +205,7 @@ Plus skills discovered from [hesreallyhim/awesome-claude-code](https://github.co
 
 ## 🔌 Optional Claude Code Plugins
 
-These plugin commands are Claude Code-specific. Codex users can still use the skill corpus directly from `~/.codex/skills` and configure MCP servers in `~/.codex/config.toml`.
+These plugin commands are Claude Code-specific. Codex users can use the skill corpus directly from `~/.codex/skills` and configure MCP servers in `~/.codex/config.toml`.
 
 ```bash
 for plugin in typescript-lsp security-guidance code-review playwright \
@@ -223,12 +223,21 @@ The examples below use Claude Code's `claude mcp add` syntax. For Codex, add equ
 ### No API key required
 
 ```bash
-claude mcp add --transport stdio investor-agent -- npx -y investor-agent
-claude mcp add --transport stdio exa            -- npx -y exa-mcp-server
 claude mcp add --transport stdio context7       -- npx -y @upstash/context7-mcp
 claude mcp add --transport stdio context-mode   -- npx -y context-mode
+claude mcp add --transport stdio exa            -- npx -y exa-mcp-server
+claude mcp add --transport stdio investor-agent -- npx -y investor-agent
 claude mcp add --transport stdio token-savior   -- uvx token-savior-recall
 ```
+
+### LINE Official Account — AI-driven messaging
+
+```bash
+claude mcp add --transport stdio line -- npx -y line-oa-mcp-ultimate
+# Set env: LINE_CHANNEL_ACCESS_TOKEN=<your token>
+```
+
+> 27 tools: send messages, rich menus, Flex messages, audiences, insights, coupons, LIFF management. Thai-localized templates. Source: [wasintoh/line-oa-mcp-ultimate](https://github.com/wasintoh/line-oa-mcp-ultimate)
 
 ### `code-review-graph` — Tree-sitter knowledge graph
 
@@ -261,7 +270,7 @@ sequenceDiagram
     participant R as skills/ (this repo)
 
     C->>S: bash sync-listed-sources.sh
-    S->>G: clone / zip-download 36 sources
+    S->>G: clone / zip-download 32+ sources
     G-->>S: raw skill directories
     S->>S: deduplicate + filter SKIP_SKILLS
     S->>R: sync updated skills/
