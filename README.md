@@ -4,11 +4,11 @@
 
 ### the biggest open-source skill drop for AI coding agents. period.
 
-**4,366 skills. 37+ repos. one install.**
+**4,874 skills. 43+ repos. one install.**
 
-[![Skills](https://img.shields.io/badge/skills-4%2C366-00ff88?style=for-the-badge&logo=anthropic&logoColor=white)](./skills/)
+[![Skills](https://img.shields.io/badge/skills-4%2C874-00ff88?style=for-the-badge&logo=anthropic&logoColor=white)](./skills/)
 [![Plugins](https://img.shields.io/badge/plugins-49-ff6b35?style=for-the-badge&logo=puzzle&logoColor=white)](.)
-[![Source Repos](https://img.shields.io/badge/sources-37%2B-6c63ff?style=for-the-badge&logo=github)](./skills-source-map.tsv)
+[![Source Repos](https://img.shields.io/badge/sources-43%2B-6c63ff?style=for-the-badge&logo=github)](./skills-source-map.tsv)
 [![MCP Servers](https://img.shields.io/badge/MCPs-15-ff3cac?style=for-the-badge)](.)
 [![Stars](https://img.shields.io/github/stars/KunanonJ/claude-skills-hub?style=for-the-badge&logo=github&color=ffd700)](https://github.com/KunanonJ/claude-skills-hub/stargazers)
 
@@ -30,8 +30,8 @@ no fluff. just numbers.
 
 | | |
 |---|---|
-| 📦 skills | **4,366** |
-| 🗂️ sources scraped | **37+** repos |
+| 📦 skills | **4,874** |
+| 🗂️ sources scraped | **43+** repos |
 | 🔌 plugins | **49** (LSPs, services, workflows) |
 | 🔗 MCP servers | **15** documented |
 | 🤖 compatible agents | **6** — Claude · Codex · Cursor · Gemini · Windsurf · OpenClaw |
@@ -39,7 +39,7 @@ no fluff. just numbers.
 
 ```mermaid
 xychart-beta horizontal
-    title "4,366 skills by domain"
+    title "4,874 skills by domain"
     x-axis ["Composio APIs", "Claude & Agent Ecosystem", "Business & Marketing", "Dev Lifecycle", "Workflows", "UI/Design", "Token Efficiency"]
     y-axis "skills" 0 --> 2200
     bar [2100, 1200, 570, 300, 200, 55, 54]
@@ -49,7 +49,7 @@ xychart-beta horizontal
 
 ## ⚡ install in 10 seconds
 
-### claude code — all 4,366 skills
+### claude code — all 4,874 skills
 
 ```bash
 npx skills add KunanonJ/claude-skills-hub -g -a claude-code -s '*' --copy -y
@@ -106,7 +106,7 @@ npx skills add KunanonJ/claude-skills-hub/content-strategist -g -y
 ## 🗂️ what's inside
 
 ```mermaid
-pie title source breakdown (4,366 skills)
+pie title source breakdown (4,874 skills)
     "Composio ecosystem (2,100)" : 2100
     "Claude & agent ecosystem (1,200)" : 1200
     "Business & marketing (570)" : 570
@@ -117,7 +117,7 @@ pie title source breakdown (4,366 skills)
 ```
 
 <details>
-<summary><strong>📋 full source list (37+ repos)</strong></summary>
+<summary><strong>📋 full source list (43+ repos)</strong></summary>
 
 | repo | what's in it | skills |
 |------|-------------|--------|
@@ -151,6 +151,11 @@ pie title source breakdown (4,366 skills)
 | [shanraisshan/claude-code-best-practice](https://github.com/shanraisshan/claude-code-best-practice) | best practices | 4 |
 | [kubony/claude-session-wrap](https://github.com/kubony/claude-session-wrap) | session management | ~3 |
 | [vercel-labs/skills](https://github.com/vercel-labs/skills) | discovery | 1 |
+| [K-Dense-AI/scientific-agent-skills](https://github.com/K-Dense-AI/scientific-agent-skills) | bioinformatics, scientific computing | ~90 |
+| [anthropics/claude-cookbooks](https://github.com/anthropics/claude-cookbooks) | official Anthropic custom skills | 3 |
+| [jeremylongshore/claude-code-plugins-plus-skills](https://github.com/jeremylongshore/claude-code-plugins-plus-skills) | 20-category DevOps/ML/security/cloud pack | ~400 |
+| [tfriedel/claude-office-skills](https://github.com/tfriedel/claude-office-skills) | PPTX, DOCX, PDF, XLSX manipulation | 4 |
+| [coffeefuelbump/csv-data-summarizer-claude-skill](https://github.com/coffeefuelbump/csv-data-summarizer-claude-skill) | CSV auto-analysis + visualizations | 1 |
 
 plus skills from [hesreallyhim/awesome-claude-code](https://github.com/hesreallyhim/awesome-claude-code), [VoltAgent/awesome-agent-skills](https://github.com/VoltAgent/awesome-agent-skills), [awesomeclaude.ai](https://awesomeclaude.ai/awesome-claude-skills), and more.
 
@@ -208,7 +213,7 @@ code-review-graph build
 
 ```mermaid
 flowchart TD
-    A1[📁 37+ Curated Repos] --> S
+    A1[📁 43+ Curated Repos] --> S
     A2[🌐 6 Discovery Pages] --> S
     A3[🏢 ComposioHQ Org] --> S
     A4[🖥️ Local ~/.claude/skills] --> S
@@ -219,7 +224,7 @@ flowchart TD
     D1 --> D2{deduplicate\nfirst-source wins}
     D2 --> D3{security filter\nSKIP_SKILLS}
 
-    D3 -->|clean| OUT[(📦 skills/\n4,366 skills)]
+    D3 -->|clean| OUT[(📦 skills/\n4,874 skills)]
     D3 -->|flagged| BIN[🗑️ dropped]
 
     OUT --> M[📋 skills-manifest.txt]
