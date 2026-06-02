@@ -1,11 +1,18 @@
 ---
 name: agents-md
 description: This skill should be used when the user asks to "create AGENTS.md", "update AGENTS.md", "maintain agent docs", "set up CLAUDE.md", or needs to keep agent instructions concise. Enforces research-backed best practices for minimal, high-signal agent documentation.
+risk: unknown
+source: community
 ---
 
 # Maintaining AGENTS.md
 
 AGENTS.md is the canonical agent-facing documentation. Keep it minimal—agents are capable and don't need hand-holding. Target under 60 lines; never exceed 100. Instruction-following quality degrades as document length increases.
+
+## When to Use
+- The user asks to create, update, or audit `AGENTS.md` or `CLAUDE.md`.
+- The project needs concise, high-signal agent instructions derived from the actual toolchain and repo layout.
+- Existing agent documentation is too long, duplicated, or drifting away from real project conventions.
 
 ## File Setup
 
@@ -116,3 +123,8 @@ Co-Authored-By: (the agent model's name and attribution byline)
 |---------|-------------|
 | `pnpm cli sync` | Sync data |
 ```
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

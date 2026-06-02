@@ -1,522 +1,145 @@
 ---
 name: accessibility
-description: Audit and improve web accessibility following WCAG 2.1 guidelines. Use when asked to "improve accessibility", "a11y audit", "WCAG compliance", "screen reader support", "keyboard navigation", or "make accessible".
-license: MIT
-metadata:
-  author: web-quality-skills
-  version: "1.0"
+description: WCAG 2.2 レベル AA 標準を用いてインクルーシブなデジタルプロダクトを設計・実装・監査します。Web 用のセマンティック ARIA および Web・ネイティブプラットフォーム（iOS/Android）のアクセシビリティトレイトを生成するために使用します。
+origin: ECC
 ---
 
-# Accessibility (a11y)
+# アクセシビリティ（WCAG 2.2）
 
-Comprehensive accessibility guidelines based on WCAG 2.1 and Lighthouse accessibility audits. Goal: make content usable by everyone, including people with disabilities.
+このスキルは、スクリーンリーダー、スイッチコントロール、キーボードナビゲーションを使用するユーザーを含む、すべてのユーザーにとってデジタルインターフェースが知覚可能・操作可能・理解可能・堅牢（POUR）であることを保証します。WCAG 2.2 達成基準の技術的な実装に焦点を当てています。
 
-## WCAG Principles: POUR
+## 使用タイミング
 
-| Principle | Description |
-|-----------|-------------|
-| **P**erceivable | Content can be perceived through different senses |
-| **O**perable | Interface can be operated by all users |
-| **U**nderstandable | Content and interface are understandable |
-| **R**obust | Content works with assistive technologies |
+- Web、iOS、Android 向け UI コンポーネント仕様の定義。
+- アクセシビリティの障壁やコンプライアンスのギャップについて既存コードを監査する。
+- Target Size（最小）や Focus Appearance など新しい WCAG 2.2 基準を実装する。
+- 高水準な設計要件を技術属性（ARIA ロール、トレイト、ヒント）にマッピングする。
 
-## Conformance levels
+## コアコンセプト
 
-| Level | Requirement | Target |
-|-------|-------------|--------|
-| **A** | Minimum accessibility | Must pass |
-| **AA** | Standard compliance | Should pass (legal requirement in many jurisdictions) |
-| **AAA** | Enhanced accessibility | Nice to have |
+- **POUR 原則**: WCAG の基盤（知覚可能・操作可能・理解可能・堅牢）。
+- **セマンティックマッピング**: 汎用コンテナよりネイティブ要素を使用して組み込みのアクセシビリティを提供する。
+- **アクセシビリティツリー**: 支援技術が実際に「読み取る」UI の表現。
+- **フォーカス管理**: キーボード・スクリーンリーダーカーソルの順序と可視性を制御する。
+- **ラベリングとヒント**: `aria-label`、`accessibilityLabel`、`contentDescription` を通じてコンテキストを提供する。
 
----
+## 仕組み
 
-## Perceivable
+### ステップ 1: コンポーネントロールの特定
 
-### Text alternatives (1.1)
+機能的な目的を決定します（例：これはボタンか、リンクか、タブか）。カスタムロールに頼る前に、利用可能な最もセマンティックなネイティブ要素を使用します。
 
-**Images require alt text:**
-```html
-<!-- ❌ Missing alt -->
-<img src="chart.png">
+### ステップ 2: 知覚可能属性の定義
 
-<!-- ✅ Descriptive alt -->
-<img src="chart.png" alt="Bar chart showing 40% increase in Q3 sales">
+- テキストのコントラストが **4.5:1**（通常）または **3:1**（大きいテキスト・UI）を満たすことを確認。
+- 非テキストコンテンツ（画像、アイコン）にテキスト代替を追加。
+- レスポンシブリフロー（機能を損なわずに最大 400% ズーム）を実装。
 
-<!-- ✅ Decorative image (empty alt) -->
-<img src="decorative-border.png" alt="" role="presentation">
+### ステップ 3: 操作可能なコントロールの実装
 
-<!-- ✅ Complex image with longer description -->
-<figure>
-  <img src="infographic.png" alt="2024 market trends infographic" 
-       aria-describedby="infographic-desc">
-  <figcaption id="infographic-desc">
-    <!-- Detailed description -->
-  </figcaption>
-</figure>
+- 最小 **24x24 CSS ピクセル**のターゲットサイズを確保（WCAG 2.2 SC 2.5.8）。
+- すべてのインタラクティブ要素がキーボードで到達可能で、可視のフォーカスインジケーターを持つことを確認（SC 2.4.11）。
+- ドラッグ操作の単一ポインター代替手段を提供。
+
+### ステップ 4: 理解可能なロジックの確保
+
+- 一貫したナビゲーションパターンを使用。
+- 修正のための説明的なエラーメッセージと提案を提供（SC 3.3.3）。
+- 同じデータを二度求めないよう「冗長入力防止」（SC 3.3.7）を実装。
+
+### ステップ 5: 堅牢な互換性の検証
+
+- 正しい `Name, Role, Value` パターンを使用。
+- 動的なステータス更新のために `aria-live` またはライブリージョンを実装。
+
+## アクセシビリティアーキテクチャ図
+
+```mermaid
+flowchart TD
+  UI["UI コンポーネント"] --> Platform{プラットフォーム?}
+  Platform -->|Web| ARIA["WAI-ARIA + HTML5"]
+  Platform -->|iOS| SwiftUI["アクセシビリティトレイト + ラベル"]
+  Platform -->|Android| Compose["セマンティクス + コンテンツ説明"]
+
+  ARIA --> AT["支援技術（スクリーンリーダー、スイッチ）"]
+  SwiftUI --> AT
+  Compose --> AT
 ```
 
-**Icon buttons need accessible names:**
-```html
-<!-- ❌ No accessible name -->
-<button><svg><!-- menu icon --></svg></button>
+## クロスプラットフォームマッピング
 
-<!-- ✅ Using aria-label -->
-<button aria-label="Open menu">
-  <svg aria-hidden="true"><!-- menu icon --></svg>
-</button>
+| 機能                   | Web (HTML/ARIA)          | iOS (SwiftUI)                        | Android (Compose)                                           |
+| :----------------- | :----------------------- | :----------------------------------- | :---------------------------------------------------------- |
+| **プライマリラベル**  | `aria-label` / `<label>` | `.accessibilityLabel()`              | `contentDescription`                                        |
+| **セカンダリヒント** | `aria-describedby`       | `.accessibilityHint()`               | `Modifier.semantics { stateDescription = ... }`             |
+| **アクションロール**    | `role="button"`          | `.accessibilityAddTraits(.isButton)` | `Modifier.semantics { role = Role.Button }`                 |
+| **ライブ更新**   | `aria-live="polite"`     | `.accessibilityLiveRegion(.polite)`  | `Modifier.semantics { liveRegion = LiveRegionMode.Polite }` |
 
-<!-- ✅ Using visually hidden text -->
-<button>
-  <svg aria-hidden="true"><!-- menu icon --></svg>
-  <span class="visually-hidden">Open menu</span>
-</button>
-```
+## 例
 
-**Visually hidden class:**
-```css
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-```
-
-### Color contrast (1.4.3, 1.4.6)
-
-| Text Size | AA minimum | AAA enhanced |
-|-----------|------------|--------------|
-| Normal text (< 18px / < 14px bold) | 4.5:1 | 7:1 |
-| Large text (≥ 18px / ≥ 14px bold) | 3:1 | 4.5:1 |
-| UI components & graphics | 3:1 | 3:1 |
-
-```css
-/* ❌ Low contrast (2.5:1) */
-.low-contrast {
-  color: #999;
-  background: #fff;
-}
-
-/* ✅ Sufficient contrast (7:1) */
-.high-contrast {
-  color: #333;
-  background: #fff;
-}
-
-/* ✅ Focus states need contrast too */
-:focus-visible {
-  outline: 2px solid #005fcc;
-  outline-offset: 2px;
-}
-```
-
-**Don't rely on color alone:**
-```html
-<!-- ❌ Only color indicates error -->
-<input class="error-border">
-<style>.error-border { border-color: red; }</style>
-
-<!-- ✅ Color + icon + text -->
-<div class="field-error">
-  <input aria-invalid="true" aria-describedby="email-error">
-  <span id="email-error" class="error-message">
-    <svg aria-hidden="true"><!-- error icon --></svg>
-    Please enter a valid email address
-  </span>
-</div>
-```
-
-### Media alternatives (1.2)
+### Web: アクセシブルな検索
 
 ```html
-<!-- Video with captions -->
-<video controls>
-  <source src="video.mp4" type="video/mp4">
-  <track kind="captions" src="captions.vtt" srclang="en" label="English" default>
-  <track kind="descriptions" src="descriptions.vtt" srclang="en" label="Descriptions">
-</video>
-
-<!-- Audio with transcript -->
-<audio controls>
-  <source src="podcast.mp3" type="audio/mp3">
-</audio>
-<details>
-  <summary>Transcript</summary>
-  <p>Full transcript text...</p>
-</details>
-```
-
----
-
-## Operable
-
-### Keyboard accessible (2.1)
-
-**All functionality must be keyboard accessible:**
-```javascript
-// ❌ Only handles click
-element.addEventListener('click', handleAction);
-
-// ✅ Handles both click and keyboard
-element.addEventListener('click', handleAction);
-element.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter' || e.key === ' ') {
-    e.preventDefault();
-    handleAction();
-  }
-});
-```
-
-**No keyboard traps:**
-```javascript
-// Modal focus management
-function openModal(modal) {
-  const focusableElements = modal.querySelectorAll(
-    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-  );
-  const firstElement = focusableElements[0];
-  const lastElement = focusableElements[focusableElements.length - 1];
-  
-  // Trap focus within modal
-  modal.addEventListener('keydown', (e) => {
-    if (e.key === 'Tab') {
-      if (e.shiftKey && document.activeElement === firstElement) {
-        e.preventDefault();
-        lastElement.focus();
-      } else if (!e.shiftKey && document.activeElement === lastElement) {
-        e.preventDefault();
-        firstElement.focus();
-      }
-    }
-    if (e.key === 'Escape') {
-      closeModal();
-    }
-  });
-  
-  firstElement.focus();
-}
-```
-
-### Focus visible (2.4.7)
-
-```css
-/* ❌ Never remove focus outlines */
-*:focus { outline: none; }
-
-/* ✅ Use :focus-visible for keyboard-only focus */
-:focus {
-  outline: none;
-}
-
-:focus-visible {
-  outline: 2px solid #005fcc;
-  outline-offset: 2px;
-}
-
-/* ✅ Or custom focus styles */
-button:focus-visible {
-  box-shadow: 0 0 0 3px rgba(0, 95, 204, 0.5);
-}
-```
-
-### Skip links (2.4.1)
-
-```html
-<body>
-  <a href="#main-content" class="skip-link">Skip to main content</a>
-  <header><!-- navigation --></header>
-  <main id="main-content" tabindex="-1">
-    <!-- main content -->
-  </main>
-</body>
-```
-
-```css
-.skip-link {
-  position: absolute;
-  top: -40px;
-  left: 0;
-  background: #000;
-  color: #fff;
-  padding: 8px 16px;
-  z-index: 100;
-}
-
-.skip-link:focus {
-  top: 0;
-}
-```
-
-### Timing (2.2)
-
-```javascript
-// Allow users to extend time limits
-function showSessionWarning() {
-  const modal = createModal({
-    title: 'Session Expiring',
-    content: 'Your session will expire in 2 minutes.',
-    actions: [
-      { label: 'Extend session', action: extendSession },
-      { label: 'Log out', action: logout }
-    ],
-    timeout: 120000 // 2 minutes to respond
-  });
-}
-```
-
-### Motion (2.3)
-
-```css
-/* Respect reduced motion preference */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-```
-
----
-
-## Understandable
-
-### Page language (3.1.1)
-
-```html
-<!-- ❌ No language specified -->
-<html>
-
-<!-- ✅ Language specified -->
-<html lang="en">
-
-<!-- ✅ Language changes within page -->
-<p>The French word for hello is <span lang="fr">bonjour</span>.</p>
-```
-
-### Consistent navigation (3.2.3)
-
-```html
-<!-- Navigation should be consistent across pages -->
-<nav aria-label="Main">
-  <ul>
-    <li><a href="/" aria-current="page">Home</a></li>
-    <li><a href="/products">Products</a></li>
-    <li><a href="/about">About</a></li>
-  </ul>
-</nav>
-```
-
-### Form labels (3.3.2)
-
-```html
-<!-- ❌ No label association -->
-<input type="email" placeholder="Email">
-
-<!-- ✅ Explicit label -->
-<label for="email">Email address</label>
-<input type="email" id="email" name="email" 
-       autocomplete="email" required>
-
-<!-- ✅ Implicit label -->
-<label>
-  Email address
-  <input type="email" name="email" autocomplete="email" required>
-</label>
-
-<!-- ✅ With instructions -->
-<label for="password">Password</label>
-<input type="password" id="password" 
-       aria-describedby="password-requirements">
-<p id="password-requirements">
-  Must be at least 8 characters with one number.
-</p>
-```
-
-### Error handling (3.3.1, 3.3.3)
-
-```html
-<!-- Announce errors to screen readers -->
-<form novalidate>
-  <div class="field" aria-live="polite">
-    <label for="email">Email</label>
-    <input type="email" id="email" 
-           aria-invalid="true"
-           aria-describedby="email-error">
-    <p id="email-error" class="error" role="alert">
-      Please enter a valid email address (e.g., name@example.com)
-    </p>
-  </div>
+<form role="search">
+  <label for="search-input" class="sr-only">Search products</label>
+  <input type="search" id="search-input" placeholder="Search..." />
+  <button type="submit" aria-label="Submit Search">
+    <svg aria-hidden="true">...</svg>
+  </button>
 </form>
 ```
 
-```javascript
-// Focus first error on submit
-form.addEventListener('submit', (e) => {
-  const firstError = form.querySelector('[aria-invalid="true"]');
-  if (firstError) {
-    e.preventDefault();
-    firstError.focus();
-    
-    // Announce error summary
-    const errorSummary = document.getElementById('error-summary');
-    errorSummary.textContent = `${errors.length} errors found. Please fix them and try again.`;
-    errorSummary.focus();
-  }
-});
-```
+### iOS: アクセシブルなアクションボタン
 
----
-
-## Robust
-
-### Valid HTML (4.1.1)
-
-```html
-<!-- ❌ Duplicate IDs -->
-<div id="content">...</div>
-<div id="content">...</div>
-
-<!-- ❌ Invalid nesting -->
-<a href="/"><button>Click</button></a>
-
-<!-- ✅ Unique IDs -->
-<div id="main-content">...</div>
-<div id="sidebar-content">...</div>
-
-<!-- ✅ Proper nesting -->
-<a href="/" class="button-link">Click</a>
-```
-
-### ARIA usage (4.1.2)
-
-**Prefer native elements:**
-```html
-<!-- ❌ ARIA role on div -->
-<div role="button" tabindex="0">Click me</div>
-
-<!-- ✅ Native button -->
-<button>Click me</button>
-
-<!-- ❌ ARIA checkbox -->
-<div role="checkbox" aria-checked="false">Option</div>
-
-<!-- ✅ Native checkbox -->
-<label><input type="checkbox"> Option</label>
-```
-
-**When ARIA is needed:**
-```html
-<!-- Custom tabs component -->
-<div role="tablist" aria-label="Product information">
-  <button role="tab" id="tab-1" aria-selected="true" 
-          aria-controls="panel-1">Description</button>
-  <button role="tab" id="tab-2" aria-selected="false" 
-          aria-controls="panel-2" tabindex="-1">Reviews</button>
-</div>
-<div role="tabpanel" id="panel-1" aria-labelledby="tab-1">
-  <!-- Panel content -->
-</div>
-<div role="tabpanel" id="panel-2" aria-labelledby="tab-2" hidden>
-  <!-- Panel content -->
-</div>
-```
-
-### Live regions (4.1.3)
-
-```html
-<!-- Status updates -->
-<div aria-live="polite" aria-atomic="true" class="status">
-  <!-- Content updates announced to screen readers -->
-</div>
-
-<!-- Urgent alerts -->
-<div role="alert" aria-live="assertive">
-  <!-- Interrupts current announcement -->
-</div>
-```
-
-```javascript
-// Announce dynamic content changes
-function showNotification(message, type = 'polite') {
-  const container = document.getElementById(`${type}-announcer`);
-  container.textContent = ''; // Clear first
-  requestAnimationFrame(() => {
-    container.textContent = message;
-  });
+```swift
+Button(action: deleteItem) {
+    Image(systemName: "trash")
 }
+.accessibilityLabel("Delete item")
+.accessibilityHint("Permanently removes this item from your list")
+.accessibilityAddTraits(.isButton)
 ```
 
----
+### Android: アクセシブルなトグル
 
-## Testing checklist
-
-### Automated testing
-```bash
-# Lighthouse accessibility audit
-npx lighthouse https://example.com --only-categories=accessibility
-
-# axe-core
-npm install @axe-core/cli -g
-axe https://example.com
+```kotlin
+Switch(
+    checked = isEnabled,
+    onCheckedChange = { onToggle() },
+    modifier = Modifier.semantics {
+        contentDescription = "Enable notifications"
+    }
+)
 ```
 
-### Manual testing
+## 避けるべきアンチパターン
 
-- [ ] **Keyboard navigation:** Tab through entire page, use Enter/Space to activate
-- [ ] **Screen reader:** Test with VoiceOver (Mac), NVDA (Windows), or TalkBack (Android)
-- [ ] **Zoom:** Content usable at 200% zoom
-- [ ] **High contrast:** Test with Windows High Contrast Mode
-- [ ] **Reduced motion:** Test with `prefers-reduced-motion: reduce`
-- [ ] **Focus order:** Logical and follows visual order
+- **Div ボタン**: ロールとキーボードサポートを追加せずに `<div>` や `<span>` をクリックイベントに使用する。
+- **色のみの意味**: エラーやステータスを色の変化_のみ_で示す（例：ボーダーを赤にする）。
+- **モーダルフォーカスの未封じ込め**: フォーカスをトラップしないモーダルで、キーボードユーザーがモーダル開放中に背景コンテンツをナビゲートできてしまう。フォーカスは封じ込め_かつ_`Escape` キーまたは明示的な閉じるボタンで脱出可能でなければならない（WCAG SC 2.1.2）。
+- **冗長な代替テキスト**: alt テキストに「Image of...」や「Picture of...」を使用する（スクリーンリーダーはすでに「画像」というロールをアナウンスする）。
 
-### Screen reader commands
+## ベストプラクティスチェックリスト
 
-| Action | VoiceOver (Mac) | NVDA (Windows) |
-|--------|-----------------|----------------|
-| Start/Stop | ⌘ + F5 | Ctrl + Alt + N |
-| Next item | VO + → | ↓ |
-| Previous item | VO + ← | ↑ |
-| Activate | VO + Space | Enter |
-| Headings list | VO + U, then arrows | H / Shift + H |
-| Links list | VO + U | K / Shift + K |
+- [ ] インタラクティブ要素が **24x24px**（Web）または **44x44pt**（ネイティブ）のターゲットサイズを満たしている。
+- [ ] フォーカスインジケーターが明確に見え、高コントラストである。
+- [ ] モーダルは開いている間**フォーカスを封じ込め**、閉じる際にクリーンに解放する（`Escape` キーまたは閉じるボタン）。
+- [ ] ドロップダウンとメニューは閉じる際にトリガー要素にフォーカスを戻す。
+- [ ] フォームはテキストベースのエラー提案を提供する。
+- [ ] アイコンのみのボタンには説明的なテキストラベルがある。
+- [ ] テキストが拡大縮小されるとコンテンツが適切にリフローする。
 
----
+## 参考資料
 
-## Common issues by impact
+- [WCAG 2.2 ガイドライン](https://www.w3.org/TR/WCAG22/)
+- [WAI-ARIA オーサリング実践](https://www.w3.org/TR/wai-aria-practices/)
+- [iOS アクセシビリティプログラミングガイド](https://developer.apple.com/documentation/accessibility)
+- [iOS ヒューマンインターフェースガイドライン - アクセシビリティ](https://developer.apple.com/design/human-interface-guidelines/accessibility)
+- [Android アクセシビリティ開発者ガイド](https://developer.android.com/guide/topics/ui/accessibility)
 
-### Critical (fix immediately)
-1. Missing form labels
-2. Missing image alt text
-3. Insufficient color contrast
-4. Keyboard traps
-5. No focus indicators
+## 関連スキル
 
-### Serious (fix before launch)
-1. Missing page language
-2. Missing heading structure
-3. Non-descriptive link text
-4. Auto-playing media
-5. Missing skip links
-
-### Moderate (fix soon)
-1. Missing ARIA labels on icons
-2. Inconsistent navigation
-3. Missing error identification
-4. Timing without controls
-5. Missing landmark regions
-
-## References
-
-- [WCAG 2.1 Quick Reference](https://www.w3.org/WAI/WCAG21/quickref/)
-- [WAI-ARIA Authoring Practices](https://www.w3.org/WAI/ARIA/apg/)
-- [Deque axe Rules](https://dequeuniversity.com/rules/axe/)
-- [Web Quality Audit](../web-quality-audit/SKILL.md)
+- `frontend-patterns`
+- `design-system`
+- `liquid-glass-design`
+- `swiftui-patterns`

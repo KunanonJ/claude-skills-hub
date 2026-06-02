@@ -1,0 +1,69 @@
+{
+  "scenario_id": "xl-composite-manual-review",
+  "task_class": "xl_composite_specialist_delivery",
+  "runtime": {
+    "status": "completed",
+    "readiness_state": "ready"
+  },
+  "truths": {
+    "governance_truth": {
+      "state": "passing",
+      "evidence": [
+        "root-owned requirement and plan remain canonical"
+      ]
+    },
+    "engineering_verification_truth": {
+      "state": "passing",
+      "evidence": [
+        "automation suite passes",
+        "specialist outputs are structurally valid"
+      ]
+    },
+    "specialist_disclosure_truth": {
+      "state": "passing",
+      "evidence": [
+        "approved specialist units were disclosed before execution"
+      ]
+    },
+    "specialist_decision_truth": {
+      "state": "passing",
+      "evidence": [
+        "root-owned specialist decision evidence was retained"
+      ]
+    },
+    "workflow_completion_truth": {
+      "state": "passing",
+      "evidence": [
+        "all planned waves completed",
+        "approved specialist units executed"
+      ]
+    },
+    "code_task_tdd_evidence_truth": {
+      "state": "passing",
+      "evidence": [
+        "implementation lane captured failing-first and green verification evidence before handoff"
+      ]
+    },
+    "artifact_review_truth": {
+      "state": "manual_review_required",
+      "evidence": [
+        "final scientific artifact still requires direct expert review"
+      ],
+      "notes": "Artifact exists, but the required domain review has not been closed."
+    },
+    "product_acceptance_truth": {
+      "state": "manual_review_required",
+      "evidence": [
+        "automated checks pass but final downstream judgment still needs a domain expert"
+      ],
+      "notes": "Scientific output quality still requires bounded manual review."
+    }
+  },
+  "manual_spot_checks": [
+    "Review the scientific writing section for methodological honesty.",
+    "Review the domain-specific analysis output for plausibility."
+  ],
+  "residual_risks": [
+    "Automated acceptance does not fully establish domain correctness."
+  ]
+}

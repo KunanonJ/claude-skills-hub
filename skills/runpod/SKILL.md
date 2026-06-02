@@ -81,6 +81,104 @@ Each tool stores its endpoint ID in `.env`:
 
 To free worker slots without deleting the endpoint, set `workersMax=0` via the RunPod dashboard or GraphQL API.
 
+## RunPod API Reference
+
+Use these to query and manage endpoints programmatically. RunPod disables GraphQL introspection, so these field names are verified and must be exact.
+
+### Authentication
+
+All API calls require `Authorization: Bearer $RUNPOD_API_KEY`.
+
+- **GraphQL:** `POST https://api.runpod.io/graphql`
+- **REST (Serverless):** `https://api.runpod.ai/v2/{endpoint_id}/...`
+
+### GraphQL Queries
+
+**List all endpoints:**
+```graphql
+query { myself { endpoints { id name gpuIds templateId workersMax workersMin } } }
+```
+
+**Current spend rate:**
+```graphql
+query { myself { currentSpendPerHr spendDetails { localStoragePerHour networkStoragePerHour gpuComputePerHour } } }
+```
+
+**List pods:**
+```graphql
+query { myself { pods { id name runtime { uptimeInSeconds } machine { gpuDisplayName } desiredStatus } } }
+```
+
+> **Common mistakes:** Field names are camelCase with full words — `localStoragePerHour` not `localStoragePerHr`. Endpoints are `endpoints` not `serverlessWorkers`. `spending` is not a field — use `currentSpendPerHr` and `spendDetails`.
+
+### GraphQL Mutations
+
+**Update endpoint GPU or config:**
+```graphql
+mutation { saveEndpoint(input: {
+  id: "endpoint_id",
+  name: "endpoint-name",
+  templateId: "template_id",
+  gpuIds: "AMPERE_24",
+  workersMin: 0,
+  workersMax: 1
+}) { id gpuIds } }
+```
+
+`saveEndpoint` requires `name` and `templateId` even for updates — query first to get current values.
+
+### REST API (Serverless)
+
+| Action | Method | URL |
+|--------|--------|-----|
+| Submit job | POST | `/v2/{id}/run` |
+| Check status | GET | `/v2/{id}/status/{job_id}` |
+| Cancel job | POST | `/v2/{id}/cancel/{job_id}` |
+| List pending | GET | `/v2/{id}/requests` |
+| Health/stats | GET | `/v2/{id}/health` |
+
+**Health response** includes job counts and worker state:
+```json
+{
+  "jobs": { "completed": 16, "failed": 1, "inProgress": 0, "inQueue": 2, "retried": 0 },
+  "workers": { "idle": 0, "initializing": 1, "ready": 0, "running": 0, "throttled": 0 }
+}
+```
+
+> **Note:** `/requests` only returns pending/queued jobs. Completed job history is not available via the API — check the RunPod web console for logs.
+
+### GPU Type IDs
+
+| ID | GPU | VRAM | Typical Cost |
+|----|-----|------|-------------|
+| `AMPERE_24` | RTX 3090 | 24GB | ~$0.34/hr |
+| `ADA_24` | RTX 4090 | 24GB | ~$0.69/hr |
+| `AMPERE_48` | A6000 | 48GB | ~$0.76/hr |
+| `AMPERE_80` | A100 | 80GB | ~$1.99/hr |
+
+**Availability note:** `ADA_24` (4090) is frequently throttled/unavailable on RunPod. Always configure endpoints with **multiple fallback GPU types** (comma-separated) to avoid jobs getting stuck in queue indefinitely:
+
+```graphql
+gpuIds: "AMPERE_24,ADA_24"   # Try 3090 first, fall back to 4090
+```
+
+All toolkit tools also enforce a 5-minute queue timeout — if no GPU is available within 300 seconds, the job is automatically cancelled to prevent runaway billing from failed initialization cycles.
+
+### Cloudflare R2 via AWS CLI
+
+R2 uses the S3-compatible API but requires `--region auto`:
+
+```bash
+AWS_ACCESS_KEY_ID="$R2_ACCESS_KEY_ID" \
+AWS_SECRET_ACCESS_KEY="$R2_SECRET_ACCESS_KEY" \
+aws s3api list-objects-v2 \
+  --bucket "$R2_BUCKET_NAME" \
+  --endpoint-url "https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com" \
+  --region auto
+```
+
+> **Common mistake:** Omitting `--region auto` causes `InvalidRegionName` error. R2 valid regions: `wnam`, `enam`, `weur`, `eeur`, `apac`, `oc`, `auto`.
+
 ## Troubleshooting
 
 ### Force Image Pull

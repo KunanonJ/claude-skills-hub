@@ -1,7 +1,28 @@
 ---
 name: numerical-integration
-description: Select and configure time integration methods for ODE/PDE simulations. Use when choosing explicit/implicit schemes, setting error tolerances, adapting time steps, diagnosing integration accuracy, planning IMEX splitting, or handling stiff/non-stiff coupled systems.
-allowed-tools: Read, Bash, Write, Grep, Glob
+description: >
+  Select and configure time integration methods for ODE and PDE simulations —
+  choose among explicit Runge-Kutta, BDF, Rosenbrock, and Adams families,
+  set relative and absolute error tolerances, implement adaptive step-size
+  control with I/PI/PID controllers, plan IMEX operator splitting for mixed
+  stiff and non-stiff terms, and estimate splitting errors. Use when picking
+  an integrator for a new simulation, diagnosing step rejections or tolerance
+  failures, setting up operator splitting for phase-field or reaction-diffusion
+  problems, or deciding between explicit and implicit time marching, even if
+  the user only says "my solver keeps rejecting steps" or "which ODE method
+  should I use."
+allowed-tools: Read, Write, Grep, Glob
+metadata:
+  author: HeshamFS
+  version: "1.1.0"
+  security_tier: medium
+  security_reviewed: true
+  tested_with:
+    - claude-code
+    - gemini-cli
+    - vs-code-copilot
+  eval_cases: 4
+  last_reviewed: "2026-03-26"
 ---
 
 # Numerical Integration
@@ -12,7 +33,7 @@ Provide a reliable workflow to select integrators, set tolerances, and manage ad
 
 ## Requirements
 
-- Python 3.8+
+- Python 3.10+
 - NumPy (for some scripts)
 - No heavy dependencies for core functionality
 
@@ -144,6 +165,32 @@ python3 scripts/splitting_error_estimator.py --dt 1e-4 --scheme strang --commuta
 | Weak | Simple operator splitting |
 | Moderate | Strang splitting |
 | Strong | Fully coupled IMEX-RK |
+
+## Security
+
+### Input Validation
+- All numeric inputs (`dt`, `rtol`, `atol`, `error_norm`, `stiffness_ratio`, `commutator_norm`, etc.) are validated as finite numbers at the function boundary
+- `imex_split_planner.py` validates term names against `[a-zA-Z_][a-zA-Z0-9_ -]*` with length and count limits, preventing injection payloads in user-supplied term lists
+- Comma-separated value lists are capped at 100,000 entries to prevent resource exhaustion
+- Numeric bounds enforced: `dimension` capped at 10 billion, `order` at 20, `stiffness_ratio` at 1e30
+- `--controller` is validated against a fixed allowlist (`i`, `pi`, `pid`)
+- `--scheme` is validated against known splitting schemes (`lie`, `strang`)
+
+### File Access
+- Scripts read no external files; all inputs are provided via CLI arguments
+- Scripts write only to stdout (JSON output); no files are created unless the agent explicitly uses the Write tool
+
+### Tool Restrictions
+- **Read**: Used to inspect script source, references, and user configuration files
+- **Write**: Used to save integrator recommendations or splitting plans; writes are scoped to the user's working directory
+- **Grep/Glob**: Used to locate relevant files and search references
+- The skill's `allowed-tools` excludes `Bash` to prevent the agent from executing arbitrary commands when processing user-provided inputs
+
+### Safety Measures
+- No `eval()`, `exec()`, or dynamic code generation
+- All subprocess calls use explicit argument lists (no `shell=True`)
+- Reduced tool surface (no Bash) limits the agent to read/write operations only
+- Term names are sanitized before use, preventing shell metacharacter injection
 
 ## Limitations
 

@@ -1,154 +1,154 @@
 ---
 name: social-graph-ranker
-description: Weighted social-graph ranking for warm intro discovery, bridge scoring, and network gap analysis across X and LinkedIn. Use when the user wants the reusable graph-ranking engine itself, not the broader outreach or network-maintenance workflow layered on top of it.
+description: XとLinkedInでのウォームイントロ発見、ブリッジスコアリング、ネットワークギャップ分析のための重み付きソーシャルグラフランキング。ユーザーがランキングエンジン自体を必要としている場合（より広いプロモーションやネットワーク維持ワークフローではなく）に使用する。
 origin: ECC
 ---
 
-# Social Graph Ranker
+# ソーシャルグラフランカー
 
-Canonical weighted graph-ranking layer for network-aware outreach.
+ネットワーク認識型アウトリーチのための正規化された重み付きグラフランキングレイヤー。
 
-Use this when the user needs to:
+以下の機能が必要な場合にこのツールを使用する：
 
-- rank existing mutuals or connections by intro value
-- map warm paths to a target list
-- measure bridge value across first- and second-order connections
-- decide which targets deserve warm intros versus direct cold outreach
-- understand the graph math independently from `lead-intelligence` or `connections-optimizer`
+* 内在的価値に基づいて既存の相互フォロワーまたはコネクションをランク付けする
+* ターゲットリストに対してウォームパスをマッピングする
+* 1度と2度のコネクション全体でブリッジ価値を測定する
+* ウォームな紹介とコールドアウトリーチのどちらが適切かを判断する
+* `lead-intelligence` や `connections-optimizer` とは独立してグラフの数学的原理を理解する
 
-## When To Use This Standalone
+## 単独での使用場面
 
-Choose this skill when the user primarily wants the ranking engine:
+ユーザーが主にランキングエンジンを必要としている場合にこのスキルを選択する：
 
-- "who in my network is best positioned to introduce me?"
-- "rank my mutuals by who can get me to these people"
-- "map my graph against this ICP"
-- "show me the bridge math"
+* 「私のネットワークで誰が最もよい紹介をしてくれるか？」
+* 「相互フォロワーをランク付けして、この人たちへの連絡を手伝ってもらえる人を見つける」
+* 「このICPに対して私のグラフをマッピングする」
+* 「ブリッジの数学的計算を見せる」
 
-Do not use this by itself when the user really wants:
+ユーザーが実際に以下を必要としている場合は、単独で使用しない：
 
-- full lead generation and outbound sequencing -> use `lead-intelligence`
-- pruning, rebalancing, and growing the network -> use `connections-optimizer`
+* 完全なリード生成とアウトリーチシーケンス -> `lead-intelligence` を使用
+* ネットワークのトリミング、再バランシング、拡張 -> `connections-optimizer` を使用
 
-## Inputs
+## 入力
 
-Collect or infer:
+以下を収集または推論する：
 
-- target people, companies, or ICP definition
-- the user's current graph on X, LinkedIn, or both
-- weighting priorities such as role, industry, geography, and responsiveness
-- traversal depth and decay tolerance
+* ターゲットとなる人物、企業、またはICP定義
+* XまたはLinkedIn、あるいは両方におけるユーザーの現在のグラフ
+* 役割、業界、地理、レスポンス性などの重み付け優先度
+* 探索の深さと減衰の許容度
 
-## Core Model
+## コアモデル
 
-Given:
+以下が与えられたとする：
 
-- `T` = weighted target set
-- `M` = your current mutuals / direct connections
-- `d(m, t)` = shortest hop distance from mutual `m` to target `t`
-- `w(t)` = target weight from signal scoring
+* `T` = 重み付きターゲットのセット
+* `M` = 現在の相互フォロワー/直接コネクション
+* `d(m, t)` = 相互フォロワー `m` からターゲット `t` への最短ホップ距離
+* `w(t)` = シグナルスコアリングからのターゲット重み
 
-Base bridge score:
+基本ブリッジスコア：
 
 ```text
 B(m) = Σ_{t ∈ T} w(t) · λ^(d(m,t) - 1)
 ```
 
-Where:
+ここで：
 
-- `λ` is the decay factor, usually `0.5`
-- a direct path contributes full value
-- each extra hop halves the contribution
+* `λ` は減衰因子、通常 `0.5`
+* 直接パスは全価値を提供
+* ホップが増えるごとに貢献が半分になる
 
-Second-order expansion:
+2度拡張：
 
 ```text
 B_ext(m) = B(m) + α · Σ_{m' ∈ N(m) \\ M} Σ_{t ∈ T} w(t) · λ^(d(m',t))
 ```
 
-Where:
+ここで：
 
-- `N(m) \\ M` is the set of people the mutual knows that you do not
-- `α` discounts second-order reach, usually `0.3`
+* `N(m) \\ M` は相互フォロワーが知っているがユーザーが知らない人のセット
+* `α` は2度の到達可能性に対する割引、通常 `0.3`
 
-Response-adjusted final ranking:
+レスポンス調整後の最終ランキング：
 
 ```text
 R(m) = B_ext(m) · (1 + β · engagement(m))
 ```
 
-Where:
+ここで：
 
-- `engagement(m)` is normalized responsiveness or relationship strength
-- `β` is the engagement bonus, usually `0.2`
+* `engagement(m)` は正規化されたレスポンス性または関係強度
+* `β` はエンゲージメントボーナス、通常 `0.2`
 
-Interpretation:
+解釈：
 
-- Tier 1: high `R(m)` and direct bridge paths -> warm intro asks
-- Tier 2: medium `R(m)` and one-hop bridge paths -> conditional intro asks
-- Tier 3: low `R(m)` or no viable bridge -> direct outreach or follow-gap fill
+* 第1層：高い `R(m)` と直接ブリッジパス -> ウォームな紹介リクエスト
+* 第2層：中程度の `R(m)` と1ホップのブリッジパス -> 条件付き紹介リクエスト
+* 第3層：低い `R(m)` またはブリッジなし -> 直接アウトリーチまたはギャップ補完に注力
 
-## Scoring Signals
+## スコアリングシグナル
 
-Weight targets before graph traversal with whatever matters for the current priority set:
+グラフ探索前に、現在の優先度セットに基づいてターゲットを重み付けする：
 
-- role or title alignment
-- company or industry fit
-- current activity and recency
-- geographic relevance
-- influence or reach
-- likelihood of response
+* 役職または職位の一致度
+* 企業または業界の適合性
+* 現在のアクティビティと時効性
+* 地理的な関連性
+* 影響力またはリーチ
+* レスポンスの可能性
 
-Weight mutuals after traversal with:
+探索後に相互フォロワーを重み付けする：
 
-- number of weighted paths into the target set
-- directness of those paths
-- responsiveness or prior interaction history
-- contextual fit for making the intro
+* ターゲットセットへの重み付きパスの数
+* それらのパスの直接性
+* レスポンス性または過去のインタラクション履歴
+* 紹介を行うためのコンテキスト適合性
 
-## Workflow
+## ワークフロー
 
-1. Build the weighted target set.
-2. Pull the user's graph from X, LinkedIn, or both.
-3. Compute direct bridge scores.
-4. Expand second-order candidates for the highest-value mutuals.
-5. Rank by `R(m)`.
-6. Return:
-   - best warm intro asks
-   - conditional bridge paths
-   - graph gaps where no warm path exists
+1. 重み付きターゲットセットを構築する。
+2. X、LinkedIn、または両方からユーザーのグラフを取得する。
+3. 直接ブリッジスコアを計算する。
+4. 最も価値の高い相互フォロワーの2度の候補を拡張する。
+5. `R(m)` でランク付けする。
+6. 以下を返す：
+   * 最良のウォームな紹介リクエスト
+   * 条件付きブリッジパス
+   * ウォームパスが存在しないグラフギャップ
 
-## Output Shape
+## 出力フォーマット
 
 ```text
-SOCIAL GRAPH RANKING
+ソーシャルグラフランキング
 ====================
 
-Priority Set:
-Platforms:
-Decay Model:
+優先度セット：
+プラットフォーム：
+減衰モデル：
 
-Top Bridges
-- mutual / connection
-  base_score:
-  extended_score:
-  best_targets:
-  path_summary:
-  recommended_action:
+トップブリッジ
+- 相互フォロワー / コネクション
+  基本スコア：
+  拡張スコア：
+  最良ターゲット：
+  パスサマリー：
+  推奨アクション：
 
-Conditional Paths
-- mutual / connection
-  reason:
-  extra hop cost:
+条件付きパス
+- 相互フォロワー / コネクション
+  理由：
+  追加ホップコスト：
 
-No Warm Path
-- target
-  recommendation: direct outreach / fill graph gap
+ウォームパスなし
+- ターゲット
+  推奨：直接連絡 / グラフギャップを補完
 ```
 
-## Related Skills
+## 関連スキル
 
-- `lead-intelligence` uses this ranking model inside the broader target-discovery and outreach pipeline
-- `connections-optimizer` uses the same bridge logic when deciding who to keep, prune, or add
-- `brand-voice` should run before drafting any intro request or direct outreach
-- `x-api` provides X graph access and optional execution paths
+* `lead-intelligence` はより広いターゲット発見とアウトリーチパイプラインでこのランキングモデルを使用する
+* `connections-optimizer` は誰を保持、トリミング、または追加するかを決定する際に同じブリッジロジックを使用する
+* `brand-voice` は紹介リクエストや直接アウトリーチを起草する前に実行する
+* `x-api` はXグラフへのアクセスとオプションの実行パスを提供する

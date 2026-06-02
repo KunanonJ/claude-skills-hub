@@ -1,6 +1,6 @@
 ---
 name: gateguard
-description: Fact-forcing gate that blocks Edit/Write/Bash (including MultiEdit) and demands concrete investigation (importers, data schemas, user instruction) before allowing the action. Measurably improves output quality by +2.25 points vs ungated agents.
+description: API、エージェント、およびLLMエンドポイントのアクセス制御と認可パターン。
 origin: community
 ---
 
@@ -84,7 +84,8 @@ Triggers on: `rm -rf`, `git reset --hard`, `git push --force`, `drop table`, etc
 ### Routine Bash Gate (once per session)
 
 ```
-Quote the user's current instruction verbatim.
+1. The current user request in one sentence
+2. What this specific command verifies or produces
 ```
 
 ## Quick Start
@@ -92,6 +93,10 @@ Quote the user's current instruction verbatim.
 ### Option A: Use the ECC hook (zero install)
 
 The hook at `scripts/hooks/gateguard-fact-force.js` is included in this plugin. Enable it via hooks.json.
+
+If GateGuard blocks setup or repair work, start the session with
+`ECC_GATEGUARD=off`. For hook-level control, keep using
+`ECC_DISABLED_HOOKS` with the GateGuard hook ID.
 
 ### Option B: Full package with config
 

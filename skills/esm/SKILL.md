@@ -1,9 +1,10 @@
 ---
 name: esm
-description: Comprehensive toolkit for protein language models including ESM3 (generative multimodal protein design across sequence, structure, and function) and ESM C (efficient protein embeddings and representations). Use this skill when working with protein sequences, structures, or function prediction; designing novel proteins; generating protein embeddings; performing inverse folding; or conducting protein engineering tasks. Supports both local model usage and cloud-based Forge API for scalable inference.
+description: Comprehensive toolkit for EvolutionaryScale protein language models including ESM3 (generative multimodal design across sequence, structure, and function) and ESM C (efficient embeddings). Use for protein sequence/structure/function tasks, inverse folding, embeddings, variant design, and ESMFold2 structure prediction via Biohub. Supports local open weights (Python 3.12, esm on PyPI) and cloud Forge/Biohub APIs with ESM_API_KEY authentication.
 license: MIT license
 metadata:
-    skill-author: K-Dense Inc.
+  version: "1.0"
+  skill-author: K-Dense Inc.
 ---
 
 # ESM: Evolutionary Scale Modeling
@@ -44,11 +45,12 @@ print(protein.sequence)
 **For remote/cloud usage via Forge API:**
 
 ```python
-from esm.sdk.forge import ESM3ForgeInferenceClient
+import os
+import esm
 from esm.sdk.api import ESMProtein, GenerationConfig
 
-# Connect to Forge
-model = ESM3ForgeInferenceClient(model="esm3-medium-2024-08", url="https://forge.evolutionaryscale.ai", token="<token>")
+# Same interface as local ESM3 — token from ESM_API_KEY (see Authentication)
+model = esm.sdk.client("esm3-medium-2024-08", token=os.environ["ESM_API_KEY"])
 
 # Generate
 protein = model.generate(protein, GenerationConfig(track="sequence", num_steps=8))
@@ -185,10 +187,11 @@ protein = model.generate(protein, config)
 Process multiple proteins efficiently using Forge's async executor.
 
 ```python
-from esm.sdk.forge import ESM3ForgeInferenceClient
+import os
 import asyncio
+import esm
 
-client = ESM3ForgeInferenceClient(model="esm3-medium-2024-08", token="<token>")
+client = esm.sdk.client("esm3-medium-2024-08", token=os.environ["ESM_API_KEY"])
 
 # Async batch processing
 async def batch_generate(proteins_list):
@@ -213,39 +216,53 @@ See `references/forge-api.md` for detailed Forge API documentation, authenticati
 - `esm3-large-2024-03` (98B) - Highest quality, slower (Forge only)
 
 **ESM C Models (Embeddings):**
-- `esmc-300m` (30 layers) - Lightweight, fast inference
-- `esmc-600m` (36 layers) - Balanced performance
-- `esmc-6b` (80 layers) - Maximum representation quality
+- `esmc-300m` (30 layers) - Lightweight, fast inference (open weights, local)
+- `esmc-600m` (36 layers) - Balanced performance (open weights, local)
+- `esmc-6b-2024-12` (80 layers) - Maximum quality (Forge API; local 6B weights require Forge or SageMaker)
 
 **Selection criteria:**
 - **Local development/testing:** Use `esm3-sm-open-v1` or `esmc-300m`
 - **Production quality:** Use `esm3-medium-2024-08` via Forge
-- **Maximum accuracy:** Use `esm3-large-2024-03` or `esmc-6b`
+- **Maximum accuracy:** Use `esm3-large-2024-03` or `esmc-6b-2024-12` via Forge
 - **High throughput:** Use Forge API with batch executor
 - **Cost optimization:** Use smaller models, implement caching strategies
 
 ## Installation
 
+Install from PyPI ([`esm` on PyPI](https://pypi.org/project/esm/) by EvolutionaryScale). Requires **Python 3.12** (`>=3.12,<3.13` for current releases).
+
 **Basic installation:**
 
 ```bash
-uv pip install esm
+uv pip install "esm==3.2.3"
 ```
 
-**With Flash Attention (recommended for faster inference):**
+**With Flash Attention (recommended for faster inference on NVIDIA GPUs):**
 
 ```bash
-uv pip install esm
+uv pip install "esm==3.2.3"
 uv pip install flash-attn --no-build-isolation
 ```
 
-**For Forge API access:**
+The Forge client ships with the `esm` package — no extra install for cloud inference.
 
-```bash
-uv pip install esm  # SDK includes Forge client
+## Authentication
+
+Forge API access requires an API key. Never hardcode tokens in scripts or commit them to version control.
+
+1. Check whether `ESM_API_KEY` is already set in the environment.
+2. If not, check a local `.env` for `ESM_API_KEY` only (do not load unrelated secrets).
+3. If still missing, create a key at [Forge](https://forge.evolutionaryscale.ai) (or [Biohub developer console](https://biohub.ai/developer-console/api-keys) for newer ESMFold2 endpoints).
+
+```python
+import os
+
+token = os.environ["ESM_API_KEY"]  # raises KeyError if unset
 ```
 
-No additional dependencies needed. Obtain Forge API token at https://forge.evolutionaryscale.ai
+`esm.sdk.client()` reads `ESM_API_KEY` automatically when `token` is omitted.
+
+**Biohub platform:** EvolutionaryScale is migrating some services (including ESMFold2 structure prediction) to [biohub.ai](https://biohub.ai). SDK class names may still reference "Forge". See `references/biohub-platform.md` for ESMFold2 and Biohub-specific setup.
 
 ## Common Workflows
 
@@ -263,6 +280,7 @@ This skill includes comprehensive reference documentation:
 - `references/esm3-api.md` - ESM3 model architecture, API reference, generation parameters, and multimodal prompting
 - `references/esm-c-api.md` - ESM C model details, embedding strategies, and performance optimization
 - `references/forge-api.md` - Forge platform documentation, authentication, batch processing, and deployment
+- `references/biohub-platform.md` - Biohub API migration, ESMFold2 structure prediction, and developer-console auth
 - `references/workflows.md` - Complete examples and common workflow patterns
 
 These references contain detailed API specifications, parameter descriptions, and advanced usage patterns. Load them as needed for specific tasks.
@@ -289,8 +307,9 @@ These references contain detailed API specifications, parameter descriptions, an
 
 ## Resources and Documentation
 
-- **GitHub Repository:** https://github.com/evolutionaryscale/esm
+- **GitHub Repository:** https://github.com/evolutionaryscale/esm (releases through v3.2.x; see also [Biohub/esm](https://github.com/Biohub/esm) for ESMFold2)
 - **Forge Platform:** https://forge.evolutionaryscale.ai
+- **Biohub Platform:** https://biohub.ai
 - **Scientific Paper:** Hayes et al., Science (2025) - https://www.science.org/doi/10.1126/science.ads0018
 - **Blog Posts:**
   - ESM3 Release: https://www.evolutionaryscale.ai/blog/esm3-release

@@ -76,8 +76,12 @@ This document lists all authoritative sources used to build this skill, organize
 ### COLM
 
 | Document | URL | Purpose |
-|----------|-----|---------|
+|----------|-----|--------|
 | Template | [GitHub](https://github.com/COLM-org/Template) | LaTeX templates |
+
+### Systems Conferences (OSDI, NSDI, ASPLOS, SOSP)
+
+Systems conference sources have moved to the [systems-paper-writing](../../systems-paper-writing/) skill. See [systems-conferences.md](../../systems-paper-writing/references/systems-conferences.md) for CFP links and templates.
 
 ---
 
@@ -150,7 +154,8 @@ This document lists all authoritative sources used to build this skill, organize
 → Start with: Zachary Lipton, Jacob Steinhardt
 
 ### For Conference-Specific Requirements
-→ Start with: Official venue guidelines (NeurIPS, ICML, ICLR, ACL)
+→ ML/AI: Start with official venue guidelines (NeurIPS, ICML, ICLR, ACL)
+→ Systems (OSDI, NSDI, ASPLOS, SOSP): See systems-paper-writing skill
 
 ### For Citation Management
 → Start with: Semantic Scholar API, CrossRef, citation-workflow.md

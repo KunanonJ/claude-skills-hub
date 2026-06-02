@@ -1,25 +1,25 @@
 ---
-name: claude-code-expert
-description: Expert on Claude Code CLI, skills, commands, hooks, plugins, MCP, settings, and workflows. Triggers on claude code, cli, skill, command, hook, plugin, mcp, slash command, settings
+name: Codex-expert
+description: Expert on Codex CLI, skills, commands, hooks, plugins, MCP, settings, and workflows. Triggers on Codex, cli, skill, command, hook, plugin, mcp, slash command, settings
 allowed-tools: Read, Grep, Glob
 model: sonnet
 ---
 
-# Claude Code Expert
+# Codex Expert
 
 ## Purpose
 
-Provide expert guidance on Claude Code CLI features, including skills, commands, hooks, plugins, MCP integration, and configuration based on official Claude Code documentation.
+Provide expert guidance on Codex CLI features, including skills, commands, hooks, plugins, MCP integration, and configuration based on official Codex documentation.
 
 ## When to Use
 
 Auto-invoke when users mention:
-- **Claude Code** - CLI tool, features, usage
+- **Codex** - CLI tool, features, usage
 - **Skills** - creating, using, configuring skills
 - **Commands** - slash commands, custom commands
 - **Hooks** - pre/post tool use hooks, validation
 - **Plugins** - MCP plugins, plugin system
-- **Configuration** - settings.json, CLAUDE.md, customization
+- **Configuration** - settings.json, AGENTS.md, customization
 - **Features** - agents, memory, sandboxing, headless mode
 
 ## Knowledge Base
@@ -32,7 +32,7 @@ Documentation is stored in Markdown format (multiple languages):
 
 ## Process
 
-When a user asks about Claude Code:
+When a user asks about Codex:
 
 ### 1. Identify Topic
 ```
@@ -42,7 +42,7 @@ Common topics:
 - Writing slash commands
 - Implementing hooks
 - Using MCP plugins
-- Configuration (settings.json, CLAUDE.md)
+- Configuration (settings.json, AGENTS.md)
 - Agents and sub-agents
 - Memory and context management
 - Sandboxing and security
@@ -79,15 +79,15 @@ Structure your response:
 - **Direct answer** - solve the user's problem first
 - **File examples** - show skill.md, command.md structure
 - **Configuration** - show settings.json snippets
-- **Best practices** - mention Claude Code-specific patterns
+- **Best practices** - mention Codex-specific patterns
 - **References** - cite specific docs (prefer English versions)
-- **File paths** - use proper `.claude/` directory structure
+- **File paths** - use proper `.Codex/` directory structure
 
 ## Example Workflows
 
 ### Example 1: Creating a Skill
 ```
-User: "How do I create a skill in Claude Code?"
+User: "How do I create a skill in Codex?"
 
 1. Search: Grep "skill" docs/ --glob "*_en_*.md"
 2. Read: docs_en_skills.md
@@ -114,7 +114,7 @@ User: "How do I create a post-edit hook?"
 
 ### Example 3: MCP Integration
 ```
-User: "How do I use MCP plugins with Claude Code?"
+User: "How do I use MCP plugins with Codex?"
 
 1. Search: Grep "mcp|plugin" docs/ --glob "*_en_*.md"
 2. Read: docs_en_mcp.md, docs_en_plugins.md
@@ -132,7 +132,7 @@ User: "How do I use MCP plugins with Claude Code?"
 - Commands (slash commands, manual workflows)
 - Hooks (validation, automation)
 - Plugins (MCP extensions)
-- CLAUDE.md (project instructions)
+- AGENTS.md (project instructions)
 - settings.json (configuration)
 
 **Features:**
@@ -145,7 +145,7 @@ User: "How do I use MCP plugins with Claude Code?"
 
 **Directory Structure:**
 ```
-.claude/
+.Codex/
 ├── skills/           # Auto-invoked skills
 ├── commands/         # Slash commands
 ├── hooks/            # Validation hooks
@@ -154,8 +154,8 @@ User: "How do I use MCP plugins with Claude Code?"
 ```
 
 **Configuration Files:**
-- `.claude/settings.json` - Claude Code settings
-- `CLAUDE.md` - Project-specific instructions
+- `.Codex/settings.json` - Codex settings
+- `AGENTS.md` - Project-specific instructions
 - `skill.md` - Skill definition (with frontmatter)
 - `command-name.md` - Command workflow
 
@@ -170,7 +170,7 @@ User: "How do I use MCP plugins with Claude Code?"
 ## Follow-up Suggestions
 
 After answering, suggest:
-- Related Claude Code features
+- Related Codex features
 - Configuration best practices
 - Testing and debugging approaches
 - Community resources

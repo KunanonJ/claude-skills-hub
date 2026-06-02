@@ -1,19 +1,19 @@
-<!-- PM-Skills | https://github.com/product-on-purpose/pm-skills | Apache 2.0 -->
 ---
 name: develop-design-rationale
 description: Documents the reasoning behind design decisions including alternatives considered, trade-offs evaluated, and principles applied. Use when making significant UX decisions, aligning with stakeholders on design direction, or preserving design context for future reference.
-phase: develop
-version: "2.0.0"
-updated: 2026-01-26
 license: Apache-2.0
 metadata:
+  phase: develop
+  version: "2.0.0"
+  updated: 2026-01-26
   category: specification
   frameworks: [triple-diamond, lean-startup, design-thinking]
   author: product-on-purpose
 ---
+<!-- PM-Skills | https://github.com/product-on-purpose/pm-skills | Apache 2.0 -->
 # Design Rationale
 
-A design rationale document captures the "why" behind design decisions—the context, constraints, alternatives considered, and reasoning that led to a particular solution. While designs themselves show what was built, rationale documents preserve institutional knowledge about why it was built that way.
+A design rationale document captures the "why" behind design decisions.the context, constraints, alternatives considered, and reasoning that led to a particular solution. While designs themselves show what was built, rationale documents preserve institutional knowledge about why it was built that way.
 
 ## When to Use
 
@@ -35,13 +35,13 @@ When asked to document design rationale, follow these steps:
    Explain the situation that prompted this decision. What problem were you solving? What constraints existed? What user needs informed the direction? Include relevant research findings.
 
 3. **List Options Considered**
-   Document at least 2-3 alternatives that were evaluated. For each option, describe what it would look like and its key characteristics. Be fair to all options—avoid strawmen.
+   Document at least 2-3 alternatives that were evaluated. For each option, describe what it would look like and its key characteristics. Be fair to all options.avoid strawmen.
 
 4. **Define Evaluation Criteria**
    Specify how options were assessed: usability heuristics, technical feasibility, brand alignment, user research findings, business requirements, or design principles.
 
 5. **Explain the Reasoning**
-   Walk through why the chosen option best meets the criteria. Be explicit about trade-offs—what you gained and what you sacrificed. Acknowledge where the decision is reversible vs. irreversible.
+   Walk through why the chosen option best meets the criteria. Be explicit about trade-offs.what you gained and what you sacrificed. Acknowledge where the decision is reversible vs. irreversible.
 
 6. **Document Trade-offs Accepted**
    Every design decision involves trade-offs. Name what you gave up and why it was acceptable. This honesty helps future teams understand constraints.

@@ -6,7 +6,7 @@ status: complete
 context: Sprint 14 retrospective after payment feature launch
 ---
 
-# Retrospective: Sprint 14 — Payment Feature Launch
+# Retrospective: Sprint 14 . Payment Feature Launch
 
 ## Overview
 
@@ -50,7 +50,7 @@ Sprint 14 included the launch of our new payment processing feature, which was a
 
 - Shipped payment feature on time despite mid-sprint requirements change
 - Zero critical bugs found in production after launch
-- Team rallied together during the P2 incident—great cross-functional response
+- Team rallied together during the P2 incident.great cross-functional response
 - New PR template caught several issues before merge
 
 ### Process Wins
@@ -62,7 +62,7 @@ Sprint 14 included the launch of our new payment processing feature, which was a
 ### Individual Shoutouts
 
 - Jordan: Stepped up to mentor Chris during onboarding while maintaining velocity
-- Sam: On-call response to P2 was exemplary—clear communication, fast resolution
+- Sam: On-call response to P2 was exemplary.clear communication, fast resolution
 - Taylor: Requirements change was communicated with context, not just "do this"
 
 ---
@@ -78,9 +78,9 @@ Sprint 14 included the launch of our new payment processing feature, which was a
 
 ### Process Pain Points
 
-- Requirements changes mid-sprint—how do we protect sprint scope better?
-- Flaky tests are getting worse—5 tests failed intermittently this sprint
-- On-call runbook is still incomplete—we were lucky Sam knew what to do
+- Requirements changes mid-sprint.how do we protect sprint scope better?
+- Flaky tests are getting worse.5 tests failed intermittently this sprint
+- On-call runbook is still incomplete.we were lucky Sam knew what to do
 - Onboarding documentation is outdated
 
 ### Themes Identified
@@ -113,7 +113,7 @@ Dedicate 1 story point per sprint to fixing flaky tests until backlog is clear. 
 ### Documentation Gaps
 
 **What was discussed:**
-Chris mentioned that onboarding was harder than it needed to be—docs pointed to systems that no longer exist or had wrong information. The P2 incident also showed that our runbooks are incomplete. If Sam hadn't been on call, resolution would have taken longer.
+Chris mentioned that onboarding was harder than it needed to be.docs pointed to systems that no longer exist or had wrong information. The P2 incident also showed that our runbooks are incomplete. If Sam hadn't been on call, resolution would have taken longer.
 
 **Root cause identified:**
 - No owner for documentation maintenance
@@ -155,12 +155,12 @@ Create a lightweight process: any mid-sprint addition requires (1) PM-Eng discus
 
 **Action 1: Fix race condition tests**
 - What: Fix the 3 tests identified as having race conditions (test_async_payment, test_webhook_handler, test_batch_process)
-- Why: Test reliability theme—reducing CI failures and investigation time
+- Why: Test reliability theme.reducing CI failures and investigation time
 - Success criteria: Tests pass 50 consecutive times in CI
 
 **Action 2: Complete on-call runbook**
 - What: Finish documenting P1/P2 response procedures, escalation paths, and common issues
-- Why: Documentation gaps theme—P2 incident showed risk
+- Why: Documentation gaps theme.P2 incident showed risk
 - Success criteria: Runbook reviewed by Alex and used in next on-call rotation
 
 **Action 3: Update onboarding documentation**
@@ -170,7 +170,7 @@ Create a lightweight process: any mid-sprint addition requires (1) PM-Eng discus
 
 **Action 4: Draft scope change process**
 - What: Create 1-page process for handling mid-sprint scope changes
-- Why: Scope protection theme—prevent future frustration from unplanned changes
+- Why: Scope protection theme.prevent future frustration from unplanned changes
 - Success criteria: Team agrees to trial process in Sprint 15
 
 ---
@@ -201,8 +201,8 @@ Create a lightweight process: any mid-sprint addition requires (1) PM-Eng discus
 
 ## Facilitator Notes
 
-- Start/Stop/Continue worked well for this team—consider alternating with 4Ls next time for variety
-- Should timebox discussion sections more strictly—we ran 5 min over
+- Start/Stop/Continue worked well for this team.consider alternating with 4Ls next time for variety
+- Should timebox discussion sections more strictly.we ran 5 min over
 - Anonymous input submission before meeting helped quieter team members contribute equally
 
 ---

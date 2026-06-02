@@ -1,0 +1,12 @@
+# OAuth tokens (contain refresh tokens)
+accounts/
+
+# OAuth client credentials
+references/credentials.json
+
+# Virtual environment
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc

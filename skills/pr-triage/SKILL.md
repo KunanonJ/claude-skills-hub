@@ -1,94 +1,91 @@
 ---
 name: pr-triage
-description: >
-  PR triage: audit open PRs, deep review selected ones, draft and post review comments.
-  Args: "all" to review all, PR numbers to focus (e.g. "42 57"), "en"/"fr" for language, no arg = audit only in French.
-allowed-tools:
-  - Bash
-  - Read
-  - Grep
-  - Glob
+description: "4-phase PR backlog management with audit, deep code review, validated comments, and optional worktree setup. Use when triaging pull requests, catching up on pending code reviews, or managing a backlog of open PRs. Args: 'all' to review all, PR numbers to focus (e.g. '42 57'), 'en'/'fr' for language, no arg = audit only."
+allowed-tools: Bash Read
 effort: medium
-tags: [triage, pr, github, review, code-review, rtk]
 ---
 
 # PR Triage
 
-## Quand utiliser
+4-phase workflow for maintainers: automated audit of all open PRs, opt-in deep review via parallel agents, validated comment posting, and optional worktree setup for local review.
+
+## When to Use This Skill
 
 | Skill | Usage | Output |
 |-------|-------|--------|
-| `/pr-triage` | Trier, reviewer, commenter les PRs | Tableau d'action + reviews + commentaires postés |
-| `/repo-recap` | Récap général pour partager avec l'équipe | Résumé Markdown (PRs + issues + releases) |
+| `/pr-triage` | Sort, review, and comment on a PR backlog | Triage table + reviews + posted comments |
+| `/review-pr` | Review a single PR in depth | Inline PR review |
 
-**Déclencheurs** :
-- Manuellement : `/pr-triage` ou `/pr-triage all` ou `/pr-triage 42 57`
-- Proactivement : quand >5 PRs ouvertes sans review, ou PR stale >14j détectée
-
----
-
-## Langue
-
-- Vérifier l'argument passé au skill
-- Si `en` ou `english` → tableaux et résumé en anglais
-- Si `fr`, `french`, ou pas d'argument → français (défaut)
-- Note : les commentaires GitHub (Phase 3) restent TOUJOURS en anglais (audience internationale)
+**Triggers**:
+- Manually: `/pr-triage` or `/pr-triage all` or `/pr-triage 42 57`
+- Proactively: when >5 PRs open without review, or stale PR >14 days detected
 
 ---
 
-Workflow en 3 phases : audit automatique → deep review opt-in → commentaires avec validation obligatoire.
+## Language
 
-## Préconditions
+- Check the argument passed to the skill
+- If `en` or `english` → tables and summary in English
+- If `fr`, `french`, or no argument → French (default)
+- Note: GitHub comments (Phase 3) are ALWAYS in English (international audience)
+
+---
+
+## Configuration
+
+Thresholds used throughout the workflow. Edit to match your project:
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `staleness_days` | 14 | Days without activity before flagging as stale |
+| `overlap_threshold` | 50% | Shared files % to flag as overlapping |
+| `cluster_min_prs` | 3 | Author PR count to trigger cluster suggestion |
+| `xl_cutoff_additions` | 1000 | Additions above which a PR is classified XL |
+| `xl_cutoff_files` | 10 | Changed files above which a PR is "too large" |
+
+---
+
+## Preconditions
 
 ```bash
 git rev-parse --is-inside-work-tree
 gh auth status
 ```
 
-Si l'un échoue, stop et expliquer ce qui manque.
+If either fails, stop and explain what is missing.
 
 ---
 
-## Phase 1 — Audit (toujours exécutée)
+## Phase 1 — Audit (always executed)
 
-### Data Gathering (commandes en parallèle)
+### Data Gathering (parallel commands)
 
 ```bash
-# Identité du repo
 gh repo view --json nameWithOwner -q .nameWithOwner
-
-# PRs ouvertes avec métadonnées complètes (ajouter body pour cross-référence issues)
 gh pr list --state open --limit 50 \
   --json number,title,author,createdAt,updatedAt,additions,deletions,changedFiles,isDraft,mergeable,reviewDecision,statusCheckRollup,body
-
-# Collaborateurs (pour distinguer "nos PRs" des externes)
 gh api "repos/{owner}/{repo}/collaborators" --jq '.[].login'
 ```
 
-**Fallback collaborateurs** : si `gh api .../collaborators` échoue (403/404) :
+**Collaborators fallback**: if `gh api .../collaborators` returns 403/404:
 ```bash
-# Extraire les auteurs des 10 derniers PRs mergés
 gh pr list --state merged --limit 10 --json author --jq '.[].author.login' | sort -u
 ```
-Si toujours ambigu, demander à l'utilisateur via `AskUserQuestion`.
+If still ambiguous, ask via `AskUserQuestion`.
 
-Pour chaque PR, récupérer reviews existantes ET fichiers modifiés :
+For each PR, fetch reviews and changed files:
 
 ```bash
 gh api "repos/{owner}/{repo}/pulls/{num}/reviews" \
   --jq '[.[] | .user.login + ":" + .state] | join(", ")'
-
-# Fichiers modifiés (nécessaire pour overlap detection)
 gh pr view {num} --json files --jq '[.files[].path] | join(",")'
 ```
 
-**Note rate-limiting** : la récupération des fichiers est N appels API (1 par PR). Pour repos avec 20+ PRs, prioriser les PRs candidates à l'overlap (même domaine fonctionnel, même auteur).
+**Notes**: Fetching files requires 1 API call per PR — for 20+ PRs, prioritize overlap candidates. The `author` field is an object; always extract `.author.login`.
 
-**Note** : `author` est un objet `{login: "..."}` — toujours extraire `.author.login`.
+### Analysis
 
-### Analyse
-
-**Classification taille** :
+**Size classification**:
 | Label | Additions |
 |-------|-----------|
 | XS | < 50 |
@@ -97,115 +94,135 @@ gh pr view {num} --json files --jq '[.files[].path] | join(",")'
 | L | 500–1000 |
 | XL | > 1000 |
 
-Format taille : `+{additions}/-{deletions}, {files} files ({label})`
+Size format: `+{additions}/-{deletions}, {files} files ({label})`
 
-**Détections** :
-- **Overlaps** : comparer les listes de fichiers entre PRs — si >50% de fichiers en commun → cross-reference
-- **Clusters** : auteur avec 3+ PRs ouvertes → suggérer ordre de review (plus petite en premier)
-- **Staleness** : aucune activité depuis >14j → flag "stale"
-- **CI status** : via `statusCheckRollup` → `clean` / `unstable` / `dirty`
-- **Reviews** : approved / changes_requested / aucune
+**Detections**:
+- **Overlaps**: compare file lists across PRs — if >50% files in common → cross-reference
+- **Clusters**: author with 3+ open PRs → suggest review order (smallest first)
+- **Staleness**: no activity for >14 days → flag "stale"
+- **CI status**: via `statusCheckRollup` → `clean` / `unstable` / `dirty`
+- **Reviews**: approved / changes_requested / none
 
-**Liens PR ↔ Issues** :
-- Scanner le `body` de chaque PR pour `fixes #N`, `closes #N`, `resolves #N` (case-insensitive)
-- Si trouvé, afficher dans le tableau : `Fixes #42` dans la colonne Action/Status
+**PR ↔ Issue linking**:
+- Scan each PR `body` for `fixes #N`, `closes #N`, `resolves #N` (case-insensitive)
+- If found, display in the table: `Fixes #42` in the Action/Status column
 
-**Catégorisation** :
+**Categorization**:
 
-_Nos PRs_ : auteur dans la liste des collaborateurs
+_Internal PRs_: author in collaborators list
 
-_Externes — Prêtes_ : additions ≤ 1000 ET files ≤ 10 ET `mergeable` ≠ `CONFLICTING` ET CI clean/unstable
+_External — Ready_: additions ≤ 1000 AND files ≤ 10 AND `mergeable` ≠ `CONFLICTING` AND CI clean/unstable
 
-_Externes — Problématiques_ : un des critères suivants :
-- additions > 1000 OU files > 10
-- OU `mergeable` == `CONFLICTING` (conflit de merge)
-- OU CI dirty (statusCheckRollup contient des échecs)
-- OU overlap avec une autre PR ouverte (>50% fichiers communs)
+_External — Problematic_: any of:
+- additions > 1000 OR files > 10
+- OR `mergeable` == `CONFLICTING` (merge conflict)
+- OR CI dirty (statusCheckRollup contains failures)
+- OR overlap with another open PR (>50% shared files)
 
-### Output — Tableau de triage
+### Output — Triage Table
 
 ```
-## PRs ouvertes ({count})
+## Open PRs ({count})
 
-### Nos PRs
-| PR | Titre | Taille | CI | Status |
-| -- | ----- | ------ | -- | ------ |
+### Internal PRs
+| PR | Title | Size | CI | Status |
+| -- | ----- | ---- | -- | ------ |
 
-### Externes — Prêtes pour review
-| PR | Auteur | Titre | Taille | CI | Reviews | Action |
-| -- | ------ | ----- | ------ | -- | ------- | ------ |
+### External — Ready for Review
+| PR | Author | Title | Size | CI | Reviews | Action |
+| -- | ------ | ----- | ---- | -- | ------- | ------ |
 
-### Externes — Problématiques
-| PR | Auteur | Titre | Taille | Problème | Action recommandée |
-| -- | ------ | ----- | ------ | -------- | ------------------ |
+### External — Problematic
+| PR | Author | Title | Size | Problem | Recommended Action |
+| -- | ------ | ----- | ---- | ------- | ------------------ |
 
-### Résumé
-- Quick wins : {PRs XS/S prêtes à merger}
-- Risques : {overlaps, tailles XL, CI dirty}
-- Clusters : {auteurs avec 3+ PRs}
-- Stale : {PRs sans activité >14j}
-- Overlaps : {PRs qui touchent les mêmes fichiers}
+### Summary
+- Quick wins: {XS/S PRs ready to merge}
+- Risks: {overlaps, XL sizes, CI dirty}
+- Clusters: {authors with 3+ PRs}
+- Stale: {PRs with no activity >14d}
+- Overlaps: {PRs touching the same files}
 ```
 
-0 PRs → afficher `Aucune PR ouverte.` et terminer.
+0 PRs → display `No open PRs.` and stop.
 
-### Copie automatique
+### Navigation Post-Phase 1
 
-Après affichage du tableau de triage, copier dans le presse-papier :
+After displaying the triage table, ask via `AskUserQuestion`:
+
+```
+question: "What would you like to do next?"
+header: "Next Step"
+options:
+  - label: "Phase 2 — Deep review"
+    description: "Analyze selected PRs with code-reviewer agents and generate comment drafts"
+  - label: "Phase 4 — Create worktrees"
+    description: "Set up local worktrees for hands-on review (skips comment generation)"
+  - label: "Done"
+    description: "End the workflow here"
+```
+
+Note: Phase 3 (posting comments) is NOT offered here — it requires the drafts generated in Phase 2. If the user picks "Phase 4", Phase 2 → Phase 3 remains accessible afterward.
+
+### Automatic Copy
+
+After displaying the triage table, copy to clipboard using platform-appropriate command:
+
 ```bash
-# Cross-platform clipboard
-clip() {
-  if command -v pbcopy &>/dev/null; then pbcopy
-  elif command -v xclip &>/dev/null; then xclip -selection clipboard
-  elif command -v wl-copy &>/dev/null; then wl-copy
-  else cat
-  fi
-}
-
-clip <<'EOF'
-{tableau de triage complet}
+UNAME=$(uname -s)
+if [ "$UNAME" = "Darwin" ]; then
+  pbcopy <<'EOF'
+{full triage table}
 EOF
+elif command -v xclip &>/dev/null; then
+  echo "{full triage table}" | xclip -selection clipboard
+elif command -v wl-copy &>/dev/null; then
+  echo "{full triage table}" | wl-copy
+elif command -v clip.exe &>/dev/null; then
+  echo "{full triage table}" | clip.exe
+fi
 ```
-Confirmer : `Tableau copié dans le presse-papier.` (FR) / `Triage table copied to clipboard.` (EN)
+
+Confirm: `Triage table copied to clipboard.` (EN) / `Tableau copié dans le presse-papier.` (FR)
 
 ---
 
 ## Phase 2 — Deep Review (opt-in)
 
-### Sélection des PRs
+### PR Selection
 
-**Si argument passé** :
-- `"all"` → toutes les PRs externes
-- Numéros (`"42 57"`) → uniquement ces PRs
-- Pas d'argument → proposer via `AskUserQuestion`
+**If argument passed**:
+- `"all"` → all external PRs
+- Numbers (`"42 57"`) → only those PRs
+- No argument → propose via `AskUserQuestion`
 
-**Si pas d'argument**, afficher :
+**If no argument**, display:
 
 ```
-question: "Quelles PRs voulez-vous reviewer en profondeur ?"
+question: "Which PRs do you want to review in depth?"
 header: "Deep Review"
 multiSelect: true
 options:
-  - label: "Toutes les externes"
-    description: "Review {N} PRs externes avec agents code-reviewer en parallèle"
-  - label: "Problématiques uniquement"
-    description: "Focus sur les {M} PRs à risque (CI dirty, trop large, overlaps)"
-  - label: "Prêtes uniquement"
-    description: "Review {K} PRs prêtes à merger"
-  - label: "Passer"
-    description: "Terminer ici — juste l'audit"
+  - label: "All external"
+    description: "Review {N} external PRs with parallel code-reviewer agents"
+  - label: "Problematic only"
+    description: "Focus on {M} risky PRs (CI dirty, too large, overlaps)"
+  - label: "Ready only"
+    description: "Review {K} PRs ready to merge"
+  - label: "Skip"
+    description: "Stop here — audit only"
 ```
 
-**Note sur les drafts** :
-- Les PRs en draft sont EXCLUES des options "Toutes les externes" et "Prêtes uniquement"
-- Les PRs en draft sont INCLUSES dans "Problématiques uniquement" (car elles nécessitent attention)
-- Pour reviewer un draft : taper son numéro explicitement (ex: `42`)
+**Draft PR behavior**:
+- Draft PRs are EXCLUDED from "All external" and "Ready only"
+- Draft PRs are INCLUDED in "Problematic only" (they need attention)
+- To review a draft: type its number explicitly (e.g. `42`)
 
-Si "Passer" → fin du workflow.
+If "Skip" → end workflow.
 
-### Exécution des Reviews
+### Executing Reviews
 
-Pour chaque PR sélectionnée, lancer un agent `code-reviewer` via **Task tool en parallèle** :
+For each selected PR, launch a `code-reviewer` agent via **Task tool in parallel**:
 
 ```
 subagent_type: code-reviewer
@@ -222,111 +239,387 @@ prompt: |
   **Diff**:
   {gh pr diff {num} output}
 
-  Apply your security-guardian and backend-architect skills for this review.
-  Additionally, apply the RTK-specific checklist:
-  - lazy_static! regex (no inline Regex::new())
-  - anyhow::Result + .context() (no unwrap())
-  - Fallback to raw command on filter failure
-  - Exit code propagation
-  - Token savings ≥60% in tests with real fixtures
-  - No async/tokio dependencies
+  Apply your security and architecture expertise. Use the project-specific checklist
+  from the SKILL.md Configuration section if available.
 
   Return structured review:
-  ### Critical Issues 🔴
-  ### Important Issues 🟡
-  ### Suggestions 🟢
-  ### What's Good ✅
+  ### Critical Issues
+  ### Important Issues
+  ### Suggestions
+  ### What's Good
 
-  Be specific: quote the file:line, explain why it's an issue, suggest the fix.
+  Be specific: quote file:line, explain the issue, suggest the fix.
 ```
 
-Récupérer le diff via :
+**Fallback if parallel agents unavailable**: run reviews sequentially, one PR at a time. Notify user: `Running sequential review (parallel agents not available).`
+
+Fetch diff via:
 ```bash
 gh pr diff {num}
 gh pr view {num} --json body,title,author -q '{body: .body, title: .title, author: .author.login}'
 ```
 
-Agréger tous les rapports. Afficher un résumé après toutes les reviews.
+Aggregate all reports. Display a summary after all reviews complete.
 
 ---
 
-## Phase 3 — Commentaires (validation obligatoire)
+## Phase 3 — Comments (mandatory validation)
 
-### Génération des drafts
+### Draft Generation
 
-Pour chaque PR reviewée, générer un commentaire GitHub en utilisant le template `templates/review-comment.md`.
+For each reviewed PR, generate a GitHub comment using the template `templates/review-comment.md`.
 
-**Règles** :
-- Langue : **anglais** (audience internationale)
-- Ton : professionnel, constructif, factuel
-- Toujours inclure au moins 1 point positif
-- Citer les lignes de code quand pertinent (format `file.rs:42`)
+**Rules**:
+- Language: **English** (international audience)
+- Tone: professional, constructive, factual
+- Always include at least 1 positive point
+- Quote code lines when relevant (format `file:42`)
 
-### Affichage et validation
+### Display and Validation
 
-**Afficher TOUS les commentaires draftés** au format :
+**Display ALL drafted comments** in format:
 
 ```
 ---
 ### Draft — PR #{num}: {title}
 
-{commentaire complet}
+{full comment}
 
 ---
 ```
 
-Puis demander validation via `AskUserQuestion` :
+Then request validation via `AskUserQuestion`:
 
 ```
-question: "Ces commentaires sont prêts. Lesquels voulez-vous poster ?"
-header: "Poster"
+question: "These comments are ready. Which ones do you want to post?"
+header: "Post Comments"
 multiSelect: true
 options:
-  - label: "Tous ({N} commentaires)"
-    description: "Poster sur toutes les PRs reviewées"
+  - label: "All ({N} comments)"
+    description: "Post on all reviewed PRs"
   - label: "PR #{x} — {title_truncated}"
-    description: "Poster uniquement sur cette PR"
-  - label: "Aucun"
-    description: "Annuler — ne rien poster"
+    description: "Post only on this PR"
+  - label: "None"
+    description: "Cancel — post nothing"
 ```
 
-(Générer une option par PR + "Tous" + "Aucun")
+(Generate one option per PR + "All" + "None")
 
 ### Posting
 
-Pour chaque commentaire validé :
+For each validated comment:
 
 ```bash
 gh pr comment {num} --body-file - <<'REVIEW_EOF'
-{commentaire}
+{comment}
 REVIEW_EOF
 ```
 
-Confirmer chaque post : `✅ Commentaire posté sur PR #{num}: {title}`
+Confirm each post: `Comment posted on PR #{num}: {title}`
 
-Si "Aucun" → `Aucun commentaire posté. Workflow terminé.`
+If "None" → `No comments posted. Workflow complete.`
 
 ---
 
-## Gestion des cas limites
+## Project-Specific Checklist
 
-| Situation | Comportement |
-|-----------|--------------|
-| 0 PRs ouvertes | `Aucune PR ouverte.` + terminer |
-| PR en draft | Indiquer dans tableau, skip pour review sauf si sélectionnée explicitement |
-| CI inconnu | Afficher `?` dans colonne CI |
-| Review agent timeout | Afficher erreur partielle, continuer avec les autres |
-| `gh pr diff` vide | Skip cette PR, notifier l'utilisateur |
-| PR très large (>5000 additions) | Avertir : "Review partielle, diff tronqué" |
-| Collaborateurs API 403/404 | Fallback sur auteurs des 10 derniers PRs mergés |
+Add your stack's checklist to the agent prompt in Phase 2. Examples by stack:
+
+**Node.js / TypeScript**:
+- No `any` type without explicit justification
+- `async/await` error handling (try/catch or `.catch()`)
+- No unhandled promise rejections
+- Input validation at API boundaries
+
+**Python**:
+- Type hints on all public functions
+- Exception specificity (no bare `except:`)
+- Resource cleanup (`with` statements, context managers)
+- No mutable default arguments
+
+**Rust**:
+- `Result<T, E>` with `.context()` for error chain (no `.unwrap()` in production code)
+- No `clone()` on hot paths without justification
+- `lazy_static!` or `once_cell` for static regex
+- Lifetime annotations where ownership is non-obvious
+
+**Go**:
+- Explicit error handling (no `_` discard without comment)
+- `defer` for resource cleanup
+- Context propagation in concurrent code
+- No goroutine leaks
+
+**Generic** (stack-agnostic):
+- No secrets or hardcoded credentials
+- New public functions have tests
+- Breaking changes documented in PR body
+- Dependencies added have clear justification
+
+---
+
+---
+
+## Phase 4 — Worktree Setup (opt-in)
+
+Creates local git worktrees for each selected PR so you can run, test, or review code without switching branches.
+
+**Never triggered automatically** — only via Phase 1 navigation or explicit user request.
+
+### Step 4.1 — Cache check + PR list
+
+**Cache check**: before using data from Phase 1, verify it is less than 30 minutes old:
+
+```bash
+CACHE_FILE="/tmp/pr-triage-prs.json"
+CACHE_AGE=$(( $(date +%s) - $(stat -f %m "$CACHE_FILE" 2>/dev/null || echo 0) ))
+if [ "$CACHE_AGE" -gt 1800 ]; then
+  echo "STALE_CACHE"
+fi
+```
+
+If `STALE_CACHE` → re-run the Phase 1 data gathering before continuing.
+
+**Filter**: exclude Draft PRs and bot PRs (Dependabot, renovate, etc.):
+
+```bash
+python3 -c "
+import json
+prs = json.load(open('/tmp/pr-triage-prs.json'))
+filtered = [
+  p for p in prs
+  if not p['isDraft']
+  and not any(bot in p['author']['login'].lower() for bot in ['dependabot', 'renovate', 'snyk'])
+]
+import sys; json.dump(filtered, sys.stdout, indent=2)
+" > /tmp/pr-triage-phase4.json
+```
+
+If 0 PRs after filtering → display `No reviewable PRs available for worktree (all are drafts or bots).` + end Phase 4.
+
+**Display grouped by author** (use display name if available, fallback to login):
+
+```
+## PRs available for worktree (non-draft)
+
+### Alice Martin (@alice)
+  [1] #123 — feat(auth): add OAuth2 support
+      Branch: feat/oauth2  |  Size: M  |  CI: clean
+
+### Bob Chen (@bob)
+  [2] #456 — fix(api): handle empty response
+      Branch: fix/empty-response  |  Size: S  |  CI: dirty ⚠️
+```
+
+### Step 4.2 — Selection
+
+Ask via `AskUserQuestion` (multiSelect):
+
+```
+question: "Which PRs do you want to create a worktree for?"
+header: "Worktree Setup"
+multiSelect: true
+options:
+  - label: "All"
+    description: "Create worktrees for all {N} listed PRs"
+  - label: "[1] #{num} — {title} ({author})"
+    description: "Branch: {branch} | Size: {size} | CI: {ci}"
+  - label: "None"
+    description: "Cancel — return to menu"
+```
+
+If "None" → end Phase 4.
+
+### Step 4.3 — Sequential creation
+
+**Execution model**: Claude runs **one bash command per PR**, reads its output, updates its internal state (created / existing / failed), then moves to the next. Never a bash loop wrapping all PRs.
+
+For each selected PR, Claude sets variables explicitly then runs:
+
+```bash
+PR_NUM="123"
+BRANCH_NAME="feat/oauth2"
+WORKTREE_NAME="${BRANCH_NAME//\//-}"
+REPO_ROOT="$(cd "$(git rev-parse --git-common-dir)/.." && pwd)"
+WORKTREE_DIR="$REPO_ROOT/.worktrees/$WORKTREE_NAME"
+
+# Already exists?
+if [ -d "$WORKTREE_DIR" ]; then
+  echo "STATUS:EXISTING:$PR_NUM:$WORKTREE_DIR"
+  exit 0
+fi
+
+# .gitignore check (fail-fast)
+if ! grep -qE "^\.worktrees/?$" "$REPO_ROOT/.gitignore" 2>/dev/null; then
+  echo "STATUS:GITIGNORE_MISSING:$PR_NUM"
+  exit 1
+fi
+
+# Fetch remote branch
+if ! git fetch origin "$BRANCH_NAME" 2>/tmp/wt-fetch-$PR_NUM.log; then
+  echo "STATUS:FETCH_FAILED:$PR_NUM"
+  exit 1
+fi
+
+mkdir -p "$REPO_ROOT/.worktrees"
+
+# Create worktree (branch local exists or not)
+if ! git branch --list "$BRANCH_NAME" | grep -q "$BRANCH_NAME"; then
+  git worktree add -b "$BRANCH_NAME" "$WORKTREE_DIR" "origin/$BRANCH_NAME" \
+    2>/tmp/wt-err-$PR_NUM.log
+else
+  git worktree add "$WORKTREE_DIR" "$BRANCH_NAME" \
+    2>/tmp/wt-err-$PR_NUM.log
+fi
+
+if [ $? -ne 0 ]; then
+  if grep -q "already checked out" /tmp/wt-err-$PR_NUM.log; then
+    echo "STATUS:ALREADY_CHECKED_OUT:$PR_NUM"
+  else
+    echo "STATUS:CREATE_FAILED:$PR_NUM"
+  fi
+  exit 1
+fi
+
+# Optional: symlink node_modules (Node.js projects — avoids reinstall)
+[ -d "$REPO_ROOT/node_modules" ] && ln -sf "$REPO_ROOT/node_modules" "$WORKTREE_DIR/node_modules"
+
+# Copy project-specific files listed in .worktreeinclude (if present)
+if [ -f "$REPO_ROOT/.worktreeinclude" ]; then
+  while IFS= read -r entry || [ -n "$entry" ]; do
+    [[ "$entry" =~ ^#.*$ || -z "$entry" ]] && continue
+    entry="$(echo "$entry" | xargs)"
+    [ -e "$REPO_ROOT/$entry" ] && {
+      mkdir -p "$(dirname "$WORKTREE_DIR/$entry")"
+      cp -R "$REPO_ROOT/$entry" "$WORKTREE_DIR/$entry"
+    }
+  done < "$REPO_ROOT/.worktreeinclude"
+fi
+
+echo "STATUS:CREATED:$PR_NUM:$WORKTREE_DIR"
+```
+
+**Status handling** (Claude maintains internal state between PRs):
+
+| Status | Claude action |
+|--------|--------------|
+| `STATUS:CREATED:NUM:PATH` | Add to "created" list |
+| `STATUS:EXISTING:NUM:PATH` | Add to "existing" list → offer pull in Step 4.4 |
+| `STATUS:FETCH_FAILED:NUM` | Warn + continue to next PR |
+| `STATUS:GITIGNORE_MISSING:NUM` | Fail-fast: show fix instructions + stop Phase 4 |
+| `STATUS:ALREADY_CHECKED_OUT:NUM` | Warn: "Branch already checked out in another worktree. Run `git worktree list` to locate it." |
+| `STATUS:CREATE_FAILED:NUM` | Warn + continue to next PR |
+
+**GITIGNORE_MISSING fix instructions**:
+```
+.worktrees/ is not in .gitignore. Add it to avoid accidentally committing worktree files:
+  echo ".worktrees/" >> .gitignore
+Then re-run Phase 4.
+```
+
+### Step 4.4 — Update existing worktrees
+
+If any `STATUS:EXISTING` collected, offer a single prompt:
+
+```
+Existing worktrees detected:
+  PR #123 — .worktrees/feat-oauth2
+  PR #789 — .worktrees/fix-session-leak
+
+- [Pull all] git pull --ff-only in all existing worktrees
+- [#123] Pull PR #123 only
+- [Skip] Leave as-is
+```
+
+For each selected pull, Claude runs (one command per worktree):
+
+```bash
+PR_NUM="123"
+BRANCH_NAME="feat/oauth2"
+WORKTREE_DIR="/abs/path/.worktrees/feat-oauth2"
+
+cd "$WORKTREE_DIR" && git pull origin "$BRANCH_NAME" --ff-only 2>/tmp/wt-pull-$PR_NUM.log
+echo "PULL_STATUS:$?:$PR_NUM"
+```
+
+If `PULL_STATUS` ≠ 0:
+```
+⚠️ PR #123 — --ff-only failed (branches have diverged)
+   Manual fix: cd .worktrees/feat-oauth2 && git pull --rebase
+```
+
+### Step 4.5 — Summary
+
+```
+## Worktrees ready
+
+| PR | Author | Branch | Path | Status |
+|----|--------|--------|------|--------|
+| #123 | Alice | feat/oauth2 | .worktrees/feat-oauth2 | Created |
+| #456 | Bob | fix/empty-response | .worktrees/fix-empty-response | Created |
+| #789 | Alice | fix/session-leak | .worktrees/fix-session-leak | Updated (pull) |
+| #321 | Carol | feat/chat | .worktrees/feat-chat | Fetch failed ⚠️ |
+
+Note: if a PR modifies package.json, install dependencies manually:
+  cd .worktrees/<branch-name> && npm install   # or pnpm/yarn/bun
+
+Next steps:
+  cd .worktrees/<branch-name>
+  claude
+```
+
+### `.worktreeinclude` convention
+
+Create a `.worktreeinclude` file at the repo root to list files Phase 4 copies into each new worktree. Useful for local config files not tracked in git:
+
+```
+# .worktreeinclude
+.env.local
+.env.test
+config/local.json
+```
+
+---
+
+## Edge Cases
+
+| Situation | Behavior |
+|-----------|----------|
+| 0 open PRs | Display `No open PRs.` + stop |
+| Draft PR | Show in table, skip for review unless explicitly selected |
+| Unknown CI | Display `?` in CI column |
+| Review agent timeout | Show partial error, continue with others |
+| `gh pr diff` empty | Skip this PR, notify user |
+| Very large PR (>5000 additions) | Warn: "Partial review, diff truncated" |
+| Collaborators API 403/404 | Fallback to last 10 merged PR authors |
+| Parallel agents unavailable | Run sequential reviews, notify user |
+| Phase 4: `.gitignore` missing `.worktrees/` | Fail-fast, show fix instructions, stop Phase 4 |
+| Phase 4: branch already checked out | Warn with `git worktree list` hint, skip this PR |
+| Phase 4: stale cache (>30min) | Re-fetch PR list before creating worktrees |
+| Phase 4: PR modifies `package.json` | Warn in summary to run install manually |
+| Phase 4: 0 non-draft PRs | Display message + end Phase 4 |
 
 ---
 
 ## Notes
 
-- Toujours dériver owner/repo via `gh repo view`, jamais hardcoder
-- Utiliser `gh` CLI (pas `curl` GitHub API) sauf pour la liste des collaborateurs
-- `statusCheckRollup` peut être null → traiter comme `?`
-- `mergeable` peut être `MERGEABLE`, `CONFLICTING`, ou `UNKNOWN` → traiter `UNKNOWN` comme `?`
-- Ne jamais poster sans validation explicite de l'utilisateur dans le chat
-- Les commentaires draftés doivent être visibles AVANT tout `gh pr comment`
+- Always derive owner/repo via `gh repo view`, never hardcode
+- Use `gh` CLI (not `curl` GitHub API) except for collaborators list
+- `statusCheckRollup` can be null → treat as `?`
+- `mergeable` can be `MERGEABLE`, `CONFLICTING`, or `UNKNOWN` → treat `UNKNOWN` as `?`
+- Never post without explicit user validation in chat
+- Drafted comments must be visible BEFORE any `gh pr comment`
+
+---
+
+## Related: /review-pr
+
+| | `/pr-triage` | `/review-pr` |
+|--|-------------|--------------|
+| **Scope** | Full PR backlog | Single PR |
+| **Use when** | Catching up after accumulation, periodic triage | Reviewing a specific incoming PR |
+| **Phases** | 4 (audit + deep review + comments + worktrees) | 1 (review only) |
+| **Agents** | Parallel sub-agents per PR | Single session |
+| **Output** | Triage table + review reports + GitHub comments + local worktrees | Inline review |
+| **Validation** | AskUserQuestion before posting | Manual decision |
+
+**Decision rule**: use `/pr-triage` for backlog triage (5+ PRs), `/review-pr` for focused review of a single PR. Use Phase 4 when you want to run the code locally rather than just reading the diff.

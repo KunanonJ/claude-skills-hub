@@ -1,217 +1,284 @@
 ---
 name: security-audit
-description: "Comprehensive security auditing workflow covering web application testing, API security, penetration testing, vulnerability scanning, and security hardening."
-category: workflow-bundle
-risk: safe
-source: personal
-date_added: "2026-02-27"
+description: Comprehensive security audit with scored posture assessment
+argument-hint: "[path] [--owasp] [--verbose]"
+effort: high
+disable-model-invocation: true
 ---
 
-# Security Auditing Workflow Bundle
+# Security Audit
 
-## Overview
+Comprehensive security audit of your project AND Claude Code configuration. Analyzes secrets exposure, injection surfaces, dependencies, hook security, and produces a scored security posture assessment.
 
-Comprehensive security auditing workflow for web applications, APIs, and infrastructure. This bundle orchestrates skills for penetration testing, vulnerability assessment, security scanning, and remediation.
+**Time**: 2-5 minutes | **Scope**: Full project + Claude Code config
 
-## When to Use This Workflow
+> For a quick config-only check, use `/security-check` instead.
 
-Use this workflow when:
-- Performing security audits on web applications
-- Testing API security
-- Conducting penetration tests
-- Scanning for vulnerabilities
-- Hardening application security
-- Compliance security assessments
+## Instructions
 
-## Workflow Phases
+You are a senior application security engineer. Perform a 6-phase security audit and produce a scored report with prioritized remediation plan.
 
-### Phase 1: Reconnaissance
+---
 
-#### Skills to Invoke
-- `scanning-tools` - Security scanning
-- `shodan-reconnaissance` - Shodan searches
-- `top-web-vulnerabilities` - OWASP Top 10
+### Pre-Step: Establish Audit Context
 
-#### Actions
-1. Identify target scope
-2. Gather intelligence
-3. Map attack surface
-4. Identify technologies
-5. Document findings
+**Before running any checks**, use `AskUserQuestion` to ask:
 
-#### Copy-Paste Prompts
-```
-Use @scanning-tools to perform initial reconnaissance
-```
+1. **Environment**: Is this code running in production, staging, or local development?
+2. **Scope**: Full audit or specific areas to prioritize?
 
-```
-Use @shodan-reconnaissance to find exposed services
-```
+This is critical for accurate findings:
+- **Local dev**: `DEBUG=True`, CORS `*`, HTTP without TLS, `.env` files — all normal. Do NOT flag as vulnerabilities. Mention in an "Before going to production" informational section instead.
+- **Staging**: Configs should mirror production. Flag deviations as MEDIUM.
+- **Production**: Any misconfiguration is a real finding with full severity.
 
-### Phase 2: Vulnerability Scanning
+If the user doesn't answer or is unsure, default to **production** (conservative).
 
-#### Skills to Invoke
-- `vulnerability-scanner` - Vulnerability analysis
-- `security-scanning-security-sast` - Static analysis
-- `security-scanning-security-dependencies` - Dependency scanning
+---
 
-#### Actions
-1. Run automated scanners
-2. Perform static analysis
-3. Scan dependencies
-4. Identify misconfigurations
-5. Document vulnerabilities
+### Phase 1: Configuration Security (via /security-check)
 
-#### Copy-Paste Prompts
-```
-Use @vulnerability-scanner to scan for OWASP Top 10 vulnerabilities
-```
+Execute all checks from `/security-check` (the `examples/skills/security-check/SKILL.md` command). This covers:
+- MCP server audit against CVE database
+- Skills & agents against known malicious entries
+- Hook exfiltration patterns
+- Memory poisoning detection
+- Permissions & settings review
+- Exposed secrets in Claude Code config
 
-```
-Use @security-scanning-security-dependencies to audit dependencies
-```
+Record findings — they contribute to the final score.
 
-### Phase 3: Web Application Testing
+---
 
-#### Skills to Invoke
-- `top-web-vulnerabilities` - OWASP vulnerabilities
-- `sql-injection-testing` - SQL injection
-- `xss-html-injection` - XSS testing
-- `broken-authentication` - Authentication testing
-- `idor-testing` - IDOR testing
-- `file-path-traversal` - Path traversal
-- `burp-suite-testing` - Burp Suite testing
+### Phase 2: Project Secrets Scan
 
-#### Actions
-1. Test for injection flaws
-2. Test authentication mechanisms
-3. Test session management
-4. Test access controls
-5. Test input validation
-6. Test security headers
+Scan the entire project for exposed secrets and credentials:
 
-#### Copy-Paste Prompts
-```
-Use @sql-injection-testing to test for SQL injection vulnerabilities
+```bash
+# API keys and tokens
+grep -rn --include="*.{js,ts,py,go,java,rb,php,yaml,yml,json,toml,env,cfg,ini,conf}" \
+  -E '(?i)(api[_-]?key|apikey|secret|password|passwd|token|bearer|auth)\s*[=:]\s*["'\''"][^"'\'']{8,}["'\''"]\s' \
+  --exclude-dir={node_modules,vendor,.git,dist,build,target,__pycache__,.venv} . 2>/dev/null | head -30
+
+# Known provider key patterns
+grep -rn -E 'sk-[a-zA-Z0-9]{20,}|sk-ant-[a-zA-Z0-9]{20,}|ghp_[a-zA-Z0-9]{36}|AKIA[A-Z0-9]{16}|xox[bps]-[a-zA-Z0-9\-]{20,}' \
+  --exclude-dir={node_modules,vendor,.git,dist,build,target} . 2>/dev/null | head -20
+
+# Private keys
+grep -rn 'BEGIN.*PRIVATE KEY' --exclude-dir={node_modules,vendor,.git} . 2>/dev/null
+
+# .env files that might be committed
+find . -name ".env*" -not -path "*/node_modules/*" -not -path "*/.git/*" -type f 2>/dev/null
+
+# Check .gitignore coverage
+[ -f ".gitignore" ] && {
+  grep -q "\.env" .gitignore && echo "✅ .env in .gitignore" || echo "⚠️ .env NOT in .gitignore"
+  grep -q "\.pem" .gitignore && echo "✅ .pem in .gitignore" || echo "⚠️ .pem NOT in .gitignore"
+  grep -q "\.key" .gitignore && echo "✅ .key in .gitignore" || echo "⚠️ .key NOT in .gitignore"
+}
 ```
 
-```
-Use @xss-html-injection to test for cross-site scripting
-```
+**Anti-false-positive rule — MANDATORY before reporting any secret finding:**
 
-```
-Use @broken-authentication to test authentication security
-```
+Before raising a secrets finding, run these verification commands:
 
-### Phase 4: API Security Testing
+```bash
+# 1. Verify .env is actually in .gitignore (if yes, local .env is NOT a finding)
+grep -n '\.env' .gitignore 2>/dev/null || echo ".env NOT in .gitignore"
 
-#### Skills to Invoke
-- `api-fuzzing-bug-bounty` - API fuzzing
-- `api-security-best-practices` - API security
+# 2. Verify secrets were actually committed (empty output = no finding)
+git log --all -p -- '*.env' '*.key' '*.pem' '*.secret' 2>/dev/null | grep -E '^\+.*(password|secret|api_key|token)' | head -20
 
-#### Actions
-1. Enumerate API endpoints
-2. Test authentication/authorization
-3. Test rate limiting
-4. Test input validation
-5. Test error handling
-6. Document API vulnerabilities
-
-#### Copy-Paste Prompts
-```
-Use @api-fuzzing-bug-bounty to fuzz API endpoints
+# 3. Check git history for provider-specific patterns
+git log --all -p 2>/dev/null | grep -E '^\+(sk-[a-zA-Z0-9]{20,}|AKIA[A-Z0-9]{16}|ghp_[a-zA-Z0-9]{36})' | head -10
 ```
 
-### Phase 5: Penetration Testing
+Only report a secret finding if you have **concrete proof from these commands**. A `.env` file present locally is not a finding if it's in `.gitignore`. Never report "secrets may be exposed" based on pattern matching alone.
 
-#### Skills to Invoke
-- `pentest-commands` - Penetration testing commands
-- `pentest-checklist` - Pentest planning
-- `ethical-hacking-methodology` - Ethical hacking
-- `metasploit-framework` - Metasploit
+**Scoring:**
+- 0 secrets found → +20 points
+- 1-3 secrets → +10 points
+- 4+ secrets → 0 points
+- Private key committed → -10 points
 
-#### Actions
-1. Plan penetration test
-2. Execute attack scenarios
-3. Exploit vulnerabilities
-4. Document proof of concept
-5. Assess impact
+---
 
-#### Copy-Paste Prompts
-```
-Use @pentest-checklist to plan penetration test
-```
+### Phase 3: Prompt Injection Surface
 
-```
-Use @pentest-commands to execute penetration testing
-```
+Analyze markdown and config files for injection vectors:
 
-### Phase 6: Security Hardening
+```bash
+# Zero-width characters (invisible instructions)
+grep -rPn '[\x{200B}-\x{200D}\x{FEFF}]' --include="*.md" --include="*.yaml" --include="*.json" . 2>/dev/null
 
-#### Skills to Invoke
-- `security-scanning-security-hardening` - Security hardening
-- `auth-implementation-patterns` - Authentication
-- `api-security-best-practices` - API security
+# Hidden HTML comments with instructions
+grep -rn '<!--' --include="*.md" . 2>/dev/null | grep -i 'ignore\|system\|admin\|instruction\|override\|forget'
 
-#### Actions
-1. Implement security controls
-2. Configure security headers
-3. Set up authentication
-4. Implement authorization
-5. Configure logging
-6. Apply patches
+# Base64 in comments (potential hidden payloads)
+grep -rn -E '[#;].*[A-Za-z0-9+/]{20,}={0,2}' --include="*.py" --include="*.js" --include="*.ts" --include="*.md" \
+  --exclude-dir={node_modules,vendor,.git} . 2>/dev/null | head -10
 
-#### Copy-Paste Prompts
-```
-Use @security-scanning-security-hardening to harden application security
+# ANSI escape sequences
+grep -rPn '\x1b\[|\x1b\]|\x1b\(' --exclude-dir={node_modules,vendor,.git} . 2>/dev/null | head -10
+
+# Null bytes
+grep -rPn '\x00' --exclude-dir={node_modules,vendor,.git,dist} . 2>/dev/null | head -5
+
+# Nested command execution in markdown/config
+grep -rn -E '\$\([^)]+\)|`[^`]+`' --include="*.md" --include="*.yaml" --include="*.json" \
+  --exclude-dir={node_modules,vendor,.git} . 2>/dev/null | head -10
 ```
 
-### Phase 7: Reporting
+**Scoring:**
+- 0 injection vectors → +15 points
+- 1-2 vectors (likely false positives) → +10 points
+- 3+ vectors → +5 points
+- Confirmed injection in CLAUDE.md → 0 points
 
-#### Skills to Invoke
-- `reporting-standards` - Security reporting
+---
 
-#### Actions
-1. Document findings
-2. Assess risk levels
-3. Provide remediation steps
-4. Create executive summary
-5. Generate technical report
+### Phase 4: Dependency Audit
 
-## Security Testing Checklist
+Run the appropriate package audit for the project:
 
-### OWASP Top 10
-- [ ] Injection (SQL, NoSQL, OS, LDAP)
-- [ ] Broken Authentication
-- [ ] Sensitive Data Exposure
-- [ ] XML External Entities (XXE)
-- [ ] Broken Access Control
-- [ ] Security Misconfiguration
-- [ ] Cross-Site Scripting (XSS)
-- [ ] Insecure Deserialization
-- [ ] Using Components with Known Vulnerabilities
-- [ ] Insufficient Logging & Monitoring
+```bash
+# Node.js
+[ -f "package-lock.json" ] && npm audit --json 2>/dev/null | jq '{total: .metadata.vulnerabilities.total, critical: .metadata.vulnerabilities.critical, high: .metadata.vulnerabilities.high}' 2>/dev/null
 
-### API Security
-- [ ] Authentication mechanisms
-- [ ] Authorization checks
-- [ ] Rate limiting
-- [ ] Input validation
-- [ ] Error handling
-- [ ] Security headers
+# Python
+[ -f "requirements.txt" ] && pip-audit -r requirements.txt 2>/dev/null || [ -f "pyproject.toml" ] && pip-audit 2>/dev/null
 
-## Quality Gates
+# Rust
+[ -f "Cargo.toml" ] && cargo audit 2>/dev/null
 
-- [ ] All planned tests executed
-- [ ] Vulnerabilities documented
-- [ ] Proof of concepts captured
-- [ ] Risk assessments completed
-- [ ] Remediation steps provided
-- [ ] Report generated
+# Go
+[ -f "go.mod" ] && govulncheck ./... 2>/dev/null
+```
 
-## Related Workflow Bundles
+If no package manager detected, note it and skip (no penalty).
 
-- `development` - Secure development practices
-- `wordpress` - WordPress security
-- `cloud-devops` - Cloud security
-- `testing-qa` - Security testing
+**Scoring:**
+- 0 vulnerabilities → +20 points
+- 0 critical + 0 high → +15 points
+- 1-3 high → +10 points
+- Any critical → +5 points
+- 10+ high or 3+ critical → 0 points
+
+---
+
+### Phase 5: Hook Security Assessment
+
+Verify security hooks from `guide/security-hardening.md` are properly installed:
+
+```bash
+# Check for recommended security hooks
+echo "=== Checking security hooks ==="
+
+# PreToolUse hooks (should block dangerous patterns)
+ls .claude/hooks/PreToolUse* 2>/dev/null || echo "⚠️ No PreToolUse hooks found"
+
+# PostToolUse hooks (should monitor output)
+ls .claude/hooks/PostToolUse* 2>/dev/null || echo "⚠️ No PostToolUse hooks found"
+
+# Check if prompt injection detector exists
+find . -path "*/hooks/*injection*" -o -path "*/hooks/*security*" -o -path "*/hooks/*scanner*" 2>/dev/null
+
+# Check settings for hook configuration
+grep -c "hooks" .claude/settings.json 2>/dev/null || echo "No hooks in settings.json"
+```
+
+**Scoring:**
+- PreToolUse security hooks installed → +10 points
+- PostToolUse output scanner installed → +5 points
+- Prompt injection detector hook → +5 points
+- No hooks at all → 0 points
+
+---
+
+### Phase 6: Posture Score & Report
+
+Calculate total score and generate report.
+
+**Scoring Breakdown:**
+
+| Category | Max Points | Source |
+|----------|-----------|--------|
+| Config Security (Phase 1) | 30 | /security-check results |
+| Secrets Scan (Phase 2) | 20 | Secrets found in project |
+| Injection Surface (Phase 3) | 15 | Injection vectors found |
+| Dependencies (Phase 4) | 20 | Vulnerability audit |
+| Hook Security (Phase 5) | 15 | Security hooks installed |
+| **Total** | **100** | |
+
+**Phase 1 scoring detail:**
+- 0 CRITICAL findings → +15 points
+- 0 HIGH findings → +10 points
+- 0 MEDIUM findings → +5 points
+- Any CRITICAL → 0 for that sub-score
+
+**Grade Scale:**
+
+| Score | Grade | Meaning |
+|-------|-------|---------|
+| 90-100 | A | Excellent — production-ready security posture |
+| 75-89 | B | Good — minor improvements recommended |
+| 60-74 | C | Acceptable — address HIGH issues before production |
+| 40-59 | D | Poor — significant security gaps |
+| 0-39 | F | Critical — do not deploy, address CRITICAL issues immediately |
+
+## Output Format
+
+```
+## 🛡️ Security Audit Report
+
+**Date**: [timestamp]
+**Project**: [directory name]
+**Scope**: Full project + Claude Code configuration
+
+### Security Posture Score: [XX]/100 (Grade [X])
+
+[1-sentence assessment]
+
+### Phase Results
+
+| Phase | Score | Max | Key Finding |
+|-------|-------|-----|-------------|
+| 1. Config Security | XX | 30 | [summary] |
+| 2. Secrets Scan | XX | 20 | [summary] |
+| 3. Injection Surface | XX | 15 | [summary] |
+| 4. Dependencies | XX | 20 | [summary] |
+| 5. Hook Security | XX | 15 | [summary] |
+| **Total** | **XX** | **100** | |
+
+### 🔴 Critical Findings
+[Each finding with location, description, and exact fix]
+
+### 🟠 High Findings
+[Each finding with location, description, and fix]
+
+### 🟡 Medium Findings
+[Each finding with location, description, and fix]
+
+### 🔧 Remediation Plan (Priority Order)
+
+| # | Action | Severity | Effort | Command/Steps |
+|---|--------|----------|--------|---------------|
+| 1 | [action] | CRITICAL | [time] | [how] |
+| 2 | [action] | HIGH | [time] | [how] |
+| ... | | | | |
+
+### 📊 Benchmark
+
+Your score vs security-hardening.md recommendations:
+- [X] items from the guide are implemented
+- [X] items are missing
+- Top 3 missing items to implement next: [...]
+
+### 📚 References
+- Security hardening guide: guide/security-hardening.md
+- Threat database: examples/skills/update-threat-db/threat-db.yaml
+- Quick check: `/security-check`
+- MCP scan tool: `npx mcp-scan` (Snyk)
+```
+
+$ARGUMENTS

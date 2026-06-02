@@ -4,11 +4,18 @@ description: Interactive visualization library. Use when you need hover info, zo
 license: MIT license
 metadata:
     skill-author: K-Dense Inc.
+risk: unknown
+source: community
 ---
 
 # Plotly
 
 Python graphing library for creating interactive, publication-quality visualizations with 40+ chart types.
+
+## When to Use
+- You need interactive charts with hover, zoom, pan, or web embedding.
+- You are building dashboards, exploratory analysis notebooks, or presentations that benefit from rich interaction.
+- You want to choose between Plotly Express and Graph Objects for the same visualization task.
 
 ## Quick Start
 
@@ -263,3 +270,7 @@ app.run_server(debug=True)
 - API reference: https://plotly.com/python-api-reference/
 - Community forum: https://community.plotly.com/
 
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

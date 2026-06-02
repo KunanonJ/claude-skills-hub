@@ -5,30 +5,28 @@
 ### Installation
 
 ```bash
-# Stable release
-pip install benchling-sdk
+# Stable release (recommended)
+uv pip install "benchling-sdk==1.25.0"
 
-# With Poetry
-poetry add benchling-sdk
-
-# Pre-release/preview versions (not recommended for production)
-pip install benchling-sdk --pre
-poetry add benchling-sdk --allow-prereleases
+# Preview builds — alpha functionality, not for production
+uv pip install "benchling-sdk" --prerelease allow
 ```
 
 ### Requirements
-- Python 3.7 or higher
+- Python 3.9+ (3.12 supported since SDK 1.11.0; repo recommends 3.11+)
 - API access enabled on your Benchling tenant
+- Developer Platform access from your tenant admin (for apps and events)
 
 ### Basic Initialization
 
 ```python
+import os
 from benchling_sdk.benchling import Benchling
 from benchling_sdk.auth.api_key_auth import ApiKeyAuth
 
 benchling = Benchling(
-    url="https://your-tenant.benchling.com",
-    auth_method=ApiKeyAuth("your_api_key")
+    url=os.environ["BENCHLING_TENANT_URL"],
+    auth_method=ApiKeyAuth(os.environ["BENCHLING_API_KEY"]),
 )
 ```
 
@@ -67,7 +65,7 @@ All resources follow a consistent CRUD pattern:
 resource.create(CreateModel(...))
 
 # Read (single)
-resource.get(id="resource_id")
+resource.get_by_id("resource_id")
 
 # Read (list)
 resource.list(optional_filters...)
@@ -106,7 +104,7 @@ sequence = benchling.dna_sequences.create(
 **Read:**
 ```python
 # Get by ID
-seq = benchling.dna_sequences.get(sequence_id="seq_abc123")
+seq = benchling.dna_sequences.get_by_id("seq_abc123")
 print(f"{seq.name}: {len(seq.bases)} bp")
 
 # List with filters
@@ -541,7 +539,7 @@ from benchling_sdk.errors import (
 )
 
 try:
-    sequence = benchling.dna_sequences.get(sequence_id="seq_invalid")
+    sequence = benchling.dna_sequences.get_by_id("seq_invalid")
 except NotFoundError:
     print("Sequence not found")
 except UnauthorizedError:
@@ -663,7 +661,7 @@ The SDK handles unknown API values gracefully:
 
 ```python
 # Unknown enum values are preserved
-entity = benchling.dna_sequences.get("seq_abc")
+entity = benchling.dna_sequences.get_by_id("seq_abc")
 # Even if API returns new enum value not in SDK, it's preserved
 
 # Unknown polymorphic types return UnknownType
@@ -733,13 +731,13 @@ for page in sequences:
 
 ### Common Issues
 
-**Import Errors:**
+**Import paths:**
 ```python
-# Wrong
-from benchling_sdk import Benchling  # ImportError
-
-# Correct
+# Preferred (documented in getting started guide)
 from benchling_sdk.benchling import Benchling
+
+# Also valid in benchling-sdk 1.25+
+from benchling_sdk import Benchling
 ```
 
 **Field Validation:**

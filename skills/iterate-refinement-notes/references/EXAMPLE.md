@@ -55,7 +55,7 @@ context: Weekly refinement session preparing for Sprint 15
 - Team agreed to use existing CSV library (PapaParse) for consistency
 
 **Scope Changes:**
-- Originally included Excel export—moved to separate story for future sprint
+- Originally included Excel export.moved to separate story for future sprint
 
 **Acceptance Criteria Confirmed:**
 - [x] Export button visible on reports dashboard
@@ -121,12 +121,12 @@ context: Weekly refinement session preparing for Sprint 15
 
 | Attribute | Value |
 |-----------|-------|
-| **Points** | — |
+| **Points** | . |
 | **Status** | Needs Work |
 | **Assignee** | TBD |
 
 **Discussion Notes:**
-- Story is too large—team estimated 13+ points
+- Story is too large.team estimated 13+ points
 - Decision: Split into 3 smaller stories
   - USER-348a: Settings navigation restructure (3 pts)
   - USER-348b: Notification preferences panel (5 pts)
@@ -145,7 +145,7 @@ context: Weekly refinement session preparing for Sprint 15
 
 | Attribute | Value |
 |-----------|-------|
-| **Points** | — |
+| **Points** | . |
 | **Status** | Blocked |
 | **Assignee** | TBD |
 
@@ -155,7 +155,7 @@ context: Weekly refinement session preparing for Sprint 15
 - Some components may need redesign (charts, badges with colored backgrounds)
 
 **Blocker:**
-- Missing design specs—blocked on design team
+- Missing design specs.blocked on design team
 
 ---
 
@@ -166,8 +166,8 @@ context: Weekly refinement session preparing for Sprint 15
 | USER-342 | CSV Export for Reports | 3 | Ready | Excel export moved to future |
 | USER-345 | Password Reset Rate Limiting | 5 | Ready | Security team approved |
 | USER-347 | Profile Page Performance | 5 | Ready | Added perf test criterion |
-| USER-348 | User Settings Redesign | — | Needs Work | Splitting into 3 stories |
-| USER-350 | Dark Mode Toggle | — | Blocked | Waiting on design specs |
+| USER-348 | User Settings Redesign | . | Needs Work | Splitting into 3 stories |
+| USER-350 | Dark Mode Toggle | . | Blocked | Waiting on design specs |
 
 ---
 
@@ -183,7 +183,7 @@ context: Weekly refinement session preparing for Sprint 15
 
 **Q: Should CSV export include hidden columns?**
 - Context: Users can hide columns in the report view. Should hidden columns appear in export?
-- Impact: Minor—doesn't block story, but affects implementation detail
+- Impact: Minor.doesn't block story, but affects implementation detail
 - Notes: Taylor leaning toward "export matches what you see" but will confirm with customers
 
 **Q: What's the plan for internationalization of exported dates?**

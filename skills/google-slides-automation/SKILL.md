@@ -1,10 +1,9 @@
 ---
 name: google-slides-automation
-description: |
-  Read and write Google Slides presentations - get text, find presentations, create presentations, add slides,
-  replace text, and manage slide content. Use when user asks to: read a presentation, create slides, find slides,
-  add a slide, replace text in a presentation, or...
---- Apache-2.0
+description: "Lightweight Google Slides integration with standalone OAuth authentication. No MCP server required. Full read/write access."
+license: Apache-2.0
+risk: critical
+source: community
 metadata:
   author: sanjay3290
   version: "1.0"
@@ -15,6 +14,11 @@ metadata:
 Lightweight Google Slides integration with standalone OAuth authentication. No MCP server required. Full read/write access.
 
 > **Requires Google Workspace account.** Personal Gmail accounts are not supported.
+
+## When to Use
+- You need to create, inspect, or modify Google Slides presentations from local automation.
+- The task involves reading slide text, adding/removing slides, or batch updating presentation content.
+- You want Slides automation for Workspace documents without using an MCP server.
 
 ## First-Time Setup
 
@@ -139,3 +143,8 @@ Tokens stored securely using the system keyring:
 Service name: `google-slides-skill-oauth`
 
 Automatically refreshes expired tokens using Google's cloud function.
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

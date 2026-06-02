@@ -1,6 +1,6 @@
 ---
 name: azure-monitor-opentelemetry-ts
-description: "Instrument applications with Azure Monitor and OpenTelemetry for JavaScript (@azure/monitor-opentelemetry). Use when adding distributed tracing, metrics, and logs to Node.js applications with Appli..."
+description: "Auto-instrument Node.js applications with distributed tracing, metrics, and logs."
 risk: unknown
 source: community
 date_added: "2026-02-27"
@@ -322,3 +322,8 @@ import {
 
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

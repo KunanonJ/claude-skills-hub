@@ -1,7 +1,7 @@
 ---
 name: agentfolio
 description: "Skill for discovering and researching autonomous AI agents, tools, and ecosystems using the AgentFolio directory."
-risk: unknown
+risk: safe
 source: agentfolio.io
 date_added: "2026-02-27"
 ---
@@ -88,10 +88,13 @@ Use these prompts when working with this skill in an AI coding agent:
 - “Before we build our own research assistant, use AgentFolio to map existing research / analysis agents and highlight gaps we could fill.”
 
 ## When to Use
-
 This skill is applicable when you need to **discover or compare autonomous AI agents** instead of building in a vacuum:
 
 - At the start of a new agent or workflow project.
 - When evaluating vendors or tools to integrate.
 - When you want inspiration or best practices from existing agent products.
 
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

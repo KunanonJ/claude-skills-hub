@@ -1,6 +1,6 @@
 ---
 name: wiki-onboarding
-description: "Generates two complementary onboarding guides \u2014 a Principal-Level architectural deep-dive and a Zero-to-Hero contributor walkthrough. Use when the user wants onboarding documentation fo..."
+description: "Generate two complementary onboarding documents that together give any engineer — from newcomer to principal — a complete understanding of a codebase. Use when user asks for onboarding docs or getting-started guides, user runs /deep-wiki, or user wants to help new team members understand a codebase."
 risk: unknown
 source: community
 date_added: "2026-02-27"
@@ -10,8 +10,7 @@ date_added: "2026-02-27"
 
 Generate two complementary onboarding documents that together give any engineer — from newcomer to principal — a complete understanding of a codebase.
 
-## When to Activate
-
+## When to Use
 - User asks for onboarding docs or getting-started guides
 - User runs `/deep-wiki:onboard` command
 - User wants to help new team members understand a codebase
@@ -79,5 +78,10 @@ Scan the repository for build files to determine the primary language for code e
 - Use Mermaid for workflow diagrams (dark-mode colors)
 - Ground all claims in actual code — cite `(file_path:line_number)`
 
-## When to Use
+### When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

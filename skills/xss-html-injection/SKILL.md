@@ -1,11 +1,13 @@
 ---
 name: xss-html-injection
-description: "This skill should be used when the user asks to \"test for XSS vulnerabilities\", \"perform cross-site scripting attacks\", \"identify HTML injection flaws\", \"exploit client-side injection..."
-risk: unknown
+description: "Execute comprehensive client-side injection vulnerability assessments on web applications to identify XSS and HTML injection flaws, demonstrate exploitation techniques for session hijacking and credential theft, and validate input sanitization and output encoding mechanisms."
+risk: offensive
 source: community
 author: zebbern
 date_added: "2026-02-27"
 ---
+
+> AUTHORIZED USE ONLY: Use this skill only for authorized security assessments, defensive validation, or controlled educational environments.
 
 # Cross-Site Scripting and HTML Injection Testing
 

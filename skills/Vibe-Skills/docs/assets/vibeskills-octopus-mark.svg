@@ -1,0 +1,50 @@
+<svg width="320" height="320" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGlow" x1="54" y1="38" x2="261" y2="274" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#D9F6F1"/>
+      <stop offset="1" stop-color="#F8F4EB"/>
+    </linearGradient>
+    <linearGradient id="bodyFill" x1="114" y1="74" x2="213" y2="219" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1E7B7A"/>
+      <stop offset="1" stop-color="#104B56"/>
+    </linearGradient>
+    <linearGradient id="tentacleFill" x1="95" y1="174" x2="225" y2="258" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2A8F8E"/>
+      <stop offset="1" stop-color="#16535C"/>
+    </linearGradient>
+    <filter id="shadow" x="54" y="44" width="212" height="224" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#0F4550" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+
+  <circle cx="160" cy="160" r="122" fill="url(#bgGlow)"/>
+  <circle cx="238" cy="82" r="17" fill="#F47D6B" fill-opacity="0.18"/>
+  <circle cx="82" cy="232" r="14" fill="#1E7B7A" fill-opacity="0.10"/>
+  <circle cx="160" cy="60" r="28" stroke="#1E7B7A" stroke-opacity="0.18" stroke-width="2"/>
+
+  <g filter="url(#shadow)">
+    <path d="M113 175C99 188 90 204 90 221C90 238 99 249 114 249C130 249 140 238 140 223V196H113V175Z" fill="url(#tentacleFill)"/>
+    <path d="M133 185C121 197 113 211 113 226C113 242 122 252 136 252C149 252 159 242 159 228V200H133V185Z" fill="url(#tentacleFill)"/>
+    <path d="M160 188C148 198 141 211 141 226C141 241 150 251 163 251C177 251 186 241 186 226V202H160V188Z" fill="url(#tentacleFill)"/>
+    <path d="M186 184C175 196 168 210 168 226C168 241 177 251 190 251C203 251 213 241 213 225V199H186V184Z" fill="url(#tentacleFill)"/>
+    <path d="M208 174C194 187 186 203 186 220C186 238 197 249 212 249C227 249 238 237 238 221C238 204 229 188 215 175L208 174Z" fill="url(#tentacleFill)"/>
+
+    <path d="M95 145C95 100 124 70 160 70C196 70 225 100 225 145C225 173 205 194 160 194C115 194 95 173 95 145Z" fill="url(#bodyFill)"/>
+    <path d="M120 111C129 95 143 85 160 85C177 85 191 95 200 111" stroke="#B7FFF3" stroke-opacity="0.34" stroke-width="6" stroke-linecap="round"/>
+
+    <ellipse cx="136" cy="141" rx="15" ry="17" fill="#F8F4EB"/>
+    <ellipse cx="184" cy="141" rx="15" ry="17" fill="#F8F4EB"/>
+    <circle cx="140" cy="144" r="6" fill="#0F4550"/>
+    <circle cx="180" cy="144" r="6" fill="#0F4550"/>
+    <circle cx="143" cy="141" r="2" fill="#F8F4EB"/>
+    <circle cx="183" cy="141" r="2" fill="#F8F4EB"/>
+
+    <circle cx="119" cy="157" r="7" fill="#F47D6B" fill-opacity="0.55"/>
+    <circle cx="201" cy="157" r="7" fill="#F47D6B" fill-opacity="0.55"/>
+    <path d="M147 165C151 170 156 172 160 172C164 172 169 170 173 165" stroke="#F8F4EB" stroke-width="4.5" stroke-linecap="round"/>
+  </g>
+
+  <circle cx="248" cy="124" r="5" fill="#1E7B7A"/>
+  <circle cx="260" cy="124" r="5" fill="#1E7B7A" fill-opacity="0.55"/>
+  <circle cx="272" cy="124" r="5" fill="#1E7B7A" fill-opacity="0.25"/>
+</svg>

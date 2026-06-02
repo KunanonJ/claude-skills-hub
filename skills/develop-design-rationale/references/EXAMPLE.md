@@ -52,7 +52,7 @@ Users need to quickly access core functionality without hunting through menus. R
 **Description:** Keep the hamburger menu but reorganize features into clear categories with icons. Add a "Favorites" section users can customize.
 
 **Pros:**
-- Minimal development effort—iterates on existing pattern
+- Minimal development effort.iterates on existing pattern
 - Preserves screen real estate for content
 - Familiar pattern for existing users
 - Scales to unlimited features
@@ -70,7 +70,7 @@ Users need to quickly access core functionality without hunting through menus. R
 **Description:** A prominent FAB in the bottom-right that expands to show 6 primary actions in a radial/fan pattern. Secondary features remain in a hamburger menu.
 
 **Pros:**
-- Highly discoverable—the FAB draws attention
+- Highly discoverable.the FAB draws attention
 - Quick access to primary actions (single tap to reveal)
 - Visually distinctive and modern
 - Works well for task-oriented apps
@@ -88,9 +88,9 @@ Users need to quickly access core functionality without hunting through menus. R
 **Description:** A persistent 5-item bottom tab bar showing the most-used features. The 5th tab is "More" which opens a organized list of all other features.
 
 **Pros:**
-- Most accessible pattern—large tap targets, always visible
+- Most accessible pattern.large tap targets, always visible
 - Industry standard across both iOS and Android
-- Highly discoverable—users instantly see what app does
+- Highly discoverable.users instantly see what app does
 - Research shows 5 items is optimal for quick scanning
 - "More" menu can be organized and searchable
 
@@ -139,7 +139,7 @@ Users need to quickly access core functionality without hunting through menus. R
 
 ### Why Option C?
 
-The bottom tab bar provides the best balance of discoverability, accessibility, and task efficiency—our three highest-weighted criteria. While it sacrifices some screen real estate and limits direct access to 4 features, user research strongly validates that our users primarily need quick access to a small set of features.
+The bottom tab bar provides the best balance of discoverability, accessibility, and task efficiency.our three highest-weighted criteria. While it sacrifices some screen real estate and limits direct access to 4 features, user research strongly validates that our users primarily need quick access to a small set of features.
 
 The hamburger menu (Option A) fails to solve our core problem: users still have to remember where features are. The FAB approach (Option B) has significant accessibility concerns and would require iOS users to learn an Android-centric pattern.
 
@@ -180,7 +180,7 @@ Chen (Engineering) initially preferred Option A due to lower implementation effo
 
 **Is this decision reversible?** Yes, with effort
 
-**Cost to reverse:** Significant—requires navigation rewrite and user re-education. Estimate 4-6 weeks engineering work plus user communication.
+**Cost to reverse:** Significant.requires navigation rewrite and user re-education. Estimate 4-6 weeks engineering work plus user communication.
 
 **Conditions that would warrant reverting:**
 - Task completion rates don't improve after 3 months

@@ -1,45 +1,42 @@
 ---
 name: nutrient-document-processing
-description: Process, convert, OCR, extract, redact, sign, and fill documents using the Nutrient DWS API. Works with PDFs, DOCX, XLSX, PPTX, HTML, and images.
-origin: ECC
+description: Nutrient DWS API を使用してドキュメントの処理、変換、OCR、抽出、編集、署名、フォーム入力を行います。PDF、DOCX、XLSX、PPTX、HTML、画像に対応しています。
 ---
 
 # Nutrient Document Processing
 
-> **Note:** This skill integrates with the Nutrient commercial API. Review their terms before use.
+[Nutrient DWS Processor API](https://www.nutrient.io/api/) でドキュメントを処理します。フォーマット変換、テキストとテーブルの抽出、スキャンされたドキュメントの OCR、PII の編集、ウォーターマークの追加、デジタル署名、PDF フォームの入力が可能です。
 
-Process documents with the [Nutrient DWS Processor API](https://www.nutrient.io/api/). Convert formats, extract text and tables, OCR scanned documents, redact PII, add watermarks, digitally sign, and fill PDF forms.
+## セットアップ
 
-## Setup
-
-Get a free API key at **[nutrient.io](https://dashboard.nutrient.io/sign_up/?product=processor)**
+**[nutrient.io](https://dashboard.nutrient.io/sign_up/?product=processor)** で無料の API キーを取得してください
 
 ```bash
 export NUTRIENT_API_KEY="pdf_live_..."
 ```
 
-All requests go to `https://api.nutrient.io/build` as multipart POST with an `instructions` JSON field.
+すべてのリクエストは `https://api.nutrient.io/build` に `instructions` JSON フィールドを含むマルチパート POST として送信されます。
 
-## Operations
+## 操作
 
-### Convert Documents
+### ドキュメントの変換
 
 ```bash
-# DOCX to PDF
+# DOCX から PDF へ
 curl -X POST https://api.nutrient.io/build \
   -H "Authorization: Bearer $NUTRIENT_API_KEY" \
   -F "document.docx=@document.docx" \
   -F 'instructions={"parts":[{"file":"document.docx"}]}' \
   -o output.pdf
 
-# PDF to DOCX
+# PDF から DOCX へ
 curl -X POST https://api.nutrient.io/build \
   -H "Authorization: Bearer $NUTRIENT_API_KEY" \
   -F "document.pdf=@document.pdf" \
   -F 'instructions={"parts":[{"file":"document.pdf"}],"output":{"type":"docx"}}' \
   -o output.docx
 
-# HTML to PDF
+# HTML から PDF へ
 curl -X POST https://api.nutrient.io/build \
   -H "Authorization: Bearer $NUTRIENT_API_KEY" \
   -F "index.html=@index.html" \
@@ -47,19 +44,19 @@ curl -X POST https://api.nutrient.io/build \
   -o output.pdf
 ```
 
-Supported inputs: PDF, DOCX, XLSX, PPTX, DOC, XLS, PPT, PPS, PPSX, ODT, RTF, HTML, JPG, PNG, TIFF, HEIC, GIF, WebP, SVG, TGA, EPS.
+サポートされている入力形式: PDF、DOCX、XLSX、PPTX、DOC、XLS、PPT、PPS、PPSX、ODT、RTF、HTML、JPG、PNG、TIFF、HEIC、GIF、WebP、SVG、TGA、EPS。
 
-### Extract Text and Data
+### テキストとデータの抽出
 
 ```bash
-# Extract plain text
+# プレーンテキストの抽出
 curl -X POST https://api.nutrient.io/build \
   -H "Authorization: Bearer $NUTRIENT_API_KEY" \
   -F "document.pdf=@document.pdf" \
   -F 'instructions={"parts":[{"file":"document.pdf"}],"output":{"type":"text"}}' \
   -o output.txt
 
-# Extract tables as Excel
+# テーブルを Excel として抽出
 curl -X POST https://api.nutrient.io/build \
   -H "Authorization: Bearer $NUTRIENT_API_KEY" \
   -F "document.pdf=@document.pdf" \
@@ -67,10 +64,10 @@ curl -X POST https://api.nutrient.io/build \
   -o tables.xlsx
 ```
 
-### OCR Scanned Documents
+### スキャンされたドキュメントの OCR
 
 ```bash
-# OCR to searchable PDF (supports 100+ languages)
+# 検索可能な PDF への OCR（100以上の言語をサポート）
 curl -X POST https://api.nutrient.io/build \
   -H "Authorization: Bearer $NUTRIENT_API_KEY" \
   -F "scanned.pdf=@scanned.pdf" \
@@ -78,19 +75,19 @@ curl -X POST https://api.nutrient.io/build \
   -o searchable.pdf
 ```
 
-Languages: Supports 100+ languages via ISO 639-2 codes (e.g., `eng`, `deu`, `fra`, `spa`, `jpn`, `kor`, `chi_sim`, `chi_tra`, `ara`, `hin`, `rus`). Full language names like `english` or `german` also work. See the [complete OCR language table](https://www.nutrient.io/guides/document-engine/ocr/language-support/) for all supported codes.
+言語: ISO 639-2 コード（例: `eng`、`deu`、`fra`、`spa`、`jpn`、`kor`、`chi_sim`、`chi_tra`、`ara`、`hin`、`rus`）を介して100以上の言語をサポートしています。`english` や `german` などの完全な言語名も機能します。サポートされているすべてのコードについては、[完全な OCR 言語表](https://www.nutrient.io/guides/document-engine/ocr/language-support/)を参照してください。
 
-### Redact Sensitive Information
+### 機密情報の編集
 
 ```bash
-# Pattern-based (SSN, email)
+# パターンベース（SSN、メール）
 curl -X POST https://api.nutrient.io/build \
   -H "Authorization: Bearer $NUTRIENT_API_KEY" \
   -F "document.pdf=@document.pdf" \
   -F 'instructions={"parts":[{"file":"document.pdf"}],"actions":[{"type":"redaction","strategy":"preset","strategyOptions":{"preset":"social-security-number"}},{"type":"redaction","strategy":"preset","strategyOptions":{"preset":"email-address"}}]}' \
   -o redacted.pdf
 
-# Regex-based
+# 正規表現ベース
 curl -X POST https://api.nutrient.io/build \
   -H "Authorization: Bearer $NUTRIENT_API_KEY" \
   -F "document.pdf=@document.pdf" \
@@ -98,9 +95,9 @@ curl -X POST https://api.nutrient.io/build \
   -o redacted.pdf
 ```
 
-Presets: `social-security-number`, `email-address`, `credit-card-number`, `international-phone-number`, `north-american-phone-number`, `date`, `time`, `url`, `ipv4`, `ipv6`, `mac-address`, `us-zip-code`, `vin`.
+プリセット: `social-security-number`、`email-address`、`credit-card-number`、`international-phone-number`、`north-american-phone-number`、`date`、`time`、`url`、`ipv4`、`ipv6`、`mac-address`、`us-zip-code`、`vin`。
 
-### Add Watermarks
+### ウォーターマークの追加
 
 ```bash
 curl -X POST https://api.nutrient.io/build \
@@ -110,10 +107,10 @@ curl -X POST https://api.nutrient.io/build \
   -o watermarked.pdf
 ```
 
-### Digital Signatures
+### デジタル署名
 
 ```bash
-# Self-signed CMS signature
+# 自己署名 CMS 署名
 curl -X POST https://api.nutrient.io/build \
   -H "Authorization: Bearer $NUTRIENT_API_KEY" \
   -F "document.pdf=@document.pdf" \
@@ -121,7 +118,7 @@ curl -X POST https://api.nutrient.io/build \
   -o signed.pdf
 ```
 
-### Fill PDF Forms
+### PDF フォームの入力
 
 ```bash
 curl -X POST https://api.nutrient.io/build \
@@ -131,9 +128,9 @@ curl -X POST https://api.nutrient.io/build \
   -o filled.pdf
 ```
 
-## MCP Server (Alternative)
+## MCP サーバー（代替）
 
-For native tool integration, use the MCP server instead of curl:
+ネイティブツール統合には、curl の代わりに MCP サーバーを使用します：
 
 ```json
 {
@@ -150,18 +147,18 @@ For native tool integration, use the MCP server instead of curl:
 }
 ```
 
-## When to Use
+## 使用タイミング
 
-- Converting documents between formats (PDF, DOCX, XLSX, PPTX, HTML, images)
-- Extracting text, tables, or key-value pairs from PDFs
-- OCR on scanned documents or images
-- Redacting PII before sharing documents
-- Adding watermarks to drafts or confidential documents
-- Digitally signing contracts or agreements
-- Filling PDF forms programmatically
+- フォーマット間でのドキュメント変換（PDF、DOCX、XLSX、PPTX、HTML、画像）
+- PDF からテキスト、テーブル、キー値ペアの抽出
+- スキャンされたドキュメントまたは画像の OCR
+- ドキュメントを共有する前の PII の編集
+- ドラフトまたは機密文書へのウォーターマークの追加
+- 契約または合意書へのデジタル署名
+- プログラムによる PDF フォームの入力
 
-## Links
+## リンク
 
 - [API Playground](https://dashboard.nutrient.io/processor-api/playground/)
-- [Full API Docs](https://www.nutrient.io/guides/dws-processor/)
-- [npm MCP Server](https://www.npmjs.com/package/@nutrient-sdk/dws-mcp-server)
+- [完全な API ドキュメント](https://www.nutrient.io/guides/dws-processor/)
+- [npm MCP サーバー](https://www.npmjs.com/package/@nutrient-sdk/dws-mcp-server)

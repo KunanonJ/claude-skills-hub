@@ -1,6 +1,6 @@
 ---
 name: sast-configuration
-description: "Configure Static Application Security Testing (SAST) tools for automated vulnerability detection in application code. Use when setting up security scanning, implementing DevSecOps practices, or aut..."
+description: "Static Application Security Testing (SAST) tool setup, configuration, and custom rule creation for comprehensive security scanning across multiple programming languages."
 risk: unknown
 source: community
 date_added: "2026-02-27"
@@ -213,3 +213,8 @@ semgrep --config p/pci-dss --json -o pci-scan-results.json
 4. Integrate into CI/CD pipeline
 5. Establish security gate policies
 6. Train development team on findings and remediation
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

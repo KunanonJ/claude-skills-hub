@@ -1,0 +1,83 @@
+<svg width="1600" height="620" viewBox="0 0 1600 620" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="heroBg" x1="38" y1="24" x2="1495" y2="620" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F7F3EA"/>
+      <stop offset="0.56" stop-color="#E8F4F0"/>
+      <stop offset="1" stop-color="#D7EBEA"/>
+    </linearGradient>
+    <linearGradient id="inkBar" x1="1061" y1="83" x2="1450" y2="458" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#14515B"/>
+      <stop offset="1" stop-color="#0A2F39"/>
+    </linearGradient>
+    <linearGradient id="panelFill" x1="102" y1="336" x2="645" y2="520" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF" stop-opacity="0.88"/>
+      <stop offset="1" stop-color="#F1F7F5" stop-opacity="0.96"/>
+    </linearGradient>
+    <filter id="softShadow" x="68" y="38" width="1464" height="558" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="18" stdDeviation="24" flood-color="#0A3942" flood-opacity="0.10"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#softShadow)">
+    <rect x="52" y="42" width="1496" height="536" rx="36" fill="url(#heroBg)"/>
+  </g>
+
+  <rect x="1007" y="78" width="443" height="462" rx="34" fill="url(#inkBar)"/>
+  <path d="M1410 78H1450V540H1326C1372 478 1400 400 1400 314C1400 225 1369 145 1410 78Z" fill="#0E3E47" fill-opacity="0.65"/>
+
+  <g opacity="0.42">
+    <path d="M140 124H882" stroke="#1E7B7A" stroke-opacity="0.18" stroke-width="2"/>
+    <path d="M140 186H882" stroke="#1E7B7A" stroke-opacity="0.12" stroke-width="2"/>
+    <path d="M140 248H882" stroke="#1E7B7A" stroke-opacity="0.12" stroke-width="2"/>
+    <path d="M140 310H882" stroke="#1E7B7A" stroke-opacity="0.12" stroke-width="2"/>
+    <path d="M170 100V520" stroke="#1E7B7A" stroke-opacity="0.10" stroke-width="2"/>
+    <path d="M332 100V520" stroke="#1E7B7A" stroke-opacity="0.08" stroke-width="2"/>
+    <path d="M494 100V520" stroke="#1E7B7A" stroke-opacity="0.08" stroke-width="2"/>
+    <path d="M656 100V520" stroke="#1E7B7A" stroke-opacity="0.08" stroke-width="2"/>
+    <path d="M818 100V520" stroke="#1E7B7A" stroke-opacity="0.08" stroke-width="2"/>
+  </g>
+
+  <circle cx="897" cy="121" r="32" fill="#F47D6B" fill-opacity="0.18"/>
+  <circle cx="970" cy="182" r="12" fill="#14515B" fill-opacity="0.10"/>
+  <circle cx="1237" cy="129" r="18" fill="#D9F6F1" fill-opacity="0.28"/>
+
+  <text x="132" y="132" fill="#14515B" font-size="22" font-family="Segoe UI, Inter, Noto Sans, sans-serif" letter-spacing="0.28em">AI AGENT SYSTEM / GOVERNED RUNTIME</text>
+  <text x="132" y="220" fill="#0F2F38" font-size="78" font-weight="700" font-family="Segoe UI, Inter, Noto Sans, sans-serif">VibeSkills</text>
+  <text x="132" y="282" fill="#0F2F38" font-size="28" font-family="Segoe UI, Inter, Noto Sans, sans-serif">Not another skills repository. A governed AI system where calling, verification, and traceability stay on the same surface.</text>
+  <text x="132" y="332" fill="#33545A" font-size="24" font-family="Segoe UI, Inter, Noto Sans, sans-serif">The octopus carries the identity layer. VCO carries the execution order.</text>
+
+  <rect x="132" y="376" width="238" height="118" rx="24" fill="url(#panelFill)" stroke="#14515B" stroke-opacity="0.10"/>
+  <rect x="388" y="376" width="238" height="118" rx="24" fill="url(#panelFill)" stroke="#14515B" stroke-opacity="0.10"/>
+  <rect x="644" y="376" width="238" height="118" rx="24" fill="url(#panelFill)" stroke="#14515B" stroke-opacity="0.10"/>
+
+  <text x="160" y="425" fill="#14515B" font-size="19" font-family="Segoe UI, Inter, Noto Sans, sans-serif">Bundled Skills</text>
+  <text x="160" y="470" fill="#0F2F38" font-size="46" font-weight="700" font-family="Segoe UI, Inter, Noto Sans, sans-serif">340</text>
+  <text x="160" y="500" fill="#47666B" font-size="17" font-family="Segoe UI, Inter, Noto Sans, sans-serif">Scale with operational shape</text>
+
+  <text x="416" y="425" fill="#14515B" font-size="19" font-family="Segoe UI, Inter, Noto Sans, sans-serif">Upstream Sources</text>
+  <text x="416" y="470" fill="#0F2F38" font-size="46" font-weight="700" font-family="Segoe UI, Inter, Noto Sans, sans-serif">19</text>
+  <text x="416" y="500" fill="#47666B" font-size="17" font-family="Segoe UI, Inter, Noto Sans, sans-serif">Integrated, not merely stacked</text>
+
+  <text x="672" y="425" fill="#14515B" font-size="19" font-family="Segoe UI, Inter, Noto Sans, sans-serif">Policies / Contracts</text>
+  <text x="672" y="470" fill="#0F2F38" font-size="46" font-weight="700" font-family="Segoe UI, Inter, Noto Sans, sans-serif">129</text>
+  <text x="672" y="500" fill="#47666B" font-size="17" font-family="Segoe UI, Inter, Noto Sans, sans-serif">Governance density is visible</text>
+
+  <path d="M1128 212C1128 156 1164 118 1210 118C1256 118 1292 156 1292 212C1292 248 1267 275 1210 275C1153 275 1128 248 1128 212Z" fill="#1F7D7C"/>
+  <path d="M1157 170C1168 149 1187 135 1210 135C1233 135 1252 149 1263 170" stroke="#B6FFF4" stroke-opacity="0.35" stroke-width="8" stroke-linecap="round"/>
+  <path d="M1115 276C1088 300 1071 331 1071 365C1071 399 1090 421 1120 421C1151 421 1171 401 1171 371V312H1128L1115 276Z" fill="#2A8F8E"/>
+  <path d="M1166 292C1143 313 1129 339 1129 367C1129 396 1148 416 1174 416C1200 416 1219 396 1219 368V318H1179L1166 292Z" fill="#2A8F8E"/>
+  <path d="M1219 293C1242 313 1256 339 1256 367C1256 396 1275 416 1301 416C1327 416 1346 396 1346 368C1346 340 1332 314 1309 293H1219Z" fill="#2A8F8E"/>
+  <path d="M1265 276C1292 300 1309 331 1309 365C1309 399 1328 421 1358 421C1389 421 1408 399 1408 365C1408 331 1391 300 1364 276H1265Z" fill="#2A8F8E"/>
+  <ellipse cx="1180" cy="210" rx="18" ry="21" fill="#F8F4EB"/>
+  <ellipse cx="1240" cy="210" rx="18" ry="21" fill="#F8F4EB"/>
+  <circle cx="1186" cy="214" r="7" fill="#0F4550"/>
+  <circle cx="1234" cy="214" r="7" fill="#0F4550"/>
+  <circle cx="1189" cy="210" r="2.5" fill="#F8F4EB"/>
+  <circle cx="1237" cy="210" r="2.5" fill="#F8F4EB"/>
+  <circle cx="1159" cy="232" r="8" fill="#F47D6B" fill-opacity="0.64"/>
+  <circle cx="1261" cy="232" r="8" fill="#F47D6B" fill-opacity="0.64"/>
+  <path d="M1194 246C1198 252 1204 255 1210 255C1216 255 1222 252 1226 246" stroke="#F8F4EB" stroke-width="5" stroke-linecap="round"/>
+
+  <rect x="1078" y="447" width="315" height="48" rx="24" fill="#F8F4EB" fill-opacity="0.12" stroke="#BDEDE6" stroke-opacity="0.26"/>
+  <text x="1112" y="478" fill="#F8F4EB" font-size="20" font-family="Segoe UI, Inter, Noto Sans, sans-serif">Cute identity × disciplined surface</text>
+</svg>

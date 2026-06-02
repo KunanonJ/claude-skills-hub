@@ -2,9 +2,16 @@
 name: mental-health-analyzer
 description: 分析心理健康数据、识别心理模式、评估心理健康状况、提供个性化心理健康建议。支持与睡眠、运动、营养等其他健康数据的关联分析。
 allowed-tools: Read, Grep, Glob, Write, Edit
+risk: unknown
+source: community
 ---
 
 # 心理健康分析技能
+
+## When to Use
+- 需要分析情绪、焦虑、抑郁评分、治疗进展或危机风险时使用。
+- 任务涉及心理健康趋势、情绪模式识别或与睡眠/运动/营养的关联分析。
+- 用户请求心理健康报告、风险预警或治疗进展追踪时使用。
 
 ## 核心功能
 
@@ -707,7 +714,7 @@ allowed-tools: Read, Grep, Glob, Write, Edit
 2. 冥想 - 有效率85% ✓
 3. 深呼吸 - 有效率75% ✓
 
-## 建议
+### 建议
 - 下午工作压力大时，可使用深呼吸或短暂散步
 - 保持规律运动，对情绪改善效果显著
 - 改善睡眠有助于减轻焦虑和疲劳
@@ -979,3 +986,8 @@ allowed-tools: Read, Grep, Glob, Write, Edit
 **技能版本**: v1.0.0
 **最后更新**: 2025-01-06
 **维护者**: WellAlly Tech
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

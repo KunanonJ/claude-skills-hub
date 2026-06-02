@@ -1,15 +1,15 @@
 ---
-name: claude-settings-expert
-description: Expert on Claude Code settings.json configuration, permissions, sandbox, environment variables, and settings hierarchy. Triggers when user mentions settings.json, permissions, allow rules, deny rules, sandbox, hooks configuration, or settings precedence.
+name: Codex-settings-expert
+description: Expert on Codex settings.json configuration, permissions, sandbox, environment variables, and settings hierarchy. Triggers when user mentions settings.json, permissions, allow rules, deny rules, sandbox, hooks configuration, or settings precedence.
 allowed-tools: Read, Write, Edit, Grep, Glob
 model: sonnet
 ---
 
-# Claude Code Settings Expert
+# Codex Settings Expert
 
 ## Purpose
 
-Provide expert guidance on configuring Claude Code through settings.json, including permissions, hooks, sandbox configuration, environment variables, and settings hierarchy. Auto-invokes when users need help with settings.
+Provide expert guidance on configuring Codex through settings.json, including permissions, hooks, sandbox configuration, environment variables, and settings hierarchy. Auto-invokes when users need help with settings.
 
 ## When to Use
 
@@ -23,54 +23,54 @@ Auto-invoke when users mention:
 
 ## Knowledge Base
 
-- Official docs: `.claude/skills/ai/claude-code/docs/code_claude_com/docs_en_settings.md`
+- Official docs: `.Codex/skills/ai/Codex/docs/code_claude_com/docs_en_settings.md`
 - IAM docs: Look for IAM/permissions documentation
-- Hooks docs: `.claude/skills/ai/claude-code/docs/code_claude_com/docs_en_hooks.md`
+- Hooks docs: `.Codex/skills/ai/Codex/docs/code_claude_com/docs_en_hooks.md`
 
 ## Settings File Locations
 
 ### Hierarchy (highest to lowest precedence)
 
 1. **Enterprise managed policies**
-   - macOS: `/Library/Application Support/ClaudeCode/managed-settings.json`
-   - Linux/WSL: `/etc/claude-code/managed-settings.json`
-   - Windows: `C:\ProgramData\ClaudeCode\managed-settings.json`
+   - macOS: `/Library/Application Support/Codex/managed-settings.json`
+   - Linux/WSL: `/etc/Codex/managed-settings.json`
+   - Windows: `C:\ProgramData\Codex\managed-settings.json`
    - Cannot be overridden by users
 
 2. **Command line arguments**
    - Temporary overrides for specific session
-   - Example: `claude --dangerously-skip-permissions`
+   - Example: `Codex --dangerously-skip-permissions`
 
 3. **Local project settings**
-   - `.claude/settings.local.json`
+   - `.Codex/settings.local.json`
    - Personal project settings (not committed)
    - Git-ignored automatically
 
 4. **Shared project settings**
-   - `.claude/settings.json`
+   - `.Codex/settings.json`
    - Team-shared settings in source control
    - Committed to repository
 
 5. **User settings**
-   - `~/.claude/settings.json`
+   - `~/.Codex/settings.json`
    - Personal global settings
    - Apply to all projects
 
 ### When to Use Each
 
-**User settings** (`~/.claude/settings.json`):
+**User settings** (`~/.Codex/settings.json`):
 - Personal preferences across all projects
 - Personal API keys
 - Personal slash commands
 - Personal output style
 
-**Project settings** (`.claude/settings.json`):
+**Project settings** (`.Codex/settings.json`):
 - Team permissions
 - Project-specific hooks
 - Required plugins/marketplaces
 - Team workflow configuration
 
-**Local project** (`.claude/settings.local.json`):
+**Local project** (`.Codex/settings.local.json`):
 - Personal project overrides
 - Experimental settings
 - Local-only preferences
@@ -101,9 +101,9 @@ Ask about scope:
 ```
 Where should this configuration apply?
 
-- **User-level** (`~/.claude/settings.json`) - All your projects
-- **Project-level** (`.claude/settings.json`) - This project, shared with team
-- **Local** (`.claude/settings.local.json`) - This project, just you
+- **User-level** (`~/.Codex/settings.json`) - All your projects
+- **Project-level** (`.Codex/settings.json`) - This project, shared with team
+- **Local** (`.Codex/settings.local.json`) - This project, just you
 ```
 
 ### 3. Build Configuration
@@ -233,7 +233,7 @@ Based on needs, construct the appropriate JSON:
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/format.sh",
+            "command": "$CLAUDE_PROJECT_DIR/.Codex/hooks/format.sh",
             "timeout": 30
           }
         ]
@@ -245,7 +245,7 @@ Based on needs, construct the appropriate JSON:
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/validate-bash.py"
+            "command": "$CLAUDE_PROJECT_DIR/.Codex/hooks/validate-bash.py"
           }
         ]
       }
@@ -255,7 +255,7 @@ Based on needs, construct the appropriate JSON:
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/add-context.sh"
+            "command": "$CLAUDE_PROJECT_DIR/.Codex/hooks/add-context.sh"
           }
         ]
       }
@@ -334,7 +334,7 @@ Based on needs, construct the appropriate JSON:
 ```json
 {
   "env": {
-    "ANTHROPIC_MODEL": "claude-sonnet-4-5-20250929",
+    "ANTHROPIC_MODEL": "Codex-sonnet-4-5-20250929",
     "DISABLE_TELEMETRY": "1",
     "DISABLE_AUTOUPDATER": "1",
     "DISABLE_PROMPT_CACHING": "0",
@@ -379,7 +379,7 @@ Based on needs, construct the appropriate JSON:
     "company-tools": {
       "source": {
         "source": "github",
-        "repo": "company/claude-plugins"
+        "repo": "company/Codex-plugins"
       }
     }
   }
@@ -392,7 +392,7 @@ Based on needs, construct the appropriate JSON:
 
 ```json
 {
-  "model": "claude-sonnet-4-5-20250929"
+  "model": "Codex-sonnet-4-5-20250929"
 }
 ```
 
@@ -446,7 +446,7 @@ Based on needs, construct the appropriate JSON:
 {
   "statusLine": {
     "type": "command",
-    "command": "~/.claude/statusline.sh"
+    "command": "~/.Codex/statusline.sh"
   }
 }
 ```
@@ -498,7 +498,7 @@ Based on needs, construct the appropriate JSON:
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/lint-and-format.sh",
+            "command": "$CLAUDE_PROJECT_DIR/.Codex/hooks/lint-and-format.sh",
             "timeout": 60
           }
         ]
@@ -510,7 +510,7 @@ Based on needs, construct the appropriate JSON:
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/validate-bash.py"
+            "command": "$CLAUDE_PROJECT_DIR/.Codex/hooks/validate-bash.py"
           }
         ]
       }
@@ -537,7 +537,7 @@ Based on needs, construct the appropriate JSON:
     "company-tools": {
       "source": {
         "source": "github",
-        "repo": "company/claude-plugins"
+        "repo": "company/Codex-plugins"
       }
     }
   },
@@ -545,7 +545,7 @@ Based on needs, construct the appropriate JSON:
     "Welcome to Company Dev! See docs.company.com for coding standards",
     "Reminder: All PRs require security scan approval"
   ],
-  "model": "claude-sonnet-4-5-20250929",
+  "model": "Codex-sonnet-4-5-20250929",
   "cleanupPeriodDays": 20,
   "includeCoAuthoredBy": true
 }
@@ -557,17 +557,17 @@ Based on needs, construct the appropriate JSON:
 
 ```bash
 # Validate JSON
-cat .claude/settings.json | jq .
+cat .Codex/settings.json | jq .
 
 # Pretty-print
-cat .claude/settings.json | jq . > temp.json && mv temp.json .claude/settings.json
+cat .Codex/settings.json | jq . > temp.json && mv temp.json .Codex/settings.json
 ```
 
 ### Test Configuration
 
 ```bash
-# Start Claude Code with debug
-claude --debug
+# Start Codex with debug
+Codex --debug
 
 # Check settings loaded
 # Look for: "Loading settings from..."
@@ -576,7 +576,7 @@ claude --debug
 ### Verify Permissions
 
 ```bash
-# Run /permissions in Claude Code
+# Run /permissions in Codex
 /permissions
 
 # Check what's allowed/denied
@@ -589,7 +589,7 @@ claude --debug
 **Check:**
 1. JSON syntax is valid (`jq` validation)
 2. File location is correct
-3. Restart Claude Code after changes
+3. Restart Codex after changes
 4. Check precedence (higher-level settings override)
 
 ### Permission Rules Not Working
@@ -606,7 +606,7 @@ claude --debug
 1. `disableAllHooks` is not `true`
 2. Hook configuration is valid
 3. Script has execute permissions
-4. Restart Claude Code
+4. Restart Codex
 5. Use `/hooks` to verify loaded
 
 ### Sandbox Issues
@@ -640,7 +640,7 @@ claude --debug
 
 ## Sensitive Files
 
-### Exclude from Claude Code
+### Exclude from Codex
 
 ```json
 {
@@ -710,14 +710,14 @@ I can help you configure this. Would you like me to:
 3. Show you what to add manually
 
 Where should I make these changes?
-- User settings (~/.claude/settings.json)
-- Project settings (.claude/settings.json)
-- Local settings (.claude/settings.local.json)
+- User settings (~/.Codex/settings.json)
+- Project settings (.Codex/settings.json)
+- Local settings (.Codex/settings.local.json)
 ```
 
 ## Resources
 
-- **Official Settings Docs:** `.claude/skills/ai/claude-code/docs/code_claude_com/docs_en_settings.md`
-- **Hooks Reference:** `.claude/skills/ai/claude-code/docs/code_claude_com/docs_en_hooks.md`
+- **Official Settings Docs:** `.Codex/skills/ai/Codex/docs/code_claude_com/docs_en_settings.md`
+- **Hooks Reference:** `.Codex/skills/ai/Codex/docs/code_claude_com/docs_en_hooks.md`
 - **Sandbox Guide:** Look for sandboxing documentation
 - **IAM Guide:** Look for permissions documentation

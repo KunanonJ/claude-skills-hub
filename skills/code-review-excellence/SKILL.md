@@ -1,7 +1,7 @@
 ---
 name: code-review-excellence
-description: "Master effective code review practices to provide constructive feedback, catch bugs early, and foster knowledge sharing while maintaining team morale. Use when reviewing pull requests, establishing..."
-risk: unknown
+description: "Transform code reviews from gatekeeping to knowledge sharing through constructive feedback, systematic analysis, and collaborative improvement."
+risk: safe
 source: community
 date_added: "2026-02-27"
 ---
@@ -41,3 +41,8 @@ Transform code reviews from gatekeeping to knowledge sharing through constructiv
 ## Resources
 
 - `resources/implementation-playbook.md` for detailed review patterns and templates.
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

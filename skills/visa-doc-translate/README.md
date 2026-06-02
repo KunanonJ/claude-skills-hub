@@ -1,32 +1,32 @@
-# Visa Document Translator
+# ビザ書類翻訳ツール
 
-Automatically translate visa application documents from images to professional English PDFs.
+ビザ申請書類を画像からプロフェッショナルな英語PDFに自動翻訳する。
 
-## Features
+## 機能
 
-- **Automatic OCR**: Tries multiple OCR methods (macOS Vision, EasyOCR, Tesseract)
-- **Bilingual PDF**: Original image + professional English translation
-- **Multi-language**: Supports Chinese, and other languages
-- **Professional Format**: Suitable for official visa applications
-- **Fully Automated**: No manual intervention required
+* **自動OCR**：複数のOCR方法を試みる（macOS Vision、EasyOCR、Tesseract）
+* **バイリンガルPDF**：元の画像 + プロフェッショナルな英語翻訳
+* **多言語対応**：中国語およびその他の言語に対応
+* **プロフェッショナルなフォーマット**：公式ビザ申請に適合
+* **完全自動化**：人の介入不要
 
-## Supported Documents
+## 対応ファイルタイプ
 
-- Bank deposit certificates (存款证明)
-- Employment certificates (在职证明)
-- Retirement certificates (退休证明)
-- Income certificates (收入证明)
-- Property certificates (房产证明)
-- Business licenses (营业执照)
-- ID cards and passports
+* 銀行預金証明書（存款证明）
+* 在職証明書（在职证明）
+* 退職証明書（退休证明）
+* 収入証明書（收入证明）
+* 不動産証明書（房产证明）
+* 営業許可証（营业执照）
+* 身分証明書とパスポート
 
-## Usage
+## 使用方法
 
 ```bash
 /visa-doc-translate <image-file>
 ```
 
-### Examples
+### 例
 
 ```bash
 /visa-doc-translate RetirementCertificate.PNG
@@ -34,53 +34,58 @@ Automatically translate visa application documents from images to professional E
 /visa-doc-translate EmploymentLetter.jpg
 ```
 
-## Output
+## 出力
 
-Creates `<filename>_Translated.pdf` with:
-- **Page 1**: Original document image (centered, A4 size)
-- **Page 2**: Professional English translation
+`<filename>_Translated.pdf` を作成し、以下を含む：
 
-## Requirements
+* **第1ページ**：元の書類画像（中央配置、A4サイズ）
+* **第2ページ**：プロフェッショナルな英語翻訳
 
-### Python Libraries
+## 要件
+
+### Pythonライブラリ
+
 ```bash
 pip install pillow reportlab
 ```
 
-### OCR (one of the following)
+### OCR（以下のいずれかが必要）
 
-**macOS (recommended)**:
+**macOS（推奨）**：
+
 ```bash
 pip install pyobjc-framework-Vision pyobjc-framework-Quartz
 ```
 
-**Cross-platform**:
+**クロスプラットフォーム**：
+
 ```bash
 pip install easyocr
 ```
 
-**Tesseract**:
+**Tesseract**：
+
 ```bash
 brew install tesseract tesseract-lang
 pip install pytesseract
 ```
 
-## How It Works
+## 仕組み
 
-1. Converts HEIC to PNG if needed
-2. Checks and applies EXIF rotation
-3. Extracts text using available OCR method
-4. Translates to professional English
-5. Generates bilingual PDF
+1. 必要に応じてHEICをPNGに変換する
+2. EXIFの回転を確認して適用する
+3. 利用可能なOCR方法でテキストを抽出する
+4. プロフェッショナルな英語に翻訳する
+5. バイリンガルPDFを生成する
 
-## Perfect For
+## 最適な用途
 
-- Australia visa applications
-- USA visa applications
-- Canada visa applications
-- UK visa applications
-- EU visa applications
+* オーストラリアのビザ申請
+* 米国のビザ申請
+* カナダのビザ申請
+* 英国のビザ申請
+* EUのビザ申請
 
-## License
+## ライセンス
 
 MIT

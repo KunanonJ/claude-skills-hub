@@ -1,0 +1,6 @@
+# PDFs are large (~550MB total) and not needed for the skill
+# The markdown summaries capture all relevant content
+# Keep PDFs locally for reference but don't commit
+*.pdf
+node_modules
+.claude/

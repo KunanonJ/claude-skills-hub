@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 from dataclasses import dataclass
+import json
 import os
 import shutil
 import subprocess
@@ -15,7 +16,7 @@ import urllib.parse
 import zipfile
 
 from github_utils import github_request
-DEFAULT_REF = "main"
+DEFAULT_REF = "master"
 
 
 @dataclass
@@ -23,7 +24,7 @@ class Args:
     url: str | None = None
     repo: str | None = None
     path: list[str] | None = None
-    ref: str = DEFAULT_REF
+    ref: str | None = None
     dest: str | None = None
     name: str | None = None
     method: str = "auto"
@@ -33,7 +34,7 @@ class Args:
 class Source:
     owner: str
     repo: str
-    ref: str
+    ref: str | None
     paths: list[str]
     repo_url: str | None = None
 
@@ -56,7 +57,9 @@ def _request(url: str) -> bytes:
     return github_request(url, "codex-skill-install")
 
 
-def _parse_github_url(url: str, default_ref: str) -> tuple[str, str, str, str | None]:
+def _parse_github_url(
+    url: str, default_ref: str | None
+) -> tuple[str, str, str | None, str | None]:
     parsed = urllib.parse.urlparse(url)
     if parsed.netloc != "github.com":
         raise InstallError("Only GitHub URLs are supported for download mode.")
@@ -96,6 +99,19 @@ def _download_repo_zip(owner: str, repo: str, ref: str, dest_dir: str) -> str:
     return os.path.join(dest_dir, next(iter(top_levels)))
 
 
+def _github_default_branch(owner: str, repo: str) -> str:
+    api_url = f"https://api.github.com/repos/{owner}/{repo}"
+    try:
+        payload = _request(api_url)
+    except urllib.error.HTTPError as exc:
+        raise InstallError(f"Default branch lookup failed: HTTP {exc.code}") from exc
+    repo_info = json.loads(payload.decode("utf-8"))
+    default_branch = repo_info.get("default_branch")
+    if not isinstance(default_branch, str) or not default_branch:
+        raise InstallError("Default branch lookup failed.")
+    return default_branch
+
+
 def _run_git(args: list[str]) -> None:
     result = subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     if result.returncode != 0:
@@ -125,8 +141,13 @@ def _validate_skill_name(name: str) -> None:
         raise InstallError("Invalid skill name.")
 
 
-def _git_sparse_checkout(repo_url: str, ref: str, paths: list[str], dest_dir: str) -> str:
-    repo_dir = os.path.join(dest_dir, "repo")
+def _git_sparse_checkout(
+    repo_url: str, ref: str | None, paths: list[str], dest_dir: str
+) -> str:
+    def _new_repo_dir() -> str:
+        return tempfile.mkdtemp(prefix="repo-", dir=dest_dir)
+
+    repo_dir = _new_repo_dir()
     clone_cmd = [
         "git",
         "clone",
@@ -135,14 +156,15 @@ def _git_sparse_checkout(repo_url: str, ref: str, paths: list[str], dest_dir: st
         "1",
         "--sparse",
         "--single-branch",
-        "--branch",
-        ref,
         repo_url,
         repo_dir,
     ]
+    if ref:
+        clone_cmd[7:7] = ["--branch", ref]
     try:
         _run_git(clone_cmd)
     except InstallError:
+        repo_dir = _new_repo_dir()
         _run_git(
             [
                 "git",
@@ -157,7 +179,8 @@ def _git_sparse_checkout(repo_url: str, ref: str, paths: list[str], dest_dir: st
             ]
         )
     _run_git(["git", "-C", repo_dir, "sparse-checkout", "set", *paths])
-    _run_git(["git", "-C", repo_dir, "checkout", ref])
+    if ref:
+        _run_git(["git", "-C", repo_dir, "checkout", ref])
     return repo_dir
 
 
@@ -187,7 +210,8 @@ def _build_repo_ssh(owner: str, repo: str) -> str:
 def _prepare_repo(source: Source, method: str, tmp_dir: str) -> str:
     if method in ("download", "auto"):
         try:
-            return _download_repo_zip(source.owner, source.repo, source.ref, tmp_dir)
+            ref = source.ref or _github_default_branch(source.owner, source.repo)
+            return _download_repo_zip(source.owner, source.repo, ref, tmp_dir)
         except InstallError as exc:
             if method == "download":
                 raise
@@ -253,7 +277,7 @@ def _parse_args(argv: list[str]) -> Args:
         nargs="+",
         help="Path(s) to skill(s) inside repo",
     )
-    parser.add_argument("--ref", default=DEFAULT_REF)
+    parser.add_argument("--ref", help="Git ref to install from (defaults to the repo default branch)")
     parser.add_argument("--dest", help="Destination skills directory")
     parser.add_argument(
         "--name", help="Destination skill name (defaults to basename of path)"
@@ -270,7 +294,6 @@ def main(argv: list[str]) -> int:
     args = _parse_args(argv)
     try:
         source = _resolve_source(args)
-        source.ref = source.ref or args.ref
         if not source.paths:
             raise InstallError("No skill paths provided.")
         for path in source.paths:

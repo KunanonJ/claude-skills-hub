@@ -1,6 +1,6 @@
 ---
 name: anthropic-expert
-description: Expert on Anthropic Claude API, models, prompt engineering, function calling, vision, and best practices. Triggers on anthropic, claude, api, prompt, function calling, vision, messages api, embeddings
+description: Expert on Anthropic Codex API, models, prompt engineering, function calling, vision, and best practices. Triggers on anthropic, Codex, api, prompt, function calling, vision, messages api, embeddings
 allowed-tools: Read, Grep, Glob
 model: sonnet
 ---
@@ -9,13 +9,13 @@ model: sonnet
 
 ## Purpose
 
-Provide expert guidance on Anthropic's Claude API, including prompt engineering, function calling, vision capabilities, and best practices based on official Anthropic documentation.
+Provide expert guidance on Anthropic's Codex API, including prompt engineering, function calling, vision capabilities, and best practices based on official Anthropic documentation.
 
 ## When to Use
 
 Auto-invoke when users mention:
 - **Anthropic** - company, API, platform
-- **Claude** - models (Opus, Sonnet, Haiku), capabilities
+- **Codex** - models (Opus, Sonnet, Haiku), capabilities
 - **API** - Messages API, streaming, embeddings
 - **Features** - function calling, vision, extended context, prompt caching
 - **Integration** - SDKs (Python, TypeScript), REST API
@@ -30,12 +30,12 @@ Auto-invoke when users mention:
 **Note:** Documentation must be pulled separately:
 ```bash
 pipx install docpull
-docpull https://docs.anthropic.com -o .claude/skills/anthropic/docs
+docpull https://docs.anthropic.com -o .Codex/skills/anthropic/docs
 ```
 
 ## Process
 
-When a user asks about Anthropic/Claude:
+When a user asks about Anthropic/Codex:
 
 ### 1. Identify Topic
 ```
@@ -78,7 +78,7 @@ Read docs/path/to/relevant-doc.md
 Structure your response:
 - **Direct answer** - solve the user's problem first
 - **Code examples** - show API calls with proper formatting
-- **Best practices** - mention Claude-specific patterns
+- **Best practices** - mention Codex-specific patterns
 - **Model selection** - recommend appropriate model (Opus/Sonnet/Haiku)
 - **References** - cite specific docs for deeper reading
 - **Cost optimization** - mention prompt caching, model choice
@@ -87,7 +87,7 @@ Structure your response:
 
 ### Example 1: Function Calling
 ```
-User: "How do I implement function calling with Claude?"
+User: "How do I implement function calling with Codex?"
 
 1. Search: Grep "function calling|tool" docs/
 2. Read: Function calling documentation
@@ -100,7 +100,7 @@ User: "How do I implement function calling with Claude?"
 
 ### Example 2: Vision Capabilities
 ```
-User: "Can Claude analyze images?"
+User: "Can Codex analyze images?"
 
 1. Search: Grep "vision|image" docs/ -i
 2. Read: Vision API documentation
@@ -113,7 +113,7 @@ User: "Can Claude analyze images?"
 
 ### Example 3: Prompt Engineering
 ```
-User: "How do I write better prompts for Claude?"
+User: "How do I write better prompts for Codex?"
 
 1. Search: Grep "prompt|engineering" docs/
 2. Read: Prompt engineering guide
@@ -127,9 +127,9 @@ User: "How do I write better prompts for Claude?"
 ## Key Concepts to Reference
 
 **Models:**
-- Claude 3.5 Opus - most capable
-- Claude 3.5 Sonnet - balanced (recommended for most use cases)
-- Claude 3.5 Haiku - fast and economical
+- Codex 3.5 Opus - most capable
+- Codex 3.5 Sonnet - balanced (recommended for most use cases)
+- Codex 3.5 Haiku - fast and economical
 
 **API Features:**
 - Messages API (primary interface)
@@ -155,7 +155,7 @@ User: "How do I write better prompts for Claude?"
 
 - **Clear** - API developers want precise answers
 - **Code-first** - show working examples
-- **Model-aware** - recommend appropriate Claude model
+- **Model-aware** - recommend appropriate Codex model
 - **Cost-conscious** - mention caching, model choice
 - **Cite sources** - reference specific doc sections
 

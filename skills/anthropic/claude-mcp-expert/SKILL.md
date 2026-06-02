@@ -1,6 +1,6 @@
 ---
-name: claude-mcp-expert
-description: Model Context Protocol (MCP) expert for Claude Code. Install, configure, and troubleshoot MCP servers. Covers HTTP, SSE, and stdio transports, authentication, popular integrations (Sentry, GitHub, Jira, Notion, databases). Triggers on MCP, Model Context Protocol, MCP server, installing MCP, connecting tools, webhooks, remote server.
+name: Codex-mcp-expert
+description: Model Context Protocol (MCP) expert for Codex. Install, configure, and troubleshoot MCP servers. Covers HTTP, SSE, and stdio transports, authentication, popular integrations (Sentry, GitHub, Jira, Notion, databases). Triggers on MCP, Model Context Protocol, MCP server, installing MCP, connecting tools, webhooks, remote server.
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash
 model: sonnet
 license: MIT
@@ -9,9 +9,9 @@ metadata:
   version: "1.0"
 ---
 
-# Claude Code MCP Expert
+# Codex MCP Expert
 
-Connect Claude Code to external tools, databases, and services using Model Context Protocol (MCP).
+Connect Codex to external tools, databases, and services using Model Context Protocol (MCP).
 
 ## When to Use
 
@@ -32,13 +32,13 @@ Connect Claude Code to external tools, databases, and services using Model Conte
 
 ```bash
 # Add an HTTP server
-claude mcp add --transport http sentry https://mcp.sentry.dev/mcp
+Codex mcp add --transport http sentry https://mcp.sentry.dev/mcp
 
 # Add an SSE server
-claude mcp add --transport sse atlassian https://mcp.atlassian.com/v1/sse
+Codex mcp add --transport sse atlassian https://mcp.atlassian.com/v1/sse
 
 # Add a stdio server (npm package)
-claude mcp add --transport stdio github -- npx -y @modelcontextprotocol/server-github
+Codex mcp add --transport stdio github -- npx -y @modelcontextprotocol/server-github
 
 # Manage servers interactively
 /mcp
@@ -50,28 +50,28 @@ claude mcp add --transport stdio github -- npx -y @modelcontextprotocol/server-g
 For cloud services with REST-like endpoints.
 
 ```bash
-claude mcp add --transport http sentry https://mcp.sentry.dev/mcp
-claude mcp add --transport http github https://api.github.com/mcp
-claude mcp add --transport http notion https://mcp.notion.com/mcp
+Codex mcp add --transport http sentry https://mcp.sentry.dev/mcp
+Codex mcp add --transport http github https://api.github.com/mcp
+Codex mcp add --transport http notion https://mcp.notion.com/mcp
 ```
 
 ### SSE (Server-Sent Events)
 For streaming services.
 
 ```bash
-claude mcp add --transport sse atlassian https://mcp.atlassian.com/v1/sse
-claude mcp add --transport sse asana https://mcp.asana.com/sse
+Codex mcp add --transport sse atlassian https://mcp.atlassian.com/v1/sse
+Codex mcp add --transport sse asana https://mcp.asana.com/sse
 ```
 
 ### stdio (Local/NPM Packages)
 For local tools or npm packages.
 
 ```bash
-claude mcp add --transport stdio postgres \
+Codex mcp add --transport stdio postgres \
   --env POSTGRES_CONNECTION_STRING="postgresql://user:pass@localhost:5432/db" \
   -- npx -y @modelcontextprotocol/server-postgres
 
-claude mcp add --transport stdio filesystem \
+Codex mcp add --transport stdio filesystem \
   --env ALLOWED_DIRECTORIES="/path/to/dir" \
   -- npx -y @modelcontextprotocol/server-filesystem
 ```
@@ -82,29 +82,29 @@ claude mcp add --transport stdio filesystem \
 
 | Service | Command |
 |---------|---------|
-| **Sentry** | `claude mcp add --transport http sentry https://mcp.sentry.dev/mcp` |
-| **GitHub** | `claude mcp add --transport http github https://api.github.com/mcp` |
-| **Socket** | `claude mcp add --transport http socket https://mcp.socket.dev/` |
+| **Sentry** | `Codex mcp add --transport http sentry https://mcp.sentry.dev/mcp` |
+| **GitHub** | `Codex mcp add --transport http github https://api.github.com/mcp` |
+| **Socket** | `Codex mcp add --transport http socket https://mcp.socket.dev/` |
 
 ### Project Management
 
 | Service | Command |
 |---------|---------|
-| **Jira** | `claude mcp add --transport sse atlassian https://mcp.atlassian.com/v1/sse` |
-| **Linear** | `claude mcp add --transport http linear https://mcp.linear.app/mcp` |
-| **Notion** | `claude mcp add --transport http notion https://mcp.notion.com/mcp` |
-| **Asana** | `claude mcp add --transport sse asana https://mcp.asana.com/sse` |
+| **Jira** | `Codex mcp add --transport sse atlassian https://mcp.atlassian.com/v1/sse` |
+| **Linear** | `Codex mcp add --transport http linear https://mcp.linear.app/mcp` |
+| **Notion** | `Codex mcp add --transport http notion https://mcp.notion.com/mcp` |
+| **Asana** | `Codex mcp add --transport sse asana https://mcp.asana.com/sse` |
 
 ### Databases
 
 ```bash
 # PostgreSQL
-claude mcp add --transport stdio postgres \
+Codex mcp add --transport stdio postgres \
   --env POSTGRES_CONNECTION_STRING="postgresql://localhost:5432/mydb" \
   -- npx -y @modelcontextprotocol/server-postgres
 
 # MongoDB
-claude mcp add --transport stdio mongodb \
+Codex mcp add --transport stdio mongodb \
   --env MONGODB_URI="mongodb://localhost:27017/mydb" \
   -- npx -y @modelcontextprotocol/server-mongodb
 ```
@@ -113,13 +113,13 @@ claude mcp add --transport stdio mongodb \
 
 ```bash
 # Slack
-claude mcp add --transport stdio slack \
+Codex mcp add --transport stdio slack \
   --env SLACK_BOT_TOKEN=xoxb-your-token \
   --env SLACK_TEAM_ID=T1234567 \
   -- npx -y @modelcontextprotocol/server-slack
 
 # Gmail
-claude mcp add --transport stdio gmail \
+Codex mcp add --transport stdio gmail \
   -- npx -y @modelcontextprotocol/server-gmail
 ```
 
@@ -150,16 +150,16 @@ claude mcp add --transport stdio gmail \
 
 | Scope | Location | Use Case |
 |-------|----------|----------|
-| **User** | `~/.claude/.mcp.json` | Personal tools, global |
-| **Project** | `.claude/.mcp.json` | Team-shared, git committed |
-| **Local** | `.claude/.mcp.local.json` | Personal overrides, not committed |
+| **User** | `~/.Codex/.mcp.json` | Personal tools, global |
+| **Project** | `.Codex/.mcp.json` | Team-shared, git committed |
+| **Local** | `.Codex/.mcp.local.json` | Personal overrides, not committed |
 
 ### Add with Scope
 
 ```bash
-claude mcp add --transport http sentry https://mcp.sentry.dev/mcp --user     # Global
-claude mcp add --transport http linear https://mcp.linear.app/mcp --project  # Team
-claude mcp add --transport http notion https://mcp.notion.com/mcp --local    # Personal override
+Codex mcp add --transport http sentry https://mcp.sentry.dev/mcp --user     # Global
+Codex mcp add --transport http linear https://mcp.linear.app/mcp --project  # Team
+Codex mcp add --transport http notion https://mcp.notion.com/mcp --local    # Personal override
 ```
 
 ## Authentication
@@ -167,7 +167,7 @@ claude mcp add --transport http notion https://mcp.notion.com/mcp --local    # P
 ### OAuth (Recommended)
 ```bash
 # Install server
-claude mcp add --transport http github https://api.github.com/mcp
+Codex mcp add --transport http github https://api.github.com/mcp
 
 # Authenticate via /mcp command
 /mcp
@@ -177,7 +177,7 @@ claude mcp add --transport http github https://api.github.com/mcp
 
 ### API Keys (Environment Variables)
 ```bash
-claude mcp add --transport stdio server-name \
+Codex mcp add --transport stdio server-name \
   --env API_KEY=your_api_key \
   -- npx -y package-name
 ```
@@ -231,9 +231,9 @@ MCP prompts become slash commands:
 
 ### Command Line
 ```bash
-claude mcp list                    # List servers
-claude mcp add ...                 # Add server
-claude mcp remove server-name      # Remove server
+Codex mcp list                    # List servers
+Codex mcp add ...                 # Add server
+Codex mcp remove server-name      # Remove server
 ```
 
 ## Troubleshooting
@@ -243,7 +243,7 @@ claude mcp remove server-name      # Remove server
 1. **Verify URL/command** - check for typos
 2. **Check auth** - run `/mcp` → Authenticate
 3. **Test network** - can you reach the URL?
-4. **Debug mode** - run `claude --debug`
+4. **Debug mode** - run `Codex --debug`
 
 ### Authentication Failing
 
@@ -269,7 +269,7 @@ npm info @modelcontextprotocol/server-postgres
 
 1. Confirm server is connected: `/mcp`
 2. Check authentication completed
-3. Restart Claude Code
+3. Restart Codex
 4. Verify server provides expected tools
 
 ## Security Best Practices
@@ -291,8 +291,8 @@ npm info @modelcontextprotocol/server-postgres
 ### Issue to PR
 ```bash
 # Setup
-claude mcp add --transport http github https://api.github.com/mcp
-claude mcp add --transport sse atlassian https://mcp.atlassian.com/v1/sse
+Codex mcp add --transport http github https://api.github.com/mcp
+Codex mcp add --transport sse atlassian https://mcp.atlassian.com/v1/sse
 
 # Usage
 "Read JIRA ticket ENG-123, implement the feature, and create a PR on GitHub"
@@ -301,7 +301,7 @@ claude mcp add --transport sse atlassian https://mcp.atlassian.com/v1/sse
 ### Error Investigation
 ```bash
 # Setup
-claude mcp add --transport http sentry https://mcp.sentry.dev/mcp
+Codex mcp add --transport http sentry https://mcp.sentry.dev/mcp
 
 # Usage
 "Check Sentry for errors in the last hour and fix them"
@@ -310,7 +310,7 @@ claude mcp add --transport http sentry https://mcp.sentry.dev/mcp
 ### Database Query to Report
 ```bash
 # Setup
-claude mcp add --transport stdio postgres \
+Codex mcp add --transport stdio postgres \
   --env POSTGRES_CONNECTION_STRING="postgresql://localhost/analytics" \
   -- npx -y @modelcontextprotocol/server-postgres
 
@@ -322,4 +322,4 @@ claude mcp add --transport stdio postgres \
 
 - **MCP Website:** https://modelcontextprotocol.io/
 - **MCP Servers List:** https://github.com/modelcontextprotocol/servers
-- **Claude Code MCP Docs:** https://docs.anthropic.com/en/docs/claude-code/mcp
+- **Codex MCP Docs:** https://docs.anthropic.com/en/docs/Codex/mcp

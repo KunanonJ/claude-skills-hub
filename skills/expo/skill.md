@@ -26,7 +26,7 @@ Auto-invoke when users mention:
 
 ## Knowledge Base
 
-Complete Expo documentation stored in `.claude/skills/frontend/expo/docs/docs_expo_dev/`
+Complete Expo documentation stored in `.Codex/skills/frontend/expo/docs/docs_expo_dev/`
 
 Coverage includes:
 - Getting started and core concepts
@@ -52,19 +52,19 @@ When a user asks about Expo:
 
 2. **Search Documentation**
    ```
-   Use Grep to search: Grep "keyword" .claude/skills/frontend/expo/docs/
+   Use Grep to search: Grep "keyword" .Codex/skills/frontend/expo/docs/
    ```
 
    Common search patterns:
-   - EAS Build: `Grep "eas build" .claude/skills/frontend/expo/docs/ -i`
-   - Expo Router: `Grep "router" .claude/skills/frontend/expo/docs/ -i`
-   - Configuration: `Grep "app.json|eas.json" .claude/skills/frontend/expo/docs/`
-   - Native modules: `Grep "expo modules" .claude/skills/frontend/expo/docs/ -i`
+   - EAS Build: `Grep "eas build" .Codex/skills/frontend/expo/docs/ -i`
+   - Expo Router: `Grep "router" .Codex/skills/frontend/expo/docs/ -i`
+   - Configuration: `Grep "app.json|eas.json" .Codex/skills/frontend/expo/docs/`
+   - Native modules: `Grep "expo modules" .Codex/skills/frontend/expo/docs/ -i`
 
 3. **Read Relevant Documentation**
    ```
    Use Read to load specific files found in search
-   Read .claude/skills/frontend/expo/docs/docs_expo_dev/[filename].md
+   Read .Codex/skills/frontend/expo/docs/docs_expo_dev/[filename].md
    ```
 
 4. **Provide Structured Answer**
@@ -84,7 +84,7 @@ When a user asks about Expo:
 ```
 User: "How do I set up EAS Build for my Expo app?"
 
-1. Search: Grep "eas build" .claude/skills/frontend/expo/docs/ -i
+1. Search: Grep "eas build" .Codex/skills/frontend/expo/docs/ -i
 2. Read: build_introduction.md, build_setup.md
 3. Answer with setup steps, configuration, and examples
 ```
@@ -93,7 +93,7 @@ User: "How do I set up EAS Build for my Expo app?"
 ```
 User: "How does file-based routing work in Expo Router?"
 
-1. Search: Grep "router|routing" .claude/skills/frontend/expo/docs/ -i
+1. Search: Grep "router|routing" .Codex/skills/frontend/expo/docs/ -i
 2. Read: Router documentation files
 3. Explain routing patterns, file structure, navigation
 ```
@@ -102,7 +102,7 @@ User: "How does file-based routing work in Expo Router?"
 ```
 User: "What are config plugins in Expo?"
 
-1. Search: Grep "config plugin" .claude/skills/frontend/expo/docs/ -i
+1. Search: Grep "config plugin" .Codex/skills/frontend/expo/docs/ -i
 2. Read: config-plugins_introduction.md, related files
 3. Explain plugins, usage, development, examples
 ```
@@ -111,7 +111,7 @@ User: "What are config plugins in Expo?"
 ```
 User: "How do I submit my Expo app to the App Store?"
 
-1. Search: Grep "submit|app store" .claude/skills/frontend/expo/docs/ -i
+1. Search: Grep "submit|app store" .Codex/skills/frontend/expo/docs/ -i
 2. Read: deploy documentation, EAS Submit guides
 3. Provide submission workflow, requirements, automation
 ```
@@ -151,7 +151,7 @@ Always structure responses as:
 - Related feature or concept
 - Link to additional documentation
 
-**Source:** `.claude/skills/frontend/expo/docs/docs_expo_dev/[filename].md`
+**Source:** `.Codex/skills/frontend/expo/docs/docs_expo_dev/[filename].md`
 ```
 
 ## Important Notes

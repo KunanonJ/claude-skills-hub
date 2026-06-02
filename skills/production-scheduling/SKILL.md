@@ -7,7 +7,6 @@ date_added: '2026-02-27'
 ---
 
 ## When to Use
-
 Use this skill when planning manufacturing operations, sequencing jobs to minimize changeover times, balancing production lines, resolving factory bottlenecks, or responding to unexpected equipment downtime and supply disruptions.
 
 # Production Scheduling
@@ -207,10 +206,14 @@ Track per shift and trend weekly:
 - For the comprehensive edge case library with full resolution playbooks, see [edge-cases.md](references/edge-cases.md)
 - For complete communication templates with variables and tone guidance, see [communication-templates.md](references/communication-templates.md)
 
-## When to Use
-
+### When to Use
 Use this skill when you need to **design or adjust production schedules and constraint‑focused execution plans**:
 
 - Sequencing jobs, balancing lines, and optimising changeovers in discrete or batch manufacturing.
 - Responding to disruptions (machine breakdowns, shortages, quality holds, absenteeism) while protecting the bottleneck and customer commitments.
 - Building scheduling rules, KPIs, and communication patterns between planning, production, maintenance, and quality teams.
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

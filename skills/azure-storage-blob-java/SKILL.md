@@ -1,6 +1,6 @@
 ---
 name: azure-storage-blob-java
-description: "Build blob storage applications with Azure Storage Blob SDK for Java. Use when uploading, downloading, or managing files in Azure Blob Storage, working with containers, or implementing streaming da..."
+description: "Build blob storage applications using the Azure Storage Blob SDK for Java."
 risk: unknown
 source: community
 date_added: "2026-02-27"
@@ -391,3 +391,8 @@ AZURE_STORAGE_ACCOUNT_URL=https://<account>.blob.core.windows.net
 
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

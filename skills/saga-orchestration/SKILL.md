@@ -1,6 +1,6 @@
 ---
 name: saga-orchestration
-description: "Implement saga patterns for distributed transactions and cross-aggregate workflows. Use when coordinating multi-step business processes, handling compensating transactions, or managing long-running..."
+description: "Patterns for managing distributed transactions and long-running business processes."
 risk: unknown
 source: community
 date_added: "2026-02-27"
@@ -505,3 +505,8 @@ Works well with: `event-sourcing-architect`, `workflow-automation`, `dbos-*`
 
 - [Saga Pattern](https://microservices.io/patterns/data/saga.html)
 - [Designing Data-Intensive Applications](https://dataintensive.net/)
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

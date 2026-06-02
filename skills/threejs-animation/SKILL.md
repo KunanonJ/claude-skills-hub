@@ -1,30 +1,38 @@
 ---
 name: threejs-animation
 description: Three.js animation - keyframe animation, skeletal animation, morph targets, animation mixing. Use when animating objects, playing GLTF animations, creating procedural motion, or blending animations.
+risk: unknown
+source: community
 ---
 
 # Three.js Animation
+
+## When to Use
+- You need to animate objects, rigs, morph targets, or imported GLTF animations in Three.js.
+- The task involves mixers, clips, keyframes, procedural motion, or animation blending.
+- You are building motion behavior in a Three.js scene rather than just static rendering.
 
 ## Quick Start
 
 ```javascript
 import * as THREE from "three";
 
-// Simple procedural animation
-const clock = new THREE.Clock();
+// Simple procedural animation with Timer (recommended in r183)
+const timer = new THREE.Timer();
 
-function animate() {
-  const delta = clock.getDelta();
-  const elapsed = clock.getElapsedTime();
+renderer.setAnimationLoop(() => {
+  timer.update();
+  const delta = timer.getDelta();
+  const elapsed = timer.getElapsed();
 
   mesh.rotation.y += delta;
   mesh.position.y = Math.sin(elapsed) * 0.5;
 
-  requestAnimationFrame(animate);
   renderer.render(scene, camera);
-}
-animate();
+});
 ```
+
+**Note:** `THREE.Timer` is recommended over `THREE.Clock` as of r183. Timer pauses when the page is hidden and has a cleaner API. `THREE.Clock` still works but is considered legacy.
 
 ## Animation System Overview
 
@@ -115,6 +123,10 @@ track.setInterpolation(THREE.InterpolateLinear); // Default
 track.setInterpolation(THREE.InterpolateSmooth); // Cubic spline
 track.setInterpolation(THREE.InterpolateDiscrete); // Step function
 ```
+
+### BezierInterpolant (r183)
+
+Three.js r183 adds `THREE.BezierInterpolant` for bezier curve interpolation in keyframe tracks, enabling smoother animation curves with tangent control.
 
 ## AnimationMixer
 
@@ -550,3 +562,8 @@ function getClip(name) {
 - `threejs-loaders` - Loading animated GLTF models
 - `threejs-fundamentals` - Clock and animation loop
 - `threejs-shaders` - Vertex animation in shaders
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

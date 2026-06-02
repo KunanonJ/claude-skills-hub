@@ -1,124 +1,124 @@
 ---
 name: flutter-dart-code-review
-description: Library-agnostic Flutter/Dart code review checklist covering widget best practices, state management patterns (BLoC, Riverpod, Provider, GetX, MobX, Signals), Dart idioms, performance, accessibility, security, and clean architecture.
+description: ウィジェットのベストプラクティス、状態管理パターン（BLoC、Riverpod、Provider、GetX、MobX、Signals）、Dartのイディオム、パフォーマンス、アクセシビリティ、セキュリティ、クリーンアーキテクチャをカバーするライブラリに依存しないFlutter/Dartのコードレビューチェックリスト。
 origin: ECC
 ---
 
-# Flutter/Dart Code Review Best Practices
+# Flutter/Dartコードレビューベストプラクティス
 
-Comprehensive, library-agnostic checklist for reviewing Flutter/Dart applications. These principles apply regardless of which state management solution, routing library, or DI framework is used.
-
----
-
-## 1. General Project Health
-
-- [ ] Project follows consistent folder structure (feature-first or layer-first)
-- [ ] Proper separation of concerns: UI, business logic, data layers
-- [ ] No business logic in widgets; widgets are purely presentational
-- [ ] `pubspec.yaml` is clean — no unused dependencies, versions pinned appropriately
-- [ ] `analysis_options.yaml` includes a strict lint set with strict analyzer settings enabled
-- [ ] No `print()` statements in production code — use `dart:developer` `log()` or a logging package
-- [ ] Generated files (`.g.dart`, `.freezed.dart`, `.gr.dart`) are up-to-date or in `.gitignore`
-- [ ] Platform-specific code isolated behind abstractions
+Flutter/Dartアプリケーションをレビューするための包括的なライブラリに依存しないチェックリスト。これらの原則は、どの状態管理ソリューション、ルーティングライブラリ、またはDIフレームワークを使用していても適用されます。
 
 ---
 
-## 2. Dart Language Pitfalls
+## 1. 全般的なプロジェクトの健全性
 
-- [ ] **Implicit dynamic**: Missing type annotations leading to `dynamic` — enable `strict-casts`, `strict-inference`, `strict-raw-types`
-- [ ] **Null safety misuse**: Excessive `!` (bang operator) instead of proper null checks or Dart 3 pattern matching (`if (value case var v?)`)
-- [ ] **Type promotion failures**: Using `this.field` where local variable promotion would work
-- [ ] **Catching too broadly**: `catch (e)` without `on` clause; always specify exception types
-- [ ] **Catching `Error`**: `Error` subtypes indicate bugs and should not be caught
-- [ ] **Unused `async`**: Functions marked `async` that never `await` — unnecessary overhead
-- [ ] **`late` overuse**: `late` used where nullable or constructor initialization would be safer; defers errors to runtime
-- [ ] **String concatenation in loops**: Use `StringBuffer` instead of `+` for iterative string building
-- [ ] **Mutable state in `const` contexts**: Fields in `const` constructor classes should not be mutable
-- [ ] **Ignoring `Future` return values**: Use `await` or explicitly call `unawaited()` to signal intent
-- [ ] **`var` where `final` works**: Prefer `final` for locals and `const` for compile-time constants
-- [ ] **Relative imports**: Use `package:` imports for consistency
-- [ ] **Mutable collections exposed**: Public APIs should return unmodifiable views, not raw `List`/`Map`
-- [ ] **Missing Dart 3 pattern matching**: Prefer switch expressions and `if-case` over verbose `is` checks and manual casting
-- [ ] **Throwaway classes for multiple returns**: Use Dart 3 records `(String, int)` instead of single-use DTOs
-- [ ] **`print()` in production code**: Use `dart:developer` `log()` or the project's logging package; `print()` has no log levels and cannot be filtered
+- [ ] プロジェクトは一貫したフォルダー構造に従っている（フィーチャーファーストまたはレイヤーファースト）
+- [ ] 適切な関心の分離: UI、ビジネスロジック、データレイヤー
+- [ ] ウィジェットにビジネスロジックがない; ウィジェットは純粋にプレゼンテーション
+- [ ] `pubspec.yaml`が整理されている — 未使用の依存関係がなく、バージョンが適切に固定されている
+- [ ] `analysis_options.yaml`に厳格なリントセットと厳格なアナライザー設定が含まれている
+- [ ] 本番コードに`print()`文がない — `dart:developer`の`log()`またはロギングパッケージを使用
+- [ ] 生成されたファイル（`.g.dart`、`.freezed.dart`、`.gr.dart`）が最新か`.gitignore`に含まれている
+- [ ] プラットフォーム固有のコードが抽象化の背後に分離されている
 
 ---
 
-## 3. Widget Best Practices
+## 2. Dart言語の落とし穴
 
-### Widget decomposition:
-- [ ] No single widget with a `build()` method exceeding ~80-100 lines
-- [ ] Widgets split by encapsulation AND by how they change (rebuild boundaries)
-- [ ] Private `_build*()` helper methods that return widgets are extracted to separate widget classes (enables element reuse, const propagation, and framework optimizations)
-- [ ] Stateless widgets preferred over Stateful where no mutable local state is needed
-- [ ] Extracted widgets are in separate files when reusable
-
-### Const usage:
-- [ ] `const` constructors used wherever possible — prevents unnecessary rebuilds
-- [ ] `const` literals for collections that don't change (`const []`, `const {}`)
-- [ ] Constructor is declared `const` when all fields are final
-
-### Key usage:
-- [ ] `ValueKey` used in lists/grids to preserve state across reorders
-- [ ] `GlobalKey` used sparingly — only when accessing state across the tree is truly needed
-- [ ] `UniqueKey` avoided in `build()` — it forces rebuild every frame
-- [ ] `ObjectKey` used when identity is based on a data object rather than a single value
-
-### Theming & design system:
-- [ ] Colors come from `Theme.of(context).colorScheme` — no hardcoded `Colors.red` or hex values
-- [ ] Text styles come from `Theme.of(context).textTheme` — no inline `TextStyle` with raw font sizes
-- [ ] Dark mode compatibility verified — no assumptions about light background
-- [ ] Spacing and sizing use consistent design tokens or constants, not magic numbers
-
-### Build method complexity:
-- [ ] No network calls, file I/O, or heavy computation in `build()`
-- [ ] No `Future.then()` or `async` work in `build()`
-- [ ] No subscription creation (`.listen()`) in `build()`
-- [ ] `setState()` localized to smallest possible subtree
+- [ ] **暗黙的なdynamic**: 型アノテーションの欠如が`dynamic`につながる — `strict-casts`、`strict-inference`、`strict-raw-types`を有効にする
+- [ ] **Null安全の誤用**: 適切なnullチェックやDart 3のパターンマッチング（`if (value case var v?)`）の代わりに過度な`!`（bang演算子）
+- [ ] **型プロモーションの失敗**: ローカル変数プロモーションが機能する場所で`this.field`を使用
+- [ ] **過度に広い例外のキャッチ**: `on`句なしの`catch (e)`; 常に例外型を指定する
+- [ ] **`Error`のキャッチ**: `Error`のサブタイプはバグを示し、キャッチすべきでない
+- [ ] **未使用の`async`**: `await`しない`async`マークされた関数 — 不要なオーバーヘッド
+- [ ] **`late`の過剰使用**: nullable型やコンストラクターの初期化がより安全な場所での`late`の使用; エラーをランタイムに先送りにする
+- [ ] **ループでの文字列連結**: 繰り返しの文字列構築には`+`の代わりに`StringBuffer`を使用
+- [ ] **`const`コンテキストでの可変状態**: `const`コンストラクタークラスのフィールドは可変であるべきでない
+- [ ] **`Future`の戻り値の無視**: 意図を示すために`await`を使用するか明示的に`unawaited()`を呼び出す
+- [ ] **`final`が使える場所での`var`**: ローカル変数には`final`を、コンパイル時定数には`const`を優先
+- [ ] **相対インポート**: 一貫性のために`package:`インポートを使用
+- [ ] **公開された可変コレクション**: パブリックAPIは生の`List`/`Map`ではなく変更不可能なビューを返すべき
+- [ ] **Dart 3パターンマッチングの欠如**: 冗長な`is`チェックと手動キャストの代わりにswitch式と`if-case`を優先
+- [ ] **複数の戻り値のための使い捨てクラス**: 単一使用のDTOの代わりにDart 3のレコード`(String, int)`を使用
+- [ ] **本番コードでの`print()`**: `dart:developer`の`log()`またはプロジェクトのロギングパッケージを使用; `print()`はログレベルがなくフィルタリングできない
 
 ---
 
-## 4. State Management (Library-Agnostic)
+## 3. ウィジェットのベストプラクティス
 
-These principles apply to all Flutter state management solutions (BLoC, Riverpod, Provider, GetX, MobX, Signals, ValueNotifier, etc.).
+### ウィジェットの分解:
+- [ ] `build()`メソッドが約80-100行を超える単一ウィジェットがない
+- [ ] ウィジェットがカプセル化と変化の仕方（再構築の境界）によって分割されている
+- [ ] ウィジェットを返すプライベートな`_build*()`ヘルパーメソッドが別のウィジェットクラスに抽出されている（要素の再利用、const伝播、フレームワーク最適化を可能にする）
+- [ ] 可変のローカル状態が必要でない場合、Statelessウィジェットが優先される
+- [ ] 抽出されたウィジェットが再利用可能な場合、別のファイルに存在する
 
-### Architecture:
-- [ ] Business logic lives outside the widget layer — in a state management component (BLoC, Notifier, Controller, Store, ViewModel, etc.)
-- [ ] State managers receive dependencies via injection, not by constructing them internally
-- [ ] A service or repository layer abstracts data sources — widgets and state managers should not call APIs or databases directly
-- [ ] State managers have a single responsibility — no "god" managers handling unrelated concerns
-- [ ] Cross-component dependencies follow the solution's conventions:
-  - In **Riverpod**: providers depending on providers via `ref.watch` is expected — flag only circular or overly tangled chains
-  - In **BLoC**: blocs should not directly depend on other blocs — prefer shared repositories or presentation-layer coordination
-  - In other solutions: follow the documented conventions for inter-component communication
+### Constの使用:
+- [ ] `const`コンストラクターを可能な限り使用 — 不要な再構築を防ぐ
+- [ ] 変化しないコレクションに`const`リテラルを使用（`const []`、`const {}`）
+- [ ] すべてのフィールドがfinalの場合、コンストラクターが`const`として宣言されている
 
-### Immutability & value equality (for immutable-state solutions: BLoC, Riverpod, Redux):
-- [ ] State objects are immutable — new instances created via `copyWith()` or constructors, never mutated in-place
-- [ ] State classes implement `==` and `hashCode` properly (all fields included in comparison)
-- [ ] Mechanism is consistent across the project — manual override, `Equatable`, `freezed`, Dart records, or other
-- [ ] Collections inside state objects are not exposed as raw mutable `List`/`Map`
+### Keyの使用:
+- [ ] 並べ替え時に状態を保持するために`ValueKey`をリスト/グリッドで使用
+- [ ] `GlobalKey`は控えめに使用 — ツリー全体の状態アクセスが本当に必要な場合のみ
+- [ ] `UniqueKey`を`build()`内で使用しない — フレームごとに再構築を強制する
+- [ ] 単一の値ではなくデータオブジェクトのアイデンティティに基づく場合は`ObjectKey`を使用
 
-### Reactivity discipline (for reactive-mutation solutions: MobX, GetX, Signals):
-- [ ] State is only mutated through the solution's reactive API (`@action` in MobX, `.value` on signals, `.obs` in GetX) — direct field mutation bypasses change tracking
-- [ ] Derived values use the solution's computed mechanism rather than being stored redundantly
-- [ ] Reactions and disposers are properly cleaned up (`ReactionDisposer` in MobX, effect cleanup in Signals)
+### テーマとデザインシステム:
+- [ ] 色は`Theme.of(context).colorScheme`から取得 — `Colors.red`やhex値のハードコードなし
+- [ ] テキストスタイルは`Theme.of(context).textTheme`から取得 — 生のフォントサイズのインライン`TextStyle`なし
+- [ ] ダークモードの互換性を確認 — 明るい背景についての仮定なし
+- [ ] スペーシングとサイジングは一貫したデザイントークンまたは定数を使用し、マジックナンバーではない
 
-### State shape design:
-- [ ] Mutually exclusive states use sealed types, union variants, or the solution's built-in async state type (e.g. Riverpod's `AsyncValue`) — not boolean flags (`isLoading`, `isError`, `hasData`)
-- [ ] Every async operation models loading, success, and error as distinct states
-- [ ] All state variants are handled exhaustively in UI — no silently ignored cases
-- [ ] Error states carry error information for display; loading states don't carry stale data
-- [ ] Nullable data is not used as a loading indicator — states are explicit
+### buildメソッドの複雑さ:
+- [ ] `build()`内にネットワーク呼び出し、ファイルI/O、または重い計算がない
+- [ ] `build()`内に`Future.then()`または`async`作業がない
+- [ ] `build()`内にサブスクリプション作成（`.listen()`）がない
+- [ ] `setState()`が可能な限り小さいサブツリーに限定されている
+
+---
+
+## 4. 状態管理（ライブラリに依存しない）
+
+これらの原則はすべてのFlutter状態管理ソリューション（BLoC、Riverpod、Provider、GetX、MobX、Signals、ValueNotifier など）に適用されます。
+
+### アーキテクチャ:
+- [ ] ビジネスロジックがウィジェットレイヤーの外にある — 状態管理コンポーネント（BLoC、Notifier、Controller、Store、ViewModelなど）内
+- [ ] 状態マネージャーが依存関係をインジェクションで受け取り、内部で構築しない
+- [ ] サービスまたはリポジトリレイヤーがデータソースを抽象化 — ウィジェットと状態マネージャーはAPIやデータベースを直接呼び出すべきでない
+- [ ] 状態マネージャーが単一の責務を持つ — 無関係な懸念を処理する「god」マネージャーなし
+- [ ] コンポーネント間の依存関係がソリューションの規約に従う:
+  - **Riverpod**では: プロバイダーが`ref.watch`を通じて他のプロバイダーに依存することは予期されている — 循環または過度に絡み合ったチェーンのみフラグを立てる
+  - **BLoC**では: BLoCが他のBLoCに直接依存すべきでない — 共有リポジトリまたはプレゼンテーション層の調整を優先する
+  - 他のソリューションでは: コンポーネント間通信の文書化された規約に従う
+
+### イミュータビリティと値の等値性（イミュータブル状態ソリューション用: BLoC、Riverpod、Redux）:
+- [ ] 状態オブジェクトがイミュータブル — インプレースで変異させるのではなく、`copyWith()`またはコンストラクターで新しいインスタンスを作成
+- [ ] 状態クラスが`==`と`hashCode`を適切に実装（すべてのフィールドが比較に含まれる）
+- [ ] メカニズムがプロジェクト全体で一貫 — 手動オーバーライド、`Equatable`、`freezed`、Dartレコード、またはその他
+- [ ] 状態オブジェクト内のコレクションが生の可変`List`/`Map`として公開されていない
+
+### リアクティビティの規律（リアクティブ変異ソリューション用: MobX、GetX、Signals）:
+- [ ] 状態がソリューションのリアクティブAPI（MobXでの`@action`、signalでの`.value`、GetXでの`.obs`）を通じてのみ変異される — 直接フィールド変異は変更追跡をバイパスする
+- [ ] 派生値がソリューションの計算メカニズムを使用し、冗長に保存されない
+- [ ] リアクションとディスポーザーが適切にクリーンアップされる（MobXでの`ReactionDisposer`、Signalsでのeffectクリーンアップ）
+
+### 状態の形状設計:
+- [ ] 相互に排他的な状態がsealed型、ユニオン変体、またはソリューションの組み込み非同期状態型（例: Riverpodの`AsyncValue`）を使用 — ブールフラグ（`isLoading`、`isError`、`hasData`）は使わない
+- [ ] すべての非同期操作がローディング、成功、エラーを異なる状態としてモデル化
+- [ ] すべての状態変体がUIで網羅的に処理 — サイレントに無視されるケースなし
+- [ ] エラー状態が表示のためのエラー情報を持つ; ローディング状態は古いデータを持たない
+- [ ] 可変のデータがローディングインジケーターとして使用されない — 状態は明示的
 
 ```dart
-// BAD — boolean flag soup allows impossible states
+// 悪い例 — ブールフラグの混乱が不可能な状態を許可する
 class UserState {
   bool isLoading = false;
-  bool hasError = false; // isLoading && hasError is representable!
+  bool hasError = false; // isLoading && hasErrorが表現可能！
   User? user;
 }
 
-// GOOD (immutable approach) — sealed types make impossible states unrepresentable
+// 良い例（イミュータブルアプローチ） — sealed型が不可能な状態を表現不可能にする
 sealed class UserState {}
 class UserInitial extends UserState {}
 class UserLoading extends UserState {}
@@ -131,297 +131,297 @@ class UserError extends UserState {
   const UserError(this.message);
 }
 
-// GOOD (reactive approach) — observable enum + data, mutations via reactivity API
+// 良い例（リアクティブアプローチ） — observableのenum + データ、リアクティビティAPIを通じた変異
 // enum UserStatus { initial, loading, loaded, error }
-// Use your solution's observable/signal to wrap status and data separately
+// ソリューションのobservable/signalを使用してstatusとdataを別々にラップする
 ```
 
-### Rebuild optimization:
-- [ ] State consumer widgets (Builder, Consumer, Observer, Obx, Watch, etc.) scoped as narrow as possible
-- [ ] Selectors used to rebuild only when specific fields change — not on every state emission
-- [ ] `const` widgets used to stop rebuild propagation through the tree
-- [ ] Computed/derived state is calculated reactively, not stored redundantly
+### 再構築の最適化:
+- [ ] 状態コンシューマーウィジェット（Builder、Consumer、Observer、Obx、Watchなど）をできるだけ狭くスコープする
+- [ ] 特定のフィールドが変化した場合のみ再構築するためにセレクターを使用 — すべての状態エミッションで再構築しない
+- [ ] ツリーを通じた再構築の伝播を止めるために`const`ウィジェットを使用
+- [ ] 計算/派生状態がリアクティブに計算され、冗長に保存されない
 
-### Subscriptions & disposal:
-- [ ] All manual subscriptions (`.listen()`) are cancelled in `dispose()` / `close()`
-- [ ] Stream controllers are closed when no longer needed
-- [ ] Timers are cancelled in disposal lifecycle
-- [ ] Framework-managed lifecycle is preferred over manual subscription (declarative builders over `.listen()`)
-- [ ] `mounted` check before `setState` in async callbacks
-- [ ] `BuildContext` not used after `await` without checking `context.mounted` (Flutter 3.7+) — stale context causes crashes
-- [ ] No navigation, dialogs, or scaffold messages after async gaps without verifying the widget is still mounted
-- [ ] `BuildContext` never stored in singletons, state managers, or static fields
+### サブスクリプションと廃棄:
+- [ ] すべての手動サブスクリプション（`.listen()`）が`dispose()` / `close()`でキャンセルされる
+- [ ] ストリームコントローラーが不要になったら閉じられる
+- [ ] タイマーが廃棄ライフサイクルでキャンセルされる
+- [ ] フレームワーク管理のライフサイクルが手動サブスクリプションより優先される（`.listen()`よりも宣言的ビルダー）
+- [ ] 非同期コールバックでの`setState`前に`mounted`チェック
+- [ ] `await`後に`BuildContext`を`context.mounted`をチェックせずに使用しない（Flutter 3.7+） — 古いコンテキストはクラッシュを引き起こす
+- [ ] 非同期ギャップの後にウィジェットがまだマウントされていることを確認せずにナビゲーション、ダイアログ、またはscaffoldメッセージを使用しない
+- [ ] `BuildContext`をシングルトン、状態マネージャー、または静的フィールドに保存しない
 
-### Local vs global state:
-- [ ] Ephemeral UI state (checkbox, slider, animation) uses local state (`setState`, `ValueNotifier`)
-- [ ] Shared state is lifted only as high as needed — not over-globalized
-- [ ] Feature-scoped state is properly disposed when the feature is no longer active
-
----
-
-## 5. Performance
-
-### Unnecessary rebuilds:
-- [ ] `setState()` not called at root widget level — localize state changes
-- [ ] `const` widgets used to stop rebuild propagation
-- [ ] `RepaintBoundary` used around complex subtrees that repaint independently
-- [ ] `AnimatedBuilder` child parameter used for subtrees independent of animation
-
-### Expensive operations in build():
-- [ ] No sorting, filtering, or mapping large collections in `build()` — compute in state management layer
-- [ ] No regex compilation in `build()`
-- [ ] `MediaQuery.of(context)` usage is specific (e.g., `MediaQuery.sizeOf(context)`)
-
-### Image optimization:
-- [ ] Network images use caching (any caching solution appropriate for the project)
-- [ ] Appropriate image resolution for target device (no loading 4K images for thumbnails)
-- [ ] `Image.asset` with `cacheWidth`/`cacheHeight` to decode at display size
-- [ ] Placeholder and error widgets provided for network images
-
-### Lazy loading:
-- [ ] `ListView.builder` / `GridView.builder` used instead of `ListView(children: [...])` for large or dynamic lists (concrete constructors are fine for small, static lists)
-- [ ] Pagination implemented for large data sets
-- [ ] Deferred loading (`deferred as`) used for heavy libraries in web builds
-
-### Other:
-- [ ] `Opacity` widget avoided in animations — use `AnimatedOpacity` or `FadeTransition`
-- [ ] Clipping avoided in animations — pre-clip images
-- [ ] `operator ==` not overridden on widgets — use `const` constructors instead
-- [ ] Intrinsic dimension widgets (`IntrinsicHeight`, `IntrinsicWidth`) used sparingly (extra layout pass)
+### ローカル対グローバル状態:
+- [ ] 一時的なUI状態（チェックボックス、スライダー、アニメーション）がローカル状態（`setState`、`ValueNotifier`）を使用
+- [ ] 共有状態が必要な分だけリフトされる — 過度にグローバル化されない
+- [ ] フィーチャースコープの状態がフィーチャーがアクティブでなくなったときに適切に廃棄される
 
 ---
 
-## 6. Testing
+## 5. パフォーマンス
 
-### Test types and expectations:
-- [ ] **Unit tests**: Cover all business logic (state managers, repositories, utility functions)
-- [ ] **Widget tests**: Cover individual widget behavior, interactions, and visual output
-- [ ] **Integration tests**: Cover critical user flows end-to-end
-- [ ] **Golden tests**: Pixel-perfect comparisons for design-critical UI components
+### 不要な再構築:
+- [ ] `setState()`がルートウィジェットレベルで呼び出されない — 状態変更をローカル化する
+- [ ] `const`ウィジェットが再構築の伝播を止めるために使用される
+- [ ] `RepaintBoundary`が独立して再描画する複雑なサブツリーの周りに使用される
+- [ ] `AnimatedBuilder`のchildパラメーターがアニメーションから独立したサブツリーに使用される
 
-### Coverage targets:
-- [ ] Aim for 80%+ line coverage on business logic
-- [ ] All state transitions have corresponding tests (loading → success, loading → error, retry, etc.)
-- [ ] Edge cases tested: empty states, error states, loading states, boundary values
+### build()内の高コスト操作:
+- [ ] `build()`内で大きなコレクションのソート、フィルタリング、マッピングがない — 状態管理レイヤーで計算する
+- [ ] `build()`内でregexのコンパイルがない
+- [ ] `MediaQuery.of(context)`の使用が具体的（例: `MediaQuery.sizeOf(context)`）
 
-### Test isolation:
-- [ ] External dependencies (API clients, databases, services) are mocked or faked
-- [ ] Each test file tests exactly one class/unit
-- [ ] Tests verify behavior, not implementation details
-- [ ] Stubs define only the behavior needed for each test (minimal stubbing)
-- [ ] No shared mutable state between test cases
+### 画像の最適化:
+- [ ] ネットワーク画像がキャッシングを使用（プロジェクトに適したキャッシングソリューション）
+- [ ] ターゲットデバイスに適した画像解像度（サムネイルに4K画像をロードしない）
+- [ ] `Image.asset`と`cacheWidth`/`cacheHeight`を使用して表示サイズでデコードする
+- [ ] ネットワーク画像にプレースホルダーとエラーウィジェットが提供されている
 
-### Widget test quality:
-- [ ] `pumpWidget` and `pump` used correctly for async operations
-- [ ] `find.byType`, `find.text`, `find.byKey` used appropriately
-- [ ] No flaky tests depending on timing — use `pumpAndSettle` or explicit `pump(Duration)`
-- [ ] Tests run in CI and failures block merges
+### 遅延ローディング:
+- [ ] 大きなまたは動的なリストには`ListView(children: [...])`の代わりに`ListView.builder` / `GridView.builder`を使用（小さくて静的なリストにはコンクリートコンストラクターが適切）
+- [ ] 大きなデータセットにページネーションが実装されている
+- [ ] Webビルドで重いライブラリに遅延ローディング（`deferred as`）を使用
 
----
-
-## 7. Accessibility
-
-### Semantic widgets:
-- [ ] `Semantics` widget used to provide screen reader labels where automatic labels are insufficient
-- [ ] `ExcludeSemantics` used for purely decorative elements
-- [ ] `MergeSemantics` used to combine related widgets into a single accessible element
-- [ ] Images have `semanticLabel` property set
-
-### Screen reader support:
-- [ ] All interactive elements are focusable and have meaningful descriptions
-- [ ] Focus order is logical (follows visual reading order)
-
-### Visual accessibility:
-- [ ] Contrast ratio >= 4.5:1 for text against background
-- [ ] Tappable targets are at least 48x48 pixels
-- [ ] Color is not the sole indicator of state (use icons/text alongside)
-- [ ] Text scales with system font size settings
-
-### Interaction accessibility:
-- [ ] No no-op `onPressed` callbacks — every button does something or is disabled
-- [ ] Error fields suggest corrections
-- [ ] Context does not change unexpectedly while user is inputting data
+### その他:
+- [ ] アニメーションで`Opacity`ウィジェットを避ける — `AnimatedOpacity`または`FadeTransition`を使用
+- [ ] アニメーションでクリッピングを避ける — 画像を事前にクリップする
+- [ ] ウィジェットで`operator ==`をオーバーライドしない — 代わりに`const`コンストラクターを使用
+- [ ] 組み込み次元ウィジェット（`IntrinsicHeight`、`IntrinsicWidth`）を控えめに使用（追加のレイアウトパス）
 
 ---
 
-## 8. Platform-Specific Concerns
+## 6. テスト
 
-### iOS/Android differences:
-- [ ] Platform-adaptive widgets used where appropriate
-- [ ] Back navigation handled correctly (Android back button, iOS swipe-to-go-back)
-- [ ] Status bar and safe area handled via `SafeArea` widget
-- [ ] Platform-specific permissions declared in `AndroidManifest.xml` and `Info.plist`
+### テストの種類と期待値:
+- [ ] **ユニットテスト**: すべてのビジネスロジック（状態マネージャー、リポジトリ、ユーティリティ関数）をカバー
+- [ ] **ウィジェットテスト**: 個々のウィジェットの動作、インタラクション、視覚的出力をカバー
+- [ ] **統合テスト**: 重要なユーザーフローをエンドツーエンドでカバー
+- [ ] **ゴールデンテスト**: デザインクリティカルなUIコンポーネントのピクセル単位の比較
 
-### Responsive design:
-- [ ] `LayoutBuilder` or `MediaQuery` used for responsive layouts
-- [ ] Breakpoints defined consistently (phone, tablet, desktop)
-- [ ] Text doesn't overflow on small screens — use `Flexible`, `Expanded`, `FittedBox`
-- [ ] Landscape orientation tested or explicitly locked
-- [ ] Web-specific: mouse/keyboard interactions supported, hover states present
+### カバレッジの目標:
+- [ ] ビジネスロジックで80%以上のライン カバレッジを目指す
+- [ ] すべての状態遷移が対応するテストを持つ（ローディング→成功、ローディング→エラー、リトライなど）
+- [ ] エッジケースのテスト: 空の状態、エラー状態、ローディング状態、境界値
 
----
+### テストの分離:
+- [ ] 外部依存関係（APIクライアント、データベース、サービス）がモック化またはフェイク化されている
+- [ ] 各テストファイルが正確に1つのクラス/ユニットをテストする
+- [ ] テストが実装の詳細ではなく動作を検証する
+- [ ] スタブが各テストに必要な動作のみを定義する（最小限のスタッビング）
+- [ ] テストケース間で共有された可変状態がない
 
-## 9. Security
-
-### Secure storage:
-- [ ] Sensitive data (tokens, credentials) stored using platform-secure storage (Keychain on iOS, EncryptedSharedPreferences on Android)
-- [ ] Never store secrets in plaintext storage
-- [ ] Biometric authentication gating considered for sensitive operations
-
-### API key handling:
-- [ ] API keys NOT hardcoded in Dart source — use `--dart-define`, `.env` files excluded from VCS, or compile-time configuration
-- [ ] Secrets not committed to git — check `.gitignore`
-- [ ] Backend proxy used for truly secret keys (client should never hold server secrets)
-
-### Input validation:
-- [ ] All user input validated before sending to API
-- [ ] Form validation uses proper validation patterns
-- [ ] No raw SQL or string interpolation of user input
-- [ ] Deep link URLs validated and sanitized before navigation
-
-### Network security:
-- [ ] HTTPS enforced for all API calls
-- [ ] Certificate pinning considered for high-security apps
-- [ ] Authentication tokens refreshed and expired properly
-- [ ] No sensitive data logged or printed
+### ウィジェットテストの品質:
+- [ ] `pumpWidget`と`pump`が非同期操作に対して正しく使用されている
+- [ ] `find.byType`、`find.text`、`find.byKey`が適切に使用されている
+- [ ] タイミングに依存する不安定なテストがない — `pumpAndSettle`または明示的な`pump(Duration)`を使用
+- [ ] テストがCIで実行され、失敗がマージをブロックする
 
 ---
 
-## 10. Package/Dependency Review
+## 7. アクセシビリティ
 
-### Evaluating pub.dev packages:
-- [ ] Check **pub points score** (aim for 130+/160)
-- [ ] Check **likes** and **popularity** as community signals
-- [ ] Verify the publisher is **verified** on pub.dev
-- [ ] Check last publish date — stale packages (>1 year) are a risk
-- [ ] Review open issues and response time from maintainers
-- [ ] Check license compatibility with your project
-- [ ] Verify platform support covers your targets
+### セマンティックウィジェット:
+- [ ] 自動ラベルが不十分な場所でスクリーンリーダーラベルを提供するために`Semantics`ウィジェットを使用
+- [ ] 純粋に装飾的な要素に`ExcludeSemantics`を使用
+- [ ] 関連するウィジェットを単一のアクセシブルな要素に結合するために`MergeSemantics`を使用
+- [ ] 画像に`semanticLabel`プロパティが設定されている
 
-### Version constraints:
-- [ ] Use caret syntax (`^1.2.3`) for dependencies — allows compatible updates
-- [ ] Pin exact versions only when absolutely necessary
-- [ ] Run `flutter pub outdated` regularly to track stale dependencies
-- [ ] No dependency overrides in production `pubspec.yaml` — only for temporary fixes with a comment/issue link
-- [ ] Minimize transitive dependency count — each dependency is an attack surface
+### スクリーンリーダーのサポート:
+- [ ] すべてのインタラクティブ要素がフォーカス可能で意味のある説明を持つ
+- [ ] フォーカス順序が論理的（視覚的な読み取り順序に従う）
 
-### Monorepo-specific (melos/workspace):
-- [ ] Internal packages import only from public API — no `package:other/src/internal.dart` (breaks Dart package encapsulation)
-- [ ] Internal package dependencies use workspace resolution, not hardcoded `path: ../../` relative strings
-- [ ] All sub-packages share or inherit root `analysis_options.yaml`
+### 視覚的アクセシビリティ:
+- [ ] テキストと背景のコントラスト比が4.5:1以上
+- [ ] タップ可能なターゲットが少なくとも48x48ピクセル
+- [ ] 色だけが状態の指標でない（アイコン/テキストと共に使用）
+- [ ] テキストがシステムフォントサイズ設定に合わせてスケールする
 
----
-
-## 11. Navigation and Routing
-
-### General principles (apply to any routing solution):
-- [ ] One routing approach used consistently — no mixing imperative `Navigator.push` with a declarative router
-- [ ] Route arguments are typed — no `Map<String, dynamic>` or `Object?` casting
-- [ ] Route paths defined as constants, enums, or generated — no magic strings scattered in code
-- [ ] Auth guards/redirects centralized — not duplicated across individual screens
-- [ ] Deep links configured for both Android and iOS
-- [ ] Deep link URLs validated and sanitized before navigation
-- [ ] Navigation state is testable — route changes can be verified in tests
-- [ ] Back behavior is correct on all platforms
+### インタラクションのアクセシビリティ:
+- [ ] 何もしない`onPressed`コールバックがない — すべてのボタンが何かをするか無効化されている
+- [ ] エラーフィールドが修正を提案する
+- [ ] ユーザーがデータを入力している間にコンテキストが予期せず変わらない
 
 ---
 
-## 12. Error Handling
+## 8. プラットフォーム固有の考慮事項
 
-### Framework error handling:
-- [ ] `FlutterError.onError` overridden to capture framework errors (build, layout, paint)
-- [ ] `PlatformDispatcher.instance.onError` set for async errors not caught by Flutter
-- [ ] `ErrorWidget.builder` customized for release mode (user-friendly instead of red screen)
-- [ ] Global error capture wrapper around `runApp` (e.g., `runZonedGuarded`, Sentry/Crashlytics wrapper)
+### iOS/Androidの違い:
+- [ ] 適切な場所でプラットフォーム適応型ウィジェットを使用
+- [ ] バック ナビゲーションが正しく処理されている（Androidのバックボタン、iOSのスワイプバック）
+- [ ] ステータスバーとセーフエリアが`SafeArea`ウィジェットで処理されている
+- [ ] プラットフォーム固有の権限が`AndroidManifest.xml`と`Info.plist`で宣言されている
 
-### Error reporting:
-- [ ] Error reporting service integrated (Firebase Crashlytics, Sentry, or equivalent)
-- [ ] Non-fatal errors reported with stack traces
-- [ ] State management error observer wired to error reporting (e.g., BlocObserver, ProviderObserver, or equivalent for your solution)
-- [ ] User-identifiable info (user ID) attached to error reports for debugging
-
-### Graceful degradation:
-- [ ] API errors result in user-friendly error UI, not crashes
-- [ ] Retry mechanisms for transient network failures
-- [ ] Offline state handled gracefully
-- [ ] Error states in state management carry error info for display
-- [ ] Raw exceptions (network, parsing) are mapped to user-friendly, localized messages before reaching the UI — never show raw exception strings to users
+### レスポンシブデザイン:
+- [ ] レスポンシブレイアウトに`LayoutBuilder`または`MediaQuery`を使用
+- [ ] ブレークポイントが一貫して定義されている（電話、タブレット、デスクトップ）
+- [ ] テキストが小さい画面でオーバーフローしない — `Flexible`、`Expanded`、`FittedBox`を使用
+- [ ] 横向きが テストされているか明示的にロックされている
+- [ ] Web固有: マウス/キーボードインタラクションがサポートされ、ホバー状態が存在する
 
 ---
 
-## 13. Internationalization (l10n)
+## 9. セキュリティ
 
-### Setup:
-- [ ] Localization solution configured (Flutter's built-in ARB/l10n, easy_localization, or equivalent)
-- [ ] Supported locales declared in app configuration
+### 安全なストレージ:
+- [ ] 機密データ（トークン、資格情報）がプラットフォームセキュアなストレージを使用（iOSのKeychain、AndroidのEncryptedSharedPreferences）
+- [ ] 平文ストレージにシークレットを保存しない
+- [ ] 機密操作に生体認証ゲーティングを検討
 
-### Content:
-- [ ] All user-visible strings use the localization system — no hardcoded strings in widgets
-- [ ] Template file includes descriptions/context for translators
-- [ ] ICU message syntax used for plurals, genders, selects
-- [ ] Placeholders defined with types
-- [ ] No missing keys across locales
+### APIキーの処理:
+- [ ] APIキーがDartソースにハードコードされていない — `--dart-define`、VCSから除外された`.env`ファイル、またはコンパイル時設定を使用
+- [ ] シークレットがgitにコミットされていない — `.gitignore`を確認
+- [ ] 本当にシークレットなキーにはバックエンドプロキシを使用（クライアントはサーバーシークレットを保持すべきでない）
 
-### Code review:
-- [ ] Localization accessor used consistently throughout the project
-- [ ] Date, time, number, and currency formatting is locale-aware
-- [ ] Text directionality (RTL) supported if targeting Arabic, Hebrew, etc.
-- [ ] No string concatenation for localized text — use parameterized messages
+### 入力バリデーション:
+- [ ] すべてのユーザー入力がAPIに送信する前にバリデートされる
+- [ ] フォームバリデーションが適切なバリデーションパターンを使用
+- [ ] ユーザー入力の生のSQLや文字列補間がない
+- [ ] ナビゲーション前にディープリンクURLがバリデートおよびサニタイズされる
 
----
-
-## 14. Dependency Injection
-
-### Principles (apply to any DI approach):
-- [ ] Classes depend on abstractions (interfaces), not concrete implementations at layer boundaries
-- [ ] Dependencies provided externally via constructor, DI framework, or provider graph — not created internally
-- [ ] Registration distinguishes lifetime: singleton vs factory vs lazy singleton
-- [ ] Environment-specific bindings (dev/staging/prod) use configuration, not runtime `if` checks
-- [ ] No circular dependencies in the DI graph
-- [ ] Service locator calls (if used) are not scattered throughout business logic
+### ネットワークセキュリティ:
+- [ ] すべてのAPI呼び出しにHTTPSが強制されている
+- [ ] 高セキュリティアプリには証明書のピン留めを検討
+- [ ] 認証トークンが適切にリフレッシュおよび期限切れになる
+- [ ] 機密データがログや出力に記録されない
 
 ---
 
-## 15. Static Analysis
+## 10. パッケージ/依存関係のレビュー
 
-### Configuration:
-- [ ] `analysis_options.yaml` present with strict settings enabled
-- [ ] Strict analyzer settings: `strict-casts: true`, `strict-inference: true`, `strict-raw-types: true`
-- [ ] A comprehensive lint rule set is included (very_good_analysis, flutter_lints, or custom strict rules)
-- [ ] All sub-packages in monorepos inherit or share the root analysis options
+### pub.devパッケージの評価:
+- [ ] **pubポイントスコア**を確認（130+/160を目指す）
+- [ ] コミュニティシグナルとして**いいね**と**人気度**を確認
+- [ ] pub.devでパブリッシャーが**認証済み**であることを確認
+- [ ] 最終公開日を確認 — 古いパッケージ（1年以上）はリスク
+- [ ] オープンな問題とメンテナーからの応答時間を確認
+- [ ] ライセンスがプロジェクトと互換性があることを確認
+- [ ] プラットフォームサポートがターゲットをカバーすることを確認
 
-### Enforcement:
-- [ ] No unresolved analyzer warnings in committed code
-- [ ] Lint suppressions (`// ignore:`) are justified with comments explaining why
-- [ ] `flutter analyze` runs in CI and failures block merges
+### バージョン制約:
+- [ ] 依存関係にキャレット構文（`^1.2.3`）を使用 — 互換性のある更新を許可
+- [ ] 絶対に必要な場合のみ正確なバージョンを固定
+- [ ] 古い依存関係を追跡するために定期的に`flutter pub outdated`を実行
+- [ ] 本番`pubspec.yaml`では依存関係のオーバーライドなし — コメント/問題リンク付きの一時的な修正のみ
+- [ ] 一時的な依存関係の数を最小化 — 各依存関係は攻撃面
 
-### Key rules to verify regardless of lint package:
-- [ ] `prefer_const_constructors` — performance in widget trees
-- [ ] `avoid_print` — use proper logging
-- [ ] `unawaited_futures` — prevent fire-and-forget async bugs
-- [ ] `prefer_final_locals` — immutability at variable level
-- [ ] `always_declare_return_types` — explicit contracts
-- [ ] `avoid_catches_without_on_clauses` — specific error handling
-- [ ] `always_use_package_imports` — consistent import style
+### モノリポ固有（melos/workspace）:
+- [ ] 内部パッケージがパブリックAPIからのみインポートする — `package:other/src/internal.dart`なし（Dartパッケージのカプセル化を壊す）
+- [ ] 内部パッケージの依存関係がワークスペース解決を使用し、ハードコードされた`path: ../../`相対文字列でない
+- [ ] すべてのサブパッケージがルートの`analysis_options.yaml`を共有または継承する
 
 ---
 
-## State Management Quick Reference
+## 11. ナビゲーションとルーティング
 
-The table below maps universal principles to their implementation in popular solutions. Use this to adapt review rules to whichever solution the project uses.
+### 一般原則（任意のルーティングソリューションに適用）:
+- [ ] 一つのルーティングアプローチが一貫して使用されている — 宣言的ルーターと命令的`Navigator.push`の混在なし
+- [ ] ルート引数が型付き — `Map<String, dynamic>`や`Object?`キャストなし
+- [ ] ルートパスが定数、enum、または生成として定義されている — コード全体に散らばったマジック文字列なし
+- [ ] 認証ガード/リダイレクトが集中管理されている — 個々の画面で重複していない
+- [ ] ディープリンクがAndroidとiOSの両方で設定されている
+- [ ] ナビゲーション前にディープリンクURLがバリデートおよびサニタイズされる
+- [ ] ナビゲーション状態がテスト可能 — ルート変更がテストで検証できる
+- [ ] すべてのプラットフォームでバック動作が正しい
 
-| Principle | BLoC/Cubit | Riverpod | Provider | GetX | MobX | Signals | Built-in |
+---
+
+## 12. エラー処理
+
+### フレームワークエラー処理:
+- [ ] `FlutterError.onError`がフレームワークエラー（ビルド、レイアウト、描画）をキャプチャするためにオーバーライドされている
+- [ ] `PlatformDispatcher.instance.onError`がFlutterにキャッチされない非同期エラー用に設定されている
+- [ ] `ErrorWidget.builder`がリリースモードのためにカスタマイズされている（赤い画面の代わりにユーザーフレンドリー）
+- [ ] `runApp`の周りにグローバルエラーキャプチャラッパー（例: `runZonedGuarded`、Sentry/Crashlyticsラッパー）
+
+### エラーレポート:
+- [ ] エラーレポートサービスが統合されている（Firebase Crashlytics、Sentry、または同等のもの）
+- [ ] 非致命エラーがスタックトレースと共に報告されている
+- [ ] エラーレポートに状態管理エラーオブザーバーが接続されている（例: BlocObserver、ProviderObserver、またはソリューションの同等のもの）
+- [ ] デバッグのためにユーザー識別可能な情報（ユーザーID）がエラーレポートに添付されている
+
+### グレースフルデグラデーション:
+- [ ] APIエラーがクラッシュではなくユーザーフレンドリーなエラーUIになる
+- [ ] 一時的なネットワーク障害に対するリトライメカニズム
+- [ ] オフライン状態がグレースフルに処理される
+- [ ] 状態管理のエラー状態が表示のためのエラー情報を持つ
+- [ ] 生の例外（ネットワーク、パース）がUIに到達する前にユーザーフレンドリーでローカライズされたメッセージにマッピングされる — 生の例外文字列をユーザーに表示しない
+
+---
+
+## 13. 国際化（l10n）
+
+### セットアップ:
+- [ ] ローカリゼーションソリューションが設定されている（FlutterのビルトインARB/l10n、easy_localization、または同等のもの）
+- [ ] サポートされているロケールがアプリの設定で宣言されている
+
+### コンテンツ:
+- [ ] すべてのユーザー向け文字列がローカリゼーションシステムを使用 — ウィジェット内のハードコードされた文字列なし
+- [ ] テンプレートファイルが翻訳者向けの説明/コンテキストを含む
+- [ ] 複数形、性別、選択にICUメッセージ構文を使用
+- [ ] プレースホルダーが型で定義されている
+- [ ] ロケール間でキーが欠けていない
+
+### コードレビュー:
+- [ ] ローカリゼーションアクセサーがプロジェクト全体で一貫して使用されている
+- [ ] 日付、時刻、数値、通貨のフォーマットがロケール対応
+- [ ] アラビア語、ヘブライ語などをターゲットにする場合、テキストの方向性（RTL）がサポートされている
+- [ ] ローカライズされたテキストに文字列連結がない — パラメーター化されたメッセージを使用
+
+---
+
+## 14. 依存性注入
+
+### 原則（任意のDIアプローチに適用）:
+- [ ] クラスがレイヤー境界で具体的な実装ではなく抽象（インターフェース）に依存する
+- [ ] 依存関係がコンストラクター、DIフレームワーク、またはプロバイダーグラフを通じて外部から提供される — 内部で作成されない
+- [ ] 登録がライフタイムを区別する: シングルトン対ファクトリー対レイジーシングルトン
+- [ ] 環境固有のバインディング（dev/staging/prod）が設定を使用し、ランタイムの`if`チェックではない
+- [ ] DIグラフに循環依存がない
+- [ ] サービスロケーターの呼び出し（使用する場合）がビジネスロジック全体に散らばっていない
+
+---
+
+## 15. 静的解析
+
+### 設定:
+- [ ] `analysis_options.yaml`が厳格な設定を有効にして存在する
+- [ ] 厳格なアナライザー設定: `strict-casts: true`、`strict-inference: true`、`strict-raw-types: true`
+- [ ] 包括的なリントルールセットが含まれている（very_good_analysis、flutter_lints、またはカスタム厳格ルール）
+- [ ] モノリポ内のすべてのサブパッケージがルートの解析オプションを継承または共有する
+
+### 適用:
+- [ ] コミットされたコードにアナライザーの未解決の警告がない
+- [ ] リントの抑制（`// ignore:`）が理由を説明するコメントで正当化されている
+- [ ] `flutter analyze`がCIで実行され、失敗がマージをブロックする
+
+### リントパッケージに関わらず確認すべき主要なルール:
+- [ ] `prefer_const_constructors` — ウィジェットツリーのパフォーマンス
+- [ ] `avoid_print` — 適切なロギングを使用
+- [ ] `unawaited_futures` — fire-and-forget非同期バグを防ぐ
+- [ ] `prefer_final_locals` — 変数レベルのイミュータビリティ
+- [ ] `always_declare_return_types` — 明示的なコントラクト
+- [ ] `avoid_catches_without_on_clauses` — 特定のエラー処理
+- [ ] `always_use_package_imports` — 一貫したインポートスタイル
+
+---
+
+## 状態管理クイックリファレンス
+
+以下の表は普遍的な原則を人気のソリューションでの実装にマッピングしています。プロジェクトが使用するソリューションにレビュールールを適応させるために使用してください。
+
+| 原則 | BLoC/Cubit | Riverpod | Provider | GetX | MobX | Signals | ビルトイン |
 |-----------|-----------|----------|----------|------|------|---------|----------|
-| State container | `Bloc`/`Cubit` | `Notifier`/`AsyncNotifier` | `ChangeNotifier` | `GetxController` | `Store` | `signal()` | `StatefulWidget` |
-| UI consumer | `BlocBuilder` | `ConsumerWidget` | `Consumer` | `Obx`/`GetBuilder` | `Observer` | `Watch` | `setState` |
-| Selector | `BlocSelector`/`buildWhen` | `ref.watch(p.select(...))` | `Selector` | N/A | computed | `computed()` | N/A |
-| Side effects | `BlocListener` | `ref.listen` | `Consumer` callback | `ever()`/`once()` | `reaction` | `effect()` | callbacks |
-| Disposal | auto via `BlocProvider` | `.autoDispose` | auto via `Provider` | `onClose()` | `ReactionDisposer` | manual | `dispose()` |
-| Testing | `blocTest()` | `ProviderContainer` | `ChangeNotifier` directly | `Get.put` in test | store directly | signal directly | widget test |
+| 状態コンテナ | `Bloc`/`Cubit` | `Notifier`/`AsyncNotifier` | `ChangeNotifier` | `GetxController` | `Store` | `signal()` | `StatefulWidget` |
+| UIコンシューマー | `BlocBuilder` | `ConsumerWidget` | `Consumer` | `Obx`/`GetBuilder` | `Observer` | `Watch` | `setState` |
+| セレクター | `BlocSelector`/`buildWhen` | `ref.watch(p.select(...))` | `Selector` | N/A | computed | `computed()` | N/A |
+| 副作用 | `BlocListener` | `ref.listen` | `Consumer`コールバック | `ever()`/`once()` | `reaction` | `effect()` | コールバック |
+| 廃棄 | `BlocProvider`で自動 | `.autoDispose` | `Provider`で自動 | `onClose()` | `ReactionDisposer` | 手動 | `dispose()` |
+| テスト | `blocTest()` | `ProviderContainer` | `ChangeNotifier`を直接 | テストで`Get.put` | ストアを直接 | signalを直接 | ウィジェットテスト |
 
 ---
 
-## Sources
+## ソース
 
 - [Effective Dart: Style](https://dart.dev/effective-dart/style)
 - [Effective Dart: Usage](https://dart.dev/effective-dart/usage)

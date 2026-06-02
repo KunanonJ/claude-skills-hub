@@ -2,7 +2,7 @@
 
 This reference documents how reviewers evaluate papers at major ML/AI conferences, helping authors anticipate and address reviewer concerns.
 
----
+**For systems conference reviewer guidelines (OSDI, NSDI, ASPLOS, SOSP)**, see the [systems-paper-writing](../../systems-paper-writing/) skill.
 
 ## Contents
 
@@ -11,11 +11,10 @@ This reference documents how reviewers evaluate papers at major ML/AI conference
 - [ICML Reviewer Guidelines](#icml-reviewer-guidelines)
 - [ICLR Reviewer Guidelines](#iclr-reviewer-guidelines)
 - [ACL Reviewer Guidelines](#acl-reviewer-guidelines)
+- [Systems Conference Reviewer Guidelines](#systems-conference-reviewer-guidelines)
 - [What Makes Reviews Strong](#what-makes-reviews-strong)
 - [Common Reviewer Concerns](#common-reviewer-concerns)
 - [How to Address Reviewer Feedback](#how-to-address-reviewer-feedback)
-
----
 
 ## Universal Evaluation Dimensions
 
@@ -73,8 +72,6 @@ All major ML conferences assess papers across four core dimensions:
 **Key insight from NeurIPS guidelines:**
 > "Originality does not necessarily require introducing an entirely new method. Papers that provide novel insights from evaluating existing approaches or shed light on why methods succeed can also be highly original."
 
----
-
 ## NeurIPS Reviewer Guidelines
 
 ### Scoring System (1-6 Scale)
@@ -113,8 +110,6 @@ Reviewers are explicitly instructed to:
 - Discussion period: July 31 - August 13
 - Final notifications: September 18
 
----
-
 ## ICML Reviewer Guidelines
 
 ### Review Structure
@@ -144,8 +139,6 @@ ICML uses a similar 1-6 scale with calibration:
 3. **Writing quality** - Clear, organized, well-structured?
 4. **Novelty** - Non-trivial contribution?
 
----
-
 ## ICLR Reviewer Guidelines
 
 ### OpenReview Process
@@ -170,8 +163,6 @@ ICLR reviews include:
 2. **Reproducibility** - Emphasis on code availability
 3. **Reciprocal Reviewing** - Authors must also serve as reviewers
 
----
-
 ## ACL Reviewer Guidelines
 
 ### ACL-Specific Criteria
@@ -195,10 +186,6 @@ ACL has a dedicated ethics review process for:
 - Dual-use concerns
 - Data privacy issues
 - Bias and fairness implications
-
----
-
-## What Makes Reviews Strong
 
 ### Following Daniel Dennett's Rules
 
@@ -238,8 +225,6 @@ Overall Assessment:
 - Clear recommendation with reasoning
 ```
 
----
-
 ## Common Reviewer Concerns
 
 ### Technical Concerns
@@ -276,8 +261,6 @@ Overall Assessment:
 | "Limited impact" | Discuss broader implications |
 | "Narrow evaluation" | Evaluate on multiple benchmarks |
 | "Only works in restricted setting" | Acknowledge scope, explain why still valuable |
-
----
 
 ## How to Address Reviewer Feedback
 
@@ -339,8 +322,6 @@ You can respectfully disagree when:
 - Criticism is factually incorrect
 
 Frame disagreements constructively: "We appreciate this perspective. However, [explanation]..."
-
----
 
 ## Pre-Submission Reviewer Simulation
 

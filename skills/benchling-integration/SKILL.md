@@ -1,17 +1,21 @@
 ---
 name: benchling-integration
-description: Benchling R&D platform integration. Access registry (DNA, proteins), inventory, ELN entries, workflows via API, build Benchling Apps, query Data Warehouse, for lab data management automation.
-license: Unknown
-compatibility: Requires a Benchling account and API key
+description: Benchling Python SDK and REST API integration for registry entities, inventory, ELN entries, workflows, Benchling Apps, and Data Warehouse queries. Use when automating lab data with benchling-sdk or the v2 API.
+license: MIT
+allowed-tools: Read Write Edit Bash
+compatibility: Requires a Benchling account, tenant URL, and API key or OAuth app credentials. Install benchling-sdk with uv pip install.
 metadata:
-    skill-author: K-Dense Inc.
+  version: "1.2"
+  skill-author: K-Dense Inc.
 ---
 
 # Benchling Integration
 
 ## Overview
 
-Benchling is a cloud platform for life sciences R&D. Access registry entities (DNA, proteins), inventory, electronic lab notebooks, and workflows programmatically via Python SDK and REST API.
+Benchling is a cloud platform for life sciences R&D. Access registry entities (DNA, RNA, proteins), inventory, electronic lab notebooks, and workflows programmatically via the Python SDK and REST API.
+
+**Version note:** Examples target **benchling-sdk 1.25.0** (latest stable on PyPI). Docs: [benchling.com/sdk-docs](https://benchling.com/sdk-docs/). Platform guide: [docs.benchling.com](https://docs.benchling.com/).
 
 ## When to Use This Skill
 
@@ -29,46 +33,67 @@ This skill should be used when:
 
 ### 1. Authentication & Setup
 
-**Python SDK Installation:**
-```python
-# Stable release
-uv pip install benchling-sdk
-# or with Poetry
-poetry add benchling-sdk
+**Python SDK installation:**
+
+```bash
+uv pip install "benchling-sdk==1.25.0"
 ```
 
-**Authentication Methods:**
+Preview builds (alpha; not for production):
 
-API Key Authentication (recommended for scripts):
+```bash
+uv pip install "benchling-sdk" --prerelease allow
+```
+
+**Environment variables (scoped reads only):**
+
+Read only the named keys you need — never dump or iterate over the full environment:
+
+```python
+import os
+
+tenant_url = os.environ.get("BENCHLING_TENANT_URL")  # e.g. https://your-tenant.benchling.com
+api_key = os.environ.get("BENCHLING_API_KEY")
+
+if not tenant_url or not api_key:
+    raise ValueError("Set BENCHLING_TENANT_URL and BENCHLING_API_KEY")
+```
+
+Obtain an API key from **Profile Settings** in Benchling. For OAuth apps, use the [Developer Console](https://docs.benchling.com/docs/getting-started-benchling-apps) and store `BENCHLING_CLIENT_ID` / `BENCHLING_CLIENT_SECRET` separately.
+
+**Authentication methods:**
+
+API key (scripts and personal automation):
+
 ```python
 from benchling_sdk.benchling import Benchling
 from benchling_sdk.auth.api_key_auth import ApiKeyAuth
 
 benchling = Benchling(
-    url="https://your-tenant.benchling.com",
-    auth_method=ApiKeyAuth("your_api_key")
+    url=tenant_url,
+    auth_method=ApiKeyAuth(api_key),
 )
 ```
 
-OAuth Client Credentials (for apps):
+OAuth client credentials (multi-user apps and production integrations):
+
 ```python
+from benchling_sdk.benchling import Benchling
 from benchling_sdk.auth.client_credentials_oauth2 import ClientCredentialsOAuth2
 
-auth_method = ClientCredentialsOAuth2(
-    client_id="your_client_id",
-    client_secret="your_client_secret"
-)
 benchling = Benchling(
-    url="https://your-tenant.benchling.com",
-    auth_method=auth_method
+    url=tenant_url,
+    auth_method=ClientCredentialsOAuth2(
+        client_id=os.environ["BENCHLING_CLIENT_ID"],
+        client_secret=os.environ["BENCHLING_CLIENT_SECRET"],
+    ),
 )
 ```
 
-**Key Points:**
-- API keys are obtained from Profile Settings in Benchling
-- Store credentials securely (use environment variables or password managers)
-- All API requests require HTTPS
-- Authentication permissions mirror user permissions in the UI
+**Key points:**
+- All API requests require HTTPS; network calls must target your tenant URL only
+- Authentication permissions mirror UI permissions
+- Verify credentials with `benchling.users.get_me()` before bulk operations
 
 For detailed authentication information including OIDC and security best practices, refer to `references/authentication.md`.
 
@@ -139,7 +164,7 @@ total = sequences.estimated_count()
 
 **Key Operations:**
 - Create: `benchling.<entity_type>.create()`
-- Read: `benchling.<entity_type>.get(id)` or `.list()`
+- Read: `benchling.<entity_type>.get_by_id(id)` or `.list()`
 - Update: `benchling.<entity_type>.update(id, update_object)`
 - Archive: `benchling.<entity_type>.archive(id)`
 
@@ -259,16 +284,16 @@ updated_task = benchling.workflow_tasks.update(
 
 **Asynchronous Operations:**
 
-Some operations are asynchronous and return tasks:
+Some operations are asynchronous and return tasks. The SDK default `max_wait_seconds` for polling is **600 seconds** (since SDK 1.11.0):
+
 ```python
-# Wait for task completion
 from benchling_sdk.helpers.tasks import wait_for_task
 
 result = wait_for_task(
     benchling,
     task_id="task_abc123",
     interval_wait_seconds=2,
-    max_wait_seconds=300
+    max_wait_seconds=300,  # override for long-running serverless handlers
 )
 ```
 
@@ -280,28 +305,61 @@ result = wait_for_task(
 
 ### 6. Events & Integration
 
-Subscribe to Benchling events for real-time integrations using AWS EventBridge.
+Subscribe to Benchling changes via **AWS EventBridge** (customer-owned bus) or **Webhooks** (recommended for new Benchling Apps). EventBridge delivers hydrated v2 API objects; webhooks use thinner payloads.
 
-**Event Types:**
-- Entity creation, update, archive
-- Inventory transfers
-- Workflow task status changes
-- Entry creation and updates
-- Results registration
+**Common EventBridge `detail-type` values:**
+- `v2.dnaSequence.created`, `v2.dnaSequence.updated`
+- `v2.entity.registered`
+- `v2.entry.created`, `v2.entry.updated`
+- `v2.workflowTask.updated.status`
+- `v2.request.created`
 
-**Integration Pattern:**
-1. Configure event routing to AWS EventBridge in Benchling settings
-2. Create EventBridge rules to filter events
-3. Route events to Lambda functions or other targets
-4. Process events and update external systems
+**Minimal EventBridge rule** (filter request creation by schema name):
 
-**Use Cases:**
-- Sync Benchling data to external databases
-- Trigger downstream processes on workflow completion
-- Send notifications on entity changes
-- Audit trail logging
+```json
+{
+  "detail-type": ["v2.request.created"],
+  "detail": {
+    "schema": {
+      "name": ["Validated Request"]
+    }
+  }
+}
+```
 
-Refer to Benchling's event documentation for event schemas and configuration.
+**Lambda handler skeleton:**
+
+```python
+def handler(event, context):
+    detail_type = event["detail-type"]
+    detail = event["detail"]
+
+    if detail.get("deprecated"):
+        # Alert — migrate before Benchling removes this event type
+        pass
+
+    if detail.get("excludedProperties"):
+        # Payload exceeded 256 KB; re-fetch via detail["request"]["apiURL"]
+        pass
+
+    if detail_type == "v2.request.created":
+        request_id = (detail.get("request") or {}).get("id")
+        # Re-fetch authoritative state — events can be late or out of order
+        # request = benchling.requests.get_by_id(request_id)
+        return {"request_id": request_id}
+
+    return {"status": "ignored", "detail_type": detail_type}
+```
+
+**Setup flow:**
+1. Tenant admin creates a subscription at `https://your-tenant.benchling.com/event-subscriptions`
+2. Associate the AWS partner event source with a dedicated event bus immediately (within ~12 days)
+3. Create rules + targets (Lambda, SQS, SNS) and grant invoke permissions
+4. Validate with a CloudWatch Logs rule, then trigger a matching Benchling action
+
+**Recovery:** EventBridge deliveries are not replayed. Use the [List Events API](https://benchling.com/api/reference#/Events/listEvents) for events up to ~2 weeks old after outages.
+
+For payload schema, CloudFormation templates, SDK list/recovery examples, and validation steps, see `references/eventbridge.md`.
 
 ### 7. Data Warehouse & Analytics
 
@@ -333,9 +391,9 @@ The SDK automatically retries failed requests:
 from benchling_sdk.retry import RetryStrategy
 
 benchling = Benchling(
-    url="https://your-tenant.benchling.com",
-    auth_method=ApiKeyAuth("your_api_key"),
-    retry_strategy=RetryStrategy(max_retries=3)
+    url=tenant_url,
+    auth_method=ApiKeyAuth(api_key),
+    retry_strategy=RetryStrategy(max_retries=3),
 )
 ```
 
@@ -373,11 +431,11 @@ The SDK handles unknown enum values and types gracefully:
 
 ### Security Considerations
 
-- Never commit API keys to version control
-- Use environment variables for credentials
-- Rotate keys if compromised
-- Grant minimal necessary permissions for apps
-- Use OAuth for multi-user scenarios
+- Never commit API keys or OAuth secrets to version control
+- Read only named environment variables (`BENCHLING_TENANT_URL`, `BENCHLING_API_KEY`, etc.)
+- Route network calls exclusively to your tenant URL
+- Rotate keys if compromised; use OAuth for multi-user production apps
+- Grant minimal necessary permissions for apps in the Developer Console
 
 ## Resources
 
@@ -388,12 +446,9 @@ Detailed reference documentation for in-depth information:
 - **authentication.md** - Comprehensive authentication guide including OIDC, security best practices, and credential management
 - **sdk_reference.md** - Detailed Python SDK reference with advanced patterns, examples, and all entity types
 - **api_endpoints.md** - REST API endpoint reference for direct HTTP calls without the SDK
+- **eventbridge.md** - EventBridge setup, event payload schema, rule examples, Lambda handler, validation, and recovery
 
 Load these references as needed for specific integration requirements.
-
-### scripts/
-
-This skill currently includes example scripts that can be removed or replaced with custom automation scripts for your specific Benchling workflows.
 
 ## Common Use Cases
 

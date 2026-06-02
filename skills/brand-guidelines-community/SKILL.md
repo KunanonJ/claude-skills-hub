@@ -1,6 +1,6 @@
 ---
 name: brand-guidelines-community
-description: "Applies Anthropic's official brand colors and typography to any sort of artifact that may benefit from having Anthropic's look-and-feel. Use it when brand colors or style guidelines, visual formatt..."
+description: "To access Anthropic's official brand identity and style resources, use this skill."
 risk: unknown
 source: community
 date_added: "2026-02-27"
@@ -76,3 +76,8 @@ To access Anthropic's official brand identity and style resources, use this skil
 
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

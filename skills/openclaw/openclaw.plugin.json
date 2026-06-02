@@ -1,0 +1,98 @@
+{
+  "id": "claude-mem",
+  "name": "Claude-Mem (Persistent Memory)",
+  "description": "OpenClaw plugin for Claude-Mem. Records observations from embedded runner sessions and streams them to messaging channels.",
+  "kind": "memory",
+  "version": "13.4.0",
+  "license": "Apache-2.0",
+  "author": "thedotmack",
+  "homepage": "https://claude-mem.ai",
+  "skills": ["skills/make-plan", "skills/do"],
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "syncMemoryFile": {
+        "type": "boolean",
+        "default": true,
+        "description": "Inject observation context into the agent system prompt via before_prompt_build hook. When true, agents receive cross-session context without MEMORY.md being overwritten."
+      },
+      "syncMemoryFileExclude": {
+        "type": "array",
+        "items": { "type": "string" },
+        "default": [],
+        "description": "Agent IDs excluded from automatic context injection (observations are still recorded, only prompt injection is skipped)"
+      },
+      "workerPort": {
+        "type": "number",
+        "default": 37777,
+        "description": "Port for Claude-Mem worker service"
+      },
+      "workerHost": {
+        "type": "string",
+        "default": "127.0.0.1",
+        "description": "Hostname for Claude-Mem worker service. Set to host.docker.internal when the gateway runs in Docker and the worker runs on the host."
+      },
+      "project": {
+        "type": "string",
+        "default": "openclaw",
+        "description": "Project name for scoping observations in the memory database"
+      },
+      "observationFeed": {
+        "type": "object",
+        "description": "Live observation feed — streams observations to any OpenClaw channel in real-time",
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable live observation feed to messaging channels"
+          },
+          "channel": {
+            "type": "string",
+            "description": "Channel type: telegram, discord, signal, slack, whatsapp, line"
+          },
+          "to": {
+            "type": "string",
+            "description": "Target chat/user ID to send observations to"
+          },
+          "botToken": {
+            "type": "string",
+            "description": "Optional dedicated Telegram bot token for the feed (bypasses gateway channel)"
+          },
+          "emojis": {
+            "type": "object",
+            "description": "Emoji personalization for the observation feed. Each agent gets a unique emoji automatically — customize here to override.",
+            "properties": {
+              "primary": {
+                "type": "string",
+                "default": "🦞",
+                "description": "Emoji for the main OpenClaw gateway (project='openclaw')"
+              },
+              "claudeCode": {
+                "type": "string",
+                "default": "⌨️",
+                "description": "Emoji for Claude Code sessions (non-OpenClaw)"
+              },
+              "claudeCodeLabel": {
+                "type": "string",
+                "default": "Claude Code Session",
+                "description": "Display label prefix for Claude Code sessions in the feed (project identifier is appended automatically)"
+              },
+              "default": {
+                "type": "string",
+                "default": "🦀",
+                "description": "Fallback emoji when no match is found"
+              },
+              "agents": {
+                "type": "object",
+                "default": {},
+                "description": "Pin specific emojis to agent IDs (e.g. {\"devops\": \"🔧\"}). Agents not listed here get auto-assigned emojis.",
+                "additionalProperties": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

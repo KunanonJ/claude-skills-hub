@@ -11,9 +11,9 @@ Replace `{tenant}` with your Benchling tenant name.
 
 ## API Versioning
 
-Current API version: `v2` (2025-10-07)
+Current API version: `v2`
 
-The API version is specified in the URL path. Benchling maintains backward compatibility within a major version.
+The API version is specified in the URL path. Stable endpoints follow [Benchling stability guidelines](https://docs.benchling.com/docs/stability); `alpha` and `beta` endpoints may change with shorter notice.
 
 ## Authentication
 

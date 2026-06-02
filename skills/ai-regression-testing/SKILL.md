@@ -1,54 +1,54 @@
 ---
 name: ai-regression-testing
-description: Regression testing strategies for AI-assisted development. Sandbox-mode API testing without database dependencies, automated bug-check workflows, and patterns to catch AI blind spots where the same model writes and reviews code.
+description: AI 支援開発のためのリグレッションテスト戦略。データベース依存なしのサンドボックスモード API テスト、自動化されたバグチェックワークフロー、同じモデルがコードを書いてレビューする AI のブラインドスポットを捕捉するパターン。
 origin: ECC
 ---
 
-# AI Regression Testing
+# AI リグレッションテスト
 
-Testing patterns specifically designed for AI-assisted development, where the same model writes code and reviews it — creating systematic blind spots that only automated tests can catch.
+AI 支援開発のために特別に設計されたテストパターン。同じモデルがコードを書いてレビューする場合、自動化されたテストのみが捕捉できる体系的なブラインドスポットが生まれます。
 
-## When to Activate
+## 起動タイミング
 
-- AI agent (Claude Code, Cursor, Codex) has modified API routes or backend logic
-- A bug was found and fixed — need to prevent re-introduction
-- Project has a sandbox/mock mode that can be leveraged for DB-free testing
-- Running `/bug-check` or similar review commands after code changes
-- Multiple code paths exist (sandbox vs production, feature flags, etc.)
+- AI エージェント（Claude Code、Cursor、Codex）が API ルートまたはバックエンドロジックを修正した場合
+- バグが見つかり修正された — 再発を防ぐ必要がある
+- プロジェクトに DB フリーテストに活用できるサンドボックス/モックモードがある場合
+- コード変更後に `/bug-check` または同様のレビューコマンドを実行する場合
+- 複数のコードパスが存在する場合（サンドボックス対本番、機能フラグなど）
 
-## The Core Problem
+## コアの問題
 
-When an AI writes code and then reviews its own work, it carries the same assumptions into both steps. This creates a predictable failure pattern:
-
-```
-AI writes fix → AI reviews fix → AI says "looks correct" → Bug still exists
-```
-
-**Real-world example** (observed in production):
+AI がコードを書いてその後自分の作業をレビューする場合、両方のステップに同じ前提を持ち込みます。これにより予測可能な障害パターンが生まれます：
 
 ```
-Fix 1: Added notification_settings to API response
-  → Forgot to add it to the SELECT query
-  → AI reviewed and missed it (same blind spot)
-
-Fix 2: Added it to SELECT query
-  → TypeScript build error (column not in generated types)
-  → AI reviewed Fix 1 but didn't catch the SELECT issue
-
-Fix 3: Changed to SELECT *
-  → Fixed production path, forgot sandbox path
-  → AI reviewed and missed it AGAIN (4th occurrence)
-
-Fix 4: Test caught it instantly on first run PASS:
+AI が修正を書く → AI が修正をレビューする → AI が「正しく見える」と言う → バグはまだ存在する
 ```
 
-The pattern: **sandbox/production path inconsistency** is the #1 AI-introduced regression.
+**実際の例**（本番で観察された）：
 
-## Sandbox-Mode API Testing
+```
+修正 1: API レスポンスに notification_settings を追加
+  → SELECT クエリに追加するのを忘れた
+  → AI がレビューして見逃した（同じブラインドスポット）
 
-Most projects with AI-friendly architecture have a sandbox/mock mode. This is the key to fast, DB-free API testing.
+修正 2: SELECT クエリに追加
+  → TypeScript ビルドエラー（生成された型に列がない）
+  → AI が修正 1 をレビューしたが SELECT の問題を捕捉できなかった
 
-### Setup (Vitest + Next.js App Router)
+修正 3: SELECT * に変更
+  → 本番パスを修正、サンドボックスパスを忘れた
+  → AI がレビューして再び見逃した（4 回目の発生）
+
+修正 4: テストが最初の実行で即座に捕捉 PASS:
+```
+
+パターン：**サンドボックス/本番パスの不一致**が AI が導入するリグレッションの第 1 位。
+
+## サンドボックスモード API テスト
+
+AI フレンドリーなアーキテクチャを持つほとんどのプロジェクトにはサンドボックス/モックモードがあります。これが高速な DB フリー API テストの鍵です。
+
+### セットアップ（Vitest + Next.js App Router）
 
 ```typescript
 // vitest.config.ts
@@ -72,13 +72,13 @@ export default defineConfig({
 
 ```typescript
 // __tests__/setup.ts
-// Force sandbox mode — no database needed
+// サンドボックスモードを強制 — データベース不要
 process.env.SANDBOX_MODE = "true";
 process.env.NEXT_PUBLIC_SUPABASE_URL = "";
 process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "";
 ```
 
-### Test Helper for Next.js API Routes
+### Next.js API ルート用テストヘルパー
 
 ```typescript
 // __tests__/helpers.ts
@@ -120,9 +120,9 @@ export async function parseResponse(response: Response) {
 }
 ```
 
-### Writing Regression Tests
+### リグレッションテストの作成
 
-The key principle: **write tests for bugs that were found, not for code that works**.
+重要な原則：**機能するコードのためではなく、見つかったバグのためにテストを書く**。
 
 ```typescript
 // __tests__/api/user/profile.test.ts
@@ -130,7 +130,7 @@ import { describe, it, expect } from "vitest";
 import { createTestRequest, parseResponse } from "../../helpers";
 import { GET, PATCH } from "@/app/api/user/profile/route";
 
-// Define the contract — what fields MUST be in the response
+// コントラクトを定義 — レスポンスに必ず存在すべきフィールド
 const REQUIRED_FIELDS = [
   "id",
   "email",
@@ -139,11 +139,11 @@ const REQUIRED_FIELDS = [
   "role",
   "created_at",
   "avatar_url",
-  "notification_settings",  // ← Added after bug found it missing
+  "notification_settings",  // ← バグで欠落が判明した後に追加
 ];
 
 describe("GET /api/user/profile", () => {
-  it("returns all required fields", async () => {
+  it("すべての必須フィールドを返す", async () => {
     const req = createTestRequest("/api/user/profile");
     const res = await GET(req);
     const { status, json } = await parseResponse(res);
@@ -154,8 +154,8 @@ describe("GET /api/user/profile", () => {
     }
   });
 
-  // Regression test — this exact bug was introduced by AI 4 times
-  it("notification_settings is not undefined (BUG-R1 regression)", async () => {
+  // リグレッションテスト — この正確なバグが AI によって 4 回導入された
+  it("notification_settings が undefined でない（BUG-R1 リグレッション）", async () => {
     const req = createTestRequest("/api/user/profile");
     const res = await GET(req);
     const { json } = await parseResponse(res);
@@ -167,22 +167,22 @@ describe("GET /api/user/profile", () => {
 });
 ```
 
-### Testing Sandbox/Production Parity
+### サンドボックス/本番のパリティテスト
 
-The most common AI regression: fixing production path but forgetting sandbox path (or vice versa).
+最も一般的な AI リグレッション：本番パスを修正してサンドボックスパスを忘れる（またはその逆）。
 
 ```typescript
-// Test that sandbox responses match the expected contract
-describe("GET /api/user/messages (conversation list)", () => {
-  it("includes partner_name in sandbox mode", async () => {
+// サンドボックスレスポンスが期待されるコントラクトと一致することをテスト
+describe("GET /api/user/messages（会話リスト）", () => {
+  it("サンドボックスモードで partner_name を含む", async () => {
     const req = createTestRequest("/api/user/messages", {
       sandboxUserId: "user-001",
     });
     const res = await GET(req);
     const { json } = await parseResponse(res);
 
-    // This caught a bug where partner_name was added
-    // to production path but not sandbox path
+    // これは partner_name が本番パスに追加されたが
+    // サンドボックスパスに追加されなかったバグを捕捉した
     if (json.data.length > 0) {
       for (const conv of json.data) {
         expect("partner_name" in conv).toBe(true);
@@ -192,82 +192,82 @@ describe("GET /api/user/messages (conversation list)", () => {
 });
 ```
 
-## Integrating Tests into Bug-Check Workflow
+## バグチェックワークフローへのテスト統合
 
-### Custom Command Definition
+### カスタムコマンド定義
 
 ```markdown
 <!-- .claude/commands/bug-check.md -->
-# Bug Check
+# バグチェック
 
-## Step 1: Automated Tests (mandatory, cannot skip)
+## ステップ 1: 自動テスト（必須、スキップ不可）
 
-Run these commands FIRST before any code review:
+コードレビューの前に必ずこれらのコマンドを先に実行する：
 
-    npm run test       # Vitest test suite
-    npm run build      # TypeScript type check + build
+    npm run test       # Vitest テストスイート
+    npm run build      # TypeScript 型チェック + ビルド
 
-- If tests fail → report as highest priority bug
-- If build fails → report type errors as highest priority
-- Only proceed to Step 2 if both pass
+- テストが失敗した場合 → 最高優先度のバグとして報告する
+- ビルドが失敗した場合 → 型エラーを最高優先度として報告する
+- 両方がパスした場合のみステップ 2 に進む
 
-## Step 2: Code Review (AI review)
+## ステップ 2: コードレビュー（AI レビュー）
 
-1. Sandbox / production path consistency
-2. API response shape matches frontend expectations
-3. SELECT clause completeness
-4. Error handling with rollback
-5. Optimistic update race conditions
+1. サンドボックス / 本番パスの一貫性
+2. API レスポンスの形状がフロントエンドの期待と一致するか
+3. SELECT 句の完全性
+4. ロールバック付きのエラー処理
+5. オプティミスティックアップデートのレース条件
 
-## Step 3: For each bug fixed, propose a regression test
+## ステップ 3: 修正されたバグごとにリグレッションテストを提案する
 ```
 
-### The Workflow
+### ワークフロー
 
 ```
-User: "バグチェックして" (or "/bug-check")
+ユーザー: "バグチェックして" (or "/bug-check")
   │
-  ├─ Step 1: npm run test
-  │   ├─ FAIL → Bug found mechanically (no AI judgment needed)
-  │   └─ PASS → Continue
+  ├─ ステップ 1: npm run test
+  │   ├─ FAIL → バグが機械的に発見された（AI の判断不要）
+  │   └─ PASS → 続行
   │
-  ├─ Step 2: npm run build
-  │   ├─ FAIL → Type error found mechanically
-  │   └─ PASS → Continue
+  ├─ ステップ 2: npm run build
+  │   ├─ FAIL → 型エラーが機械的に発見された
+  │   └─ PASS → 続行
   │
-  ├─ Step 3: AI code review (with known blind spots in mind)
-  │   └─ Findings reported
+  ├─ ステップ 3: AI コードレビュー（既知のブラインドスポットを念頭に）
+  │   └─ 発見事項が報告される
   │
-  └─ Step 4: For each fix, write a regression test
-      └─ Next bug-check catches if fix breaks
+  └─ ステップ 4: 各修正に対してリグレッションテストを書く
+      └─ 次のバグチェックで修正が壊れるか捕捉する
 ```
 
-## Common AI Regression Patterns
+## 一般的な AI リグレッションパターン
 
-### Pattern 1: Sandbox/Production Path Mismatch
+### パターン 1: サンドボックス/本番パスの不一致
 
-**Frequency**: Most common (observed in 3 out of 4 regressions)
+**頻度**: 最も一般的（4 つのリグレッションのうち 3 つで観察）
 
 ```typescript
-// FAIL: AI adds field to production path only
+// 失敗: AI が本番パスのみにフィールドを追加する
 if (isSandboxMode()) {
-  return { data: { id, email, name } };  // Missing new field
+  return { data: { id, email, name } };  // 新しいフィールドが欠落
 }
-// Production path
+// 本番パス
 return { data: { id, email, name, notification_settings } };
 
-// PASS: Both paths must return the same shape
+// 成功: 両方のパスが同じ形状を返す必要がある
 if (isSandboxMode()) {
   return { data: { id, email, name, notification_settings: null } };
 }
 return { data: { id, email, name, notification_settings } };
 ```
 
-**Test to catch it**:
+**捕捉するためのテスト**：
 
 ```typescript
-it("sandbox and production return same fields", async () => {
-  // In test env, sandbox mode is forced ON
+it("サンドボックスと本番が同じフィールドを返す", async () => {
+  // テスト環境では、サンドボックスモードが強制的に ON になる
   const res = await GET(createTestRequest("/api/user/profile"));
   const { json } = await parseResponse(res);
 
@@ -277,56 +277,56 @@ it("sandbox and production return same fields", async () => {
 });
 ```
 
-### Pattern 2: SELECT Clause Omission
+### パターン 2: SELECT 句の省略
 
-**Frequency**: Common with Supabase/Prisma when adding new columns
+**頻度**: 新しい列を追加する際の Supabase/Prisma で一般的
 
 ```typescript
-// FAIL: New column added to response but not to SELECT
+// 失敗: 新しい列がレスポンスに追加されたが SELECT に含まれていない
 const { data } = await supabase
   .from("users")
-  .select("id, email, name")  // notification_settings not here
+  .select("id, email, name")  // notification_settings がここにない
   .single();
 
 return { data: { ...data, notification_settings: data.notification_settings } };
-// → notification_settings is always undefined
+// → notification_settings は常に undefined
 
-// PASS: Use SELECT * or explicitly include new columns
+// 成功: SELECT * を使用するか明示的に新しい列を含める
 const { data } = await supabase
   .from("users")
   .select("*")
   .single();
 ```
 
-### Pattern 3: Error State Leakage
+### パターン 3: エラー状態の漏洩
 
-**Frequency**: Moderate — when adding error handling to existing components
+**頻度**: 既存のコンポーネントにエラー処理を追加する場合に中程度
 
 ```typescript
-// FAIL: Error state set but old data not cleared
+// 失敗: エラー状態が設定されたが古いデータがクリアされていない
 catch (err) {
   setError("Failed to load");
-  // reservations still shows data from previous tab!
+  // reservations は前のタブのデータをまだ表示している！
 }
 
-// PASS: Clear related state on error
+// 成功: エラー時に関連する状態をクリアする
 catch (err) {
-  setReservations([]);  // Clear stale data
+  setReservations([]);  // 古いデータをクリア
   setError("Failed to load");
 }
 ```
 
-### Pattern 4: Optimistic Update Without Proper Rollback
+### パターン 4: 適切なロールバックなしのオプティミスティックアップデート
 
 ```typescript
-// FAIL: No rollback on failure
+// 失敗: 失敗時のロールバックなし
 const handleRemove = async (id: string) => {
   setItems(prev => prev.filter(i => i.id !== id));
   await fetch(`/api/items/${id}`, { method: "DELETE" });
-  // If API fails, item is gone from UI but still in DB
+  // API が失敗した場合、アイテムは UI から消えるが DB にはまだある
 };
 
-// PASS: Capture previous state and rollback on failure
+// 成功: 前の状態をキャプチャして失敗時にロールバックする
 const handleRemove = async (id: string) => {
   const prevItems = [...items];
   setItems(prev => prev.filter(i => i.id !== id));
@@ -334,52 +334,52 @@ const handleRemove = async (id: string) => {
     const res = await fetch(`/api/items/${id}`, { method: "DELETE" });
     if (!res.ok) throw new Error("API error");
   } catch {
-    setItems(prevItems);  // Rollback
+    setItems(prevItems);  // ロールバック
     alert("削除に失敗しました");
   }
 };
 ```
 
-## Strategy: Test Where Bugs Were Found
+## 戦略: バグが見つかった場所でテストする
 
-Don't aim for 100% coverage. Instead:
+100% カバレッジを目指さない。代わりに：
 
 ```
-Bug found in /api/user/profile     → Write test for profile API
-Bug found in /api/user/messages    → Write test for messages API
-Bug found in /api/user/favorites   → Write test for favorites API
-No bug in /api/user/notifications  → Don't write test (yet)
+/api/user/profile でバグ発見     → プロファイル API のテストを書く
+/api/user/messages でバグ発見    → メッセージ API のテストを書く
+/api/user/favorites でバグ発見   → お気に入り API のテストを書く
+/api/user/notifications でバグなし → テストを書かない（まだ）
 ```
 
-**Why this works with AI development:**
+**AI 開発でこれが機能する理由：**
 
-1. AI tends to make the **same category of mistake** repeatedly
-2. Bugs cluster in complex areas (auth, multi-path logic, state management)
-3. Once tested, that exact regression **cannot happen again**
-4. Test count grows organically with bug fixes — no wasted effort
+1. AI は**同じカテゴリのミス**を繰り返す傾向がある
+2. バグは複雑な領域（認証、マルチパスロジック、状態管理）にクラスタリングする
+3. 一度テストされると、その正確なリグレッションは**再び発生できない**
+4. テスト数はバグ修正とともに有機的に増加する — 無駄な努力なし
 
-## Quick Reference
+## クイックリファレンス
 
-| AI Regression Pattern | Test Strategy | Priority |
+| AI リグレッションパターン | テスト戦略 | 優先度 |
 |---|---|---|
-| Sandbox/production mismatch | Assert same response shape in sandbox mode |  High |
-| SELECT clause omission | Assert all required fields in response |  High |
-| Error state leakage | Assert state cleanup on error |  Medium |
-| Missing rollback | Assert state restored on API failure |  Medium |
-| Type cast masking null | Assert field is not undefined |  Medium |
+| サンドボックス/本番の不一致 | サンドボックスモードで同じレスポンス形状をアサート | 高 |
+| SELECT 句の省略 | レスポンス内のすべての必須フィールドをアサート | 高 |
+| エラー状態の漏洩 | エラー時の状態クリーンアップをアサート | 中 |
+| ロールバック欠如 | API 失敗時に状態が復元されることをアサート | 中 |
+| 型キャストが null をマスク | フィールドが undefined でないことをアサート | 中 |
 
 ## DO / DON'T
 
 **DO:**
-- Write tests immediately after finding a bug (before fixing it if possible)
-- Test the API response shape, not the implementation
-- Run tests as the first step of every bug-check
-- Keep tests fast (< 1 second total with sandbox mode)
-- Name tests after the bug they prevent (e.g., "BUG-R1 regression")
+- バグを見つけた後すぐにテストを書く（可能であれば修正前に）
+- 実装ではなく API レスポンスの形状をテストする
+- すべてのバグチェックの最初のステップとしてテストを実行する
+- テストを高速に保つ（サンドボックスモードで合計 1 秒未満）
+- 防ぐバグにちなんでテストに名前を付ける（例：「BUG-R1 リグレッション」）
 
 **DON'T:**
-- Write tests for code that has never had a bug
-- Trust AI self-review as a substitute for automated tests
-- Skip sandbox path testing because "it's just mock data"
-- Write integration tests when unit tests suffice
-- Aim for coverage percentage — aim for regression prevention
+- バグが一度もなかったコードのテストを書く
+- 自動化されたテストの代替として AI の自己レビューを信頼する
+- 「モックデータだから」という理由でサンドボックスパステストをスキップする
+- ユニットテストで十分な時に統合テストを書く
+- カバレッジのパーセンテージを目指す — リグレッション防止を目指す

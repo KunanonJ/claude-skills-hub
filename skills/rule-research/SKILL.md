@@ -37,6 +37,7 @@ When enough is known, present a short rule contract and either ask for confirmat
    - `packages/oxlint-plugin-react-doctor/src/plugin/utils/`
    - `packages/oxlint-plugin-react-doctor/src/plugin/rule-registry.ts`
    - Existing co-located `*.test.ts` files.
+   - Use `truffler` (the `find-similar-functions` skill) to fuzzy-search these paths for an existing rule, detector, or utility by symbol name before assuming a behavior is new: `bunx @rayhanadev/truffler "<symbol or behavior>" packages/oxlint-plugin-react-doctor/src/plugin --kind function,interface,type,constant --limit 20`
 4. Collect evidence:
    - Official docs.
    - Runtime or implementation notes.
@@ -68,6 +69,7 @@ Goal:
 Find examples where <exact bug definition>.
 
 Return:
+
 - Strong positive examples
 - Pattern-adjacent examples
 - False-positive traps
@@ -93,24 +95,31 @@ Detector precision:
 Syntax-only | scope-aware | path-aware
 
 Evidence:
+
 - <docs, OSS, issue, RDE, or similar-tool evidence>
 
 Strong positives:
+
 - <exact reportable examples>
 
 False-positive traps:
+
 - <valid examples that must stay quiet>
 
 In scope for v1:
+
 - <supported cases>
 
 Out of scope for v1:
+
 - <explicit non-goals>
 
 Test seeds:
+
 - <invalid and valid fixture ideas>
 
 Open questions:
+
 - <only questions that affect correctness or scope>
 ```
 

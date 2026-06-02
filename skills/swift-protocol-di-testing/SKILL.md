@@ -1,25 +1,25 @@
 ---
 name: swift-protocol-di-testing
-description: Protocol-based dependency injection for testable Swift code — mock file system, network, and external APIs using focused protocols and Swift Testing.
+description: テスト可能なSwiftコードのためのプロトコルベースの依存性注入——焦点を絞ったプロトコルとSwift Testingを使用してファイルシステム、ネットワーク、外部APIをモックする。
 origin: ECC
 ---
 
-# Swift Protocol-Based Dependency Injection for Testing
+# プロトコルベースのSwift依存性注入テスト
 
-Patterns for making Swift code testable by abstracting external dependencies (file system, network, iCloud) behind small, focused protocols. Enables deterministic tests without I/O.
+外部の依存関係（ファイルシステム、ネットワーク、iCloud）を小さく焦点を絞ったプロトコルとして抽象化することで、SwiftコードをテストしやすくするパターンI/Oなしの決定論的テストをサポートする。
 
-## When to Activate
+## 起動条件
 
-- Writing Swift code that accesses file system, network, or external APIs
-- Need to test error handling paths without triggering real failures
-- Building modules that work across environments (app, test, SwiftUI preview)
-- Designing testable architecture with Swift concurrency (actors, Sendable)
+* ファイルシステム、ネットワーク、または外部APIにアクセスするSwiftコードを書く場合
+* 実際の障害を起こさずにエラー処理パスをテストする必要がある場合
+* 異なる環境（アプリ、テスト、SwiftUIプレビュー）で動作するモジュールを構築する場合
+* Swift並行処理（Actor、Sendable）をサポートするテスト可能なアーキテクチャを設計する場合
 
-## Core Pattern
+## コアパターン
 
-### 1. Define Small, Focused Protocols
+### 1. 小さく焦点を絞ったプロトコルを定義する
 
-Each protocol handles exactly one external concern.
+各プロトコルは1つの外部関心事のみを処理する。
 
 ```swift
 // File system access
@@ -41,7 +41,7 @@ public protocol BookmarkStorageProviding: Sendable {
 }
 ```
 
-### 2. Create Default (Production) Implementations
+### 2. デフォルト（本番用）実装を作成する
 
 ```swift
 public struct DefaultFileSystemProvider: FileSystemProviding {
@@ -69,7 +69,7 @@ public struct DefaultFileAccessor: FileAccessorProviding {
 }
 ```
 
-### 3. Create Mock Implementations for Testing
+### 3. テスト用のモック実装を作成する
 
 ```swift
 public final class MockFileAccessor: FileAccessorProviding, @unchecked Sendable {
@@ -98,9 +98,9 @@ public final class MockFileAccessor: FileAccessorProviding, @unchecked Sendable 
 }
 ```
 
-### 4. Inject Dependencies with Default Parameters
+### 4. デフォルトパラメーターで依存関係を注入する
 
-Production code uses defaults; tests inject mocks.
+本番コードはデフォルト値を使用し、テストはモックを注入する。
 
 ```swift
 public actor SyncManager {
@@ -127,7 +127,7 @@ public actor SyncManager {
 }
 ```
 
-### 5. Write Tests with Swift Testing
+### 5. Swift Testingを使用してテストを書く
 
 ```swift
 import Testing
@@ -166,25 +166,25 @@ func testReadError() async {
 }
 ```
 
-## Best Practices
+## ベストプラクティス
 
-- **Single Responsibility**: Each protocol should handle one concern — don't create "god protocols" with many methods
-- **Sendable conformance**: Required when protocols are used across actor boundaries
-- **Default parameters**: Let production code use real implementations by default; only tests need to specify mocks
-- **Error simulation**: Design mocks with configurable error properties for testing failure paths
-- **Only mock boundaries**: Mock external dependencies (file system, network, APIs), not internal types
+* **単一責任**：各プロトコルは1つの関心事を処理する——多くのメソッドを持つ「ゴッドプロトコル」を作らない
+* **Sendable 一貫性**：プロトコルがActor境界をまたいで使用される場合に必要
+* **デフォルトパラメーター**：本番コードは実際の実装をデフォルトで使用する。テストだけがモックを指定する必要がある
+* **エラーのモック**：障害パスをテストするために設定可能なエラープロパティを持つモックを設計する
+* **境界のみをモック**：外部の依存関係（ファイルシステム、ネットワーク、API）をモックし、内部型はモックしない
 
-## Anti-Patterns to Avoid
+## 避けるべきアンチパターン
 
-- Creating a single large protocol that covers all external access
-- Mocking internal types that have no external dependencies
-- Using `#if DEBUG` conditionals instead of proper dependency injection
-- Forgetting `Sendable` conformance when used with actors
-- Over-engineering: if a type has no external dependencies, it doesn't need a protocol
+* すべての外部アクセスをカバーする単一の大きなプロトコルを作成する
+* 外部の依存関係を持たない内部型をモックする
+* 適切な依存性注入の代わりに `#if DEBUG` 条件文を使用する
+* Actorと組み合わせて使用する際に `Sendable` 一貫性を忘れる
+* 過度な設計：型が外部の依存関係を持たない場合、プロトコルは必要ない
 
-## When to Use
+## 使用場面
 
-- Any Swift code that touches file system, network, or external APIs
-- Testing error handling paths that are hard to trigger in real environments
-- Building modules that need to work in app, test, and SwiftUI preview contexts
-- Apps using Swift concurrency (actors, structured concurrency) that need testable architecture
+* ファイルシステム、ネットワーク、または外部APIに触れるあらゆるSwiftコード
+* 実際の環境では引き起こすことが難しいエラー処理パスをテストする場合
+* アプリ、テスト、SwiftUIプレビューのコンテキストで動作するモジュールを構築する場合
+* Swift並行処理（Actor、構造化並行処理）を採用したテスト可能なアーキテクチャが必要なアプリ

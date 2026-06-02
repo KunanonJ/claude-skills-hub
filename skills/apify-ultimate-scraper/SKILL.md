@@ -1,11 +1,18 @@
 ---
 name: apify-ultimate-scraper
-description: "Universal AI-powered web scraper for any platform. Scrape data from Instagram, Facebook, TikTok, YouTube, Google Maps, Google Search, Google Trends, Booking.com, and TripAdvisor. Use for lead gener..."
+description: "AI-driven data extraction from 55+ Actors across all major platforms. This skill automatically selects the best Actor for your task."
+risk: unknown
+source: community
 ---
 
 # Universal Web Scraper
 
 AI-driven data extraction from 55+ Actors across all major platforms. This skill automatically selects the best Actor for your task.
+
+## When to Use
+- The user needs web data extraction but has not yet chosen a specific Apify Actor.
+- You need a general-purpose Apify entry point that maps a broad scraping goal to the most suitable Actor.
+- The task spans multiple platforms and benefits from one unified workflow for actor selection, execution, and summarization.
 
 ## Prerequisites
 (No need to check it upfront)
@@ -220,7 +227,6 @@ After completion, report:
 | Competitor pages | Deep-dive with post/ad scrapers |
 | Trend data | Validate with platform-specific hashtag scrapers |
 
-
 ## Error Handling
 
 `APIFY_TOKEN not found` - Ask user to create `.env` with `APIFY_TOKEN=your_token`
@@ -228,3 +234,8 @@ After completion, report:
 `Actor not found` - Check Actor ID spelling
 `Run FAILED` - Ask user to check Apify console link in error output
 `Timeout` - Reduce input size or increase `--timeout`
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

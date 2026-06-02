@@ -1,15 +1,15 @@
 ---
-name: claude-command-builder
-description: Interactive slash command creator for Claude Code. Triggers when user mentions creating commands, slash commands, command templates, command arguments, or wants to build a new command workflow.
+name: Codex-command-builder
+description: Interactive slash command creator for Codex. Triggers when user mentions creating commands, slash commands, command templates, command arguments, or wants to build a new command workflow.
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash
 model: sonnet
 ---
 
-# Claude Code Command Builder
+# Codex Command Builder
 
 ## Purpose
 
-Guide users through creating effective Claude Code slash commands with proper structure, argument handling, and workflow design. Auto-invokes when users want to create or modify custom commands.
+Guide users through creating effective Codex slash commands with proper structure, argument handling, and workflow design. Auto-invokes when users want to create or modify custom commands.
 
 ## When to Use
 
@@ -22,9 +22,9 @@ Auto-invoke when users mention:
 
 ## Knowledge Base
 
-- Official docs: `.claude/skills/ai/claude-code/docs/code_claude_com/docs_en_slash-commands.md`
-- Project guide: `.claude/docs/creating-components.md`
-- Examples in repository: `.claude/commands/`
+- Official docs: `.Codex/skills/ai/Codex/docs/code_claude_com/docs_en_slash-commands.md`
+- Project guide: `.Codex/docs/creating-components.md`
+- Examples in repository: `.Codex/commands/`
 
 ## Process
 
@@ -33,7 +33,7 @@ Auto-invoke when users mention:
 Ask the user:
 
 ```
-Let me help you create a Claude Code slash command! I need a few details:
+Let me help you create a Codex slash command! I need a few details:
 
 1. **Command name** (lowercase-with-hyphens):
    Example: deploy, review-pr, commit, analyze-tokens
@@ -51,8 +51,8 @@ Let me help you create a Claude Code slash command! I need a few details:
    Commands that run before the slash command (e.g., !`git status`)
 
 5. **Scope:**
-   - Personal (`~/.claude/commands/`) - just for you
-   - Project (`.claude/commands/`) - shared with team
+   - Personal (`~/.Codex/commands/`) - just for you
+   - Project (`.Codex/commands/`) - shared with team
 
 6. **Namespace/subdirectory?**
    Example: git/, deploy/, testing/
@@ -146,7 +146,7 @@ Create command structure based on complexity:
 ```markdown
 Brief description of what the command does.
 
-[Prompt instructions for Claude]
+[Prompt instructions for Codex]
 ```
 
 **Template for Command with Frontmatter:**
@@ -183,7 +183,7 @@ Execute the following workflow:
    - Error handling
 
 2. **Next Step**
-   [Instructions for Claude]
+   [Instructions for Codex]
    - What to check
    - How to proceed
    - What to output
@@ -244,7 +244,7 @@ allowed-tools: Bash(git:*)
 **Important:**
 - Must specify `allowed-tools` with specific Bash permissions
 - Output is included in command context
-- Commands run before Claude processes the prompt
+- Commands run before Codex processes the prompt
 
 ### 8. Add File References
 
@@ -278,14 +278,14 @@ Save to correct location:
 
 **Personal command:**
 ```bash
-~/.claude/commands/command-name.md
-~/.claude/commands/category/command-name.md  # With namespace
+~/.Codex/commands/command-name.md
+~/.Codex/commands/category/command-name.md  # With namespace
 ```
 
 **Project command:**
 ```bash
-.claude/commands/command-name.md
-.claude/commands/category/command-name.md  # With namespace
+.Codex/commands/command-name.md
+.Codex/commands/category/command-name.md  # With namespace
 ```
 
 ### 11. Test the Command
@@ -294,7 +294,7 @@ Provide testing instructions:
 
 ```
 To test your command:
-1. Restart Claude Code or start a new session
+1. Restart Codex or start a new session
 2. Type: /help
 3. Find your command in the list
 4. Try: /your-command-name [args]
@@ -322,7 +322,7 @@ Field| Purpose| Example
 `argument-hint`| Show expected arguments in autocomplete| `[pr-number] [priority]`
 `description`| Brief description for `/help` menu| `Review pull request`
 `allowed-tools`| Tools command can use| `Bash(git:*), Read, Write`
-`model`| Specific model to use| `claude-sonnet-4-5-20250929`
+`model`| Specific model to use| `Codex-sonnet-4-5-20250929`
 `disable-model-invocation`| Prevent SlashCommand tool from calling this| `true`
 
 ## Bash Tool Permissions
@@ -476,7 +476,7 @@ Usage: /convert-to-toon <file>
 **Advanced version with bash:**
 ```markdown
 ---
-allowed-tools: Bash(jq:*), Bash(.claude/skills/toon-formatter/bin/toon:*)
+allowed-tools: Bash(jq:*), Bash(.Codex/skills/toon-formatter/bin/toon:*)
 argument-hint: <file> [--delimiter comma|tab|pipe]
 description: Convert JSON to TOON format
 ---
@@ -488,7 +488,7 @@ Delimiter: ${2:-comma}
 
 1. **Validate**: !`test -f "$1" && jq empty "$1" 2>&1`
 2. **Analyze**: !`jq 'if type == "array" then length else 0 end' "$1"`
-3. **Convert**: !`.claude/skills/toon-formatter/bin/toon encode "$1"`
+3. **Convert**: !`.Codex/skills/toon-formatter/bin/toon encode "$1"`
 4. Show savings comparison
 ```
 
@@ -499,11 +499,11 @@ Delimiter: ${2:-comma}
 **Check:**
 ```bash
 # List all commands
-ls ~/.claude/commands/*.md
-ls .claude/commands/*.md
+ls ~/.Codex/commands/*.md
+ls .Codex/commands/*.md
 
 # Verify filename
-ls .claude/commands/your-command.md
+ls .Codex/commands/your-command.md
 ```
 
 **Remember:**
@@ -536,7 +536,7 @@ Run command and check output to see what's being passed.
 - File not in correct location
 - File doesn't have `.md` extension
 - Syntax error in frontmatter
-- Need to restart Claude Code
+- Need to restart Codex
 
 ## Best Practices
 
@@ -566,7 +566,7 @@ Run command and check output to see what's being passed.
 - Frequently-used templates
 
 **Use Skills when:**
-- Claude should auto-detect need
+- Codex should auto-detect need
 - Complex, multi-file workflows
 - Comprehensive domain knowledge
 - Team needs standardized expertise
@@ -579,7 +579,7 @@ Run command and check output to see what's being passed.
 
 ## Resources
 
-- **Official Command Docs:** `.claude/skills/ai/claude-code/docs/code_claude_com/docs_en_slash-commands.md`
-- **Project Component Guide:** `.claude/docs/creating-components.md`
-- **Command Examples:** `.claude/commands/` directory
+- **Official Command Docs:** `.Codex/skills/ai/Codex/docs/code_claude_com/docs_en_slash-commands.md`
+- **Project Component Guide:** `.Codex/docs/creating-components.md`
+- **Command Examples:** `.Codex/commands/` directory
 - **Skills vs Commands:** Section in slash-commands.md

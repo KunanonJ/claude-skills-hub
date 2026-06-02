@@ -44,7 +44,7 @@ Semaine du 27 janvier : la plus grosse semaine de contenu depuis le lancement du
 - 4 nouveaux diagrammes ASCII pour TDD, UVAL, securite et incidents
 - Workflow de code review multi-agent base sur le travail de Pat Cullen : 3 agents specialises, regles anti-hallucination, classification de severite
 
-Guide complet en open source : https://{DOMAIN}/
+Guide complet en open source : https://florianbruniaux.github.io/claude-code-ultimate-guide-landing/
 
 #ClaudeCode #CodingWithAI #DeveloperTools
 ```
@@ -61,7 +61,7 @@ Week of January 27: the biggest content week since the guide launched.
 - 4 new ASCII diagrams for TDD, UVAL, security, and incidents
 - Multi-agent code review workflow based on Pat Cullen's work: 3 specialized agents, anti-hallucination rules, severity classification
 
-Full guide available open source: https://{DOMAIN}/
+Full guide available open source: https://florianbruniaux.github.io/claude-code-ultimate-guide-landing/
 
 #ClaudeCode #CodingWithAI #DeveloperTools
 ```
@@ -88,7 +88,7 @@ Code review multi-agent (Pat Cullen)
 Sandbox isolation Docker
 Metriques Anthropic : +67% PRs/jour
 
-https://github.com/{OWNER}/{REPO}
+https://github.com/FlorianBruniaux/claude-code-ultimate-guide
 ```
 
 ### Twitter/X (EN)
@@ -113,7 +113,7 @@ Multi-agent code review (Pat Cullen)
 Docker sandbox isolation
 Anthropic metrics: +67% PRs/day
 
-https://github.com/{OWNER}/{REPO}
+https://github.com/FlorianBruniaux/claude-code-ultimate-guide
 ```
 
 ### Newsletter (FR)
@@ -142,7 +142,7 @@ Cette semaine marque un tournant vers les patterns avances et la qualite de code
 
 ---
 
-[Guide complet](https://{DOMAIN}/) | [GitHub](https://github.com/{OWNER}/{REPO})
+[Guide complet](https://florianbruniaux.github.io/claude-code-ultimate-guide-landing/) | [GitHub](https://github.com/FlorianBruniaux/claude-code-ultimate-guide)
 ```
 
 ### Newsletter (EN)
@@ -171,7 +171,7 @@ This week marks a shift toward advanced patterns and code quality. If you use Cl
 
 ---
 
-[Full guide](https://{DOMAIN}/) | [GitHub](https://github.com/{OWNER}/{REPO})
+[Full guide](https://florianbruniaux.github.io/claude-code-ultimate-guide-landing/) | [GitHub](https://github.com/FlorianBruniaux/claude-code-ultimate-guide)
 ```
 
 ### Slack (FR)
@@ -185,7 +185,7 @@ This week marks a shift toward advanced patterns and code quality. If you use Cl
 :wrench: Code review multi-agent (Pat Cullen) : 3 agents, anti-hallucination, convergence
 :shield: Guide sandbox isolation Docker
 
-:link: https://github.com/{OWNER}/{REPO}
+:link: https://github.com/FlorianBruniaux/claude-code-ultimate-guide
 ```
 
 ### Slack (EN)
@@ -199,5 +199,5 @@ This week marks a shift toward advanced patterns and code quality. If you use Cl
 :wrench: Multi-agent code review (Pat Cullen): 3 agents, anti-hallucination, convergence
 :shield: Docker sandbox isolation guide
 
-:link: https://github.com/{OWNER}/{REPO}
+:link: https://github.com/FlorianBruniaux/claude-code-ultimate-guide
 ```

@@ -3,11 +3,18 @@ name: django-perf-review
 description: Django performance code review. Use when asked to "review Django performance", "find N+1 queries", "optimize Django", "check queryset performance", "database performance", "Django ORM issues", or audit Django code for performance problems.
 allowed-tools: Read, Grep, Glob, Bash, Task
 license: LICENSE
+risk: unknown
+source: community
 ---
 
 # Django Performance Review
 
 Review Django code for **validated** performance issues. Research the codebase to confirm issues before reporting. Report only what you can prove.
+
+## When to Use
+- You need a Django performance review focused on verified ORM and query issues.
+- The code likely has N+1 queries, unbounded querysets, missing indexes, or other database-driven bottlenecks.
+- You want only provable performance findings, not speculative optimization advice.
 
 ## Review Approach
 
@@ -394,3 +401,8 @@ N+1 requires a loop. A single object doing 2 queries instead of 1 can be reporte
 
 **Style preferences are not performance issues:**
 If your only suggestion is "combine these two lines" or "rename this variable" - that's style, not performance. Don't report it.
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

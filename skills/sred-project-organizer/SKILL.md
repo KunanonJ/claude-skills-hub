@@ -1,11 +1,18 @@
 ---
 name: sred-project-organizer
 description: Take a list of projects and their related documentation, and organize them into the SRED format for submission.
+risk: unknown
+source: community
 ---
 
 # SRED Project Organization
 
 SRED expects projects to be presented in a particular format. Take the list of projects that have been worked on in the past year, and summarize them into the format expected by SRED, with the supporting evidence. Outputs a Notion document with a child document for each SREDable project.
+
+## When to Use
+- You need to turn a prior-year work summary into SRED-formatted project documents.
+- The task involves classifying projects as SREDable, collecting evidence, and organizing output in Notion.
+- You already have or are ready to generate the upstream work summary that this organizer depends on.
 
 # Prerequisites
 
@@ -113,11 +120,9 @@ Provide the user with the link to the Project Summary document again, and ask th
 
 Provide a link to the "SRED Project Descriptions" notion document.
 
-
 ## Examples
 
 Example work summary: https://www.notion.so/sentry/SRED-Work-Summary-2026-30a8b10e4b5d81f5bc8df3553da55220
-
 
 ## References
 
@@ -127,3 +132,8 @@ Notion Template of the summary for a specific project: `${CLAUDE_SKILL_ROOT}/ref
 ## Resources
 
 Full documentation on the SRED program: https://www.canada.ca/en/revenue-agency/services/scientific-research-experimental-development-tax-incentive-program.html
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

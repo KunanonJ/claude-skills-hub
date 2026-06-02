@@ -1,73 +1,73 @@
 ---
 name: agent-harness-construction
-description: Design and optimize AI agent action spaces, tool definitions, and observation formatting for higher completion rates.
+description: AI エージェントのアクション空間、ツール定義、観測フォーマットを設計・最適化して完了率を向上させます。
 origin: ECC
 ---
 
-# Agent Harness Construction
+# エージェントハーネス構築
 
-Use this skill when you are improving how an agent plans, calls tools, recovers from errors, and converges on completion.
+エージェントの計画、ツール呼び出し、エラーからの回復、完了への収束を改善する場合にこのスキルを使用します。
 
-## Core Model
+## コアモデル
 
-Agent output quality is constrained by:
-1. Action space quality
-2. Observation quality
-3. Recovery quality
-4. Context budget quality
+エージェントの出力品質は以下によって制約されます：
+1. アクション空間の品質
+2. 観測の品質
+3. 回復の品質
+4. コンテキストバジェットの品質
 
-## Action Space Design
+## アクション空間の設計
 
-1. Use stable, explicit tool names.
-2. Keep inputs schema-first and narrow.
-3. Return deterministic output shapes.
-4. Avoid catch-all tools unless isolation is impossible.
+1. 安定した明示的なツール名を使用する。
+2. 入力スキーマファーストで絞り込んだものにする。
+3. 決定論的な出力形状を返す。
+4. 分離が不可能な場合を除き、キャッチオールツールは避ける。
 
-## Granularity Rules
+## 粒度ルール
 
-- Use micro-tools for high-risk operations (deploy, migration, permissions).
-- Use medium tools for common edit/read/search loops.
-- Use macro-tools only when round-trip overhead is the dominant cost.
+- 高リスク操作（デプロイ、マイグレーション、権限）にはマイクロツールを使用する。
+- 一般的な編集・読み取り・検索ループには中規模ツールを使用する。
+- ラウンドトリップのオーバーヘッドが支配的なコストである場合のみマクロツールを使用する。
 
-## Observation Design
+## 観測の設計
 
-Every tool response should include:
+すべてのツールレスポンスに含めるべき内容：
 - `status`: success|warning|error
-- `summary`: one-line result
-- `next_actions`: actionable follow-ups
-- `artifacts`: file paths / IDs
+- `summary`: 一行の結果
+- `next_actions`: 実行可能なフォローアップ
+- `artifacts`: ファイルパス / ID
 
-## Error Recovery Contract
+## エラー回復コントラクト
 
-For every error path, include:
-- root cause hint
-- safe retry instruction
-- explicit stop condition
+すべてのエラーパスに含めるべき内容：
+- 根本原因のヒント
+- 安全なリトライ指示
+- 明示的な停止条件
 
-## Context Budgeting
+## コンテキストバジェット管理
 
-1. Keep system prompt minimal and invariant.
-2. Move large guidance into skills loaded on demand.
-3. Prefer references to files over inlining long documents.
-4. Compact at phase boundaries, not arbitrary token thresholds.
+1. システムプロンプトを最小限かつ不変に保つ。
+2. 大きなガイダンスはオンデマンドで読み込まれるスキルに移動する。
+3. 長いドキュメントをインラインで挿入するより、ファイルへの参照を優先する。
+4. 任意のトークン閾値ではなく、フェーズの境界でコンパクト化する。
 
-## Architecture Pattern Guidance
+## アーキテクチャパターンガイダンス
 
-- ReAct: best for exploratory tasks with uncertain path.
-- Function-calling: best for structured deterministic flows.
-- Hybrid (recommended): ReAct planning + typed tool execution.
+- ReAct: 不確実なパスを持つ探索的タスクに最適。
+- 関数呼び出し: 構造化された決定論的フローに最適。
+- ハイブリッド（推奨）: ReAct 計画 + 型付きツール実行。
 
-## Benchmarking
+## ベンチマーク
 
-Track:
-- completion rate
-- retries per task
-- pass@1 and pass@3
-- cost per successful task
+追跡すべき指標：
+- 完了率
+- タスクあたりのリトライ数
+- pass@1 および pass@3
+- 成功タスクあたりのコスト
 
-## Anti-Patterns
+## アンチパターン
 
-- Too many tools with overlapping semantics.
-- Opaque tool output with no recovery hints.
-- Error-only output without next steps.
-- Context overloading with irrelevant references.
+- セマンティクスが重複するツールが多すぎる。
+- 回復ヒントのない不透明なツール出力。
+- 次のステップなしのエラーのみの出力。
+- 無関係な参照でコンテキストを過負荷にする。

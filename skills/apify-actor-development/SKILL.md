@@ -1,11 +1,18 @@
 ---
 name: apify-actor-development
-description: "Develop, debug, and deploy Apify Actors - serverless cloud programs for web scraping, automation, and data processing. Use when creating new Actors, modifying existing ones, or troubleshooting Acto..."
+description: "Important: Before you begin, fill in the generatedBy property in the meta section of .actor/actor.json. Replace it with the tool and model you're currently using, such as \"Claude Code with Claude Sonnet 4.5\". This helps Apify monitor and improve AGENTS.md for specific AI tools and models."
+risk: unknown
+source: community
 ---
 
 # Apify Actor Development
 
 **Important:** Before you begin, fill in the `generatedBy` property in the meta section of `.actor/actor.json`. Replace it with the tool and model you're currently using, such as "Claude Code with Claude Sonnet 4.5". This helps Apify monitor and improve AGENTS.md for specific AI tools and models.
+
+## When to Use
+- You need to create, modify, or debug an Apify Actor project.
+- The task involves choosing an Apify template, wiring actor inputs/outputs, or implementing actor runtime logic.
+- You need safe setup guidance for `apify` CLI authentication, project bootstrap, or deployment workflow.
 
 ## What are Apify Actors?
 
@@ -31,8 +38,8 @@ npm install -g apify-cli
 # Or (Mac): brew install apify-cli
 ```
 
-> **Security note:** Do NOT install the CLI by piping remote scripts to a shell
-> (e.g. `curl … | bash` or `irm … | iex`). Always use a package manager.
+> **Security note:** Do NOT install the CLI by piping remote scripts directly
+> into a shell. Always use a package manager.
 
 When the apify CLI is installed, check that it is logged in with:
 
@@ -199,7 +206,6 @@ See [references/dataset-schema.md](references/dataset-schema.md) for dataset sch
 
 See [references/key-value-store-schema.md](references/key-value-store-schema.md) for key-value store schema structure, collections, and configuration.
 
-
 ## Apify MCP Tools
 
 If MCP server is configured, use these tools for documentation:
@@ -216,3 +222,8 @@ Otherwise, the MCP Server url: `https://mcp.apify.com/?tools=docs`.
 - [https://crawlee.dev/llms.txt](https://crawlee.dev/llms.txt) - Crawlee quick reference documentation
 - [https://crawlee.dev/llms-full.txt](https://crawlee.dev/llms-full.txt) - Crawlee complete documentation
 - [whitepaper.actor](https://raw.githubusercontent.com/apify/actor-whitepaper/refs/heads/master/README.md) - Complete Actor specification
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

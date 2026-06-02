@@ -1,6 +1,8 @@
 ---
 name: hugging-face-evaluation
 description: Add and manage evaluation results in Hugging Face model cards. Supports extracting eval tables from README content, importing scores from Artificial Analysis API, and running custom model evaluations with vLLM/lighteval. Works with the model-index metadata format.
+risk: unknown
+source: community
 ---
 
 # Overview
@@ -8,6 +10,11 @@ This skill provides tools to add structured evaluation results to Hugging Face m
 - Extracting existing evaluation tables from README content
 - Importing benchmark scores from Artificial Analysis
 - Running custom model evaluations with vLLM or accelerate backends (lighteval/inspect-ai)
+
+## When to Use
+- You need to add structured evaluation results to a Hugging Face model card.
+- You want to import benchmark data or run custom evaluations with vLLM, lighteval, or inspect-ai.
+- You are preparing leaderboard-compatible `model-index` metadata for a model release.
 
 ## Integration with HF Ecosystem
 - **Model Cards**: Updates model-index metadata for leaderboard integration
@@ -69,7 +76,6 @@ This prevents spamming model repositories with duplicate evaluation PRs.
 file.**
 > Before running any script, first `cd` to that directory or use the full
 path.
-
 
 **Use `--help` for the latest workflow guidance.** Works with plain Python or `uv run`:
 ```bash
@@ -649,3 +655,8 @@ def update_model_evaluations(repo_id, readme_content):
     else:
         print(f"Error: {result.stderr}")
 ```
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

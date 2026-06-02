@@ -135,6 +135,16 @@ model = ESM3.from_pretrained("esm3-sm-open-v1").to("cuda")
 model = ESM3.from_pretrained("esm3-sm-open-v1").to("cpu")
 ```
 
+**Forge API (same interface as local):**
+
+```python
+import os
+import esm
+
+# Drop-in replacement for ESM3.from_pretrained() — reads ESM_API_KEY by default
+model = esm.sdk.client("esm3-medium-2024-08", token=os.environ["ESM_API_KEY"])
+```
+
 **Generation Method:**
 
 ```python

@@ -1,99 +1,96 @@
 ---
 name: canary-watch
-description: Use this skill to monitor a deployed URL for regressions after deploys, merges, or dependency upgrades.
+description: このスキルを使用して、デプロイメント、マージ、または依存関係アップグレード後にデプロイされたURLの回帰を監視します。
 origin: ECC
 ---
 
-# Canary Watch — Post-Deploy Monitoring
+# カナリアウォッチ — デプロイ後の監視
 
-## When to Use
+## 使用時期
 
-- After deploying to production or staging
-- After merging a risky PR
-- When you want to verify a fix actually fixed it
-- Continuous monitoring during a launch window
-- After dependency upgrades
+- 本番またはステージングへのデプロイ後
+- 危険なPRをマージした後
+- 修正が実際に修正されたことを確認したい場合
+- ローンチウィンドウ中の継続的監視
+- 依存関係アップグレード後
 
-## How It Works
+## 動作方法
 
-Monitors a deployed URL for regressions. Runs in a loop until stopped or until the watch window expires.
+デプロイされたURLの回帰を監視します。停止されるか監視ウィンドウが期限切れになるまで、ループで実行されます。
 
-### What It Watches
+### 監視内容
 
 ```
-1. HTTP Status — is the page returning 200?
-2. Console Errors — new errors that weren't there before?
-3. Network Failures — failed API calls, 5xx responses?
-4. Performance — LCP/CLS/INP regression vs baseline?
-5. Content — did key elements disappear? (h1, nav, footer, CTA)
-6. API Health — are critical endpoints responding within SLA?
+1. HTTPステータス — ページは200を返していますか？
+2. コンソールエラー — 以前なかった新しいエラーはありますか？
+3. ネットワークの障害 — 失敗したAPIコール、5xx応答？
+4. パフォーマンス — LCP/CLS/INPの回帰対ベースライン？
+5. コンテンツ — 主要な要素は消えましたか？（h1、nav、footer、CTA）
+6. API健康 — 重要なエンドポイントはSLA内で応答していますか？
 ```
 
-### Watch Modes
+### 監視モード
 
-**Quick check** (default): single pass, report results
+**クイックチェック**（デフォルト）：シングルパス、レポート結果
 ```
 /canary-watch https://myapp.com
 ```
 
-**Sustained watch**: check every N minutes for M hours
+**継続監視**：N分ごとにM時間チェック
 ```
 /canary-watch https://myapp.com --interval 5m --duration 2h
 ```
 
-**Diff mode**: compare staging vs production
+**差分モード**：ステージング対本番を比較
 ```
 /canary-watch --compare https://staging.myapp.com https://myapp.com
 ```
 
-### Alert Thresholds
+### 警告しきい値
 
 ```yaml
-critical:  # immediate alert
-  - HTTP status != 200
-  - Console error count > 5 (new errors only)
+critical:  # 即座の警告
+  - HTTPステータス != 200
+  - コンソールエラー数 > 5（新しいエラーのみ）
   - LCP > 4s
-  - API endpoint returns 5xx
+  - APIエンドポイントは5xxを返す
 
-warning:   # flag in report
-  - LCP increased > 500ms from baseline
+warning:   # レポートで報告
+  - LCP ベースラインから > 500ms増加
   - CLS > 0.1
-  - New console warnings
-  - Response time > 2x baseline
+  - 新しいコンソール警告
+  - レスポンス時間 > 2xベースライン
 
-info:      # log only
-  - Minor performance variance
-  - New network requests (third-party scripts added?)
+info:      # ログのみ
+  - マイナーパフォーマンス分散
+  - 新しいネットワークリクエスト（サードパーティスクリプトが追加された？）
 ```
 
-### Notifications
+### 通知
 
-When a critical threshold is crossed:
-- Desktop notification (macOS/Linux)
-- Optional: Slack/Discord webhook
-- Log to `~/.claude/canary-watch.log`
+重大なしきい値を超えたとき：
+- デスクトップ通知（macOS/Linux）
+- オプション：Slack/Discord Webhook
+- `~/.claude/canary-watch.log`にログ
 
-## Output
+## 出力
 
 ```markdown
 ## Canary Report — myapp.com — 2026-03-23 03:15 PST
 
-### Status: HEALTHY ✓
+### Status
+- ✓ HTTP 200
+- ✓ No critical errors
+- ✓ LCP within SLA (1.8s)
 
-| Check | Result | Baseline | Delta |
-|-------|--------|----------|-------|
-| HTTP | 200 ✓ | 200 | — |
-| Console errors | 0 ✓ | 0 | — |
-| LCP | 1.8s ✓ | 1.6s | +200ms |
-| CLS | 0.01 ✓ | 0.01 | — |
-| API /health | 145ms ✓ | 120ms | +25ms |
-
-### No regressions detected. Deploy is clean.
+### Diffs from Baseline
+- CLS: 0.08 (↓ 0.02)
+- Response: 245ms (↑ 12ms, OK)
+- Network: 42 requests (↑ 3, investigate third-party?)
 ```
 
-## Integration
+## 統合
 
-Pair with:
-- `/browser-qa` for pre-deploy verification
-- Hooks: add as a PostToolUse hook on `git push` to auto-check after deploys
-- CI: run in GitHub Actions after deploy step
+- `/benchmark`とペアリングしてパフォーマンス比較
+- `/browser-qa`とペアリングして完全なUIテスト
+- CI/CDパイプラインに組み込んでオートメーション監視

@@ -2,7 +2,7 @@
 
 This reference documents the mandatory checklist requirements for major ML/AI conferences. All major venues now require paper checklists—missing them results in desk rejection.
 
----
+**For systems conference checklists (OSDI, NSDI, ASPLOS, SOSP)**, see the [systems-paper-writing](../../systems-paper-writing/) skill.
 
 ## Contents
 
@@ -11,8 +11,6 @@ This reference documents the mandatory checklist requirements for major ML/AI co
 - [ICLR Requirements](#iclr-requirements)
 - [ACL Requirements](#acl-requirements)
 - [Universal Pre-Submission Checklist](#universal-pre-submission-checklist)
-
----
 
 ## NeurIPS Paper Checklist
 
@@ -157,8 +155,6 @@ Authors select "yes," "no," or "N/A" per question, with optional 1-2 sentence ju
 
 **Important:** Reviewers are explicitly instructed not to penalize honest limitation acknowledgment.
 
----
-
 ## ICML Paper Checklist
 
 ### Broader Impact Statement
@@ -196,8 +192,6 @@ ICML requires a Broader Impact Statement at the end of the paper, before referen
 - [ ] No grant numbers
 - [ ] Prior work cited in third person
 - [ ] No identifiable repository URLs
-
----
 
 ## ICLR Requirements
 
@@ -240,8 +234,6 @@ Address potential concerns in ≤1 page. Does not count toward page limit.
 - Authors on 3+ papers must serve as reviewers for ≥6 papers
 - Each submission needs ≥1 author registered to review ≥3 papers
 
----
-
 ## ACL Requirements
 
 ### Limitations Section (Mandatory)
@@ -278,13 +270,9 @@ If applicable:
 - [ ] Agreement metrics reported
 - [ ] Compensation documented
 
----
-
 ## Universal Pre-Submission Checklist
 
-### Before Every Submission
-
-#### Paper Content
+### Paper Content
 
 - [ ] Abstract ≤ word limit (usually 250-300 words)
 - [ ] Main content within page limit
@@ -293,7 +281,7 @@ If applicable:
 - [ ] All figures/tables have captions
 - [ ] Captions are self-contained
 
-#### Formatting
+### Formatting
 
 - [ ] Correct template used (venue + year specific)
 - [ ] Margins not modified
@@ -301,7 +289,7 @@ If applicable:
 - [ ] Double-blind requirements met
 - [ ] Page numbers (for review) or none (camera-ready)
 
-#### Technical
+### Technical
 
 - [ ] All claims supported by evidence
 - [ ] Error bars included
@@ -309,29 +297,27 @@ If applicable:
 - [ ] Hyperparameters documented
 - [ ] Compute resources stated
 
-#### Reproducibility
+### Reproducibility
 
 - [ ] Code will be available (or justification)
 - [ ] Data will be available (or justification)
 - [ ] Environment documented
 - [ ] Commands to reproduce provided
 
-#### Ethics
+### Ethics
 
 - [ ] Broader impacts considered
 - [ ] Limitations honestly stated
 - [ ] Licenses respected
 - [ ] IRB obtained if needed
 
-#### Final Checks
+### Final Checks
 
 - [ ] PDF compiles without errors
 - [ ] All figures render correctly
 - [ ] All citations resolve
 - [ ] Supplementary material organized
 - [ ] Conference checklist completed
-
----
 
 ## Quick Reference: Page Limits
 
@@ -344,11 +330,9 @@ If applicable:
 | AAAI 2026 | 7 pages (+1 camera) | Unlimited | Unlimited |
 | COLM 2025 | 9 pages (+1 camera) | Unlimited | Unlimited |
 
----
-
 ## Template Locations
 
-All conference templates are in the `templates/` directory:
+All ML/AI conference templates are in the `templates/` directory:
 
 ```
 templates/
@@ -359,3 +343,5 @@ templates/
 ├── aaai2026/       # AAAI 2026
 └── colm2025/       # COLM 2025
 ```
+
+**Systems conference templates** (OSDI, NSDI, ASPLOS, SOSP) are in the [systems-paper-writing](../../systems-paper-writing/templates/) skill.

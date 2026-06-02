@@ -1,108 +1,58 @@
 ---
 name: dashboard-builder
-description: Build monitoring dashboards that answer real operator questions for Grafana, SigNoz, and similar platforms. Use when turning metrics into a working dashboard instead of a vanity board.
+description: Grafana、SigNoz、および同様のプラットフォーム用の実際のオペレータ質問に答える監視ダッシュボードを構築します。メトリクスを虚栄ボードではなく機能するダッシュボードに変える場合に使用します。
 origin: ECC direct-port adaptation
 version: "1.0.0"
 ---
 
-# Dashboard Builder
+# ダッシュボード ビルダー
 
-Use this when the task is to build a dashboard people can operate from.
+タスクが人々が操作できるダッシュボードを構築することの場合に使用。
 
-The goal is not "show every metric." The goal is to answer:
+目標は「すべてのメトリクスを表示」ではありません。目標は以下の質問に答えることです：
 
-- is it healthy?
-- where is the bottleneck?
-- what changed?
-- what action should someone take?
+- 健康ですか？
+- ボトルネックはどこですか？
+- 何が変わったのですか？
+- 誰かが取るべき措置は何ですか？
 
-## When to Use
+## 使用時期
 
-- "Build a Kafka monitoring dashboard"
-- "Create a Grafana dashboard for Elasticsearch"
-- "Make a SigNoz dashboard for this service"
-- "Turn this metrics list into a real operational dashboard"
+- 「Kafkaモニタリングダッシュボードを構築」
+- 「Elasticsearch用のGrafanaダッシュボードを作成」
+- 「このサービス用のSigNozダッシュボードを作成」
+- 「このメトリクスリストを実際の運用ダッシュボードに変える」
 
-## Guardrails
+## ガードレール
 
-- do not start from visual layout; start from operator questions
-- do not include every available metric just because it exists
-- do not mix health, throughput, and resource panels without structure
-- do not ship panels without titles, units, and sane thresholds
+- ビジュアルレイアウトから始めない；オペレータの質問から始める
+- 利用可能なすべてのメトリクスを含めない
+- 健康、スループット、リソースパネルを構造なしで混ぜない
+- タイトル、ユニット、合理的なしきい値なしでパネルを出荷しない
 
-## Workflow
+## ワークフロー
 
-### 1. Define the operating questions
+### 1. 運用質問を定義
 
-Organize around:
+以下の周りに整理：
 
-- health / availability
-- latency / performance
-- throughput / volume
-- saturation / resources
-- service-specific risk
+- 健康/可用性
+- レイテンシ/パフォーマンス
+- スループット/ボリューム
+- 飽和/リソース
+- サービス固有のリスク
 
-### 2. Study the target platform schema
+### 2. ターゲットプラットフォームスキーマを研究
 
-Inspect existing dashboards first:
+既存のダッシュボードを最初に検査：
 
-- JSON structure
-- query language
-- variables
-- threshold styling
-- section layout
+- JSON構造
+- クエリ言語
 
-### 3. Build the minimum useful board
+### 3. メトリクスを選択
 
-Recommended structure:
+オペレータが実際に見ているもの、アラートしているもと、対応するのに必要なメトリクスのみを含める。
 
-1. overview
-2. performance
-3. resources
-4. service-specific section
+### 4. レイアウトの構築
 
-### 4. Cut vanity panels
-
-Every panel should answer a real question. If it does not, remove it.
-
-## Example Panel Sets
-
-### Elasticsearch
-
-- cluster health
-- shard allocation
-- search latency
-- indexing rate
-- JVM heap / GC
-
-### Kafka
-
-- broker count
-- under-replicated partitions
-- messages in / out
-- consumer lag
-- disk and network pressure
-
-### API gateway / ingress
-
-- request rate
-- p50 / p95 / p99 latency
-- error rate
-- upstream health
-- active connections
-
-## Quality Checklist
-
-- [ ] valid dashboard JSON
-- [ ] clear section grouping
-- [ ] titles and units are present
-- [ ] thresholds/status colors are meaningful
-- [ ] variables exist for common filters
-- [ ] default time range and refresh are sensible
-- [ ] no vanity panels with no operator value
-
-## Related Skills
-
-- `research-ops`
-- `backend-patterns`
-- `terminal-ops`
+質問ごとにパネルをグループ化。

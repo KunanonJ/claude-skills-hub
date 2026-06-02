@@ -2,11 +2,18 @@
 name: fitness-analyzer
 description: 分析运动数据、识别运动模式、评估健身进展，并提供个性化训练建议。支持与慢性病数据的关联分析。
 allowed-tools: Read, Grep, Glob, Write
+risk: unknown
+source: community
 ---
 
 # 运动分析器技能
 
 分析运动数据，识别运动模式，评估健身进展，并提供个性化训练建议。
+
+## When to Use
+- 需要分析运动记录、训练强度、运动习惯或健身进展时使用。
+- 任务涉及跑步、力量训练、耐力或柔韧性等维度的趋势与改进建议。
+- 需要把运动数据与其他健康模块做关联分析时使用。
 
 ## 功能
 
@@ -429,3 +436,8 @@ r = Σ[(xi - x̄)(yi - ȳ)] / √[Σ(xi - x̄)² × Σ(yi - ȳ)²]
 **技能版本**: v1.0
 **最后更新**: 2026-01-02
 **维护者**: WellAlly Tech
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

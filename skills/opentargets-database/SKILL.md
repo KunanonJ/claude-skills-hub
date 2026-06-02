@@ -1,9 +1,6 @@
 ---
 name: opentargets-database
-description: Query Open Targets Platform for target-disease associations, drug target discovery, tractability/safety data, genetics/omics evidence, known drugs, for therapeutic target identification.
-license: Unknown
-metadata:
-    skill-author: K-Dense Inc.
+description: "Query Open Targets Platform for target-disease associations, drug target discovery, tractability/safety data, genetics/omics evidence, known drugs, for therapeutic target identification."
 ---
 
 # Open Targets Database
@@ -368,4 +365,3 @@ Ochoa, D. et al. (2025) Open Targets Platform: facilitating therapeutic hypothes
 4. **Evidence quality varies:** Weight expert-curated sources higher than computational predictions
 5. **Requires biological interpretation:** Scores and evidence must be interpreted in biological and clinical context
 6. **No authentication required:** All data is freely accessible, but cite appropriately
-

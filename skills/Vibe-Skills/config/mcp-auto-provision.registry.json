@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "required_servers": [
+    "github",
+    "context7",
+    "serena",
+    "scrapling",
+    "claude-flow"
+  ],
+  "allowed_statuses": [
+    "ready",
+    "local_tool_present",
+    "attempt_failed",
+    "host_native_unavailable",
+    "missing_credentials",
+    "verification_failed",
+    "not_attempted_due_to_host_contract"
+  ],
+  "hosts": {
+    "codex": {
+      "attempt_order": ["github", "context7", "serena", "scrapling", "claude-flow"],
+      "servers": {
+        "github": {"category": "host_native", "strategy": "host_native", "verify_path": "host_visibility"},
+        "context7": {"category": "host_native", "strategy": "host_native", "verify_path": "host_visibility"},
+        "serena": {"category": "host_native", "strategy": "host_native", "verify_path": "host_visibility"},
+        "scrapling": {"category": "scripted_cli", "strategy": "scripted_cli", "verify_path": "command_present"},
+        "claude-flow": {"category": "scripted_cli", "strategy": "scripted_cli", "verify_path": "command_present"}
+      }
+    },
+    "claude-code": {
+      "attempt_order": ["github", "context7", "serena", "scrapling", "claude-flow"],
+      "servers": {
+        "github": {"category": "host_native", "strategy": "host_native", "verify_path": "host_visibility"},
+        "context7": {"category": "host_native", "strategy": "host_native", "verify_path": "host_visibility"},
+        "serena": {"category": "host_native", "strategy": "host_native", "verify_path": "host_visibility"},
+        "scrapling": {"category": "scripted_cli", "strategy": "scripted_cli", "verify_path": "command_present"},
+        "claude-flow": {"category": "scripted_cli", "strategy": "scripted_cli", "verify_path": "command_present"}
+      }
+    },
+    "cursor": {
+      "attempt_order": ["github", "context7", "serena", "scrapling", "claude-flow"],
+      "servers": {
+        "github": {"category": "host_native", "strategy": "host_native", "verify_path": "host_visibility"},
+        "context7": {"category": "host_native", "strategy": "host_native", "verify_path": "host_visibility"},
+        "serena": {"category": "host_native", "strategy": "host_native", "verify_path": "host_visibility"},
+        "scrapling": {"category": "scripted_cli", "strategy": "scripted_cli", "verify_path": "command_present"},
+        "claude-flow": {"category": "scripted_cli", "strategy": "scripted_cli", "verify_path": "command_present"}
+      }
+    },
+    "windsurf": {
+      "attempt_order": ["github", "context7", "serena", "scrapling", "claude-flow"],
+      "servers": {
+        "github": {"category": "host_native", "strategy": "host_native", "verify_path": "host_visibility"},
+        "context7": {"category": "host_native", "strategy": "host_native", "verify_path": "host_visibility"},
+        "serena": {"category": "host_native", "strategy": "host_native", "verify_path": "host_visibility"},
+        "scrapling": {"category": "scripted_cli", "strategy": "scripted_cli", "verify_path": "command_present"},
+        "claude-flow": {"category": "scripted_cli", "strategy": "scripted_cli", "verify_path": "command_present"}
+      }
+    },
+    "openclaw": {
+      "attempt_order": ["github", "context7", "serena", "scrapling", "claude-flow"],
+      "servers": {
+        "github": {"category": "host_native", "strategy": "host_native", "verify_path": "host_visibility"},
+        "context7": {"category": "host_native", "strategy": "host_native", "verify_path": "host_visibility"},
+        "serena": {"category": "host_native", "strategy": "host_native", "verify_path": "host_visibility"},
+        "scrapling": {"category": "scripted_cli", "strategy": "scripted_cli", "verify_path": "command_present"},
+        "claude-flow": {"category": "scripted_cli", "strategy": "scripted_cli", "verify_path": "command_present"}
+      }
+    },
+    "opencode": {
+      "attempt_order": ["github", "context7", "serena", "scrapling", "claude-flow"],
+      "servers": {
+        "github": {"category": "host_native", "strategy": "host_native", "verify_path": "host_visibility"},
+        "context7": {"category": "host_native", "strategy": "host_native", "verify_path": "host_visibility"},
+        "serena": {"category": "host_native", "strategy": "host_native", "verify_path": "host_visibility"},
+        "scrapling": {"category": "scripted_cli", "strategy": "scripted_cli", "verify_path": "command_present"},
+        "claude-flow": {"category": "scripted_cli", "strategy": "scripted_cli", "verify_path": "command_present"}
+      }
+    }
+  }
+}

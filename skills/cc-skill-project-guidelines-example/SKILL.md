@@ -15,7 +15,6 @@ Based on a real production application: [Zenith](https://zenith.chat) - AI-power
 ---
 
 ## When to Use
-
 Reference this skill when working on the specific project it's designed for. Project skills contain:
 - Architecture overview
 - File structure
@@ -351,3 +350,8 @@ SUPABASE_KEY=eyJ...
 - `backend-patterns.md` - API and database patterns
 - `frontend-patterns.md` - React and Next.js patterns
 - `tdd-workflow/` - Test-driven development methodology
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

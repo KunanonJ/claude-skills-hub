@@ -1,23 +1,29 @@
 ---
 name: autonomous-agent-harness
-description: Transform Claude Code into a fully autonomous agent system with persistent memory, scheduled operations, computer use, and task queuing. Replaces standalone agent frameworks (Hermes, AutoGPT) by leveraging Claude Code's native crons, dispatch, MCP tools, and memory. Use when the user wants continuous autonomous operation, scheduled tasks, or a self-directing agent loop.
+description: Claude Codeを永続的なメモリ、スケジュール済み操作、コンピュータ使用、タスクキューイングを備えた完全自動エージェントシステムに変換します。スタンドアロンエージェントフレームワーク（Hermes、AutoGPT）を、Claude Codeのネイティブcrons、dispatch、MCPツール、メモリを活用して置き換えます。ユーザーが継続的な自動操作、スケジュール済みタスク、または自己指令エージェントループを望む場合に使用します。
 origin: ECC
 ---
 
-# Autonomous Agent Harness
+# 自動エージェントハーネス
 
-Turn Claude Code into a persistent, self-directing agent system using only native features and MCP servers.
+ネイティブ機能とMCPサーバーのみを使用して、Claude Codeを永続的な自己指令エージェントシステムに変換します。
 
-## When to Activate
+## 同意とセーフティバウンダリ
 
-- User wants an agent that runs continuously or on a schedule
-- Setting up automated workflows that trigger periodically
-- Building a personal AI assistant that remembers context across sessions
-- User says "run this every day", "check on this regularly", "keep monitoring"
-- Wants to replicate functionality from Hermes, AutoGPT, or similar autonomous agent frameworks
-- Needs computer use combined with scheduled execution
+自動操作は、ユーザーによって明示的に要求され、スコープが設定される必要があります。スケジュール、リモートエージェントの派遣、永続的なメモリの書き込み、コンピュータ制御の使用、外部への投稿、サードパーティリソースの変更、または現在のセットアップのプライベート通信に対する行動を行わないでください。ユーザーがその機能と対象ワークスペースを承認していない限り。
 
-## Architecture
+クレデンシャル、プライベートワークスペースのエクスポート、個人データセット、およびアカウント固有の自動化を再利用可能なECCアーティファクトから除外する前に、ドライラン計画とローカルキューファイルを好みます。
+
+## アクティベーション時期
+
+- ユーザーが継続的に実行されるか、スケジュール上で実行されるエージェントを望む
+- 定期的にトリガーされる自動化ワークフローを設定
+- セッション全体でコンテキストを記憶する個人的なAIアシスタントを構築
+- ユーザーが「これを毎日実行」、「これを定期的にチェック」、「監視を続ける」と言う
+- Hermes、AutoGPT、または同様の自動エージェントフレームワークから機能を複製したい
+- スケジュール済み実行と組み合わせたコンピュータ使用が必要
+
+## アーキテクチャ
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
@@ -45,223 +51,53 @@ Turn Claude Code into a persistent, self-directing agent system using only nativ
 └──────────────────────────────────────────────────────────────┘
 ```
 
-## Core Components
+## コアコンポーネント
 
-### 1. Persistent Memory
+### 1. 永続的なメモリ
 
-Use Claude Code's built-in memory system enhanced with MCP memory server for structured data.
+構造化データ用のMCPメモリサーバーで拡張されたClaude Codeの組み込みメモリシステムを使用します。
 
-**Built-in memory** (`~/.claude/projects/*/memory/`):
-- User preferences, feedback, project context
-- Stored as markdown files with frontmatter
-- Automatically loaded at session start
+**組み込みメモリ** (`~/.claude/projects/*/memory/`):
+- ユーザーの設定、フィードバック、プロジェクトコンテキスト
+- フロントマター付きのマークダウンファイルとして保存
+- セッション開始時に自動的に読み込まれる
 
-**MCP memory server** (structured knowledge graph):
-- Entities, relations, observations
-- Queryable graph structure
-- Cross-session persistence
+**MCPメモリサーバー** (構造化知識グラフ):
+- エンティティ、関係、観察
+- クエリ可能なグラフ構造
+- クロスセッション永続性
 
-**Memory patterns:**
-
-```
-# Short-term: current session context
-Use TodoWrite for in-session task tracking
-
-# Medium-term: project memory files
-Write to ~/.claude/projects/*/memory/ for cross-session recall
-
-# Long-term: MCP knowledge graph
-Use mcp__memory__create_entities for permanent structured data
-Use mcp__memory__create_relations for relationship mapping
-Use mcp__memory__add_observations for new facts about known entities
-```
-
-### 2. Scheduled Operations (Crons)
-
-Use Claude Code's scheduled tasks to create recurring agent operations.
-
-**Setting up a cron:**
+**メモリパターン：**
 
 ```
-# Via MCP tool
+# 短期：現在のセッションコンテキスト
+TodoWriteをセッション内タスク追跡に使用
+
+# 中期：プロジェクトメモリファイル
+クロスセッションリコールの場合は～/.claude/projects/*/memory/に書き込む
+
+# 長期：MCPナレッジグラフ
+mcp__memory__create_entitiesを永続的な構造化データに使用
+mcp__memory__create_relationsを関係マッピングに使用
+mcp__memory__add_observationsを既知のエンティティについての新しい事実に使用
+```
+
+### 2. スケジュール済み操作（Crons）
+
+Claude Codeのスケジュール済みタスクを使用して、定期的なエージェント操作を作成します。
+
+**cronを設定する：**
+
+```
+# MCPツール経由
 mcp__scheduled-tasks__create_scheduled_task({
   name: "daily-pr-review",
-  schedule: "0 9 * * 1-5",  # 9 AM weekdays
-  prompt: "Review all open PRs in affaan-m/everything-claude-code. For each: check CI status, review changes, flag issues. Post summary to memory.",
+  schedule: "0 9 * * 1-5",  # 平日午前9時
+  prompt: "affaan-m/everything-claude-codeのすべてのオープンPRを確認します。各について：CIステータスをチェック、変更を確認、問題にフラグを立てます。メモリに概要を投稿します。",
   project_dir: "/path/to/repo"
 })
-
-# Via claude -p (programmatic mode)
-echo "Review open PRs and summarize" | claude -p --project /path/to/repo
 ```
 
-**Useful cron patterns:**
+## 完全な設定例
 
-| Pattern | Schedule | Use Case |
-|---------|----------|----------|
-| Daily standup | `0 9 * * 1-5` | Review PRs, issues, deploy status |
-| Weekly review | `0 10 * * 1` | Code quality metrics, test coverage |
-| Hourly monitor | `0 * * * *` | Production health, error rate checks |
-| Nightly build | `0 2 * * *` | Run full test suite, security scan |
-| Pre-meeting | `*/30 * * * *` | Prepare context for upcoming meetings |
-
-### 3. Dispatch / Remote Agents
-
-Trigger Claude Code agents remotely for event-driven workflows.
-
-**Dispatch patterns:**
-
-```bash
-# Trigger from CI/CD
-curl -X POST "https://api.anthropic.com/dispatch" \
-  -H "Authorization: Bearer $ANTHROPIC_API_KEY" \
-  -d '{"prompt": "Build failed on main. Diagnose and fix.", "project": "/repo"}'
-
-# Trigger from webhook
-# GitHub webhook → dispatch → Claude agent → fix → PR
-
-# Trigger from another agent
-claude -p "Analyze the output of the security scan and create issues for findings"
-```
-
-### 4. Computer Use
-
-Leverage Claude's computer-use MCP for physical world interaction.
-
-**Capabilities:**
-- Browser automation (navigate, click, fill forms, screenshot)
-- Desktop control (open apps, type, mouse control)
-- File system operations beyond CLI
-
-**Use cases within the harness:**
-- Automated testing of web UIs
-- Form filling and data entry
-- Screenshot-based monitoring
-- Multi-app workflows
-
-### 5. Task Queue
-
-Manage a persistent queue of tasks that survive session boundaries.
-
-**Implementation:**
-
-```
-# Task persistence via memory
-Write task queue to ~/.claude/projects/*/memory/task-queue.md
-
-# Task format
----
-name: task-queue
-type: project
-description: Persistent task queue for autonomous operation
----
-
-## Active Tasks
-- [ ] PR #123: Review and approve if CI green
-- [ ] Monitor deploy: check /health every 30 min for 2 hours
-- [ ] Research: Find 5 leads in AI tooling space
-
-## Completed
-- [x] Daily standup: reviewed 3 PRs, 2 issues
-```
-
-## Replacing Hermes
-
-| Hermes Component | ECC Equivalent | How |
-|------------------|---------------|-----|
-| Gateway/Router | Claude Code dispatch + crons | Scheduled tasks trigger agent sessions |
-| Memory System | Claude memory + MCP memory server | Built-in persistence + knowledge graph |
-| Tool Registry | MCP servers | Dynamically loaded tool providers |
-| Orchestration | ECC skills + agents | Skill definitions direct agent behavior |
-| Computer Use | computer-use MCP | Native browser and desktop control |
-| Context Manager | Session management + memory | ECC 2.0 session lifecycle |
-| Task Queue | Memory-persisted task list | TodoWrite + memory files |
-
-## Setup Guide
-
-### Step 1: Configure MCP Servers
-
-Ensure these are in `~/.claude.json`:
-
-```json
-{
-  "mcpServers": {
-    "memory": {
-      "command": "npx",
-      "args": ["-y", "@anthropic/memory-mcp-server"]
-    },
-    "scheduled-tasks": {
-      "command": "npx",
-      "args": ["-y", "@anthropic/scheduled-tasks-mcp-server"]
-    },
-    "computer-use": {
-      "command": "npx",
-      "args": ["-y", "@anthropic/computer-use-mcp-server"]
-    }
-  }
-}
-```
-
-### Step 2: Create Base Crons
-
-```bash
-# Daily morning briefing
-claude -p "Create a scheduled task: every weekday at 9am, review my GitHub notifications, open PRs, and calendar. Write a morning briefing to memory."
-
-# Continuous learning
-claude -p "Create a scheduled task: every Sunday at 8pm, extract patterns from this week's sessions and update the learned skills."
-```
-
-### Step 3: Initialize Memory Graph
-
-```bash
-# Bootstrap your identity and context
-claude -p "Create memory entities for: me (user profile), my projects, my key contacts. Add observations about current priorities."
-```
-
-### Step 4: Enable Computer Use (Optional)
-
-Grant computer-use MCP the necessary permissions for browser and desktop control.
-
-## Example Workflows
-
-### Autonomous PR Reviewer
-```
-Cron: every 30 min during work hours
-1. Check for new PRs on watched repos
-2. For each new PR:
-   - Pull branch locally
-   - Run tests
-   - Review changes with code-reviewer agent
-   - Post review comments via GitHub MCP
-3. Update memory with review status
-```
-
-### Personal Research Agent
-```
-Cron: daily at 6 AM
-1. Check saved search queries in memory
-2. Run Exa searches for each query
-3. Summarize new findings
-4. Compare against yesterday's results
-5. Write digest to memory
-6. Flag high-priority items for morning review
-```
-
-### Meeting Prep Agent
-```
-Trigger: 30 min before each calendar event
-1. Read calendar event details
-2. Search memory for context on attendees
-3. Pull recent email/Slack threads with attendees
-4. Prepare talking points and agenda suggestions
-5. Write prep doc to memory
-```
-
-## Constraints
-
-- Cron tasks run in isolated sessions — they don't share context with interactive sessions unless through memory.
-- Computer use requires explicit permission grants. Don't assume access.
-- Remote dispatch may have rate limits. Design crons with appropriate intervals.
-- Memory files should be kept concise. Archive old data rather than letting files grow unbounded.
-- Always verify that scheduled tasks completed successfully. Add error handling to cron prompts.
+セッション全体でコンテキストを記憶し、複数の定期的なタスクを実行する完全に自動化されたエージェントの設定については、高度な設定セクションを参照してください。

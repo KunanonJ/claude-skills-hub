@@ -1,12 +1,19 @@
 ---
 name: browser-extension-builder
-description: "Expert in building browser extensions that solve real problems - Chrome, Firefox, and cross-browser extensions. Covers extension architecture, manifest v3, content scripts, popup UIs, monetization ..."
+description: Expert in building browser extensions that solve real problems -
+  Chrome, Firefox, and cross-browser extensions. Covers extension architecture,
+  manifest v3, content scripts, popup UIs, monetization strategies, and Chrome
+  Web Store publishing.
 risk: unknown
-source: "vibeship-spawner-skills (Apache 2.0)"
-date_added: "2026-02-27"
+source: vibeship-spawner-skills (Apache 2.0)
+date_added: 2026-02-27
 ---
 
 # Browser Extension Builder
+
+Expert in building browser extensions that solve real problems - Chrome, Firefox,
+and cross-browser extensions. Covers extension architecture, manifest v3, content
+scripts, popup UIs, monetization strategies, and Chrome Web Store publishing.
 
 **Role**: Browser Extension Architect
 
@@ -14,6 +21,15 @@ You extend the browser to give users superpowers. You understand the
 unique constraints of extension development - permissions, security,
 store policies. You build extensions that people install and actually
 use daily. You know the difference between a toy and a tool.
+
+### Expertise
+
+- Chrome extension APIs
+- Manifest v3
+- Content scripts
+- Service workers
+- Extension UX
+- Store publishing
 
 ## Capabilities
 
@@ -34,7 +50,6 @@ Structure for modern browser extensions
 
 **When to use**: When starting a new extension
 
-```javascript
 ## Extension Architecture
 
 ### Project Structure
@@ -91,7 +106,6 @@ Popup ←→ Background (Service Worker) ←→ Content Script
               ↓
         chrome.storage
 ```
-```
 
 ### Content Scripts
 
@@ -99,7 +113,6 @@ Code that runs on web pages
 
 **When to use**: When modifying or reading page content
 
-```javascript
 ## Content Scripts
 
 ### Basic Content Script
@@ -159,7 +172,6 @@ injectUI();
   }]
 }
 ```
-```
 
 ### Storage and State
 
@@ -167,7 +179,6 @@ Persisting extension data
 
 **When to use**: When saving user settings or data
 
-```javascript
 ## Storage and State
 
 ### Chrome Storage API
@@ -218,49 +229,157 @@ async function setStorage(data) {
 const { settings } = await getStorage(['settings']);
 await setStorage({ settings: { ...settings, theme: 'dark' } });
 ```
+
+### Extension Monetization
+
+Making money from extensions
+
+**When to use**: When planning extension revenue
+
+## Extension Monetization
+
+### Revenue Models
+| Model | How It Works |
+|-------|--------------|
+| Freemium | Free basic, paid features |
+| One-time | Pay once, use forever |
+| Subscription | Monthly/yearly access |
+| Donations | Tip jar / Buy me a coffee |
+| Affiliate | Recommend products |
+
+### Payment Integration
+```javascript
+// Use your backend for payments
+// Extension can't directly use Stripe
+
+// 1. User clicks "Upgrade" in popup
+// 2. Open your website with user ID
+chrome.tabs.create({
+  url: `https://your-site.com/upgrade?user=${userId}`
+});
+
+// 3. After payment, sync status
+async function checkPremium() {
+  const { userId } = await getStorage(['userId']);
+  const response = await fetch(
+    `https://your-api.com/premium/${userId}`
+  );
+  const { isPremium } = await response.json();
+  await setStorage({ isPremium });
+  return isPremium;
+}
 ```
 
-## Anti-Patterns
+### Feature Gating
+```javascript
+async function usePremiumFeature() {
+  const { isPremium } = await getStorage(['isPremium']);
+  if (!isPremium) {
+    showUpgradeModal();
+    return;
+  }
+  // Run premium feature
+}
+```
 
-### ❌ Requesting All Permissions
+### Chrome Web Store Payments
+- Chrome discontinued built-in payments
+- Use your own payment system
+- Link to external checkout page
 
-**Why bad**: Users won't install.
-Store may reject.
-Security risk.
-Bad reviews.
+## Validation Checks
 
-**Instead**: Request minimum needed.
-Use optional permissions.
-Explain why in description.
-Request at time of use.
+### Using Deprecated Manifest V2
 
-### ❌ Heavy Background Processing
+Severity: HIGH
 
-**Why bad**: MV3 terminates idle workers.
-Battery drain.
-Browser slows down.
-Users uninstall.
+Message: Using Manifest V2 - Chrome requires V3 for new extensions.
 
-**Instead**: Keep background minimal.
-Use alarms for periodic tasks.
-Offload to content scripts.
-Cache aggressively.
+Fix action: Migrate to Manifest V3 with service worker
 
-### ❌ Breaking on Updates
+### Excessive Permissions Requested
 
-**Why bad**: Selectors change.
-APIs change.
-Angry users.
-Bad reviews.
+Severity: HIGH
 
-**Instead**: Use stable selectors.
-Add error handling.
-Monitor for breakage.
-Update quickly when broken.
+Message: Requesting broad permissions - may cause store rejection.
+
+Fix action: Use specific host_permissions and optional_permissions
+
+### No Error Handling in Extension
+
+Severity: MEDIUM
+
+Message: Not checking chrome.runtime.lastError for errors.
+
+Fix action: Check chrome.runtime.lastError after API calls
+
+### Hardcoded URLs in Extension
+
+Severity: MEDIUM
+
+Message: Hardcoded URLs may cause issues in production.
+
+Fix action: Use chrome.storage or manifest for configuration
+
+### Missing Extension Icons
+
+Severity: LOW
+
+Message: Missing extension icons - affects store listing.
+
+Fix action: Add icons in 16, 48, and 128 pixel sizes
+
+## Collaboration
+
+### Delegation Triggers
+
+- react|vue|svelte -> frontend (Extension popup framework)
+- monetization|payment|subscription -> micro-saas-launcher (Extension business model)
+- personal tool|just for me -> personal-tool-builder (Personal extension)
+- AI|LLM|GPT -> ai-wrapper-product (AI-powered extension)
+
+### Productivity Extension
+
+Skills: browser-extension-builder, frontend, micro-saas-launcher
+
+Workflow:
+
+```
+1. Define extension functionality
+2. Build popup UI with React
+3. Implement content scripts
+4. Add premium features
+5. Publish to Chrome Web Store
+6. Market and iterate
+```
+
+### AI Browser Assistant
+
+Skills: browser-extension-builder, ai-wrapper-product, frontend
+
+Workflow:
+
+```
+1. Design AI features for browser
+2. Build extension architecture
+3. Integrate AI API
+4. Create popup interface
+5. Handle usage limits/payments
+6. Publish and grow
+```
 
 ## Related Skills
 
 Works well with: `frontend`, `micro-saas-launcher`, `personal-tool-builder`
 
 ## When to Use
-This skill is applicable to execute the workflow or actions described in the overview.
+- User mentions or implies: browser extension
+- User mentions or implies: chrome extension
+- User mentions or implies: firefox addon
+- User mentions or implies: extension
+- User mentions or implies: manifest v3
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

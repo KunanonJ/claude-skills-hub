@@ -1,7 +1,7 @@
 ---
 name: linkerd-patterns
-description: "Implement Linkerd service mesh patterns for lightweight, security-focused service mesh deployments. Use when setting up Linkerd, configuring traffic policies, or implementing zero-trust networking ..."
-risk: unknown
+description: "Production patterns for Linkerd service mesh - the lightweight, security-first service mesh for Kubernetes."
+risk: critical
 source: community
 date_added: "2026-02-27"
 ---
@@ -70,7 +70,14 @@ Production patterns for Linkerd service mesh - the lightweight, security-first s
 
 ```bash
 # Install CLI
-curl --proto '=https' --tlsv1.2 -sSfL https://run.linkerd.io/install | sh
+brew install linkerd
+
+# Alternative: download the official installer, inspect it, then execute it
+tmpdir="$(mktemp -d)"
+trap 'rm -rf "$tmpdir"' EXIT
+curl --proto '=https' --tlsv1.2 -sSfL https://run.linkerd.io/install -o "$tmpdir/linkerd-install.sh"
+sed -n '1,160p' "$tmpdir/linkerd-install.sh"
+sh "$tmpdir/linkerd-install.sh"
 
 # Validate cluster
 linkerd check --pre
@@ -322,3 +329,8 @@ linkerd viz tap deploy/my-app --to deploy/my-backend
 - [Linkerd Documentation](https://linkerd.io/2.14/overview/)
 - [Service Profiles](https://linkerd.io/2.14/features/service-profiles/)
 - [Authorization Policy](https://linkerd.io/2.14/features/server-policy/)
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

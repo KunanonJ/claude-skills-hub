@@ -1,11 +1,18 @@
 ---
 name: wellally-tech
-description: Integrate digital health data sources (Apple Health, Fitbit, Oura Ring) and connect to WellAlly.tech knowledge base. Import external health device data, standardize to local format, and recommend relevant WellAlly.tech knowledge base articles based on health data. Support...
+description: "Integrate multiple digital health data sources, connect to [WellAlly.tech](https://www.wellally.tech/) knowledge base, providing data import and knowledge reference for personal health management systems."
+risk: unknown
+source: community
 ---
 
 # WellAlly Digital Health Integration
 
 Integrate multiple digital health data sources, connect to [WellAlly.tech](https://www.wellally.tech/) knowledge base, providing data import and knowledge reference for personal health management systems.
+
+## When to Use
+- You need to import or normalize health data from sources like Apple Health, Fitbit, Oura, or CSV/JSON exports.
+- You want to connect personal health data workflows to the WellAlly.tech knowledge base.
+- The task involves data import, health-data management, or article recommendations driven by user health context.
 
 ## Core Features
 
@@ -682,3 +689,8 @@ A: No. Knowledge base articles are referenced via URLs, requiring network connec
 
 **Q: Where are API credentials stored?**
 A: API credentials are encrypted and stored in local configuration files, not uploaded to any server.
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

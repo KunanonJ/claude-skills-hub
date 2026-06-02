@@ -1,0 +1,221 @@
+param(
+    [switch]$WriteArtifacts,
+    [string]$OutputDirectory = ''
+)
+
+Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
+
+. (Join-Path $PSScriptRoot '..\common\vibe-governance-helpers.ps1')
+. (Join-Path $PSScriptRoot '..\runtime\VibeRuntime.Common.ps1')
+
+function Add-Assertion {
+    param(
+        [ref]$Results,
+        [bool]$Condition,
+        [string]$Message,
+        [string]$Details = ''
+    )
+
+    $record = [pscustomobject]@{
+        passed = [bool]$Condition
+        message = $Message
+        details = $Details
+    }
+    $Results.Value += $record
+
+    if ($Condition) {
+        Write-Host "[PASS] $Message"
+    } else {
+        Write-Host "[FAIL] $Message" -ForegroundColor Red
+        if ($Details) {
+            Write-Host "       $Details" -ForegroundColor DarkRed
+        }
+    }
+}
+
+$context = Get-VgoGovernanceContext -ScriptPath $PSCommandPath -EnforceExecutionContext
+$repoRoot = $context.repoRoot
+$runtimeEntryPath = Get-VgoRuntimeEntrypointPath -RepoRoot $repoRoot -RuntimeConfig $context.runtimeConfig
+$results = @()
+
+$requiredFiles = @(
+    'SKILL.md',
+    'protocols/runtime.md',
+    'protocols/think.md',
+    'protocols/do.md',
+    'protocols/team.md',
+    'protocols/retro.md',
+    'config/runtime-contract.json',
+    'config/runtime-modes.json',
+    'config/fallback-governance.json',
+    'config/implementation-guardrails.json',
+    'config/execution-runtime-policy.json',
+    'config/requirement-doc-policy.json',
+    'config/plan-execution-policy.json',
+    'config/phase-cleanup-policy.json',
+    'docs/requirements/README.md',
+    'templates/requirements/governed-requirement-template.md',
+    'templates/plans/governed-execution-plan-template.md',
+    'scripts/runtime/VibeRuntime.Common.ps1',
+    'scripts/runtime/Invoke-SkeletonCheck.ps1',
+    'scripts/runtime/Invoke-DeepInterview.ps1',
+    'scripts/runtime/Write-RequirementDoc.ps1',
+    'scripts/runtime/Write-XlPlan.ps1',
+    'scripts/runtime/Invoke-AntiProxyGoalDriftCompaction.ps1',
+    'scripts/runtime/Invoke-PlanExecute.ps1',
+    'scripts/runtime/Invoke-PhaseCleanup.ps1',
+    'scripts/verify/vibe-runtime-execution-proof-gate.ps1',
+    'scripts/verify/vibe-specialist-dispatch-closure-gate.ps1',
+    'scripts/verify/vibe-no-silent-fallback-contract-gate.ps1',
+    'scripts/verify/vibe-no-self-introduced-fallback-gate.ps1',
+    'scripts/verify/vibe-release-truth-consistency-gate.ps1'
+)
+
+foreach ($relativePath in $requiredFiles) {
+    $fullPath = Join-Path $repoRoot $relativePath
+    Add-Assertion -Results ([ref]$results) -Condition (Test-Path -LiteralPath $fullPath) -Message ("required governed runtime file exists: {0}" -f $relativePath) -Details $fullPath
+}
+Add-Assertion -Results ([ref]$results) -Condition (Test-Path -LiteralPath $runtimeEntryPath) -Message 'effective governed runtime entrypoint exists' -Details $runtimeEntryPath
+
+$runtimeContract = Get-Content -LiteralPath (Join-Path $repoRoot 'config\runtime-contract.json') -Raw -Encoding UTF8 | ConvertFrom-Json
+Add-Assertion -Results ([ref]$results) -Condition ($runtimeContract.entry_skill -eq 'vibe') -Message 'runtime contract entry skill is vibe'
+Add-Assertion -Results ([ref]$results) -Condition (@($runtimeContract.stages).Count -eq 6) -Message 'runtime contract defines six fixed stages'
+Add-Assertion -Results ([ref]$results) -Condition ([bool]$runtimeContract.invariants.no_silent_fallback) -Message 'runtime contract forbids silent fallback'
+Add-Assertion -Results ([ref]$results) -Condition ([bool]$runtimeContract.invariants.fallback_hazard_alert_required) -Message 'runtime contract requires fallback hazard alerts'
+Add-Assertion -Results ([ref]$results) -Condition ([bool]$runtimeContract.invariants.no_self_introduced_fallback_without_requirement_approval) -Message 'runtime contract forbids self-introduced fallback without requirement approval'
+
+$skillText = Get-Content -LiteralPath (Join-Path $repoRoot 'SKILL.md') -Raw -Encoding UTF8
+Add-Assertion -Results ([ref]$results) -Condition (
+    $skillText.Contains('skeleton_check') -and
+    $skillText.Contains('deep_interview') -and
+    $skillText.Contains('requirement_doc') -and
+    $skillText.Contains('xl_plan') -and
+    $skillText.Contains('plan_execute') -and
+    $skillText.Contains('phase_cleanup')
+) -Message 'SKILL.md documents the fixed stage machine'
+Add-Assertion -Results ([ref]$results) -Condition ($skillText.Contains('governance-capsule.json')) -Message 'SKILL.md documents governance capsule artifact'
+Add-Assertion -Results ([ref]$results) -Condition ($skillText.Contains('stage-lineage.json')) -Message 'SKILL.md documents stage-lineage artifact'
+
+$teamText = Get-Content -LiteralPath (Join-Path $repoRoot 'protocols\team.md') -Raw -Encoding UTF8
+Add-Assertion -Results ([ref]$results) -Condition ($teamText.Contains('$vibe')) -Message 'team protocol requires subagent prompts to end with $vibe'
+$runtimeText = Get-Content -LiteralPath (Join-Path $repoRoot 'protocols\runtime.md') -Raw -Encoding UTF8
+Add-Assertion -Results ([ref]$results) -Condition ($runtimeText.Contains('governance-capsule.json')) -Message 'runtime protocol documents governance capsule artifact'
+Add-Assertion -Results ([ref]$results) -Condition ($runtimeText.Contains('delegation-envelope.json')) -Message 'runtime protocol documents delegation envelope artifact'
+
+$runId = "contract-gate-" + [System.Guid]::NewGuid().ToString('N').Substring(0, 8)
+$artifactRoot = Join-Path $repoRoot (".tmp\governed-runtime-contract-{0}" -f $runId)
+$summary = & $runtimeEntryPath -Task 'I have a failing test and a stack trace. Help me debug systematically before proposing fixes.' -Mode interactive_governed -RunId $runId -ArtifactRoot $artifactRoot
+
+Add-Assertion -Results ([ref]$results) -Condition ($summary.mode -eq 'interactive_governed') -Message 'runtime smoke summary keeps interactive_governed as the effective mode'
+
+$artifactPaths = @(
+    $summary.summary.artifacts.skeleton_receipt,
+    $summary.summary.artifacts.intent_contract,
+    $summary.summary.artifacts.governance_capsule,
+    $summary.summary.artifacts.stage_lineage,
+    $summary.summary.artifacts.requirement_doc,
+    $summary.summary.artifacts.execution_plan,
+    $summary.summary.artifacts.execute_receipt,
+    $summary.summary.artifacts.execution_manifest,
+    $summary.summary.artifacts.execution_proof_manifest,
+    $summary.summary.artifacts.cleanup_receipt
+)
+
+foreach ($artifactPath in $artifactPaths) {
+    Add-Assertion -Results ([ref]$results) -Condition (Test-Path -LiteralPath $artifactPath) -Message ("runtime smoke artifact exists: {0}" -f ([System.IO.Path]::GetFileName($artifactPath))) -Details $artifactPath
+}
+
+$executeReceipt = Get-Content -LiteralPath $summary.summary.artifacts.execute_receipt -Raw -Encoding UTF8 | ConvertFrom-Json
+$executionManifest = Get-Content -LiteralPath $summary.summary.artifacts.execution_manifest -Raw -Encoding UTF8 | ConvertFrom-Json
+$proofManifest = Get-Content -LiteralPath $summary.summary.artifacts.execution_proof_manifest -Raw -Encoding UTF8 | ConvertFrom-Json
+$runtimeInputPacket = Get-Content -LiteralPath $summary.summary.artifacts.runtime_input_packet -Raw -Encoding UTF8 | ConvertFrom-Json
+$governanceCapsule = Get-Content -LiteralPath $summary.summary.artifacts.governance_capsule -Raw -Encoding UTF8 | ConvertFrom-Json
+$stageLineage = Get-Content -LiteralPath $summary.summary.artifacts.stage_lineage -Raw -Encoding UTF8 | ConvertFrom-Json
+$generatedRequirement = Get-Content -LiteralPath $summary.summary.artifacts.requirement_doc -Raw -Encoding UTF8
+$generatedPlan = Get-Content -LiteralPath $summary.summary.artifacts.execution_plan -Raw -Encoding UTF8
+$expectedStageIds = @($runtimeContract.stages | ForEach-Object { [string]$_.id })
+
+Add-Assertion -Results ([ref]$results) -Condition ($governanceCapsule.runtime_selected_skill -eq 'vibe') -Message 'runtime smoke governance capsule keeps vibe authority'
+Add-Assertion -Results ([ref]$results) -Condition ((
+    @($stageLineage.stages | ForEach-Object { [string]$_.stage_name }) -join '|'
+) -eq ($expectedStageIds -join '|')) -Message 'runtime smoke stage-lineage preserves the fixed governed stage order'
+Add-Assertion -Results ([ref]$results) -Condition ($executeReceipt.status -ne 'execution-contract-prepared') -Message 'runtime smoke execute receipt is not receipt-only'
+Add-Assertion -Results ([ref]$results) -Condition ($executionManifest.status -eq 'completed') -Message 'runtime smoke execution manifest completed' -Details $executionManifest.status
+Add-Assertion -Results ([ref]$results) -Condition ([int]$executionManifest.executed_unit_count -ge 2) -Message 'runtime smoke executes at least two governed execution units' -Details $executionManifest.executed_unit_count
+Add-Assertion -Results ([ref]$results) -Condition ([bool]$proofManifest.proof_passed) -Message 'runtime smoke execution proof manifest is green'
+Add-Assertion -Results ([ref]$results) -Condition ($generatedRequirement.Contains('## Primary Objective')) -Message 'runtime smoke requirement doc includes anti-drift primary objective section'
+Add-Assertion -Results ([ref]$results) -Condition ($generatedRequirement.Contains('## Completion State')) -Message 'runtime smoke requirement doc includes anti-drift completion section'
+Add-Assertion -Results ([ref]$results) -Condition ($generatedPlan.Contains('## Anti-Proxy-Goal-Drift Controls')) -Message 'runtime smoke execution plan includes anti-drift controls section'
+Add-Assertion -Results ([ref]$results) -Condition ($generatedPlan.Contains('### Primary Objective')) -Message 'runtime smoke execution plan includes anti-drift primary objective control'
+$specialistDecision = if ($runtimeInputPacket.PSObject.Properties.Name -contains 'specialist_decision') { $runtimeInputPacket.specialist_decision } else { $null }
+$noSpecialistResolved = (
+    $null -ne $specialistDecision -and
+    $specialistDecision.PSObject.Properties.Name -contains 'decision_state' -and
+    $specialistDecision.PSObject.Properties.Name -contains 'resolution_mode' -and
+    [string]$specialistDecision.decision_state -eq 'no_specialist_recommendations' -and
+    [string]$specialistDecision.resolution_mode -in @('no_matching_specialist', 'no_specialist_needed')
+)
+$legacySkillRouting = if ($runtimeInputPacket.PSObject.Properties.Name -contains 'legacy_skill_routing') { $runtimeInputPacket.legacy_skill_routing } else { $null }
+$specialistRecommendations = if ($runtimeInputPacket.PSObject.Properties.Name -contains 'specialist_recommendations') {
+    @($runtimeInputPacket.specialist_recommendations)
+} elseif ($null -ne $legacySkillRouting -and $legacySkillRouting.PSObject.Properties.Name -contains 'specialist_recommendations') {
+    @($legacySkillRouting.specialist_recommendations)
+} else {
+    @()
+}
+$specialistRecommendationIds = @($specialistRecommendations | ForEach-Object { [string]$_.skill_id })
+$selectedSkillIds = if ($runtimeInputPacket.PSObject.Properties.Name -contains 'skill_routing' -and $runtimeInputPacket.skill_routing.PSObject.Properties.Name -contains 'selected') {
+    @($runtimeInputPacket.skill_routing.selected | ForEach-Object { [string]$_.skill_id })
+} else {
+    @()
+}
+$routeSnapshotSkill = [string]$runtimeInputPacket.route_snapshot.selected_skill
+$runtimeAuthoritySkill = [string]$runtimeInputPacket.authority_flags.explicit_runtime_skill
+$intentionalSelectedSkillSplit = (
+    $routeSnapshotSkill -ne $runtimeAuthoritySkill -and
+    ((@($selectedSkillIds) -contains $routeSnapshotSkill) -or (@($specialistRecommendationIds) -contains $routeSnapshotSkill))
+)
+Add-Assertion -Results ([ref]$results) -Condition (($routeSnapshotSkill -eq 'vibe') -or $intentionalSelectedSkillSplit -or $noSpecialistResolved) -Message 'runtime smoke route snapshot is vibe or a selected bounded skill'
+Add-Assertion -Results ([ref]$results) -Condition ($runtimeAuthoritySkill -eq 'vibe') -Message 'runtime smoke keeps vibe as explicit runtime skill'
+Add-Assertion -Results ([ref]$results) -Condition ((-not [bool]$runtimeInputPacket.divergence_shadow.skill_mismatch) -or $intentionalSelectedSkillSplit -or $noSpecialistResolved) -Message 'runtime smoke permits router/runtime split only for selected bounded skills'
+Add-Assertion -Results ([ref]$results) -Condition ((@($selectedSkillIds).Count -ge 1) -or (@($specialistRecommendationIds).Count -ge 1) -or $noSpecialistResolved) -Message 'runtime smoke freezes selected skills, legacy specialist recommendations, or no-specialist resolution'
+Add-Assertion -Results ([ref]$results) -Condition ((@($selectedSkillIds) -contains 'systematic-debugging') -or (@($specialistRecommendationIds) -contains 'systematic-debugging') -or $noSpecialistResolved) -Message 'runtime smoke preserves systematic-debugging as selected or legacy recommended skill, or no-specialist resolution'
+Add-Assertion -Results ([ref]$results) -Condition ($generatedRequirement.Contains('## Skill Execution Decision')) -Message 'runtime smoke requirement doc includes skill execution decision section'
+Add-Assertion -Results ([ref]$results) -Condition ($generatedPlan.Contains('## Selected Skill Execution Plan')) -Message 'runtime smoke execution plan includes selected skill execution section'
+Add-Assertion -Results ([ref]$results) -Condition (($null -ne $executionManifest.specialist_accounting) -and (([int]$executionManifest.specialist_accounting.recommendation_count -ge 1) -or $noSpecialistResolved)) -Message 'runtime smoke execution manifest carries skill execution accounting or no-specialist resolution'
+Add-Assertion -Results ([ref]$results) -Condition (($null -ne $executionManifest.plan_shadow) -and (([int]$executionManifest.plan_shadow.skill_execution_unit_count -ge 1) -or $noSpecialistResolved)) -Message 'runtime smoke plan shadow counts skill execution units or no-specialist resolution'
+Add-Assertion -Results ([ref]$results) -Condition ([bool]$executionManifest.dispatch_integrity.proof_passed) -Message 'runtime smoke skill execution integrity proof passes'
+
+$failureCount = @($results | Where-Object { -not $_.passed }).Count
+$gatePassed = ($failureCount -eq 0)
+$report = [pscustomobject]@{
+    generated_at = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')
+    repo_root = $repoRoot
+    gate_passed = $gatePassed
+    assertion_count = @($results).Count
+    failure_count = $failureCount
+    runtime_summary_path = $summary.summary_path
+    results = @($results)
+}
+
+if ($WriteArtifacts) {
+    $targetDir = if ([string]::IsNullOrWhiteSpace($OutputDirectory)) {
+        Join-Path $repoRoot 'outputs\verify\vibe-governed-runtime-contract'
+    } elseif ([System.IO.Path]::IsPathRooted($OutputDirectory)) {
+        [System.IO.Path]::GetFullPath($OutputDirectory)
+    } else {
+        [System.IO.Path]::GetFullPath((Join-Path $repoRoot $OutputDirectory))
+    }
+
+    New-Item -ItemType Directory -Path $targetDir -Force | Out-Null
+    Write-VibeJsonArtifact -Path (Join-Path $targetDir 'vibe-governed-runtime-contract-gate.json') -Value $report
+} elseif (Test-Path -LiteralPath $artifactRoot) {
+    Remove-Item -LiteralPath $artifactRoot -Recurse -Force
+}
+
+if (-not $gatePassed) {
+    throw "vibe-governed-runtime-contract-gate failed with $failureCount failing assertion(s)."
+}
+
+$report

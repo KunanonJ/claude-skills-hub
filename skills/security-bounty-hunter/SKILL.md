@@ -1,99 +1,99 @@
 ---
 name: security-bounty-hunter
-description: Hunt for exploitable, bounty-worthy security issues in repositories. Focuses on remotely reachable vulnerabilities that qualify for real reports instead of noisy local-only findings.
+description: リポジトリ内の悪用可能なバウンティ対象のセキュリティ問題を発見します。ノイズの多いローカルのみの発見ではなく、実際のレポートに適格なリモートから到達可能な脆弱性に焦点を当てます。
 origin: ECC direct-port adaptation
 version: "1.0.0"
 ---
 
 # Security Bounty Hunter
 
-Use this when the goal is practical vulnerability discovery for responsible disclosure or bounty submission, not a broad best-practices review.
+責任ある開示やバウンティ提出のための実際的な脆弱性発見が目的の場合に使用します。広範なベストプラクティスレビューではありません。
 
-## When to Use
+## 使用するタイミング
 
-- Scanning a repository for exploitable vulnerabilities
-- Preparing a Huntr, HackerOne, or similar bounty submission
-- Triage where the question is "does this actually pay?" rather than "is this theoretically unsafe?"
+- リポジトリの悪用可能な脆弱性をスキャンする場合
+- Huntr、HackerOne、または類似のバウンティ提出を準備する場合
+- 「これは実際に報酬が出るか？」であり「これは理論的に安全でないか？」ではないトリアージ
 
-## How It Works
+## 動作の仕組み
 
-Bias toward remotely reachable, user-controlled attack paths and throw away patterns that platforms routinely reject as informative or out of scope.
+リモートから到達可能なユーザー制御の攻撃パスに偏り、プラットフォームが定期的に情報提供または範囲外として却下するパターンを排除します。
 
-## In-Scope Patterns
+## 対象範囲内のパターン
 
-These are the kinds of issues that consistently matter:
+継続的に重要な問題の種類:
 
-| Pattern | CWE | Typical impact |
+| パターン | CWE | 典型的な影響 |
 | --- | --- | --- |
-| SSRF through user-controlled URLs | CWE-918 | internal network access, cloud metadata theft |
-| Auth bypass in middleware or API guards | CWE-287 | unauthorized account or data access |
-| Remote deserialization or upload-to-RCE paths | CWE-502 | code execution |
-| SQL injection in reachable endpoints | CWE-89 | data exfiltration, auth bypass, data destruction |
-| Command injection in request handlers | CWE-78 | code execution |
-| Path traversal in file-serving paths | CWE-22 | arbitrary file read or write |
-| Auto-triggered XSS | CWE-79 | session theft, admin compromise |
+| ユーザー制御の URL による SSRF | CWE-918 | 内部ネットワークアクセス、クラウドメタデータの窃取 |
+| ミドルウェアまたは API ガードでの認証バイパス | CWE-287 | 不正なアカウントまたはデータアクセス |
+| リモートデシリアライゼーションまたはアップロードから RCE へのパス | CWE-502 | コード実行 |
+| 到達可能なエンドポイントでの SQL インジェクション | CWE-89 | データ流出、認証バイパス、データ破壊 |
+| リクエストハンドラーでのコマンドインジェクション | CWE-78 | コード実行 |
+| ファイル提供パスでのパストラバーサル | CWE-22 | 任意のファイルの読み取りまたは書き込み |
+| 自動トリガーされる XSS | CWE-79 | セッション窃取、管理者の侵害 |
 
-## Skip These
+## スキップするもの
 
-These are usually low-signal or out of bounty scope unless the program says otherwise:
+プログラムが別途指定しない限り、通常は低シグナルまたはバウンティの範囲外です:
 
-- Local-only `pickle.loads`, `torch.load`, or equivalent with no remote path
-- `eval()` or `exec()` in CLI-only tooling
-- `shell=True` on fully hardcoded commands
-- Missing security headers by themselves
-- Generic rate-limiting complaints without exploit impact
-- Self-XSS requiring the victim to paste code manually
-- CI/CD injection that is not part of the target program scope
-- Demo, example, or test-only code
+- リモートパスのないローカルのみの `pickle.loads`、`torch.load`、または同等
+- CLI のみのツールでの `eval()` または `exec()`
+- 完全にハードコードされたコマンドの `shell=True`
+- セキュリティヘッダーのみの欠如
+- 悪用の影響のない一般的なレート制限の不満
+- 被害者がコードを手動で貼り付ける必要のあるセルフ XSS
+- ターゲットプログラムの範囲外の CI/CD インジェクション
+- デモ、サンプル、またはテスト専用のコード
 
-## Workflow
+## ワークフロー
 
-1. Check scope first: program rules, SECURITY.md, disclosure channel, and exclusions.
-2. Find real entrypoints: HTTP handlers, uploads, background jobs, webhooks, parsers, and integration endpoints.
-3. Run static tooling where it helps, but treat it as triage input only.
-4. Read the real code path end to end.
-5. Prove user control reaches a meaningful sink.
-6. Confirm exploitability and impact with the smallest safe PoC possible.
-7. Check for duplicates before drafting a report.
+1. まず範囲を確認: プログラムルール、SECURITY.md、開示チャネル、および除外事項。
+2. 実際のエントリーポイントを見つける: HTTP ハンドラー、アップロード、バックグラウンドジョブ、Webhook、パーサー、統合エンドポイント。
+3. 静的ツールが役立つ場合は実行するが、トリアージ入力としてのみ扱う。
+4. 実際のコードパスをエンドツーエンドで読む。
+5. ユーザー制御が意味のあるシンクに到達することを証明する。
+6. 可能な限り小さな安全な PoC で悪用可能性と影響を確認する。
+7. レポートを作成する前に重複を確認する。
 
-## Example Triage Loop
+## トリアージループの例
 
 ```bash
 semgrep --config=auto --severity=ERROR --severity=WARNING --json
 ```
 
-Then manually filter:
+次に手動でフィルタリング:
 
-- drop tests, demos, fixtures, vendored code
-- drop local-only or non-reachable paths
-- keep only findings with a clear network or user-controlled route
+- テスト、デモ、フィクスチャ、ベンダーコードを除外
+- ローカルのみまたは到達不可能なパスを除外
+- ネットワークまたはユーザー制御の明確なルートがある所見のみを保持
 
-## Report Structure
+## レポート構造
 
 ```markdown
-## Description
-[What the vulnerability is and why it matters]
+## 説明
+[脆弱性の内容とその重要性]
 
-## Vulnerable Code
-[File path, line range, and a small snippet]
+## 脆弱なコード
+[ファイルパス、行範囲、および小さなスニペット]
 
-## Proof of Concept
-[Minimal working request or script]
+## 概念実証
+[最小限の動作するリクエストまたはスクリプト]
 
-## Impact
-[What the attacker can achieve]
+## 影響
+[攻撃者が達成できること]
 
-## Affected Version
-[Version, commit, or deployment target tested]
+## 影響を受けるバージョン
+[テストされたバージョン、コミット、またはデプロイターゲット]
 ```
 
-## Quality Gate
+## 品質ゲート
 
-Before submitting:
+提出前に:
 
-- The code path is reachable from a real user or network boundary
-- The input is genuinely user-controlled
-- The sink is meaningful and exploitable
-- The PoC works
-- The issue is not already covered by an advisory, CVE, or open ticket
-- The target is actually in scope for the bounty program
+- コードパスが実際のユーザーまたはネットワーク境界から到達可能
+- 入力が真にユーザー制御可能
+- シンクが意味があり悪用可能
+- PoC が動作する
+- 問題がアドバイザリー、CVE、またはオープンチケットでまだカバーされていない
+- ターゲットがバウンティプログラムの実際の範囲内

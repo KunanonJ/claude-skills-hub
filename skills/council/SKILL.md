@@ -1,95 +1,95 @@
 ---
 name: council
-description: Convene a four-voice council for ambiguous decisions, tradeoffs, and go/no-go calls. Use when multiple valid paths exist and you need structured disagreement before choosing.
+description: 曖昧な決定、トレードオフ、ゴー/ノーゴーの判断のために4つの声のカウンシルを召集します。複数の有効なパスが存在し、選択前に構造化された異議が必要な場合に使用します。
 origin: ECC
 ---
 
-# Council
+# カウンシル
 
-Convene four advisors for ambiguous decisions:
-- the in-context Claude voice
-- a Skeptic subagent
-- a Pragmatist subagent
-- a Critic subagent
+曖昧な決定のために4人のアドバイザーを召集します：
+- コンテキスト内のClaudeの声
+- 懐疑論者のサブエージェント
+- 現実主義者のサブエージェント
+- 批評家のサブエージェント
 
-This is for **decision-making under ambiguity**, not code review, implementation planning, or architecture design.
+これは**曖昧さの下での意思決定**のためのものであり、コードレビュー、実装計画、またはアーキテクチャ設計のためではありません。
 
-## When to Use
+## 使用時期
 
-Use council when:
-- a decision has multiple credible paths and no obvious winner
-- you need explicit tradeoff surfacing
-- the user asks for second opinions, dissent, or multiple perspectives
-- conversational anchoring is a real risk
-- a go / no-go call would benefit from adversarial challenge
+以下の場合にカウンシルを使用します：
+- 決定に複数の信頼できるパスがあり、明らかな勝者がない場合
+- 明示的なトレードオフの表面化が必要な場合
+- ユーザーが別の意見、反対意見、または複数の視点を求める場合
+- 会話のアンカリングが実際のリスクである場合
+- ゴー/ノーゴーの判断が敵対的な挑戦から利益を得る場合
 
-Examples:
-- monorepo vs polyrepo
-- ship now vs hold for polish
-- feature flag vs full rollout
-- simplify scope vs keep strategic breadth
+例：
+- モノレポ vs ポリレポ
+- 今すぐリリース vs 磨きのために保留
+- フィーチャーフラグ vs フル展開
+- スコープを簡略化 vs 戦略的な広さを保つ
 
-## When NOT to Use
+## 使用すべきでない場合
 
-| Instead of council | Use |
+| カウンシルの代わりに | 使用するもの |
 | --- | --- |
-| Verifying whether output is correct | `santa-method` |
-| Breaking a feature into implementation steps | `planner` |
-| Designing system architecture | `architect` |
-| Reviewing code for bugs or security | `code-reviewer` or `santa-method` |
-| Straight factual questions | just answer directly |
-| Obvious execution tasks | just do the task |
+| 出力が正しいかどうかの検証 | `santa-method` |
+| フィーチャーを実装ステップに分解する | `planner` |
+| システムアーキテクチャの設計 | `architect` |
+| バグやセキュリティのコードレビュー | `code-reviewer`または`santa-method` |
+| 直接的な事実の質問 | 直接答える |
+| 明らかな実行タスク | タスクをやる |
 
-## Roles
+## 役割
 
-| Voice | Lens |
+| 声 | レンズ |
 | --- | --- |
-| Architect | correctness, maintainability, long-term implications |
-| Skeptic | premise challenge, simplification, assumption breaking |
-| Pragmatist | shipping speed, user impact, operational reality |
-| Critic | edge cases, downside risk, failure modes |
+| アーキテクト | 正確さ、保守性、長期的な影響 |
+| 懐疑論者 | 前提の挑戦、単純化、仮定の打破 |
+| 現実主義者 | リリース速度、ユーザーへの影響、運用上の現実 |
+| 批評家 | エッジケース、下降リスク、失敗モード |
 
-The three external voices should be launched as fresh subagents with **only the question and relevant context**, not the full ongoing conversation. That is the anti-anchoring mechanism.
+3つの外部の声は、**質問と関連コンテキストのみ**で新鮮なサブエージェントとして起動され、進行中の会話全体ではありません。これがアンチアンカリングメカニズムです。
 
-## Workflow
+## ワークフロー
 
-### 1. Extract the real question
+### 1. 本当の質問を抽出する
 
-Reduce the decision to one explicit prompt:
-- what are we deciding?
-- what constraints matter?
-- what counts as success?
+決定を1つの明示的なプロンプトに縮小します：
+- 何を決定しているのか？
+- どの制約が重要か？
+- 何が成功とみなされるか？
 
-If the question is vague, ask one clarifying question before convening the council.
+質問が曖昧な場合、カウンシルを召集する前に1つの明確化質問をします。
 
-### 2. Gather only the necessary context
+### 2. 必要なコンテキストのみを収集する
 
-If the decision is codebase-specific:
-- collect the relevant files, snippets, issue text, or metrics
-- keep it compact
-- include only the context needed to make the decision
+決定がコードベース固有の場合：
+- 関連するファイル、スニペット、課題テキスト、またはメトリクスを収集
+- コンパクトに保つ
+- 決定を行うために必要なコンテキストのみを含める
 
-If the decision is strategic/general:
-- skip repo snippets unless they materially change the answer
+決定が戦略的/一般的な場合：
+- 答えを実質的に変えない限りリポジトリのスニペットをスキップ
 
-### 3. Form the Architect position first
+### 3. 最初にアーキテクトの立場を形成する
 
-Before reading other voices, write down:
-- your initial position
-- the three strongest reasons for it
-- the main risk in your preferred path
+他の声を読む前に、以下を書き留めます：
+- 初期の立場
+- それを支持する3つの最強の理由
+- 好ましいパスの主要なリスク
 
-Do this first so the synthesis does not simply mirror the external voices.
+最初にこれを行うことで、合成が単に外部の声を反映するだけにならないようにします。
 
-### 4. Launch three independent voices in parallel
+### 4. 3つの独立した声を並行して起動する
 
-Each subagent gets:
-- the decision question
-- compact context if needed
-- a strict role
-- no unnecessary conversation history
+各サブエージェントは以下を受け取ります：
+- 決定の質問
+- 必要な場合はコンパクトなコンテキスト
+- 厳格な役割
+- 不必要な会話履歴なし
 
-Prompt shape:
+プロンプトの形式：
 
 ```text
 You are the [ROLE] on a four-voice decision council.
@@ -109,23 +109,23 @@ Respond with:
 Be direct. No hedging. Keep it under 300 words.
 ```
 
-Role emphasis:
-- Skeptic: challenge framing, question assumptions, propose the simplest credible alternative
-- Pragmatist: optimize for speed, simplicity, and real-world execution
-- Critic: surface downside risk, edge cases, and reasons the plan could fail
+役割の強調：
+- 懐疑論者：フレーミングに挑戦し、仮定に疑問を呈し、最もシンプルな信頼できる代替案を提案する
+- 現実主義者：速度、シンプルさ、実世界の実行を最適化する
+- 批評家：下降リスク、エッジケース、計画が失敗する可能性のある理由を表面化する
 
-### 5. Synthesize with bias guardrails
+### 5. バイアスガードレールで合成する
 
-You are both a participant and the synthesizer, so use these rules:
-- do not dismiss an external view without explaining why
-- if an external voice changed your recommendation, say so explicitly
-- always include the strongest dissent, even if you reject it
-- if two voices align against your initial position, treat that as a real signal
-- keep the raw positions visible before the verdict
+あなたは参加者と合成者の両方なので、これらのルールを使用します：
+- 外部の見解を説明なしに却下しない
+- 外部の声が推奨を変えた場合、明示的にそう述べる
+- 拒否した場合でも、最強の反対意見を常に含める
+- 2つの声が初期の立場に反対する場合、それを実際のシグナルとして扱う
+- 判決の前に生の立場を表示したままにする
 
-### 6. Present a compact verdict
+### 6. コンパクトな判決を提示する
 
-Use this output shape:
+この出力形式を使用します：
 
 ```markdown
 ## Council: [short decision title]
@@ -149,55 +149,55 @@ Use this output shape:
 - **Recommendation:** [the synthesized path]
 ```
 
-Keep it scannable on a phone screen.
+電話画面でスキャンできるようにします。
 
-## Persistence Rule
+## 永続化ルール
 
-Do **not** write ad-hoc notes to `~/.claude/notes` or other shadow paths from this skill.
+このスキルから`~/.claude/notes`や他のシャドウパスにアドホックなノートを書かないでください。
 
-If the council materially changes the recommendation:
-- use `knowledge-ops` to store the lesson in the right durable location
-- or use `/save-session` if the outcome belongs in session memory
-- or update the relevant GitHub / Linear issue directly if the decision changes active execution truth
+カウンシルが推奨を実質的に変えた場合：
+- 適切な永続的な場所にレッスンを保存するために`knowledge-ops`を使用する
+- または結果がセッションメモリに属する場合は`/save-session`を使用する
+- または決定がアクティブな実行の真実を変える場合、関連するGitHub / Linearの課題を直接更新する
 
-Only persist a decision when it changes something real.
+決定が何か実際のものを変える場合のみ永続化します。
 
-## Multi-Round Follow-up
+## マルチラウンドフォローアップ
 
-Default is one round.
+デフォルトは1ラウンドです。
 
-If the user wants another round:
-- keep the new question focused
-- include the previous verdict only if it is necessary
-- keep the Skeptic as clean as possible to preserve anti-anchoring value
+ユーザーが別のラウンドを望む場合：
+- 新しい質問を焦点を絞ったものに保つ
+- 前の判決は必要な場合のみ含める
+- アンチアンカリングの価値を保持するために懐疑論者をできるだけクリーンに保つ
 
-## Anti-Patterns
+## アンチパターン
 
-- using council for code review
-- using council when the task is just implementation work
-- feeding the subagents the entire conversation transcript
-- hiding disagreement in the final verdict
-- persisting every decision as a note regardless of importance
+- コードレビューにカウンシルを使用すること
+- タスクが単なる実装作業の場合にカウンシルを使用すること
+- サブエージェントに会話トランスクリプト全体を渡すこと
+- 最終判決で不一致を隠すこと
+- 重要性に関わらずすべての決定をノートとして永続化すること
 
-## Related Skills
+## 関連スキル
 
-- `santa-method` — adversarial verification
-- `knowledge-ops` — persist durable decision deltas correctly
-- `search-first` — gather external reference material before the council if needed
-- `architecture-decision-records` — formalize the outcome when the decision becomes long-lived system policy
+- `santa-method` — 敵対的な検証
+- `knowledge-ops` — 永続的な決定デルタを正しく保存する
+- `search-first` — 必要に応じてカウンシル前に外部参照資料を収集する
+- `architecture-decision-records` — 決定が長期的なシステムポリシーになった場合に成果を正式化する
 
-## Example
+## 例
 
-Question:
+質問：
 
 ```text
 Should we ship ECC 2.0 as alpha now, or hold until the control-plane UI is more complete?
 ```
 
-Likely council shape:
-- Architect pushes for structural integrity and avoiding a confused surface
-- Skeptic questions whether the UI is actually the gating factor
-- Pragmatist asks what can be shipped now without harming trust
-- Critic focuses on support burden, expectation debt, and rollout confusion
+カウンシルの可能性のある形：
+- アーキテクトは構造的な整合性と混乱したサーフェスを避けることを主張する
+- 懐疑論者はUIが実際にゲーティングファクターであるかどうかを疑問視する
+- 現実主義者は信頼を損なわずに今すぐ何が出荷できるかを尋ねる
+- 批評家はサポートの負担、期待の負債、ロールアウトの混乱に焦点を当てる
 
-The value is not unanimity. The value is making the disagreement legible before choosing.
+価値は一致にありません。価値は選択前に不一致を明確にすることにあります。

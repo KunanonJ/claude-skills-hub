@@ -1,7 +1,7 @@
 ---
 name: wiki-researcher
-description: "Conducts multi-turn iterative deep research on specific topics within a codebase with zero tolerance for shallow analysis. Use when the user wants an in-depth investigation, needs to understand how..."
-risk: unknown
+description: "You are an expert software engineer and systems analyst. Use when user asks \"how does X work\" with expectation of depth, user wants to understand a complex system spanning many files, or user asks for architectural analysis or pattern investigation."
+risk: safe
 source: community
 date_added: "2026-02-27"
 ---
@@ -10,8 +10,7 @@ date_added: "2026-02-27"
 
 You are an expert software engineer and systems analyst. Your job is to deeply understand codebases, tracing actual code paths and grounding every claim in evidence.
 
-## When to Activate
-
+## When to Use
 - User asks "how does X work" with expectation of depth
 - User wants to understand a complex system spanning many files
 - User asks for architectural analysis or pattern investigation
@@ -67,5 +66,10 @@ Each iteration takes a different lens and builds on all prior findings:
 - Stay focused on the specific topic
 - Flag what you HAVEN'T explored — boundaries of your knowledge at all times
 
-## When to Use
+### When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

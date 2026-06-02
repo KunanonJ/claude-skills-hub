@@ -1,6 +1,6 @@
 ---
 name: using-neon
-description: "Guides and best practices for working with Neon Serverless Postgres. Covers getting started, local development with Neon, choosing a connection method, Neon features, authentication (@neondatabase/..."
+description: "Neon is a serverless Postgres platform that separates compute and storage to offer autoscaling, branching, instant restore, and scale-to-zero. It's fully compatible with Postgres and works with any language, framework, or ORM that supports Postgres."
 risk: safe
 source: "https://github.com/neondatabase/agent-skills/tree/main/skills/neon-postgres"
 date_added: "2026-02-27"
@@ -83,3 +83,8 @@ Managing Neon resources programmatically via REST API, SDKs, or CLI.
 | Neon CLI              | `references/neon-cli.md`            | Terminal workflows, scripts, CI/CD pipelines |
 | TypeScript SDK        | `references/neon-typescript-sdk.md` | `@neondatabase/api-client`                   |
 | Python SDK            | `references/neon-python-sdk.md`     | `neon-api` package                           |
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

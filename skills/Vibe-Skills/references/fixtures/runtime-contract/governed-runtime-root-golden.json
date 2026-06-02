@@ -1,0 +1,87 @@
+{
+  "schema_version": "runtime.contract.golden.v1",
+  "generated_at": "2026-04-23",
+  "case_id": "governed_runtime_root",
+  "notes": "Normalized root governed runtime baseline. Dynamic run ids and host-local absolute paths are replaced with placeholders.",
+  "expected": {
+    "runtime_input_packet": {
+      "governance_scope": "root",
+      "runtime_mode": "interactive_governed",
+      "internal_grade": "L",
+      "hierarchy": {
+        "governance_scope": "root",
+        "root_run_id": "<run_id>",
+        "parent_run_id": null,
+        "parent_unit_id": null,
+        "inherited_requirement_doc_path": null,
+        "inherited_execution_plan_path": null
+      },
+      "host_adapter": {
+        "requested_id": "codex",
+        "id": "codex",
+        "requested_host_id": "codex",
+        "effective_host_id": "codex",
+        "status": "supported-with-constraints",
+        "install_mode": "governed",
+        "check_mode": "governed",
+        "bootstrap_mode": "governed",
+        "target_root": "<host_target_root>",
+        "closure_path": null
+      },
+      "route_snapshot": {
+        "selected_pack": "code-quality",
+        "selected_skill": "systematic-debugging",
+        "route_mode": "pack_overlay",
+        "route_reason": "candidate_signal_host_selection",
+        "confirm_required": false,
+        "confidence": 0.3656,
+        "truth_level": "authoritative",
+        "degradation_state": "standard",
+        "non_authoritative": false,
+        "fallback_active": false,
+        "hazard_alert_required": false,
+        "unattended_override_applied": false,
+        "custom_admission_status": "no_custom_manifests"
+      },
+      "authority_flags": {
+        "runtime_entry": "vibe",
+        "explicit_runtime_skill": "vibe",
+        "router_truth_level": "authoritative",
+        "shadow_only": true,
+        "non_authoritative": false,
+        "allow_requirement_freeze": true,
+        "allow_plan_freeze": true,
+        "allow_global_dispatch": true,
+        "allow_completion_claim": true
+      }
+    },
+    "execution_manifest": {
+      "governance_scope": "root",
+      "mode": "interactive_governed",
+      "internal_grade": "L",
+      "hierarchy": {
+        "governance_scope": "root",
+        "root_run_id": "<run_id>",
+        "parent_run_id": null,
+        "parent_unit_id": null,
+        "inherited_requirement_doc_path": null,
+        "inherited_execution_plan_path": null
+      },
+      "authority": {
+        "canonical_requirement_write_allowed": true,
+        "canonical_plan_write_allowed": true,
+        "global_dispatch_allowed": true,
+        "completion_claim_allowed": true
+      },
+      "route_runtime_alignment": {
+        "router_selected_skill": "systematic-debugging",
+        "runtime_selected_skill": "vibe",
+        "skill_mismatch": true,
+        "confirm_required": false,
+        "requested_host_adapter_id": "codex",
+        "effective_host_adapter_id": "codex"
+      },
+      "status": "completed"
+    }
+  }
+}

@@ -1,7 +1,7 @@
 ---
 name: e2e-testing-patterns
-description: "Master end-to-end testing with Playwright and Cypress to build reliable test suites that catch bugs, improve confidence, and enable fast deployment. Use when implementing E2E tests, debugging flaky..."
-risk: unknown
+description: "Build reliable, fast, and maintainable end-to-end test suites that provide confidence to ship code quickly and catch regressions before users do."
+risk: safe
 source: community
 date_added: "2026-02-27"
 ---
@@ -42,3 +42,8 @@ Build reliable, fast, and maintainable end-to-end test suites that provide confi
 ## Resources
 
 - `resources/implementation-playbook.md` for detailed E2E patterns and templates.
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

@@ -1,7 +1,9 @@
 ---
 name: varlock
-description: Secure environment variable management with Varlock. Use when handling secrets, API keys, credentials, or any sensitive configuration. Ensures secrets are never exposed in terminals, logs, traces, or Claude's context. Trigger phrases include "environment variables",...
---- 1.0.0
+description: "Secure-by-default environment variable management for Claude Code sessions."
+risk: critical
+source: "https://github.com/dmno-dev/varlock"
+version: 1.0.0
 ---
 
 # Varlock Security Skill
@@ -10,6 +12,11 @@ Secure-by-default environment variable management for Claude Code sessions.
 
 > **Repository**: https://github.com/dmno-dev/varlock
 > **Documentation**: https://varlock.dev
+
+## When to Use
+- You need to work with environment variables or secrets in a Claude Code session without exposing their values.
+- The task involves validating, loading, or auditing secrets while keeping them out of logs, diffs, and assistant context.
+- You want a secure-by-default workflow built around Varlock instead of direct `.env` inspection.
 
 ## Core Principle: Secrets Never Exposed
 
@@ -81,7 +88,11 @@ curl -H "Authorization: Bearer $API_KEY" https://api.example.com
 
 ```bash
 # Install Varlock CLI
-curl -sSfL https://varlock.dev/install.sh | sh -s -- --force-no-brew
+tmpdir="$(mktemp -d)"
+trap 'rm -rf "$tmpdir"' EXIT
+curl -sSfL https://varlock.dev/install.sh -o "$tmpdir/varlock-install.sh"
+sed -n '1,160p' "$tmpdir/varlock-install.sh"
+sh "$tmpdir/varlock-install.sh" --force-no-brew
 
 # Add to PATH (add to ~/.zshrc or ~/.bashrc)
 export PATH="$HOME/.varlock/bin:$PATH"
@@ -236,7 +247,11 @@ varlock load
 
 ```dockerfile
 # Install Varlock in container
-RUN curl -sSfL https://varlock.dev/install.sh | sh -s -- --force-no-brew \
+RUN tmpdir="$(mktemp -d)" \
+    && curl -sSfL https://varlock.dev/install.sh -o "$tmpdir/varlock-install.sh" \
+    && sed -n '1,160p' "$tmpdir/varlock-install.sh" \
+    && sh "$tmpdir/varlock-install.sh" --force-no-brew \
+    && rm -rf "$tmpdir" \
     && ln -s /root/.varlock/bin/varlock /usr/local/bin/varlock
 
 # Validate at container start
@@ -432,3 +447,8 @@ Add these to your package.json:
 
 *Last updated: December 22, 2025*
 *Secure-by-default environment management for Claude Code*
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

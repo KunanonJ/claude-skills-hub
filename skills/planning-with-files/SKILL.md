@@ -1,6 +1,6 @@
 ---
 name: planning-with-files
-description: "Implements Manus-style file-based planning for complex tasks. Creates task_plan.md, findings.md, and progress.md. Use when starting complex multi-step tasks, research projects, or any task requirin..."
+description: "Work like Manus: Use persistent markdown files as your \"working memory on disk.\""
 risk: unknown
 source: community
 date_added: "2026-02-27"
@@ -182,3 +182,8 @@ Helper scripts for automation:
 | Start executing immediately | Create plan file FIRST |
 | Repeat failed actions | Track attempts, mutate approach |
 | Create files in skill directory | Create files in your project |
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

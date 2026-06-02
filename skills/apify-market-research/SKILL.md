@@ -1,11 +1,18 @@
 ---
 name: apify-market-research
 description: Analyze market conditions, geographic opportunities, pricing, consumer behavior, and product validation across Google Maps, Facebook, Instagram, Booking.com, and TripAdvisor.
+risk: unknown
+source: community
 ---
 
 # Market Research
 
 Conduct market research using Apify Actors to extract data from multiple platforms.
+
+## When to Use
+- You need market sizing, regional demand, pricing, trend, or consumer behavior data.
+- The task is to gather research inputs from maps, travel, Facebook, Instagram, or trend sources with Apify.
+- You need structured market data plus a synthesized view of opportunities or risks.
 
 ## Prerequisites
 (No need to check it upfront)
@@ -109,7 +116,6 @@ After completion, report:
 - Key market insights
 - Suggested next steps (deeper analysis, validation)
 
-
 ## Error Handling
 
 `APIFY_TOKEN not found` - Ask user to create `.env` with `APIFY_TOKEN=your_token`
@@ -117,3 +123,8 @@ After completion, report:
 `Actor not found` - Check Actor ID spelling
 `Run FAILED` - Ask user to check Apify console link in error output
 `Timeout` - Reduce input size or increase `--timeout`
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

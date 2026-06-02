@@ -1,0 +1,30 @@
+{
+  "name": "@team-attention/agent-council",
+  "version": "1.0.0",
+  "description": "Collect and synthesize opinions from multiple AI Agents for Claude Code",
+  "bin": {
+    "agent-council": "./bin/install.js"
+  },
+  "files": [
+    "bin/",
+    "skills/",
+    "council.config.yaml"
+  ],
+  "dependencies": {
+    "yaml": "^2.8.2"
+  },
+  "keywords": [
+    "claude-code",
+    "plugin",
+    "llm",
+    "multi-agent",
+    "ai-council"
+  ],
+  "author": "Team Attention",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/team-attention/plugins-for-claude-natives.git"
+  },
+  "homepage": "https://github.com/team-attention/plugins-for-claude-natives"
+}

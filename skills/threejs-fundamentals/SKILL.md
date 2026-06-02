@@ -1,9 +1,16 @@
 ---
 name: threejs-fundamentals
 description: Three.js scene setup, cameras, renderer, Object3D hierarchy, coordinate systems. Use when setting up 3D scenes, creating cameras, configuring renderers, managing object hierarchies, or working with transforms.
+risk: unknown
+source: community
 ---
 
 # Three.js Fundamentals
+
+## When to Use
+- You need to set up the core structure of a Three.js scene.
+- The task involves scenes, cameras, renderers, transforms, resize handling, or object hierarchy basics.
+- You want foundational Three.js guidance before working on specialized topics like shaders or post-processing.
 
 ## Quick Start
 
@@ -414,7 +421,24 @@ function dispose() {
 }
 ```
 
-### Clock for Animation
+### Timer and Clock for Animation
+
+**Timer (recommended in r183)** - pauses when tab is hidden, cleaner API:
+
+```javascript
+const timer = new THREE.Timer();
+
+renderer.setAnimationLoop(() => {
+  timer.update();
+  const delta = timer.getDelta();
+  const elapsed = timer.getElapsed();
+
+  mesh.rotation.y += delta * 0.5;
+  renderer.render(scene, camera);
+});
+```
+
+**Clock (legacy, still works):**
 
 ```javascript
 const clock = new THREE.Clock();
@@ -428,6 +452,17 @@ function animate() {
   requestAnimationFrame(animate);
   renderer.render(scene, camera);
 }
+```
+
+### Animation Loop
+
+Prefer `renderer.setAnimationLoop()` over manual `requestAnimationFrame`. It handles WebXR compatibility and is the standard Three.js pattern:
+
+```javascript
+renderer.setAnimationLoop(() => {
+  controls.update();
+  renderer.render(scene, camera);
+});
 ```
 
 ### Responsive Canvas
@@ -481,8 +516,28 @@ lod.addLevel(lowDetailMesh, 100);
 scene.add(lod);
 ```
 
+## WebGPU Renderer (r183)
+
+Three.js includes an experimental WebGPU renderer as an alternative to WebGL:
+
+```javascript
+import { WebGPURenderer } from "three/addons/renderers/webgpu/WebGPURenderer.js";
+
+const renderer = new WebGPURenderer({ antialias: true });
+await renderer.init();
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+```
+
+WebGPU uses TSL (Three.js Shading Language) instead of GLSL. The WebGL renderer remains the default and is fully supported.
+
 ## See Also
 
 - `threejs-geometry` - Geometry creation and manipulation
 - `threejs-materials` - Material types and properties
 - `threejs-lighting` - Light types and shadows
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

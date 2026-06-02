@@ -1,7 +1,7 @@
 ---
 name: market-sizing-analysis
-description: This skill should be used when the user asks to \\\"calculate TAM\\\", "determine SAM", "estimate SOM", "size the market", "calculate market opportunity", "what's the total addressable market", or...
-risk: unknown
+description: "Comprehensive market sizing methodologies for calculating Total Addressable Market (TAM), Serviceable Available Market (SAM), and Serviceable Obtainable Market (SOM) for startup opportunities."
+risk: safe
 source: community
 date_added: '2026-02-27'
 ---
@@ -421,3 +421,8 @@ To perform market sizing analysis:
 9. **Present** - Structure for audience (investors, strategy, operations)
 
 For detailed step-by-step guidance on each methodology, reference the files in `references/` directory. For complete worked examples, see `examples/` directory.
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

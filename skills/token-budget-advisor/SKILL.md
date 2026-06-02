@@ -1,298 +1,121 @@
 ---
 name: token-budget-advisor
-description: Proactive token budget assessment and task chunking strategy. Use this skill when queries involve multiple large file uploads, requests for comprehensive multi-document analysis, complex multi-step workflows with heavy research (10+ tool calls), phrases like "complete analysis", "full audit", "thorough review", "deep dive", or tasks combining extensive research with large output artifacts. This skill helps assess token consumption risk early and recommend chunking strategies before beginning work.
+description: 回答する前に、どれだけの回答深度を消費するかについてユーザーに情報に基づいた選択を提供する。ユーザーが回答の長さ、深さ、またはトークンバジェットを明示的に制御したい場合にこのスキルを使用する。トリガー条件："token budget", "token count", "token usage", "token limit", "response length", "answer depth", "short version", "brief answer", "detailed answer", "exhaustive answer", "respuesta corta vs larga", "cuántos tokens", "ahorrar tokens", "responde al 50%", "dame la versión corta", "quiero controlar cuánto usas"、またはユーザーが回答のサイズや深さの制御を明示的に求めるその他の明確なバリエーション。トリガーしない条件：ユーザーが現在のセッションでレベルを指定済み（そのレベルを維持）、リクエストが明らかに一言の回答、または「token」が認証/セッション/支払いトークンを指している。origin: community
 ---
 
-# Token Budget Advisor
+# トークンバジェットアドバイザー（TBA）
 
-This skill provides early assessment of token-heavy tasks and recommends chunking strategies to ensure successful completion within context window constraints.
+Claudeが回答する前にレスポンスフローをインターセプトし、ユーザーが回答の深さを選択できるようにする。
 
-## When to Use This Skill
+## 使用場面
 
-Trigger this skill **before beginning work** when you detect:
+* ユーザーが回答の長さや詳細度を制御したい場合
+* ユーザーがトークン、バジェット、深さ、または回答の長さに言及する場合
+* ユーザーが「短いバージョン」「TL;DR」「簡潔に」「25%」「詳細に」などと言う場合
+* ユーザーが事前に深さ/詳細度を選択したい場合
 
-- Multiple file uploads (3+ documents) combined with analysis requests
-- Requests for "comprehensive", "complete", "thorough", or "full" analysis
-- Multi-document comparative analysis
-- Complex workflows requiring 10+ tool calls (extensive web research + synthesis)
-- Tasks combining heavy research with large artifacts (reports, presentations)
-- Queries spanning multiple dimensions (temporal + categorical + quantitative)
-- Requests to "analyze everything" or "create a complete report on all aspects"
+**トリガーしない場合**：ユーザーが本セッションですでにレベルを設定している（静かに維持）、または回答が本質的に一行。
 
-## Core Function
+## 動作原理
 
-This skill serves two purposes:
+### ステップ 1 — 入力トークンを推定する
 
-1. **Early warning system**: Assess whether a task will likely exceed token limits
-2. **Strategic planning**: Provide specific, actionable chunking recommendations
+リポジトリの標準コンテキストバジェットのヒューリスティックスを使用して、プロンプトのトークン数を頭の中で推定する。
 
-## Token Estimation Framework
+[context-budget](../context-budget/SKILL.md) と同じキャリブレーションガイドラインを使用する：
 
-### Quick Assessment Heuristics
+* 散文：`words × 1.3`
+* コード集約またはコード混在/コードブロック：`chars / 4`
 
-Estimate token consumption using these rough guidelines:
+混在コンテンツの場合、支配的なコンテンツタイプを使用し、推定ヒューリスティックスを保持する。
 
-**Input costs:**
-- Uploaded document: ~1,000-5,000 tokens each (depending on length)
-- Web search result: ~500-1,500 tokens
-- Web fetch (full article): ~2,000-8,000 tokens
-- Google Drive document: ~1,000-10,000 tokens (varies significantly)
+### ステップ 2 — 複雑度に応じてレスポンスサイズを推定する
 
-**Output costs:**
-- Simple response: 500-2,000 tokens
-- Detailed analysis: 2,000-5,000 tokens
-- Long-form report: 5,000-15,000 tokens
-- Complex artifact (presentation, document): 5,000-20,000 tokens
+プロンプトを分類し、乗数範囲を適用して完全なレスポンスウィンドウを得る：
 
-**Tool call overhead:**
-- Each tool call includes the query, results, and reasoning: ~1,000-3,000 tokens average
+| 複雑度 | 乗数範囲 | プロンプト例 |
+|--------------|------------|------------------------------------------------------|
+| シンプル | 3× – 8× | 「Xとは何ですか？」、はい/いいえの質問、単一の事実 |
+| 中程度 | 8× – 20× | 「Xはどのように機能しますか？」 |
+| 中〜高 | 10× – 25× | コンテキスト付きのコードリクエスト |
+| 複雑 | 15× – 40× | マルチパート分析、比較、アーキテクチャ |
+| クリエイティブ | 10× – 30× | ストーリー、散文、ナラティブライティング |
 
-**Warning thresholds:**
+レスポンスウィンドウ = `input_tokens × mult_min` から `input_tokens × mult_max`（ただしモデルの設定済み出力トークン制限を超えない）。
 
-- **Caution zone** (60-80% of budget): Task is achievable but tight; consider efficiency
-- **Danger zone** (80-95% of budget): High risk; strongly recommend chunking
-- **Exceeds budget** (95%+ of budget): Task requires chunking; cannot complete in one conversation
+### ステップ 3 — 深さのオプションを提示する
 
-### Task Complexity Multipliers
-
-Apply these mental adjustments:
-
-- **Synthesis required**: Add 30-50% to output estimate (comparing, integrating multiple sources)
-- **Iterative refinement**: Add 20-30% (when task involves reviewing and improving)
-- **Multiple formats**: Add 20% per additional output type (report + presentation + spreadsheet)
-
-## Chunking Strategy Framework
-
-When a task exceeds token budget, recommend specific chunking approaches. Choose strategies based on task structure:
-
-### 1. Sequential Processing
-
-**Best for:** Time-series data, chronological analysis, ordered workflows
-
-**Pattern:**
-```
-"This analysis of 12 months of data will exceed our token budget. I recommend we split it into quarters:
-- Part 1: Q1-Q2 analysis (Jan-Jun)
-- Part 2: Q3-Q4 analysis (Jul-Dec)  
-- Part 3: Synthesis and recommendations
-
-Should I start with Part 1?"
-```
-
-**When to use:**
-- Historical data analysis
-- Period-over-period comparisons
-- Multi-phase projects
-
-### 2. Dimensional Breakdown
-
-**Best for:** Multi-faceted analysis, different aspects of same topic
-
-**Pattern:**
-```
-"A complete market analysis covering financial, competitive, regulatory, and technological factors will strain our token budget. Let's break it into:
-- Session 1: Financial performance and market size
-- Session 2: Competitive landscape and positioning
-- Session 3: Regulatory environment and compliance
-- Session 4: Technology trends and synthesis
-
-Which dimension should we tackle first?"
-```
-
-**When to use:**
-- Multi-stakeholder analysis
-- Different analytical lenses on same subject
-- Complex business cases
-
-### 3. Depth Progression
-
-**Best for:** Tasks requiring outline → draft → refinement
-
-**Pattern:**
-```
-"Creating a comprehensive 50-slide presentation with detailed research will exceed our budget. I recommend:
-- Round 1: Build structure and outline (30 min)
-- Round 2: Develop content for slides 1-25 (45 min)
-- Round 3: Develop content for slides 26-50 (45 min)
-- Round 4: Refinement pass (30 min)
-
-Let's start with the outline?"
-```
-
-**When to use:**
-- Large documents or presentations
-- When quality refinement is important
-- Creative projects benefiting from iteration
-
-### 4. Subset Sampling
-
-**Best for:** Large document sets where representative sampling works
-
-**Pattern:**
-```
-"Analyzing all 15 contracts will exceed our budget. I suggest:
-- Part 1: Analyze 5 representative contracts (different types/dates)
-- Part 2: Based on patterns found, confirm with 5 more
-- Part 3: Quick scan of remaining 5 for exceptions, then synthesize
-
-This gives thorough coverage while managing tokens. Sound good?"
-```
-
-**When to use:**
-- Document review at scale
-- Pattern identification across many files
-- Risk-based sampling approaches
-
-### 5. Parallel Track Processing
-
-**Best for:** Independent workstreams that can be combined later
-
-**Pattern:**
-```
-"Comparing our product vs 5 competitors across features, pricing, and positioning is too large for one session. Let's split by competitor:
-- Session 1: Competitors A & B full analysis
-- Session 2: Competitors C & D full analysis  
-- Session 3: Competitor E + synthesis matrix
-
-Each session stays focused and manageable."
-```
-
-**When to use:**
-- Comparative analysis
-- Multiple independent subjects
-- When parts don't need each other's context
-
-## Communication Guidelines
-
-### Messaging Framework
-
-When recommending chunking, use this structure:
-
-1. **Acknowledge the request clearly**
-2. **Provide token budget assessment** (brief, 1 sentence)
-3. **Recommend specific chunking approach** (numbered list, 2-4 parts)
-4. **Ask for confirmation to proceed** (keep user in control)
-
-**Example:**
-```
-I'll help you analyze these 8 financial reports and create a comprehensive presentation. 
-This task will exceed our token budget given the research and artifact creation required. 
-I recommend splitting it into:
-1. Reports 1-4: Analysis and key findings
-2. Reports 5-8: Analysis and key findings  
-3. Synthesize all findings into presentation
-
-Should I start with reports 1-4?
-```
-
-### What NOT to Do
-
-❌ Don't over-explain token budgets or get technical about context windows
-❌ Don't apologize excessively or sound limiting
-❌ Don't provide vague suggestions like "maybe split this up somehow"
-❌ Don't start work and then stop mid-task saying "we've run out of tokens"
-
-✅ Do be matter-of-fact and solution-oriented
-✅ Do provide specific, actionable breakdowns
-✅ Do keep the momentum going toward task completion
-✅ Do frame chunking as a quality improvement (thoroughness) not limitation
-
-## Handling Edge Cases
-
-### User Insists on Single Session
-
-If user pushes back on chunking:
+**回答する前に**、実際に推定した数値を使用してこのブロックを提示する：
 
 ```
-"I understand you'd prefer this in one go. I'll do my best to complete it, but I may need to:
-- Prioritize the most critical elements
-- Provide a condensed version
-- Focus on breadth over depth in some areas
+プロンプトを分析中...
 
-Let me start and we'll see how far we can get. What aspects are highest priority?"
+入力：~[N] トークン  |  タイプ：[タイプ]  |  複雑度：[レベル]  |  言語：[言語]
+
+深さレベルを選択してください：
+
+[1] ベーシック    (25%)  ->  ~[トークン数]   直接回答、前置きなし
+[2] 適度         (50%)  ->  ~[トークン数]   回答 + 背景 + 1つの例
+[3] 詳細         (75%)  ->  ~[トークン数]   代替案を含む完全な回答
+[4] 徹底的      (100%)  ->  ~[トークン数]   すべて、制限なし
+
+どのレベルを選択しますか？(1-4 または「25%の深さ」「50%の深さ」「75%の深さ」「100%の深さ」)
+
+精度：ヒューリスティック推定、約85〜90%の精度（±15%）。
 ```
 
-### Task Becomes Too Large Mid-Stream
+各レベルのトークン推定（レスポンスウィンドウ内）：
 
-If partway through, token budget becomes concerning:
+* 25%  → `min + (max - min) × 0.25`
+* 50%  → `min + (max - min) × 0.50`
+* 75%  → `min + (max - min) × 0.75`
+* 100% → `max`
 
-```
-"I'm about halfway through and we're approaching token limits. I have two options:
-1. Complete this current section and continue in a fresh conversation (recommended - maintains quality)
-2. Accelerate through remaining sections with lighter analysis
+### ステップ 4 — 選択されたレベルで回答する
 
-Which approach works better for you?"
-```
+| レベル | 目標の長さ | 含む内容 | 省略する内容 |
+|------------------|---------------------|-----------------------------------------------------|---------------------------------------------------|
+| 25% コア | 最大2〜4文 | 直接回答、重要な結論 | コンテキスト、例、ニュアンス、代替案 |
+| 50% 適度 | 1〜3段落 | 回答 + 必要なコンテキスト + 1つの例 | 深い分析、エッジケース、参考文献 |
+| 75% 詳細 | 構造化された回答 | 複数の例、長所/短所、代替案 | 極端なエッジケース、網羅的な参考文献 |
+| 100% 徹底的 | 制限なし | すべて——完全な分析、すべてのコード、すべての視点 | なし |
 
-### Uncertain Estimation
+## ショートカット——質問をスキップ
 
-When task scope is ambiguous:
+ユーザーがすでにレベルを示している場合、質問せずにそのレベルで即座に回答する：
 
-```
-"I want to make sure we complete this successfully. The scope could go in different directions. Could you clarify:
-- [Specific question about depth]
-- [Specific question about breadth]
+| ユーザーの発言 | レベル |
+|----------------------------------------------------|-------|
+| 「1」/「25%の深さ」/「短いバージョン」/「簡潔に」/「TL;DR」 | 25% |
+| 「2」/「50%の深さ」/「適度の深さ」/「バランスの取れた回答」 | 50% |
+| 「3」/「75%の深さ」/「詳細な回答」/「包括的な回答」 | 75% |
+| 「4」/「100%の深さ」/「徹底的な回答」/「完全で詳細な分析」 | 100% |
 
-This helps me gauge whether we should chunk this task."
-```
+ユーザーが本セッションですでにレベルを設定している場合、ユーザーが変更しない限り後続の回答も**静かに**そのレベルを維持する。
 
-## Integration with Other Skills
+## 精度について
 
-This skill works in conjunction with domain-specific skills:
+このスキルはヒューリスティック推定を使用する——実際のトークナイザーではない。精度は約85〜90%で偏差は±15%。常に免責事項を表示する。
 
-- **Before heavy document analysis**: Check token budget, then use docx/pdf/xlsx skills
-- **Before comprehensive research**: Assess scope, then execute research process
-- **Before complex artifacts**: Plan chunking, then use pptx/docx/xlsx creation skills
+## 例
 
-Think of this skill as a "pre-flight check" before embarking on token-intensive tasks.
+### トリガーシナリオ
 
-## Examples in Action
+* 「まず短いバージョンをください。」
+* 「あなたの回答は何トークン使いますか？」
+* 「50%の深さで回答してください。」
+* 「徹底的な回答が欲しい、サマリーはいらない。」
+* 「まず短いバージョン、次に詳細なバージョンをください。」
 
-### Example 1: Multi-Document Analysis
+### トリガーしないシナリオ
 
-**User query:** "Analyze all these uploaded contracts and tell me the common terms and differences"
-*[User has uploaded 12 PDF contracts]*
+* 「JWTトークンとは何ですか？」
+* 「チェックアウトフローは支払いトークンを使用しています。」
+* 「これは正常ですか？」
+* 「リファクタリングを完了してください。」
+* ユーザーが本セッションの深さを選択した後の後続の質問
 
-**Response:**
-"I'll help you analyze these 12 contracts. Given the volume, I recommend we process this in batches to ensure thorough analysis:
+## 出典
 
-1. Contracts 1-4: Extract key terms, obligations, and unique clauses
-2. Contracts 5-8: Same analysis
-3. Contracts 9-12: Same analysis  
-4. Synthesis: Common terms across all + key differences
-
-This ensures I can give each contract proper attention. Should I start with contracts 1-4?"
-
-### Example 2: Comprehensive Research Report
-
-**User query:** "Research the AI chip market and create a detailed report covering market size, key players, technology trends, and 5-year forecast"
-
-**Response:**
-"I'll create a comprehensive AI chip market report. This research and report creation will be substantial, so I recommend:
-
-1. Market overview: Size, growth, segments (research + draft)
-2. Competitive landscape: Key players, market share, strategies (research + draft)
-3. Technology trends: Current developments, emerging tech (research + draft)
-4. Future outlook: 5-year forecast, implications (research + draft)
-5. Final report assembly: Executive summary, polish, formatting
-
-Each section gets thorough research and quality writing. Should I begin with the market overview?"
-
-### Example 3: Simple Task (No Chunking)
-
-**User query:** "Summarize this 10-page PDF and give me the key takeaways"
-
-**Response:**
-*[No trigger - proceed normally without invoking this skill]*
-"I'll read through the PDF and extract the key points for you."
-
-*Rationale: Single document summary is well within normal token budget.*
-
-## Skill Maintenance
-
-This skill should be updated when:
-
-- Token budget limits change
-- New patterns of token-heavy tasks emerge
-- Chunking strategies prove ineffective in practice
-- User feedback indicates communication could be clearer
+[TBA — Claude CodeのToken Budget Advisor](https://github.com/Xabilimon1/Token-Budget-Advisor-Claude-Code-)から引用した独立スキル。
+元のプロジェクトにはPython推定スクリプトも付属しているが、本リポジトリではスキルを自己完結型に保ち、ヒューリスティックスのみを使用する。

@@ -1,11 +1,18 @@
 ---
 name: apify-content-analytics
 description: Track engagement metrics, measure campaign ROI, and analyze content performance across Instagram, Facebook, YouTube, and TikTok.
+risk: unknown
+source: community
 ---
 
 # Content Analytics
 
 Track and analyze content performance using Apify Actors to extract engagement metrics from multiple platforms.
+
+## When to Use
+- You need engagement, growth, or ROI metrics for posts, reels, videos, ads, or hashtags.
+- The task is to use Apify Actors to collect cross-platform content performance data.
+- You need exported analytics results and a concise interpretation of what content is performing best.
 
 ## Prerequisites
 (No need to check it upfront)
@@ -110,7 +117,6 @@ After completion, report:
 - Key performance insights
 - Suggested next steps (deeper analysis, content optimization)
 
-
 ## Error Handling
 
 `APIFY_TOKEN not found` - Ask user to create `.env` with `APIFY_TOKEN=your_token`
@@ -118,3 +124,8 @@ After completion, report:
 `Actor not found` - Check Actor ID spelling
 `Run FAILED` - Ask user to check Apify console link in error output
 `Timeout` - Reduce input size or increase `--timeout`
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

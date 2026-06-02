@@ -1,0 +1,179 @@
+{
+  "schema_version": 4,
+  "package_id": "runtime-core-full",
+  "summary": "Governed runtime payload with canonical vibe and the host upgrade entry publicly exposed while the full bundled corpus is internalized under the canonical vibe root.",
+  "profile_manifests": {
+    "minimal": "config/runtime-core-packaging.minimal.json",
+    "full": "config/runtime-core-packaging.full.json"
+  },
+  "directories": [
+    "skills",
+    "commands",
+    "config"
+  ],
+  "copy_files": [
+    {
+      "source": "config/adapter-registry.json",
+      "target": "config/adapter-registry.json",
+      "optional": false
+    },
+    {
+      "source": "config/upstream-lock.json",
+      "target": "config/upstream-lock.json",
+      "optional": false
+    },
+    {
+      "source": "config/powershell-host-policy.json",
+      "target": "config/powershell-host-policy.json",
+      "optional": false
+    },
+    {
+      "source": "config/skills-lock.json",
+      "target": "config/skills-lock.json",
+      "optional": true
+    }
+  ],
+  "bundled_skills_source": "bundled/skills",
+  "exclude_bundled_skill_names": [
+    "vibe"
+  ],
+  "canonical_vibe_payload": {
+    "enabled": true,
+    "target_relpath": "skills/vibe"
+  },
+  "payload_roles": {
+    "target_directories": {
+      "runtime_targets": [
+        "skills",
+        "config"
+      ],
+      "command_targets": [
+        "commands"
+      ]
+    },
+    "copy_files": {
+      "required_lockfiles": [
+        {
+          "source": "config/upstream-lock.json",
+          "target": "config/upstream-lock.json",
+          "optional": false
+        }
+      ],
+      "optional_lockfiles": [
+        {
+          "source": "config/skills-lock.json",
+          "target": "config/skills-lock.json",
+          "optional": true
+        }
+      ],
+      "required_runtime_config": [
+        {
+          "source": "config/adapter-registry.json",
+          "target": "config/adapter-registry.json",
+          "optional": false
+        },
+        {
+          "source": "config/powershell-host-policy.json",
+          "target": "config/powershell-host-policy.json",
+          "optional": false
+        }
+      ]
+    },
+    "notes": {
+      "flat_projection_contract": "Resolved profile packaging fields remain the compatibility projection consumed by installer implementations.",
+      "delivery_boundary_rule": "Base manifest owns shared delivery semantics; profile overlays own profile-specific copy and inventory differences; generated profile manifests are compatibility projections only."
+    },
+    "surface_contracts": {
+      "public_skill_surface": "Declared public skill projections are the only top-level skills intentionally exposed to host discovery.",
+      "internal_skill_corpus": "Full bundled specialist corpus may be materialized under the canonical vibe root and consumed by runtime descriptor resolution without top-level exposure.",
+      "compatibility_skill_projections": "Compatibility projections preserve selected direct-entry skill paths only when host or runtime behavior still depends on them.",
+      "public_skill_surface_mode": "discoverable_wrapper_projection",
+      "discoverable_entry_surface": "config/vibe-entry-surfaces.json",
+      "internal_skill_corpus_enabled": true,
+      "compatibility_projection_mode": "explicit_projection_only"
+    },
+    "copy_directories": {
+      "active_sources": [
+        {
+          "source": "commands",
+          "target": "commands"
+        }
+      ]
+    },
+    "delivery_model": {
+      "bundled_skill_mode": "hidden_full_internal_corpus_minus_canonical_vibe",
+      "canonical_vibe_target_relpath": "skills/vibe",
+      "skills_allowlist": [],
+      "excluded_bundled_skill_names": [
+        "vibe"
+      ],
+      "public_surface_mode": "discoverable_wrapper_projection",
+      "discoverable_entry_surface": "config/vibe-entry-surfaces.json",
+      "internal_corpus_target_relpath": "skills/vibe/bundled/skills",
+      "compatibility_skill_projections": []
+    }
+  },
+  "profile": "full",
+  "copy_directories": [
+    {
+      "source": "commands",
+      "target": "commands"
+    }
+  ],
+  "copy_bundled_skills": true,
+  "skills_allowlist": [],
+  "public_skill_surface": {
+    "mode": "discoverable_wrapper_projection",
+    "canonical_vibe_target_relpath": "skills/vibe",
+    "discoverable_entry_surface": "config/vibe-entry-surfaces.json",
+    "projected_skill_names": [
+      "vibe",
+      "vibe-upgrade"
+    ]
+  },
+  "internal_skill_corpus": {
+    "enabled": true,
+    "source": "bundled/skills",
+    "target_relpath": "skills/vibe/bundled/skills",
+    "entrypoint_filename": "SKILL.runtime-mirror.md",
+    "sanitize_entrypoints": true,
+    "resolver_roots": [
+      "skills/vibe/bundled/skills"
+    ]
+  },
+  "compatibility_skill_projections": {
+    "mode": "explicit_projection_only",
+    "target_root": "skills",
+    "projected_skill_names": [],
+    "host_allowlist": [
+      "codex"
+    ],
+    "resolver_roots": [
+      "skills"
+    ]
+  },
+  "managed_skill_inventory": {
+    "required_runtime_skills": [
+      "vibe",
+      "dialectic",
+      "local-vco-roles",
+      "spec-kit-vibe-compat",
+      "superclaude-framework-compat",
+      "ralph-loop",
+      "cancel-ralph",
+      "tdd-guide",
+      "think-harder"
+    ],
+    "required_workflow_skills": [
+      "brainstorming",
+      "writing-plans",
+      "subagent-driven-development",
+      "systematic-debugging"
+    ],
+    "optional_workflow_skills": [
+      "requesting-code-review",
+      "receiving-code-review",
+      "verification-before-completion"
+    ]
+  }
+}

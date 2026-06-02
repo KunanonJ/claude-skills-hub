@@ -1,11 +1,13 @@
 ---
 name: sql-injection-testing
-description: "This skill should be used when the user asks to \"test for SQL injection vulnerabilities\", \"perform SQLi attacks\", \"bypass authentication using SQL injection\", \"extract database inform..."
-risk: unknown
+description: "Execute comprehensive SQL injection vulnerability assessments on web applications to identify database security flaws, demonstrate exploitation techniques, and validate input sanitization mechanisms."
+risk: offensive
 source: community
 author: zebbern
 date_added: "2026-02-27"
 ---
+
+> AUTHORIZED USE ONLY: Use this skill only for authorized security assessments, defensive validation, or controlled educational environments.
 
 # SQL Injection Testing
 

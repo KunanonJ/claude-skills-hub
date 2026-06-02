@@ -62,7 +62,7 @@ Survey]  A/B]      Usage]   Prototype]
 #### Solutions
 
 **Solution 1A: Interactive Onboarding Wizard**
-- Description: A 3-step guided wizard that walks users through creating their first project, adding a task, and seeing the dashboard—guaranteeing they experience core value
+- Description: A 3-step guided wizard that walks users through creating their first project, adding a task, and seeing the dashboard.guaranteeing they experience core value
 - Effort: M
 - Riskiest Assumption: Users will complete a multi-step wizard rather than skipping it
 - Assumption Test: Prototype test with 5 users measuring completion rate and time-to-value
@@ -105,7 +105,7 @@ Survey]  A/B]      Usage]   Prototype]
 - Description: A chatbot-style assistant that users can ask "how do I..." questions and get guided help
 - Effort: XL
 - Riskiest Assumption: Users will engage with a chatbot for navigation
-- Assumption Test: Wizard of Oz test with 10 users—manually respond to chat queries and measure satisfaction
+- Assumption Test: Wizard of Oz test with 10 users.manually respond to chat queries and measure satisfaction
 
 **Solution 2C: Contextual Feature Tips**
 - Description: Surface relevant features based on what the user is doing (e.g., if editing a task, suggest time tracking)
@@ -115,7 +115,7 @@ Survey]  A/B]      Usage]   Prototype]
 
 ---
 
-### Opportunity 3: Users forget to come back—nothing prompts their return
+### Opportunity 3: Users forget to come back.nothing prompts their return
 
 **Description:** Users have initial intent but without habits formed or external triggers, they simply forget the product exists until they need it again (if ever).
 **Impact Potential:** High

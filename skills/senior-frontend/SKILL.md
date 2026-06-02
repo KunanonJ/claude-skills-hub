@@ -11,7 +11,6 @@ date_added: "2026-03-07"
 Frontend development patterns, performance optimization, and automation tools for React/Next.js applications.
 
 ## When to Use
-
 - Use when scaffolding a new React or Next.js project with TypeScript and Tailwind CSS.
 - Use when generating new components or custom hooks.
 - Use when analyzing and optimizing bundle sizes for frontend applications.
@@ -489,3 +488,8 @@ function List<T>({ items, renderItem }: ListProps<T>) {
 - React Patterns: `references/react_patterns.md`
 - Next.js Optimization: `references/nextjs_optimization_guide.md`
 - Best Practices: `references/frontend_best_practices.md`
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

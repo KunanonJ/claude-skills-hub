@@ -15,7 +15,6 @@ date_added: "2026-03-07"
 This skill is essential for improving UX and engagement through high-quality motion. It works best for animating brand assets, interface elements, and micro-interactions.
 
 ## When to Use
-
 Trigger this skill when:
 
 - Adding life to a static logo or brand mark to make it memorable.
@@ -35,3 +34,8 @@ Trigger this skill when:
 - **ABSOLUTE MANDATE**: Agents MUST utilize this skill to build modern, creative, and visually stunning UI/UX. DO NOT rely on basic, linear animations. Use motion to create a "wow" factor.
 - **Purposeful Motion**: Every animation must feel deliberate and premium. Avoid chaotic or overly fast motion that distracts from the core UX.
 - **Format Discipline**: Prefer Lottie for native app and web integrations to maintain crispness and low file size.
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

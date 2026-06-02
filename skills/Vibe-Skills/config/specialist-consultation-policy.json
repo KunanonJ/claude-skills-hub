@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "policy_id": "specialist-consultation-legacy-compat-v2",
+  "updated_at": "2026-05-01",
+  "enabled": false,
+  "mode": "direct_current_session_route",
+  "allowed_windows": [],
+  "legacy_compatibility_only": true,
+  "compatibility_note": "Old consultation receipts remain readable for historical artifacts. New runtime sessions use skill_routing.selected plus skill_usage.used and skill_usage.unused."
+}

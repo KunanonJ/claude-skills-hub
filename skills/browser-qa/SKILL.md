@@ -1,87 +1,84 @@
 ---
 name: browser-qa
-description: Use this skill to automate visual testing and UI interaction verification using browser automation after deploying features.
+description: このスキルを使用して、機能をデプロイ後にブラウザ自動化を使用した自動ビジュアルテストとUI相互作用検証を自動化します。
 origin: ECC
 ---
 
-# Browser QA — Automated Visual Testing & Interaction
+# ブラウザQA — 自動ビジュアルテストと相互作用
 
-## When to Use
+## 使用時期
 
-- After deploying a feature to staging/preview
-- When you need to verify UI behavior across pages
-- Before shipping — confirm layouts, forms, interactions actually work
-- When reviewing PRs that touch frontend code
-- Accessibility audits and responsive testing
+- ステージング/プレビューに機能をデプロイ後
+- ページ全体のUIの動作を検証する必要がある場合
+- 出荷前 — レイアウト、フォーム、相互作用が実際に機能することを確認
+- フロントエンドコードに触れるPRをレビューする場合
+- アクセシビリティ監査とレスポンシブテスト
 
-## How It Works
+## 動作方法
 
-Uses the browser automation MCP (claude-in-chrome, Playwright, or Puppeteer) to interact with live pages like a real user.
+ブラウザオートメーションMCP（claude-in-chrome、Playwright、またはPuppeteer）を使用して、実際のユーザーのようにライブページと相互作用します。
 
-### Phase 1: Smoke Test
+### フェーズ1：スモークテスト
 ```
-1. Navigate to target URL
-2. Check for console errors (filter noise: analytics, third-party)
-3. Verify no 4xx/5xx in network requests
-4. Screenshot above-the-fold on desktop + mobile viewport
-5. Check Core Web Vitals: LCP < 2.5s, CLS < 0.1, INP < 200ms
-```
-
-### Phase 2: Interaction Test
-```
-1. Click every nav link — verify no dead links
-2. Submit forms with valid data — verify success state
-3. Submit forms with invalid data — verify error state
-4. Test auth flow: login → protected page → logout
-5. Test critical user journeys (checkout, onboarding, search)
+1. ターゲットURLに移動
+2. コンソールエラーをチェック（ノイズをフィルター：分析、サードパーティ）
+3. ネットワークリクエストで4xx/5xxがないことを確認
+4. デスクトップ+モバイルビューポート上の上にスクリーンショット
+5. Core Web Vitalsをチェック：LCP < 2.5s、CLS < 0.1、INP < 200ms
 ```
 
-### Phase 3: Visual Regression
+### フェーズ2：相互作用テスト
 ```
-1. Screenshot key pages at 3 breakpoints (375px, 768px, 1440px)
-2. Compare against baseline screenshots (if stored)
-3. Flag layout shifts > 5px, missing elements, overflow
-4. Check dark mode if applicable
-```
-
-### Phase 4: Accessibility
-```
-1. Run axe-core or equivalent on each page
-2. Flag WCAG AA violations (contrast, labels, focus order)
-3. Verify keyboard navigation works end-to-end
-4. Check screen reader landmarks
+1. すべてのnavリンクをクリック — デッドリンクがないことを確認
+2. 有効なデータでフォームを送信 — 成功状態を確認
+3. 無効なデータでフォームを送信 — エラー状態を確認
+4. 認証フローをテスト：ログイン→保護されたページ→ログアウト
+5. 重要なユーザージャーニーをテスト（チェックアウト、オンボーディング、検索）
 ```
 
-## Output Format
+### フェーズ3：ビジュアル回帰
+```
+1. 3つのブレークポイント（375px、768px、1440px）でキーページのスクリーンショット
+2. ベースラインスクリーンショット（保存されている場合）と比較
+3. レイアウトシフト> 5px、要素の欠落、オーバーフローにフラグを立てる
+4. 該当する場合はダークモードをチェック
+```
+
+### フェーズ4：アクセシビリティ
+```
+1. 各ページでaxe-coreまたは同等のものを実行
+2. WCAG AAの違反にフラグを立てる（コントラスト、ラベル、フォーカス順）
+3. キーボードナビゲーションがエンドツーエンドで機能することを確認
+4. スクリーンリーダーランドマークをチェック
+```
+
+## 出力形式
 
 ```markdown
 ## QA Report — [URL] — [timestamp]
 
 ### Smoke Test
-- Console errors: 0 critical, 2 warnings (analytics noise)
-- Network: all 200/304, no failures
-- Core Web Vitals: LCP 1.2s ✓, CLS 0.02 ✓, INP 89ms ✓
+- ✓ ページが読み込まれる
+- ✗ コンソールエラー：オプト不可なトラッキング警告
+- ✓ Core Web Vitals OK
+- [スクリーンショット]
 
-### Interactions
-- [✓] Nav links: 12/12 working
-- [✗] Contact form: missing error state for invalid email
-- [✓] Auth flow: login/logout working
+### 相互作用テスト
+- ✓ ナビゲーション機能
+- ✓ フォーム検証
+- ✗ モバイルメニューが開かない
 
-### Visual
-- [✗] Hero section overflows on 375px viewport
-- [✓] Dark mode: all pages consistent
+### ビジュアル回帰
+- ✓ デスクトップレイアウト
+- ✗ モバイルで画像がオーバーフロー
 
-### Accessibility
-- 2 AA violations: missing alt text on hero image, low contrast on footer links
-
-### Verdict: SHIP WITH FIXES (2 issues, 0 blockers)
+### アクセシビリティ
+- 1 WCAG AA: コントラスト違反
+- 0 WCAG A違反
 ```
 
-## Integration
+## 統合
 
-Works with any browser MCP:
-- `mChild__claude-in-chrome__*` tools (preferred — uses your actual Chrome)
-- Playwright via `mcp__browserbase__*`
-- Direct Puppeteer scripts
-
-Pair with `/canary-watch` for post-deploy monitoring.
+- `/benchmark`とペアリングしてパフォーマンス確認
+- `/canary-watch`とペアリングしてデプロイ後の監視を自動化
+- PullRequestワークフローに組み込んでフロントエンドPRをキャッチ

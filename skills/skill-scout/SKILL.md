@@ -1,66 +1,60 @@
 ---
 name: skill-scout
-description: Search existing local, marketplace, GitHub, and web skill sources before creating a new skill. Use when the user wants to create, build, fork, or find a skill for a workflow.
+description: 新しいスキルを作成する前に、ローカル・マーケットプレイス・GitHub・Webの既存スキルを検索する。スキルの作成・ビルド・フォーク・検索を行う際に使用。
 origin: community
 ---
 
-# Skill Scout
+# スキルスカウト
 
-Use this skill before creating a new skill. The goal is to avoid duplicating
-existing community or marketplace work, while still vetting anything external
-before adoption.
+新しいスキルを作成する前にこのスキルを使用してください。目的は、既存のコミュニティやマーケットプレイスの成果を重複して作成することを避けながら、外部のものを採用する前にきちんと審査することです。
 
-Source: salvaged from stale community PR #1232 by `redminwang`.
+出典: `redminwang` によるコミュニティの古いPR #1232 から再利用。
 
-## When to Use
+## 使用するタイミング
 
-- The user says "create a skill", "build a skill", "make a skill", or "new
-  skill".
-- The user asks "is there a skill for X?" or "does a skill exist that does Y?"
-- The user describes a workflow and you are about to suggest creating a new
-  skill.
-- The user wants to fork or extend an existing skill.
+- ユーザーが「スキルを作成する」「スキルをビルドする」「スキルを作る」「新しいスキル」と言ったとき。
+- ユーザーが「Xのスキルはありますか？」または「Yを実行するスキルは存在しますか？」と尋ねたとき。
+- ユーザーがワークフローを説明し、新しいスキルの作成を提案しようとしているとき。
+- ユーザーが既存のスキルをフォークまたは拡張したいとき。
 
-If the user explicitly says to skip search or create from scratch, acknowledge
-that and proceed with the requested creation workflow.
+ユーザーが検索をスキップして最初から作成するよう明示的に指示した場合は、それを確認してリクエストされた作成ワークフローを進めてください。
 
-## How It Works
+## 動作の仕組み
 
-### Step 1 - Capture Intent
+### ステップ1 - 意図の把握
 
-Extract:
+以下を抽出します：
 
-- The task the skill should perform.
-- The trigger conditions for using it.
-- The domain, tools, frameworks, or data sources involved.
-- Three to five search keywords plus useful synonyms.
+- スキルが実行すべきタスク。
+- スキルを使用するためのトリガー条件。
+- 関連するドメイン、ツール、フレームワーク、またはデータソース。
+- 3〜5個の検索キーワードと有用な同義語。
 
-### Step 2 - Search Local Sources
+### ステップ2 - ローカルソースを検索する
 
-Search installed and marketplace skill names first. Local sources are preferred
-because they are already part of the user's environment.
+まずインストール済みおよびマーケットプレイスのスキル名を検索します。ローカルソースはすでにユーザーの環境に含まれているため優先されます。
 
 ```bash
 find ~/.claude/skills -maxdepth 2 -name SKILL.md 2>/dev/null | grep -iE "keyword|synonym"
 find ~/.claude/plugins/marketplaces -path '*/skills/*/SKILL.md' 2>/dev/null | grep -iE "keyword|synonym"
 ```
 
-Then search frontmatter descriptions:
+次にフロントマターの説明を検索します：
 
 ```bash
 grep -RilE "keyword|synonym" ~/.claude/skills ~/.claude/plugins/marketplaces 2>/dev/null
 ```
 
-### Step 3 - Search Remote Sources
+### ステップ3 - リモートソースを検索する
 
-Use available GitHub and web search tools. Prefer concise queries:
+利用可能なGitHubおよびWebの検索ツールを使用します。簡潔なクエリを優先します：
 
 ```bash
 gh search repos "claude code skill keyword" --limit 10 --sort stars
 gh search code "name: keyword" --filename SKILL.md --limit 10
 ```
 
-For web search, use at most three targeted queries such as:
+Web検索では、最大3つのターゲットクエリを使用します（例）：
 
 ```text
 "claude code skill" keyword
@@ -68,73 +62,70 @@ For web search, use at most three targeted queries such as:
 "everything-claude-code" keyword
 ```
 
-### Step 4 - Vet External Matches
+### ステップ4 - 外部マッチを審査する
 
-Before recommending any external skill for adoption or forking:
+採用またはフォークのために外部スキルを推奨する前に：
 
-- Read the `SKILL.md` frontmatter and instructions.
-- Look for unexpected shell commands, file writes, network calls, credential
-  handling, or package installs.
-- Check whether the repository appears maintained.
-- Prefer copying into a fresh local branch and reviewing the diff over editing
-  marketplace originals.
+- `SKILL.md` のフロントマターと手順を読む。
+- 予期しないシェルコマンド、ファイル書き込み、ネットワーク呼び出し、クレデンシャル処理、またはパッケージインストールがないか確認する。
+- リポジトリがメンテナンスされているかどうかを確認する。
+- マーケットプレイスのオリジナルを直接編集するのではなく、新しいローカルブランチにコピーしてdiffを確認することを優先する。
 
-### Step 5 - Rank Results
+### ステップ5 - 結果をランク付けする
 
-Rank candidates by:
+候補を以下の順でランク付けします：
 
-1. Exact keyword match in the skill name.
-2. Keyword or synonym match in description.
-3. Local installed or marketplace source.
-4. Maintained GitHub source with recent activity.
-5. Web-only mention.
+1. スキル名での完全なキーワードマッチ。
+2. 説明でのキーワードまたは同義語マッチ。
+3. ローカルにインストール済みまたはマーケットプレイスのソース。
+4. 最近のアクティビティがあるメンテナンス済みのGitHubソース。
+5. Web上の言及のみ。
 
-Cap the final list at 10 results.
+最終リストは10件に制限します。
 
-### Step 6 - Present Decision Options
+### ステップ6 - 判断オプションを提示する
 
-Give the user a short table:
+ユーザーに短いテーブルを提示します：
 
-| Option | Meaning |
+| オプション | 意味 |
 | --- | --- |
-| Use existing | Invoke or install a matching skill as-is. |
-| Fork or extend | Copy the closest skill and modify it. |
-| Create fresh | Build a new skill after confirming no close match exists. |
+| 既存を使用 | マッチするスキルをそのまま呼び出すかインストールする。 |
+| フォークまたは拡張 | 最も近いスキルをコピーして修正する。 |
+| 新規作成 | 近いマッチが存在しないことを確認した後、新しいスキルをビルドする。 |
 
-Only create a new skill after the user chooses that path or after the search
-finds no close match.
+ユーザーがそのパスを選択した後、または検索で近いマッチが見つからなかった場合にのみ、新しいスキルを作成します。
 
-## Examples
+## 例
 
-### Result Table
+### 結果テーブル
 
 ```markdown
-| # | Skill | Source | Why it matches | Gap |
+| # | スキル | ソース | マッチする理由 | ギャップ |
 | --- | --- | --- | --- | --- |
-| 1 | article-writing | Local ECC | Drafts articles and guides | Not focused on release notes |
-| 2 | content-engine | Local ECC | Multi-format content workflow | Heavier than needed |
-| 3 | blog-writer | GitHub | Blog writing skill with recent commits | Needs security review |
+| 1 | article-writing | ローカル ECC | 記事とガイドの草稿作成 | リリースノートに特化していない |
+| 2 | content-engine | ローカル ECC | マルチフォーマットコンテンツワークフロー | 必要以上に重い |
+| 3 | blog-writer | GitHub | 最近のコミットがあるブログ執筆スキル | セキュリティレビューが必要 |
 ```
 
-### User-Facing Summary
+### ユーザー向けサマリー
 
 ```markdown
-I found two close local matches and one external candidate. The closest fit is
-`article-writing`; it covers drafting and revision, but it does not include the
-release-note checklist you asked for. I can either use it as-is, fork it into a
-release-note variant, or create a fresh skill.
+2つの近いローカルマッチと1つの外部候補が見つかりました。最も近いのは
+`article-writing` です。草稿作成と修正をカバーしていますが、
+お求めのリリースノートチェックリストは含まれていません。そのまま使用するか、
+リリースノートバリアントにフォークするか、新しいスキルを作成するかを選択できます。
 ```
 
-## Anti-Patterns
+## アンチパターン
 
-- Do not jump directly to new skill creation when a search is reasonable.
-- Do not install external skills without reading them first.
-- Do not present a long unranked list of weak matches.
-- Do not treat web-only mentions as trusted sources.
-- Do not edit installed marketplace originals in place.
+- 検索が適切な場合に、新しいスキルの作成に直接飛びつかないこと。
+- 読まずに外部スキルをインストールしないこと。
+- 弱いマッチの長いランク付けされていないリストを提示しないこと。
+- Web上の言及のみを信頼できるソースとして扱わないこと。
+- インストール済みのマーケットプレイスオリジナルをその場で編集しないこと。
 
-## Related
+## 関連
 
-- `search-first` - General search-before-building workflow.
-- `skill-stocktake` - Audit installed skills for health, duplicates, and gaps.
-- `agent-sort` - Categorize and organize existing agents and skills.
+- `search-first` - ビルドする前に検索する一般的なワークフロー。
+- `skill-stocktake` - インストール済みスキルの健全性、重複、ギャップの監査。
+- `agent-sort` - 既存のエージェントとスキルの分類と整理。

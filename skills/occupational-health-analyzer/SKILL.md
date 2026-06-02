@@ -2,9 +2,16 @@
 name: occupational-health-analyzer
 description: 分析职业健康数据、识别工作相关健康风险、评估职业健康状况、提供个性化职业健康建议。支持与睡眠、运动、心理健康等其他健康数据的关联分析。
 allowed-tools: Read, Grep, Glob, Write, Edit
+risk: unknown
+source: community
 ---
 
 # 职业健康分析技能
+
+## When to Use
+- 需要评估工作相关健康风险、人机工程问题或职业健康趋势时使用。
+- 任务涉及久坐、视屏终端、倒班、重复性劳损或工作压力等职业风险分析。
+- 用户请求职业健康评估、工作环境改进建议或职业病风险预警时使用。
 
 ## 核心功能
 
@@ -384,3 +391,8 @@ allowed-tools: Read, Grep, Glob, Write, Edit
 **技能版本**: v1.0.0
 **最后更新**: 2025-01-08
 **维护者**: WellAlly Tech
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

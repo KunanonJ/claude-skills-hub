@@ -1,6 +1,8 @@
 ---
 name: pr-writer
-description: ALWAYS use this skill when creating or updating pull requests — never create or edit a PR directly without it. Follows Sentry conventions for PR titles, descriptions, and issue references. Trigger on any create PR, open PR, submit PR, make PR,...
+description: "Create pull requests following Sentry's engineering practices."
+risk: unknown
+source: community
 ---
 
 # PR Writer
@@ -8,6 +10,11 @@ description: ALWAYS use this skill when creating or updating pull requests — n
 Create pull requests following Sentry's engineering practices.
 
 **Requires**: GitHub CLI (`gh`) authenticated and available.
+
+## When to Use
+- You are ready to open a pull request and need a structured description based on the committed branch diff.
+- You want the PR body to capture what changed, why it changed, and any reviewer context.
+- You are using GitHub CLI and need a repeatable PR-writing workflow rather than writing the description ad hoc.
 
 ## Prerequisites
 
@@ -181,3 +188,8 @@ Note: `gh pr edit` is currently broken due to GitHub's Projects (classic) deprec
 
 - [Sentry Code Review Guidelines](https://develop.sentry.dev/engineering-practices/code-review/)
 - [Sentry Commit Messages](https://develop.sentry.dev/engineering-practices/commit-messages/)
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

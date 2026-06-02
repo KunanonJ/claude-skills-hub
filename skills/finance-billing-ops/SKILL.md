@@ -1,127 +1,127 @@
 ---
 name: finance-billing-ops
-description: Evidence-first revenue, pricing, refunds, team-billing, and billing-model truth workflow for ECC. Use when the user wants a sales snapshot, pricing comparison, duplicate-charge diagnosis, or code-backed billing reality instead of generic payments advice.
+description: ECCの証拠優先の収益、価格設定、返金、チーム請求、請求モデルの実態確認ワークフロー。ユーザーが販売スナップショット、価格比較、重複請求の診断、または汎用的な支払いアドバイスではなくコードに裏付けられた請求の実態を必要とする場合に使用します。
 origin: ECC
 ---
 
-# Finance Billing Ops
+# Finance Billing Ops（財務請求業務）
 
-Use this when the user wants to understand money, pricing, refunds, team-seat logic, or whether the product actually behaves the way the website and sales copy imply.
+ユーザーが金銭、価格設定、返金、チームシート論理、またはウェブサイトや販売コピーが示唆する方法で製品が実際に動作しているかどうかを理解したい場合に使用します。
 
-This is broader than `customer-billing-ops`. That skill is for customer remediation. This skill is for operator truth: revenue state, pricing decisions, team billing, and code-backed billing behavior.
+これは`customer-billing-ops`より広い範囲をカバーします。そのスキルは顧客の救済措置向けです。このスキルはオペレーターの実態向けです: 収益状態、価格決定、チーム請求、コードに裏付けられた請求動作。
 
-## Skill Stack
+## スキルスタック
 
-Pull these ECC-native skills into the workflow when relevant:
+関連する場合、次のECCネイティブスキルをワークフローに引き込みます:
 
-- `customer-billing-ops` for customer-specific remediation and follow-up
-- `research-ops` when competitor pricing or current market evidence matters
-- `market-research` when the answer should end in a pricing recommendation
-- `github-ops` when the billing truth depends on code, backlog, or release state in sibling repos
-- `verification-loop` when the answer depends on proving checkout, seat handling, or entitlement behavior
+- `customer-billing-ops` 顧客固有の救済措置とフォローアップ用
+- `research-ops` 競合他社の価格設定や現在の市場エビデンスが重要な場合
+- `market-research` 答えが価格推奨で終わる場合
+- `github-ops` 請求の実態がコード、バックログ、または関連リポジトリのリリース状態に依存する場合
+- `verification-loop` 答えがチェックアウト、シート処理、エンタイトルメント動作の証明に依存する場合
 
-## When to Use
+## 使用するタイミング
 
-- user asks for Stripe sales, refunds, MRR, or recent customer activity
-- user asks whether team billing, per-seat billing, or quota stacking is real in code
-- user wants competitor pricing comparisons or pricing-model benchmarks
-- the question mixes revenue facts with product implementation truth
+- ユーザーがStripeの売上、返金、MRR、または最近の顧客活動を尋ねる場合
+- ユーザーがチーム請求、シートごとの課金、またはクォータスタッキングがコードで実際に存在するか確認したい場合
+- ユーザーが競合他社の価格比較や価格モデルのベンチマークを必要とする場合
+- 質問が収益の事実と製品実装の実態を混在させる場合
 
-## Guardrails
+## ガードレール
 
-- distinguish live data from saved snapshots
-- separate:
-  - revenue fact
-  - customer impact
-  - code-backed product truth
-  - recommendation
-- do not say "per seat" unless the actual entitlement path enforces it
-- do not assume duplicate subscriptions imply duplicate value
+- ライブデータと保存されたスナップショットを区別する
+- 以下を分離する:
+  - 収益の事実
+  - 顧客への影響
+  - コードに裏付けられた製品の実態
+  - 推奨事項
+- 実際のエンタイトルメントパスがそれを適用していない限り「シートごと」と言わない
+- 重複したサブスクリプションが重複した価値を意味すると仮定しない
 
-## Workflow
+## ワークフロー
 
-### 1. Start from the freshest billing evidence
+### 1. 最新の請求エビデンスから開始する
 
-Prefer live billing data. If the data is not live, state the snapshot timestamp explicitly.
+ライブ請求データを優先します。データがライブでない場合は、スナップショットのタイムスタンプを明示的に述べます。
 
-Normalize the picture:
+全体像を正規化する:
 
-- paid sales
-- active subscriptions
-- failed or incomplete checkouts
-- refunds
-- disputes
-- duplicate subscriptions
+- 有料売上
+- アクティブなサブスクリプション
+- 失敗または不完全なチェックアウト
+- 返金
+- 紛争
+- 重複したサブスクリプション
 
-### 2. Separate customer incidents from product truth
+### 2. 顧客インシデントと製品の実態を分離する
 
-If the question is customer-specific, classify first:
+質問が顧客固有の場合、まず分類します:
 
-- duplicate checkout
-- real team intent
-- broken self-serve controls
-- unmet product value
-- failed payment or incomplete setup
+- 重複したチェックアウト
+- 実際のチームの意図
+- 壊れたセルフサーブコントロール
+- 満たされていない製品価値
+- 失敗した支払いまたは不完全なセットアップ
 
-Then separate that from the broader product question:
+次に、より広い製品の質問から分離します:
 
-- does team billing really exist?
-- are seats actually counted?
-- does checkout quantity change entitlement?
-- does the site overstate current behavior?
+- チーム請求は本当に存在するか？
+- シートは実際にカウントされているか？
+- チェックアウトの数量はエンタイトルメントを変更するか？
+- サイトは現在の動作を誇張しているか？
 
-### 3. Inspect code-backed billing behavior
+### 3. コードに裏付けられた請求動作を検査する
 
-If the answer depends on implementation truth, inspect the code path:
+答えが実装の実態に依存する場合、コードパスを検査します:
 
-- checkout
-- pricing page
-- entitlement calculation
-- seat or quota handling
-- installation vs user usage logic
-- billing portal or self-serve management support
+- チェックアウト
+- 価格ページ
+- エンタイトルメント計算
+- シートまたはクォータ処理
+- インストールとユーザー使用ロジック
+- 請求ポータルまたはセルフサーブ管理サポート
 
-### 4. End with a decision and product gap
+### 4. 決定と製品ギャップで終わる
 
-Report:
+以下を報告します:
 
-- sales snapshot
-- issue diagnosis
-- product truth
-- recommended operator action
-- product or backlog gap
+- 販売スナップショット
+- 問題の診断
+- 製品の実態
+- 推奨されるオペレーターアクション
+- 製品またはバックログのギャップ
 
-## Output Format
+## 出力形式
 
 ```text
-SNAPSHOT
-- timestamp
-- revenue / subscriptions / anomalies
+SNAPSHOT（スナップショット）
+- タイムスタンプ
+- 収益 / サブスクリプション / 異常
 
-CUSTOMER IMPACT
-- who is affected
-- what happened
+CUSTOMER IMPACT（顧客への影響）
+- 誰が影響を受けているか
+- 何が起きたか
 
-PRODUCT TRUTH
-- what the code actually does
-- what the website or sales copy claims
+PRODUCT TRUTH（製品の実態）
+- コードが実際に何をするか
+- ウェブサイトや販売コピーが何を主張しているか
 
-DECISION
-- refund / preserve / convert / no-op
+DECISION（決定）
+- 返金 / 保持 / 変換 / 無操作
 
-PRODUCT GAP
-- exact follow-up item to build or fix
+PRODUCT GAP（製品ギャップ）
+- 構築または修正すべき具体的なフォローアップ項目
 ```
 
-## Pitfalls
+## 落とし穴
 
-- do not conflate failed attempts with net revenue
-- do not infer team billing from marketing language alone
-- do not compare competitor pricing from memory when current evidence is available
-- do not jump from diagnosis straight to refund without classifying the issue
+- 失敗した試みを純収益と混同しない
+- マーケティング言語だけからチーム請求を推測しない
+- 現在のエビデンスが利用可能な場合、記憶から競合他社の価格を比較しない
+- 問題を分類せずに診断から返金へ直接ジャンプしない
 
-## Verification
+## 検証
 
-- the answer includes a live-data statement or snapshot timestamp
-- product-truth claims are code-backed
-- customer-impact and broader pricing/product conclusions are separated cleanly
+- 答えにはライブデータの声明またはスナップショットタイムスタンプが含まれている
+- 製品実態の主張はコードに裏付けられている
+- 顧客への影響と、より広い価格/製品の結論が明確に分離されている

@@ -5,7 +5,8 @@ Supports two methods:
   - OAuth (device code flow via Azure AD) - recommended
   - PAT (Personal Access Token) - fallback
 
-Credentials stored in system keyring.
+Credentials stored in system keyring. Tokens are split across separate
+keyring entries to stay under Windows Credential Manager's 2560-byte limit.
 """
 
 import argparse
@@ -20,6 +21,10 @@ import urllib.request
 
 KEYCHAIN_SERVICE = "azure-devops-skill"
 KEYCHAIN_ACCOUNT = "default"
+# Separate keyring entries for large tokens (Windows Credential Manager has a
+# 2560-byte limit per entry, so we split tokens into their own entries).
+KEYCHAIN_ACCOUNT_ACCESS_TOKEN = f"{KEYCHAIN_ACCOUNT}_access_token"
+KEYCHAIN_ACCOUNT_REFRESH_TOKEN = f"{KEYCHAIN_ACCOUNT}_refresh_token"
 
 # Azure AD OAuth configuration
 # Uses the Visual Studio Code client ID - shows "Visual Studio Code" prompt
@@ -36,32 +41,72 @@ TOKEN_EXPIRY_BUFFER_S = 300  # 5 minutes
 # ─── Storage ────────────────────────────────────────────────────────────────
 
 def get_stored_config():
-    """Get stored config from keyring."""
+    """Get stored config from keyring.
+
+    Reassembles the full config from the main entry (metadata) and
+    separate token entries (access_token, refresh_token).
+    """
     try:
         data_str = keyring.get_password(KEYCHAIN_SERVICE, KEYCHAIN_ACCOUNT)
         if not data_str:
             return None
-        return json.loads(data_str)
-    except (json.JSONDecodeError, keyring.errors.KeyringError):
+        config = json.loads(data_str)
+
+        # Load tokens from their separate entries
+        access_token = keyring.get_password(KEYCHAIN_SERVICE, KEYCHAIN_ACCOUNT_ACCESS_TOKEN)
+        if access_token:
+            config["access_token"] = access_token
+
+        refresh_token = keyring.get_password(KEYCHAIN_SERVICE, KEYCHAIN_ACCOUNT_REFRESH_TOKEN)
+        if refresh_token:
+            config["refresh_token"] = refresh_token
+
+        return config
+    except json.JSONDecodeError as e:
+        print(f"Failed to parse credentials from keyring: {e}", file=sys.stderr)
+        return None
+    except Exception as e:
+        print(f"Failed to load credentials from keyring: {e}", file=sys.stderr)
         return None
 
 
 def save_config(config):
-    """Save config to keyring."""
+    """Save config to keyring.
+
+    Splits tokens into separate keyring entries so each stays under
+    Windows Credential Manager's 2560-byte limit.
+    """
     try:
-        keyring.set_password(KEYCHAIN_SERVICE, KEYCHAIN_ACCOUNT, json.dumps(config))
+        # Build metadata dict without tokens (avoids mutating caller's dict)
+        access_token = config.get("access_token")
+        refresh_token = config.get("refresh_token")
+        metadata = {k: v for k, v in config.items() if k not in ("access_token", "refresh_token")}
+
+        # Save metadata (org, auth_type, expires_at, pat) in main entry
+        keyring.set_password(KEYCHAIN_SERVICE, KEYCHAIN_ACCOUNT, json.dumps(metadata))
+
+        # Save tokens in their own entries
+        if access_token:
+            keyring.set_password(KEYCHAIN_SERVICE, KEYCHAIN_ACCOUNT_ACCESS_TOKEN, access_token)
+        if refresh_token:
+            keyring.set_password(KEYCHAIN_SERVICE, KEYCHAIN_ACCOUNT_REFRESH_TOKEN, refresh_token)
+
         return True
-    except keyring.errors.KeyringError:
+    except Exception as e:
+        print(f"Failed to store credentials in keyring: {e}", file=sys.stderr)
         return False
 
 
 def clear_config():
-    """Clear stored credentials from keyring."""
-    try:
-        keyring.delete_password(KEYCHAIN_SERVICE, KEYCHAIN_ACCOUNT)
-        return True
-    except (keyring.errors.PasswordDeleteError, keyring.errors.KeyringError):
-        return False
+    """Clear stored credentials from keyring, including split token entries."""
+    cleared = False
+    for account in (KEYCHAIN_ACCOUNT, KEYCHAIN_ACCOUNT_ACCESS_TOKEN, KEYCHAIN_ACCOUNT_REFRESH_TOKEN):
+        try:
+            keyring.delete_password(KEYCHAIN_SERVICE, account)
+            cleared = True
+        except Exception:
+            pass
+    return cleared
 
 
 # ─── OAuth Device Code Flow ─────────────────────────────────────────────────

@@ -1,4 +1,0 @@
-interface:
-  display_name: "Advanced Automation Architect"
-  short_description: "Blueprint enterprise-safe automations"
-  default_prompt: "Use $advanced-automation-architect to design a production-ready automation blueprint with approval gates before code."

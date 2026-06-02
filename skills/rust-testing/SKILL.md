@@ -1,43 +1,43 @@
 ---
 name: rust-testing
-description: Rust testing patterns including unit tests, integration tests, async testing, property-based testing, mocking, and coverage. Follows TDD methodology.
+description: 単体テスト、統合テスト、非同期テスト、プロパティベーステスト、モック、カバレッジを含むRustテストパターン。TDD方法論に従う。
 origin: ECC
 ---
 
-# Rust Testing Patterns
+# Rust テストパターン
 
-Comprehensive Rust testing patterns for writing reliable, maintainable tests following TDD methodology.
+TDD方法論に従って信頼性が高く保守しやすいテストを書くための包括的なRustテストパターン。
 
-## When to Use
+## 使用場面
 
-- Writing new Rust functions, methods, or traits
-- Adding test coverage to existing code
-- Creating benchmarks for performance-critical code
-- Implementing property-based tests for input validation
-- Following TDD workflow in Rust projects
+* 新しいRustの関数、メソッド、またはトレイトを書く場合
+* 既存のコードにテストカバレッジを追加する場合
+* パフォーマンスクリティカルなコードのベンチマークを作成する場合
+* 入力検証にプロパティベーステストを実装する場合
+* RustプロジェクトでTDDワークフローに従う場合
 
-## How It Works
+## 動作原理
 
-1. **Identify target code** — Find the function, trait, or module to test
-2. **Write a test** — Use `#[test]` in a `#[cfg(test)]` module, rstest for parameterized tests, or proptest for property-based tests
-3. **Mock dependencies** — Use mockall to isolate the unit under test
-4. **Run tests (RED)** — Verify the test fails with the expected error
-5. **Implement (GREEN)** — Write minimal code to pass
-6. **Refactor** — Improve while keeping tests green
-7. **Check coverage** — Use cargo-llvm-cov, target 80%+
+1. **ターゲットコードを特定する** — テストする関数、トレイト、またはモジュールを見つける
+2. **テストを書く** — `#[cfg(test)]` モジュール内で `#[test]` を使用、rstest でパラメータ化テスト、または proptest でプロパティベーステスト
+3. **依存関係をモックする** — mockall を使用してテスト対象のユニットを分離する
+4. **テストを実行する (RED)** — テストが期待通りに失敗することを確認する
+5. **実装する (GREEN)** — テストを通過するための最小限のコードを書く
+6. **リファクタリングする** — テストを通過したまま、コードを改善する
+7. **カバレッジを確認する** — cargo-llvm-cov を使用し、80%以上を目標にする
 
-## TDD Workflow for Rust
+## RustのTDDワークフロー
 
-### The RED-GREEN-REFACTOR Cycle
+### RED-GREEN-REFACTOR サイクル
 
 ```
-RED     → Write a failing test first
-GREEN   → Write minimal code to pass the test
-REFACTOR → Improve code while keeping tests green
-REPEAT  → Continue with next requirement
+RED     → まず失敗するテストを書く
+GREEN   → テストを通過する最小限のコードを書く
+REFACTOR → テストを通過したままコードをリファクタリングする
+REPEAT  → 次の要件に進む
 ```
 
-### Step-by-Step TDD in Rust
+### Rustでの段階的TDD
 
 ```rust
 // RED: Write test first, use todo!() as placeholder
@@ -58,9 +58,9 @@ pub fn add(a: i32, b: i32) -> i32 { a + b }
 // cargo test → PASS, then REFACTOR while keeping tests green
 ```
 
-## Unit Tests
+## 単体テスト
 
-### Module-Level Test Organization
+### モジュールレベルのテスト整理
 
 ```rust
 // src/user.rs
@@ -103,7 +103,7 @@ mod tests {
 }
 ```
 
-### Assertion Macros
+### アサーションマクロ
 
 ```rust
 assert_eq!(2 + 2, 4);                                    // Equality
@@ -113,9 +113,9 @@ assert_eq!(value, 42, "expected 42 but got {value}");    // Custom message
 assert!((0.1_f64 + 0.2 - 0.3).abs() < f64::EPSILON);   // Float comparison
 ```
 
-## Error and Panic Testing
+## エラーとパニックのテスト
 
-### Testing `Result` Returns
+### `Result` の戻り値のテスト
 
 ```rust
 #[test]
@@ -136,7 +136,7 @@ fn parse_succeeds_for_valid_input() -> Result<(), Box<dyn std::error::Error>> {
 }
 ```
 
-### Testing Panics
+### パニックのテスト
 
 ```rust
 #[test]
@@ -153,22 +153,22 @@ fn panics_with_specific_message() {
 }
 ```
 
-## Integration Tests
+## 統合テスト
 
-### File Structure
+### ファイル構造
 
 ```text
 my_crate/
 ├── src/
 │   └── lib.rs
-├── tests/              # Integration tests
-│   ├── api_test.rs     # Each file is a separate test binary
+├── tests/              # 統合テスト
+│   ├── api_test.rs     # 各ファイルが独立したテストバイナリ
 │   ├── db_test.rs
-│   └── common/         # Shared test utilities
+│   └── common/         # 共有テストユーティリティ
 │       └── mod.rs
 ```
 
-### Writing Integration Tests
+### 統合テストの書き方
 
 ```rust
 // tests/api_test.rs
@@ -185,9 +185,9 @@ fn full_request_lifecycle() {
 }
 ```
 
-## Async Tests
+## 非同期テスト
 
-### With Tokio
+### Tokioの使用
 
 ```rust
 #[tokio::test]
@@ -210,9 +210,9 @@ async fn handles_timeout() {
 }
 ```
 
-## Test Organization Patterns
+## テスト整理パターン
 
-### Parameterized Tests with `rstest`
+### `rstest` を使用したパラメータ化テスト
 
 ```rust
 use rstest::{rstest, fixture};
@@ -238,7 +238,7 @@ fn test_insert(test_db: TestDb) {
 }
 ```
 
-### Test Helpers
+### テストヘルパー関数
 
 ```rust
 #[cfg(test)]
@@ -258,9 +258,9 @@ mod tests {
 }
 ```
 
-## Property-Based Testing with `proptest`
+## `proptest` を使用したプロパティベーステスト
 
-### Basic Property Tests
+### 基本的なプロパティテスト
 
 ```rust
 use proptest::prelude::*;
@@ -290,7 +290,7 @@ proptest! {
 }
 ```
 
-### Custom Strategies
+### カスタムストラテジー
 
 ```rust
 use proptest::prelude::*;
@@ -308,9 +308,9 @@ proptest! {
 }
 ```
 
-## Mocking with `mockall`
+## `mockall` を使用したモック
 
-### Trait-Based Mocking
+### トレイトベースのモック
 
 ```rust
 use mockall::{automock, predicate::eq};
@@ -345,11 +345,11 @@ fn service_returns_none_when_not_found() {
 }
 ```
 
-## Doc Tests
+## ドキュメントテスト
 
-### Executable Documentation
+### 実行可能なドキュメント
 
-```rust
+````rust
 /// Adds two numbers together.
 ///
 /// # Examples
@@ -385,9 +385,9 @@ pub fn add(a: i32, b: i32) -> i32 {
 pub fn parse_config(input: &str) -> Result<Config, ParseError> {
     todo!()
 }
-```
+````
 
-## Benchmarking with Criterion
+## Criterionを使用したベンチマーク
 
 ```toml
 # Cargo.toml
@@ -418,9 +418,9 @@ criterion_group!(benches, bench_fibonacci);
 criterion_main!(benches);
 ```
 
-## Test Coverage
+## テストカバレッジ
 
-### Running Coverage
+### カバレッジの実行
 
 ```bash
 # Install: cargo install cargo-llvm-cov (or use taiki-e/install-action in CI)
@@ -430,16 +430,16 @@ cargo llvm-cov --lcov > lcov.info # LCOV format for CI
 cargo llvm-cov --fail-under-lines 80  # Fail if below threshold
 ```
 
-### Coverage Targets
+### カバレッジ目標
 
-| Code Type | Target |
+| コードの種類 | 目標 |
 |-----------|--------|
-| Critical business logic | 100% |
-| Public API | 90%+ |
-| General code | 80%+ |
-| Generated / FFI bindings | Exclude |
+| クリティカルなビジネスロジック | 100% |
+| パブリックAPI | 90%以上 |
+| 汎用コード | 80%以上 |
+| 生成済み / FFIバインディング | 除外 |
 
-## Testing Commands
+## テストコマンド
 
 ```bash
 cargo test                        # Run all tests
@@ -452,25 +452,27 @@ cargo test --no-fail-fast         # Don't stop on first failure
 cargo test -- --ignored           # Run ignored tests
 ```
 
-## Best Practices
+## ベストプラクティス
 
-**DO:**
-- Write tests FIRST (TDD)
-- Use `#[cfg(test)]` modules for unit tests
-- Test behavior, not implementation
-- Use descriptive test names that explain the scenario
-- Prefer `assert_eq!` over `assert!` for better error messages
-- Use `?` in tests that return `Result` for cleaner error output
-- Keep tests independent — no shared mutable state
+**すべきこと：**
 
-**DON'T:**
-- Use `#[should_panic]` when you can test `Result::is_err()` instead
-- Mock everything — prefer integration tests when feasible
-- Ignore flaky tests — fix or quarantine them
-- Use `sleep()` in tests — use channels, barriers, or `tokio::time::pause()`
-- Skip error path testing
+* まずテストを書く (TDD)
+* 単体テストには `#[cfg(test)]` モジュールを使用する
+* 実装ではなく動作をテストする
+* シナリオを説明する記述的なテスト名を使用する
+* より良いエラーメッセージのために `assert!` より `assert_eq!` を優先する
+* クリーンなエラー出力のために `Result` を返すテストでは `?` を使用する
+* テストを独立させる——共有の可変状態なし
 
-## CI Integration
+**すべきでないこと：**
+
+* `Result::is_err()` をテストできる場合に `#[should_panic]` を使用する
+* すべてをモックする——可能なら統合テストを優先する
+* フレーキーなテストを無視する——修正または分離する
+* テストで `sleep()` を使用する——チャンネル、バリア、または `tokio::time::pause()` を使用する
+* エラーパスのテストをスキップする
+
+## CI統合
 
 ```yaml
 # GitHub Actions
@@ -497,4 +499,4 @@ test:
       run: cargo llvm-cov --fail-under-lines 80
 ```
 
-**Remember**: Tests are documentation. They show how your code is meant to be used. Write them clearly and keep them up to date.
+**覚えておくこと**：テストはドキュメントである。コードをどのように使うべきかを示している。明確に書き、最新の状態を保つこと。

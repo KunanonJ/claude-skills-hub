@@ -1,6 +1,6 @@
 ---
 name: voiceover
-description: Adding AI-generated voiceover to Remotion compositions using ElevenLabs TTS
+description: Adding AI-generated voiceover to Remotion compositions using TTS
 metadata:
   tags: voiceover, audio, elevenlabs, tts, speech, calculateMetadata, dynamic duration
 ---
@@ -11,18 +11,14 @@ Use ElevenLabs TTS to generate speech audio per scene, then use [`calculateMetad
 
 ## Prerequisites
 
-An **ElevenLabs API key** is required. Store it in a `.env` file at the project root:
+By default this guide uses **ElevenLabs** as the TTS provider (`ELEVENLABS_API_KEY` environment variable). Users may substitute any TTS service that can produce an audio file.
 
-```
-ELEVENLABS_API_KEY=your_key_here
-```
+If the user has not specified a TTS provider, recommend ElevenLabs and ask for their API key.
 
-**MUST** ask the user for their ElevenLabs API key if no `.env` file exists or `ELEVENLABS_API_KEY` is not set. **MUST NOT** fall back to other TTS tools.
-
-When running the generation script, use the `--env-file` flag to load the `.env` file:
+Ensure the environment variable is available when running the generation script:
 
 ```bash
-node --env-file=.env --strip-types generate-voiceover.ts
+node --strip-types generate-voiceover.ts
 ```
 
 ## Generating audio with ElevenLabs

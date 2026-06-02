@@ -1,27 +1,26 @@
 # Badge Collector
 
 Systematically earns Kaggle badges across 5 phases using kagglehub, kaggle-cli,
-and Playwright. Phase 5 generates a daily streak script with manual cron/launchd
-setup instructions. Builds on the `kllm` module for credential management and
-Kaggle API interaction.
+Playwright, and cron/launchd automation. Builds on the `kllm` module for credential
+management and Kaggle API interaction.
 
 ## Quick Start
 
 ```bash
 # 1. Verify credentials
-python3 skills/kaggle/modules/kllm/scripts/check_credentials.py
+python3 modules/kllm/scripts/check_credentials.py
 
 # 2. Dry run — see what will happen
-python3 skills/kaggle/modules/badge-collector/scripts/orchestrator.py --dry-run
+python3 modules/badge-collector/scripts/orchestrator.py --dry-run
 
 # 3. Run Phase 1 (instant API badges, ~20 badges in 5-10 min)
-python3 skills/kaggle/modules/badge-collector/scripts/orchestrator.py --phase 1
+python3 modules/badge-collector/scripts/orchestrator.py --phase 1
 
 # 4. Check progress
-python3 skills/kaggle/modules/badge-collector/scripts/orchestrator.py --status
+python3 modules/badge-collector/scripts/orchestrator.py --status
 
 # 5. Run all phases
-python3 skills/kaggle/modules/badge-collector/scripts/orchestrator.py --phase all
+python3 modules/badge-collector/scripts/orchestrator.py --phase all
 ```
 
 ## Phases
@@ -31,12 +30,12 @@ python3 skills/kaggle/modules/badge-collector/scripts/orchestrator.py --phase al
 | 1 | Instant API | ~16 | 5-10 min |
 | 2 | Competition | ~7 | 10-15 min |
 | 3 | Pipeline | ~3 | 15-30 min |
-| 4 | Browser | ~8 | 5-10 min |
-| 5 | Streaks | ~4 | Setup only (generates script + manual scheduling) |
+| 4 | Browser | ~8 (3 automated via Playwright, 5 print manual instructions) | 5-10 min |
+| 5 | Streaks | ~4 (script generation only — actual badge earn requires multi-day scheduling) | Setup only (runs daily) |
 
 ## Prerequisites
 
-- Kaggle credentials configured (KAGGLE_USERNAME + KAGGLE_KEY)
+- Kaggle credentials configured (`KAGGLE_API_TOKEN` recommended; legacy `KAGGLE_USERNAME` + `KAGGLE_KEY` also supported)
 - `pip install kagglehub kaggle requests`
 - For Phase 4: `pip install playwright && playwright install chromium`
 - For Phase 2: Must accept competition rules at kaggle.com first
@@ -63,15 +62,15 @@ Use `--status` to view progress or `--resume` to continue from where you left of
 ## Scripts
 
 - `scripts/orchestrator.py` — Main entry point
-- `scripts/badge_registry.py` — All 59 badge definitions
+- `scripts/badge_registry.py` — All 55 badge definitions
 - `scripts/badge_tracker.py` — JSON progress persistence
 - `scripts/phase_1_instant_api.py` — Instant API badges
 - `scripts/phase_2_competition.py` — Competition badges
 - `scripts/phase_3_pipeline.py` — Pipeline badges (requires KKB)
 - `scripts/phase_4_browser.py` — Browser badges (Playwright)
-- `scripts/phase_5_streaks.py` — Streak script generation + manual setup instructions
+- `scripts/phase_5_streaks.py` — Streak automation setup
 - `scripts/utils.py` — Shared utilities
 
 ## References
 
-- [badge-catalog.md](references/badge-catalog.md) — Complete 59-badge catalog with earning criteria
+- [badge-catalog.md](references/badge-catalog.md) — Complete 55-badge catalog with earning criteria

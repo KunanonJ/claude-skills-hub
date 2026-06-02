@@ -1,16 +1,16 @@
-<!-- PM-Skills | https://github.com/product-on-purpose/pm-skills | Apache 2.0 -->
 ---
 name: deliver-launch-checklist
 description: Creates a comprehensive pre-launch checklist covering engineering, design, marketing, support, legal, and operations readiness. Use before releasing features, products, or major updates to ensure nothing is missed.
-phase: deliver
-version: "2.0.0"
-updated: 2026-01-26
 license: Apache-2.0
 metadata:
+  phase: deliver
+  version: "2.0.0"
+  updated: 2026-01-26
   category: coordination
   frameworks: [triple-diamond, lean-startup, design-thinking]
   author: product-on-purpose
 ---
+<!-- PM-Skills | https://github.com/product-on-purpose/pm-skills | Apache 2.0 -->
 # Launch Checklist
 
 A launch checklist is a comprehensive verification document that ensures all functions are ready before releasing a feature or product. It coordinates across engineering, QA, design, marketing, support, legal, and operations to prevent launch-day surprises. Good launch checklists surface blockers early and create shared accountability for launch readiness.

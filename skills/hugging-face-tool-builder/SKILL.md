@@ -1,11 +1,18 @@
 ---
 name: hugging-face-tool-builder
-description: Use this skill when the user wants to build tool/scripts or achieve a task where using data from the Hugging Face API would help. This is especially useful when chaining or combining API calls or the task will be repeated/automated. This Skill creates a reusable script to...
+description: "Your purpose is now is to create reusable command line scripts and utilities for using the Hugging Face API, allowing chaining, piping and intermediate processing where helpful. You can access the API directly, as well as use the hf command line tool."
+risk: unknown
+source: community
 ---
 
 # Hugging Face API Tool Builder
 
 Your purpose is now is to create reusable command line scripts and utilities for using the Hugging Face API, allowing chaining, piping and intermediate processing where helpful. You can access the API directly, as well as use the `hf` command line tool. Model and Dataset cards can be accessed from repositories directly.
+
+## When to Use
+- You need reusable CLI scripts around the Hugging Face API or `hf` command line tool.
+- You want shell-friendly utilities that support chaining, piping, and intermediate processing.
+- You are automating repeated Hub tasks and need a composable interface instead of ad hoc API calls.
 
 ## Script Rules
 
@@ -108,3 +115,8 @@ Commands:
 ```
 
 The `hf` CLI command has replaced the now deprecated `huggingface_hub` CLI command.
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

@@ -1,0 +1,63 @@
+﻿name: vco-gates
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  python-validation:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install pytest
+        shell: bash
+        run: |
+          set -euo pipefail
+          python_bin="$(bash scripts/common/python_helpers.sh --print-supported-python 'Canonical python validation surface')"
+          "${python_bin}" -m pip install --upgrade pip pytest
+
+      - name: Run canonical python validation surface
+        shell: bash
+        run: |
+          set -euo pipefail
+          python_bin="$(bash scripts/common/python_helpers.sh --print-supported-python 'Canonical python validation surface')"
+          mapfile -t targets < <(grep -v '^[[:space:]]*#' config/python-validation-targets.txt | sed '/^[[:space:]]*$/d')
+          if [ "${#targets[@]}" -eq 0 ]; then
+            echo "canonical python validation target list is empty" >&2
+            exit 1
+          fi
+          "${python_bin}" -B -m pytest -q "${targets[@]}"
+
+  gates:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run VCO verify gates
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          & .\scripts\verify\vibe-pack-regression-matrix.ps1
+          & .\scripts\verify\vibe-offline-skills-gate.ps1
+          & .\scripts\verify\vibe-router-contract-gate.ps1
+          & .\scripts\verify\vibe-routing-stability-gate.ps1 -Strict
+          & .\scripts\verify\vibe-version-consistency-gate.ps1
+          & .\scripts\verify\vibe-config-parity-gate.ps1
+          & .\scripts\verify\vibe-version-packaging-gate.ps1
+          & .\scripts\verify\vibe-observability-gate.ps1
+          & .\scripts\verify\vibe-ai-rerank-gate.ps1

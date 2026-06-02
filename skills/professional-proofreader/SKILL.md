@@ -18,7 +18,6 @@ Returns a corrected version plus a structured modification log, or generates an 
 ---
 
 ## When to Use
-
 - Use when user asks to "proofread", "review and correct", "fix grammar", "polish this text", "improve readability while keeping my voice".
 - Use when user asks to proofread a document file (like .docx, .pdf, .txt) and save the updated version as new file with 'UPDATED_' prefix.
 
@@ -104,3 +103,8 @@ If file rewrite:
 Give friendly message to user in the end.
 
 ---
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

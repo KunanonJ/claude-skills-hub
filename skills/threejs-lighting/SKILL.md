@@ -1,9 +1,16 @@
 ---
 name: threejs-lighting
 description: Three.js lighting - light types, shadows, environment lighting. Use when adding lights, configuring shadows, setting up IBL, or optimizing lighting performance.
+risk: unknown
+source: community
 ---
 
 # Three.js Lighting
+
+## When to Use
+- You need to add or tune lighting in a Three.js scene.
+- The task involves light types, shadows, environment lighting, or lighting performance tradeoffs.
+- You want to improve scene readability, realism, or mood through Three.js lighting setup.
 
 ## Quick Start
 
@@ -184,7 +191,7 @@ Rectangular area light. Great for soft, realistic lighting.
 import { RectAreaLightHelper } from "three/examples/jsm/helpers/RectAreaLightHelper.js";
 import { RectAreaLightUniformsLib } from "three/examples/jsm/lights/RectAreaLightUniformsLib.js";
 
-// Must initialize uniforms first
+// Must initialize uniforms first (WebGL renderer only)
 RectAreaLightUniformsLib.init();
 
 // RectAreaLight(color, intensity, width, height)
@@ -197,7 +204,8 @@ scene.add(rectLight);
 const helper = new RectAreaLightHelper(rectLight);
 rectLight.add(helper);
 
-// Note: Only works with MeshStandardMaterial and MeshPhysicalMaterial
+// Works with MeshStandardMaterial, MeshPhysicalMaterial
+// r183: Clearcoat on MeshPhysicalMaterial is now properly lit by RectAreaLight
 // Does not cast shadows natively
 ```
 
@@ -479,3 +487,8 @@ decorMesh.castShadow = false; // Small objects often don't need to cast
 - `threejs-materials` - Material light response
 - `threejs-textures` - Lightmaps and environment maps
 - `threejs-postprocessing` - Bloom and other light effects
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

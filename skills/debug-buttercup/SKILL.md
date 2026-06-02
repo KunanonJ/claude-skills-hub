@@ -1,16 +1,13 @@
 ---
 name: debug-buttercup
-description: >
-  Debugs the Buttercup CRS (Cyber Reasoning System) running on Kubernetes.
-  Use when diagnosing pod crashes, restart loops, Redis failures, resource pressure,
-  disk saturation, DinD issues, or any service misbehavior in the crs namespace.
-  Covers triage, log analysis,...
+description: "All pods run in namespace crs. Use when pods in the crs namespace are in CrashLoopBackOff, OOMKilled, or restarting, multiple services restart simultaneously (cascade failure), or redis is unresponsive or showing AOF warnings."
+risk: unknown
+source: community
 ---
 
 # Debug Buttercup
 
 ## When to Use
-
 - Pods in the `crs` namespace are in CrashLoopBackOff, OOMKilled, or restarting
 - Multiple services restart simultaneously (cascade failure)
 - Redis is unresponsive or showing AOF warnings
@@ -275,3 +272,8 @@ bash {baseDir}/scripts/diagnose.sh --full
 ```
 
 This collects pod status, events, resource usage, Redis health, and queue depths in one pass.
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

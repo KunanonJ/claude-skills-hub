@@ -1,160 +1,159 @@
 ---
 name: scholar-evaluation
-description: Structured scholarly-work evaluation for papers, proposals, literature reviews, methods sections, evidence quality, citation support, and research-writing feedback.
+description: 論文、提案書、文献レビュー、方法論セクション、証拠の質、引用サポート、研究論文フィードバックのための構造化された学術的作業評価。
 origin: community
 ---
 
 # Scholar Evaluation
 
-Use this skill to evaluate academic or scientific work with a repeatable rubric.
+このスキルを使用して、再現可能なルーブリックで学術的または科学的な作業を評価します。
 
-## When to Use
+## 使用するタイミング
 
-- Reviewing a research paper, proposal, thesis chapter, or literature review.
-- Checking whether claims are supported by cited evidence.
-- Evaluating methodology, study design, analysis, or limitations.
-- Comparing two or more papers for quality or relevance.
-- Producing structured feedback for revision.
+- 研究論文、提案書、論文章、または文献レビューのレビュー。
+- 主張が引用された証拠によって支持されているかの確認。
+- 方法論、研究デザイン、分析、または限界の評価。
+- 品質または関連性について2つ以上の論文を比較する。
+- 改訂のための構造化されたフィードバックの作成。
 
-## Evaluation Scope
+## 評価の範囲
 
-Start by identifying the artifact:
+まず成果物を特定します:
 
-- empirical research paper
-- theoretical paper
-- technical report
-- systematic or narrative literature review
-- research proposal
-- thesis or dissertation chapter
-- conference abstract or short paper
+- 実証的研究論文
+- 理論論文
+- 技術レポート
+- システマティックまたはナラティブ文献レビュー
+- 研究提案書
+- 論文または学位論文の章
+- 学会アブストラクトまたは短い論文
 
-Then choose scope:
+次に範囲を選択します:
 
-- **comprehensive**: all rubric dimensions
-- **targeted**: one or two dimensions, such as method or citations
-- **comparative**: rank multiple works against the same rubric
+- **包括的**: すべてのルーブリック次元
+- **的を絞った**: 1つまたは2つの次元（方法や引用など）
+- **比較的**: 同じルーブリックに対して複数の作品をランク付け
 
-## Rubric
+## ルーブリック
 
-Score each applicable dimension from 1 to 5:
+該当する各次元を1から5でスコアリング:
 
-- 5: excellent; clear, rigorous, and publication-ready
-- 4: good; minor improvements needed
-- 3: adequate; meaningful gaps but usable
-- 2: weak; substantial revision needed
-- 1: poor; major validity or clarity problems
+- 5: 優れている；明確、厳密で、出版の準備ができている
+- 4: 良好；軽微な改善が必要
+- 3: 適切；意味のあるギャップがあるが使用可能
+- 2: 弱い；実質的な改訂が必要
+- 1: 不十分；主要な有効性または明確性の問題
 
-Use `N/A` for dimensions that do not apply.
+適用されない次元には `N/A` を使用します。
 
-### 1. Problem and Research Question
+### 1. 問題と研究質問
 
-- Is the problem clear and specific?
-- Is the contribution meaningful?
-- Are scope and assumptions explicit?
-- Does the question match the claimed contribution?
+- 問題は明確かつ具体的か？
+- 貢献は意義があるか？
+- 範囲と前提は明示的か？
+- 質問は主張された貢献と一致しているか？
 
-### 2. Literature and Context
+### 2. 文献とコンテキスト
 
-- Is relevant prior work covered?
-- Does the work synthesize rather than merely list sources?
-- Are gaps accurately identified?
-- Are recent and foundational sources balanced?
+- 関連する先行研究はカバーされているか？
+- 作業はソースを単に列挙するのではなく統合しているか？
+- ギャップは正確に特定されているか？
+- 最近のソースと基礎的なソースはバランスが取れているか？
 
-### 3. Methodology
+### 3. 方法論
 
-- Does the method answer the research question?
-- Are design choices justified?
-- Are variables, datasets, participants, or materials described clearly?
-- Could another researcher reproduce the work?
-- Are ethical and practical constraints acknowledged?
+- 方法は研究質問に答えるか？
+- デザインの選択は正当化されているか？
+- 変数、データセット、参加者、または材料は明確に説明されているか？
+- 別の研究者が研究を再現できるか？
+- 倫理的および実際的な制約は認識されているか？
 
-### 4. Data and Evidence
+### 4. データと証拠
 
-- Are data sources credible and appropriate?
-- Is sample size or corpus coverage adequate?
-- Are inclusion, exclusion, and preprocessing decisions documented?
-- Are missing data and bias risks discussed?
+- データソースは信頼性があり適切か？
+- サンプルサイズまたはコーパスのカバレッジは十分か？
+- 包含、除外、前処理の決定は文書化されているか？
+- 欠損データとバイアスのリスクは議論されているか？
 
-### 5. Analysis
+### 5. 分析
 
-- Are statistical, qualitative, or computational methods appropriate?
-- Are baselines and controls fair?
-- Are uncertainty, sensitivity, or robustness checks included when needed?
-- Are alternative explanations considered?
+- 統計的、定性的、または計算的方法は適切か？
+- ベースラインとコントロールは公正か？
+- 必要に応じて不確実性、感度、またはロバスト性のチェックが含まれているか？
+- 代替の説明は考慮されているか？
 
-### 6. Results and Interpretation
+### 6. 結果と解釈
 
-- Are results clearly presented?
-- Do claims stay within the evidence?
-- Are figures, tables, and metrics understandable?
-- Are negative or null results handled honestly?
+- 結果は明確に提示されているか？
+- 主張は証拠の範囲内に留まっているか？
+- 図、表、メトリクスは理解しやすいか？
+- 否定的または帰無的な結果は正直に扱われているか？
 
-### 7. Limitations and Threats to Validity
+### 7. 限界と妥当性への脅威
 
-- Are limitations specific rather than generic?
-- Are internal, external, construct, and conclusion-validity risks addressed?
-- Does the paper distinguish speculation from demonstrated results?
+- 限界は一般的でなく具体的か？
+- 内部、外部、構成概念、結論の妥当性リスクは対処されているか？
+- 論文は投機的な結果と実証された結果を区別しているか？
 
-### 8. Writing and Structure
+### 8. 文章と構造
 
-- Is the argument easy to follow?
-- Are sections organized around the research question?
-- Are definitions and notation clear?
-- Is the tone precise and scholarly?
+- 論証は理解しやすいか？
+- セクションは研究質問を中心に構成されているか？
+- 定義と表記は明確か？
+- トーンは正確で学術的か？
 
-### 9. Citations
+### 9. 引用
 
-- Do cited papers support the claims attached to them?
-- Are primary sources used where possible?
-- Are reviews labeled as reviews?
-- Are preprints labeled as preprints?
-- Are citation metadata and links correct?
+- 引用された論文はそれに付けられた主張を支持しているか？
+- 可能な限り一次ソースが使用されているか？
+- レビューはレビューとしてラベル付けされているか？
+- プレプリントはプレプリントとしてラベル付けされているか？
+- 引用メタデータとリンクは正しいか？
 
-## Review Process
+## レビュープロセス
 
-1. Read the abstract, introduction, figures, and conclusion for claimed
-   contribution.
-2. Read methods and results for evidence quality.
-3. Check the strongest claims against cited sources.
-4. Score each applicable dimension.
-5. Separate critical blockers from revision suggestions.
-6. End with concrete next edits.
+1. 主張された貢献についてアブストラクト、序論、図、結論を読む。
+2. 証拠の質について方法と結果を読む。
+3. 最も強い主張を引用されたソースと照合する。
+4. 該当する各次元をスコアリングする。
+5. 重大なブロッカーと改訂提案を分離する。
+6. 具体的な次の編集で終了する。
 
-## Output Template
+## 出力テンプレート
 
 ```markdown
-# Scholar Evaluation: <Artifact>
+# Scholar Evaluation: <成果物>
 
-## Overall Assessment
+## 総合評価
 
-- Overall score: <1-5 or N/A>
-- Confidence: <high | medium | low>
-- Summary: <3-5 sentences>
+- 総合スコア: <1-5 または N/A>
+- 信頼度: <高 | 中 | 低>
+- サマリー: <3-5 文>
 
-## Dimension Scores
+## 次元スコア
 
-| Dimension | Score | Evidence | Revision priority |
+| 次元 | スコア | 証拠 | 改訂優先度 |
 | --- | ---: | --- | --- |
-| Problem and question |  |  |  |
-| Literature and context |  |  |  |
-| Methodology |  |  |  |
-| Data and evidence |  |  |  |
-| Analysis |  |  |  |
-| Results and interpretation |  |  |  |
-| Limitations |  |  |  |
-| Writing and structure |  |  |  |
-| Citations |  |  |  |
+| 問題と質問 |  |  |  |
+| 文献とコンテキスト |  |  |  |
+| 方法論 |  |  |  |
+| データと証拠 |  |  |  |
+| 分析 |  |  |  |
+| 結果と解釈 |  |  |  |
+| 限界 |  |  |  |
+| 文章と構造 |  |  |  |
+| 引用 |  |  |  |
 
-## Critical Issues
+## 重大な問題
 
-## Recommended Revisions
+## 推奨される改訂
 
-## Evidence Checks Needed
+## 必要な証拠確認
 ```
 
-## Pitfalls
+## 落とし穴
 
-- Do not use the score as a substitute for concrete feedback.
-- Do not penalize a paper for omitting a dimension outside its scope.
-- Do not treat citation count, venue, or author reputation as proof of quality.
-- Do not accept unsupported claims just because they appear in the abstract.
+- スコアを具体的なフィードバックの代替として使用しない。
+- 範囲外の次元の省略で論文にペナルティを与えない。
+- 引用数、出版場所、または著者の評判を品質の証拠として扱わない。
+- アブストラクトに現れるからといって根拠のない主張を受け入れない。

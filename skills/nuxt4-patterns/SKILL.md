@@ -1,39 +1,39 @@
 ---
 name: nuxt4-patterns
-description: Nuxt 4 app patterns for hydration safety, performance, route rules, lazy loading, and SSR-safe data fetching with useFetch and useAsyncData.
+description: ハイドレーション安全性、パフォーマンス、ルートルール、遅延ロード、useFetchとuseAsyncDataを使ったSSR安全なデータフェッチングのためのNuxt 4アプリパターン。
 origin: ECC
 ---
 
-# Nuxt 4 Patterns
+# Nuxt 4パターン
 
-Use when building or debugging Nuxt 4 apps with SSR, hybrid rendering, route rules, or page-level data fetching.
+SSR、ハイブリッドレンダリング、ルートルール、またはページレベルのデータフェッチングを使用してNuxt 4アプリを構築またはデバッグするときに使用する。
 
-## When to Activate
+## アクティベートするタイミング
 
-- Hydration mismatches between server HTML and client state
-- Route-level rendering decisions such as prerender, SWR, ISR, or client-only sections
-- Performance work around lazy loading, lazy hydration, or payload size
-- Page or component data fetching with `useFetch`, `useAsyncData`, or `$fetch`
-- Nuxt routing issues tied to route params, middleware, or SSR/client differences
+- サーバーHTMLとクライアントの状態の間のハイドレーション不一致
+- プリレンダリング、SWR、ISR、またはクライアントのみのセクションなどのルートレベルのレンダリング決定
+- 遅延ロード、遅延ハイドレーション、またはペイロードサイズに関するパフォーマンス作業
+- `useFetch`、`useAsyncData`、または`$fetch`を使ったページやコンポーネントのデータフェッチング
+- ルートパラメータ、ミドルウェア、またはSSR/クライアントの差異に結びついたNuxtルーティングの問題
 
-## Hydration Safety
+## ハイドレーション安全性
 
-- Keep the first render deterministic. Do not put `Date.now()`, `Math.random()`, browser-only APIs, or storage reads directly into SSR-rendered template state.
-- Move browser-only logic behind `onMounted()`, `import.meta.client`, `ClientOnly`, or a `.client.vue` component when the server cannot produce the same markup.
-- Use Nuxt's `useRoute()` composable, not the one from `vue-router`.
-- Do not use `route.fullPath` to drive SSR-rendered markup. URL fragments are client-only, which can create hydration mismatches.
-- Treat `ssr: false` as an escape hatch for truly browser-only areas, not a default fix for mismatches.
+- 最初のレンダリングを決定論的に保つ。SSRレンダリングされたテンプレートの状態に`Date.now()`、`Math.random()`、ブラウザのみのAPI、またはストレージ読み取りを直接入れないこと。
+- サーバーが同じマークアップを生成できない場合、ブラウザのみのロジックを`onMounted()`、`import.meta.client`、`ClientOnly`、または`.client.vue`コンポーネントの後ろに移動する。
+- `vue-router`のものではなく、Nuxtの`useRoute()`コンポーザブルを使用する。
+- SSRレンダリングされたマークアップを駆動するために`route.fullPath`を使用しない。URLフラグメントはクライアントのみであり、ハイドレーション不一致を引き起こす可能性がある。
+- `ssr: false`は不一致のデフォルト修正としてではなく、真にブラウザのみの領域のエスケープハッチとして扱う。
 
-## Data Fetching
+## データフェッチング
 
-- Prefer `await useFetch()` for SSR-safe API reads in pages and components. It forwards server-fetched data into the Nuxt payload and avoids a second fetch on hydration.
-- Use `useAsyncData()` when the fetcher is not a simple `$fetch()` call, when you need a custom key, or when you are composing multiple async sources.
-- Give `useAsyncData()` a stable key for cache reuse and predictable refresh behavior.
-- Keep `useAsyncData()` handlers side-effect free. They can run during SSR and hydration.
-- Use `$fetch()` for user-triggered writes or client-only actions, not top-level page data that should be hydrated from SSR.
-- Use `lazy: true`, `useLazyFetch()`, or `useLazyAsyncData()` for non-critical data that should not block navigation. Handle `status === 'pending'` in the UI.
-- Use `server: false` only for data that is not needed for SEO or the first paint.
-- Trim payload size with `pick` and prefer shallower payloads when deep reactivity is unnecessary.
+- ページとコンポーネントでSSR安全なAPI読み取りには`await useFetch()`を優先する。サーバーでフェッチしたデータをNuxtペイロードに転送し、ハイドレーション時の2回目のフェッチを避ける。
+- フェッチャーが単純な`$fetch()`呼び出しでない場合、カスタムキーが必要な場合、または複数の非同期ソースを構成する場合は`useAsyncData()`を使用する。
+- `useAsyncData()`にキャッシュの再利用と予測可能なリフレッシュ動作のための安定したキーを提供する。
+- `useAsyncData()`ハンドラを副作用なしに保つ。SSRとハイドレーション中に実行される可能性がある。
+- `$fetch()`はユーザーによるトリガーの書き込みまたはクライアントのみのアクションに使用し、SSRからハイドレートされるべきトップレベルのページデータには使用しない。
+- ナビゲーションをブロックすべきでない非重要データには`lazy: true`、`useLazyFetch()`、または`useLazyAsyncData()`を使用する。UIで`status === 'pending'`を処理する。
+- `server: false`はSEOや最初のペイントに不要なデータのみに使用する。
+- `pick`でペイロードサイズを削減し、深いリアクティビティが不要な場合はより浅いペイロードを優先する。
 
 ```ts
 const route = useRoute()
@@ -49,9 +49,9 @@ const { data: comments } = await useFetch(`/api/articles/${route.params.slug}/co
 })
 ```
 
-## Route Rules
+## ルートルール
 
-Prefer `routeRules` in `nuxt.config.ts` for rendering and caching strategy:
+レンダリングとキャッシング戦略には`nuxt.config.ts`の`routeRules`を優先する:
 
 ```ts
 export default defineNuxtConfig({
@@ -65,20 +65,20 @@ export default defineNuxtConfig({
 })
 ```
 
-- `prerender`: static HTML at build time
-- `swr`: serve cached content and revalidate in the background
-- `isr`: incremental static regeneration on supported platforms
-- `ssr: false`: client-rendered route
-- `cache` or `redirect`: Nitro-level response behavior
+- `prerender`: ビルド時の静的HTML
+- `swr`: キャッシュされたコンテンツを提供しながらバックグラウンドで再検証
+- `isr`: サポートされているプラットフォームでの増分静的再生成
+- `ssr: false`: クライアントレンダリングルート
+- `cache`または`redirect`: Nitroレベルのレスポンス動作
 
-Pick route rules per route group, not globally. Marketing pages, catalogs, dashboards, and APIs usually need different strategies.
+グローバルではなくルートグループごとにルートルールを選択する。マーケティングページ、カタログ、ダッシュボード、APIは通常異なる戦略が必要。
 
-## Lazy Loading and Performance
+## 遅延ロードとパフォーマンス
 
-- Nuxt already code-splits pages by route. Keep route boundaries meaningful before micro-optimizing component splits.
-- Use the `Lazy` prefix to dynamically import non-critical components.
-- Conditionally render lazy components with `v-if` so the chunk is not loaded until the UI actually needs it.
-- Use lazy hydration for below-the-fold or non-critical interactive UI.
+- Nuxtはすでにルートでページをコード分割している。コンポーネント分割を微小最適化する前に、ルートの境界を意味のあるものに保つ。
+- 非重要コンポーネントを動的にインポートするには`Lazy`プレフィックスを使用する。
+- UIが実際に必要になるまでチャンクが読み込まれないよう、`v-if`で遅延コンポーネントを条件付きでレンダリングする。
+- フォールドより下または非重要なインタラクティブUIには遅延ハイドレーションを使用する。
 
 ```vue
 <template>
@@ -87,14 +87,14 @@ Pick route rules per route group, not globally. Marketing pages, catalogs, dashb
 </template>
 ```
 
-- For custom strategies, use `defineLazyHydrationComponent()` with a visibility or idle strategy.
-- Nuxt lazy hydration works on single-file components. Passing new props to a lazily hydrated component will trigger hydration immediately.
-- Use `NuxtLink` for internal navigation so Nuxt can prefetch route components and generated payloads.
+- カスタム戦略には、可視性またはアイドル戦略で`defineLazyHydrationComponent()`を使用する。
+- Nuxtの遅延ハイドレーションは単一ファイルコンポーネントで機能する。遅延ハイドレーションコンポーネントに新しいpropsを渡すと、すぐにハイドレーションがトリガーされる。
+- Nuxtがルートコンポーネントと生成されたペイロードをプリフェッチできるよう、内部ナビゲーションには`NuxtLink`を使用する。
 
-## Review Checklist
+## レビューチェックリスト
 
-- First SSR render and hydrated client render produce the same markup
-- Page data uses `useFetch` or `useAsyncData`, not top-level `$fetch`
-- Non-critical data is lazy and has explicit loading UI
-- Route rules match the page's SEO and freshness requirements
-- Heavy interactive islands are lazy-loaded or lazily hydrated
+- 最初のSSRレンダリングとハイドレートされたクライアントレンダリングが同じマークアップを生成する
+- ページデータがトップレベルの`$fetch`ではなく`useFetch`または`useAsyncData`を使用している
+- 非重要なデータが遅延で明示的なローディングUIがある
+- ルートルールがページのSEOと新鮮度要件に一致している
+- 重いインタラクティブアイランドが遅延ロードまたは遅延ハイドレートされている

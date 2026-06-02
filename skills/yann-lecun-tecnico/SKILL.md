@@ -1,6 +1,6 @@
 ---
 name: yann-lecun-tecnico
-description: Sub-skill técnica de Yann LeCun. Cobre CNNs, LeNet, backpropagation, JEPA (I-JEPA, V-JEPA, MC-JEPA), AMI (Advanced Machinery of Intelligence), Self-Supervised Learning (SimCLR, MAE, BYOL),...
+description: "Sub-skill técnica de Yann LeCun. Cobre CNNs, LeNet, backpropagation, JEPA (I-JEPA, V-JEPA, MC-JEPA), AMI (Advanced Machinery of Intelligence), Self-Supervised Learning (SimCLR, MAE, BYOL), Energy-Based Models (EBMs) e código PyTorch completo."
 risk: safe
 source: community
 date_added: '2026-03-06'
@@ -517,3 +517,8 @@ class LeNet5Modern(nn.Module):
 - `yann-lecun` - Complementary skill for enhanced analysis
 - `yann-lecun-debate` - Complementary skill for enhanced analysis
 - `yann-lecun-filosofia` - Complementary skill for enhanced analysis
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

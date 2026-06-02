@@ -1,213 +1,240 @@
 ---
-name: "landing-page-generator"
-description: "Generates high-converting Next.js/React landing pages with Tailwind CSS. Uses PAS, AIDA, and BAB frameworks for optimized copy/components (Heroes, Features, Pricing). Focuses on Core Web Vitals/SEO."
-category: "front-end"
-risk: "safe"
-source: "community"
-date_added: "2026-03-18"
-author: "alirezarezvani"
-tags: ["nextjs", "react", "tailwind", "landing-page", "marketing", "seo", "cro"]
-tools: ["claude", "cursor", "gemini"]
+name: landing-page-generator
+description: "Generate complete, deploy-ready landing pages from any repository. Use when creating a homepage for an open-source project, building a project website, converting a README into a marketing page, or standardizing landing pages across multiple repos."
+allowed-tools: Read Bash Write
+effort: medium
 ---
 
 # Landing Page Generator
 
-Generate high-converting landing pages from a product description. Output complete Next.js/React components with multiple section variants, proven copy frameworks, SEO optimization, and performance-first patterns. Not lorem ipsum — actual copy that converts.
+Generate a complete, deploy-ready landing page from any repository by analyzing its documentation and structure.
 
-**Target:** LCP < 1s · CLS < 0.1 · FID < 100ms  
-**Output:** TSX components + Tailwind styles + SEO meta + copy variants
+## When to Use This Skill
 
-## When to Use
-- You need to generate a marketing landing page in Next.js or React.
-- The task involves conversion-focused page structure, section variants, Tailwind styling, or SEO-aware copy.
-- You want complete landing-page output from a product description rather than isolated UI fragments.
+- Creating a landing page for a GitHub repository
+- Generating static sites from existing documentation
+- Standardizing landing pages across multiple projects
+- Converting README content to marketing/showcase pages
 
-## Core Capabilities
+## What This Skill Does
 
-- 5 hero section variants (centered, split, gradient, video-bg, minimal)
-- Feature sections (grid, alternating, cards with icons)
-- Pricing tables (2–4 tiers with feature lists and toggle)
-- FAQ accordion with schema markup
-- Testimonials (grid, carousel, single-quote)
-- CTA sections (banner, full-page, inline)
-- Footer (simple, mega, minimal)
-- 4 design styles with Tailwind class sets
+1. **Analyze Repository**: Read README.md, CHANGELOG.md, package.json/VERSION, docs/, assets/
+2. **Extract Content**: Identify title, tagline, features, installation, screenshots
+3. **Map to Sections**: Hero, Features, Install, FAQ, Footer (+ optional: Risk Banner, Pricing)
+4. **Generate Landing**: Create complete static site (HTML + CSS + JS)
+5. **Deploy-Ready Output**: Include GitHub Actions workflow for GitHub Pages
 
----
+## How to Use
 
-## Generation Workflow
-
-Follow these steps in order for every landing page request:
-
-1. **Gather inputs** — collect product name, tagline, audience, pain point, key benefit, pricing tiers, design style, and copy framework using the trigger format below. Ask only for missing fields.
-2. **Analyze brand voice** (recommended) — if the user has existing brand content (website copy, blog posts, marketing materials), run it through `marketing-skill/content-production/scripts/brand_voice_analyzer.py` to get a voice profile (formality, tone, perspective). Use the profile to inform design style and copy framework selection:
-   - formal + professional → **enterprise** style, **AIDA** framework
-   - casual + friendly → **bold-startup** style, **BAB** framework
-   - professional + authoritative → **dark-saas** style, **PAS** framework
-   - casual + conversational → **clean-minimal** style, **BAB** framework
-3. **Select design style** — map the user's choice (or infer from brand voice analysis) to one of the four Tailwind class sets in the Design Style Reference.
-4. **Apply copy framework** — write all headline and body copy using the chosen framework (PAS / AIDA / BAB) before generating components. Match the voice profile's formality and tone throughout.
-5. **Generate sections in order** — Hero → Features → Pricing → FAQ → Testimonials → CTA → Footer. Skip sections not relevant to the product.
-6. **Validate against SEO checklist** — run through every item in the SEO Checklist before outputting final code. Fix any gaps inline.
-7. **Output final components** — deliver complete, copy-paste-ready TSX files with all Tailwind classes, SEO meta, and structured data included.
-
----
-
-## Triggering This Skill
+### Basic Usage
 
 ```
-Product: [name]
-Tagline: [one sentence value prop]
-Target audience: [who they are]
-Key pain point: [what problem you solve]
-Key benefit: [primary outcome]
-Pricing tiers: [free/pro/enterprise or describe]
-Design style: dark-saas | clean-minimal | bold-startup | enterprise
-Copy framework: PAS | AIDA | BAB
+/landing-page-generator from ~/path/to/repo
 ```
 
----
+### With Options
 
-## Design Style Reference
+```
+/landing-page-generator from ~/path/to/repo --risk-banner --pricing-table
+```
 
-| Style | Background | Accent | Cards | CTA Button |
-|---|---|---|---|---|
-| **Dark SaaS** | `bg-gray-950 text-white` | `violet-500/400` | `bg-gray-900 border border-gray-800` | `bg-violet-600 hover:bg-violet-500` |
-| **Clean Minimal** | `bg-white text-gray-900` | `blue-600` | `bg-gray-50 border border-gray-200 rounded-2xl` | `bg-blue-600 hover:bg-blue-700` |
-| **Bold Startup** | `bg-white text-gray-900` | `orange-500` | `shadow-xl rounded-3xl` | `bg-orange-500 hover:bg-orange-600 text-white` |
-| **Enterprise** | `bg-slate-50 text-slate-900` | `slate-700` | `bg-white border border-slate-200 shadow-sm` | `bg-slate-900 hover:bg-slate-800 text-white` |
+### Available Options
 
-> **Bold Startup** headings: add `font-black tracking-tight` to all `<h1>`/`<h2>` elements.
+| Option | Description | Default |
+|--------|-------------|---------|
+| `--risk-banner` | Add prominent warning/disclaimer banner above fold | false |
+| `--pricing-table` | Include pricing comparison section | false |
+| `--screenshots <path>` | Path to screenshots folder | ./assets/ |
+| `--theme [dark\|light]` | Color theme variant | dark |
+| `--search` | Enable Cmd+K search | true |
+| `--output <path>` | Output directory | ./[repo-name]-landing/ |
 
----
+## Workflow
 
-## Copy Frameworks
+### Step 1: Repository Analysis
 
-**PAS (Problem → Agitate → Solution)**
-- H1: Painful state they're in
-- Sub: What happens if they don't fix it
-- CTA: What you offer
-- *Example — H1:* "Your team wastes 3 hours a day on manual reporting" / *Sub:* "Every hour spent on spreadsheets is an hour not closing deals. Your competitors are already automated." / *CTA:* "Automate your reports in 10 minutes →"
+Read and analyze these files from the source repo:
 
-**AIDA (Attention → Interest → Desire → Action)**
-- H1: Bold attention-grabbing statement → Sub: Interesting fact or benefit → Features: Desire-building proof points → CTA: Clear action
+```
+README.md        → Primary content source (title, tagline, features, install)
+CHANGELOG.md     → Version info, recent changes
+package.json     → Version number, dependencies, metadata
+VERSION          → Alternative version source
+docs/            → Additional documentation pages
+assets/          → Screenshots, images
+LICENSE          → License type for badge
+```
 
-**BAB (Before → After → Bridge)**
-- H1: "[Before state] → [After state]" → Sub: "Here's how [product] bridges the gap" → Features: How it works (the bridge)
+### Step 2: Content Extraction Map
 
----
+| Source | Target Section | Extraction Method |
+|--------|---------------|-------------------|
+| README title/badges | Hero | First H1 + shield.io badge lines |
+| README TL;DR | Hero tagline | First paragraph or blockquote after title |
+| README features | Features grid | H2/H3 sections with bullet lists |
+| README install | Quick Start | Code blocks with shell commands |
+| README usage | Examples | Code blocks with examples |
+| README FAQ | FAQ | Details/summary or H3+P patterns |
+| CHANGELOG | What's New | Latest 1-3 releases |
+| assets/*.png | Screenshots | Gallery section |
 
-## Representative Component: Hero (Centered Gradient — Dark SaaS)
+### Step 3: Section Generation
 
-Use this as the structural template for all hero variants. Swap layout classes, gradient direction, and image placement for split, video-bg, and minimal variants.
+Generate these sections in order:
 
-```tsx
-export function HeroCentered() {
-  return (
-    <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-gray-950 px-4 text-center">
-      <div className="absolute inset-0 bg-gradient-to-b from-violet-900/20 to-transparent" />
-      <div className="pointer-events-none absolute -top-40 left-1/2 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-violet-600/20 blur-3xl" />
-      <div className="relative z-10 max-w-4xl">
-        <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-violet-500/30 bg-violet-500/10 px-4 py-1.5 text-sm text-violet-300">
-          <span className="h-1.5 w-1.5 rounded-full bg-violet-400" />
-          Now in public beta
-        </div>
-        <h1 className="mb-6 text-5xl font-bold tracking-tight text-white md:text-7xl">
-          Ship faster.<br />
-          <span className="bg-gradient-to-r from-violet-400 to-pink-400 bg-clip-text text-transparent">
-            Break less.
-          </span>
-        </h1>
-        <p className="mx-auto mb-10 max-w-2xl text-xl text-gray-400">
-          The deployment platform that catches errors before your users do.
-          Zero config. Instant rollbacks. Real-time monitoring.
-        </p>
-        <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-          <Button size="lg" className="bg-violet-600 text-white hover:bg-violet-500 px-8">
-            Start free trial
-          </Button>
-          <Button size="lg" variant="outline" className="border-gray-700 text-gray-300">
-            See how it works →
-          </Button>
-        </div>
-        <p className="mt-4 text-sm text-gray-500">No credit card required · 14-day free trial</p>
-      </div>
-    </section>
-  )
+1. **Header** (sticky)
+   - Logo/project name
+   - Nav links: Features, Install, FAQ
+   - Actions: Search (Cmd+K), GitHub Star, primary CTA
+
+2. **Risk Banner** (if `--risk-banner`)
+   - Orange/warning style above fold
+   - Clear, visible disclaimer text
+   - Link to detailed disclosure section
+
+3. **Hero Section**
+   - Title from README H1
+   - Tagline from TL;DR/first paragraph
+   - Stats badges (version, license, platform)
+   - CTAs: "Quick Start" (primary), "View on GitHub" (secondary)
+
+4. **Architecture/Overview** (if diagram in README)
+   - ASCII diagram converted to styled block
+   - Or overview cards
+
+5. **Features Grid**
+   - 4-6 feature cards from README features
+   - Icon + title + description pattern
+
+6. **Pricing Table** (if `--pricing-table`)
+   - Plans comparison table
+   - Multipliers/usage table if present
+
+7. **Screenshots Gallery** (if assets exist)
+   - Tab-based or carousel gallery
+   - Captions from alt text
+
+8. **Quick Start Section**
+   - One-liner install command (featured code block)
+   - Setup steps
+   - First usage example
+
+9. **Risk Disclosure** (if `--risk-banner`)
+   - Full disclaimer section
+   - ToS considerations
+   - Recommendations
+
+10. **FAQ Section**
+    - Generated from README FAQ or common questions
+    - Collapsible details pattern
+
+11. **Related Projects** (if links in README)
+    - Cards linking to dependencies/related repos
+
+12. **Footer**
+    - Quick links
+    - License badge
+    - Version info
+    - Author/repo links
+
+### Step 4: Output Structure
+
+```
+[project-name]-landing/
+├── index.html              # Main landing page
+├── styles.css              # Complete stylesheet
+├── search.js               # Cmd+K search functionality
+├── search-data.js          # Search index (FAQ, features)
+├── favicon.svg             # Generated or copied
+├── robots.txt              # SEO
+├── CLAUDE.md               # Project instructions
+├── README.md               # Landing repo documentation
+├── assets/                 # Copied screenshots
+│   └── [copied from source]
+└── .github/
+    └── workflows/
+        └── static.yml      # GitHub Pages deployment
+```
+
+### Step 5: Validation Checkpoint
+
+Before finalizing, verify:
+- All sections render correctly in a browser
+- Links point to valid targets (GitHub repo, docs, install commands)
+- Responsive layout works at mobile (375px), tablet (768px), and desktop (1280px) widths
+- Accessibility: skip links present, ARIA labels on interactive elements, color contrast passes WCAG AA
+
+## Tech Stack
+
+- **No build step**: Pure HTML + CSS + JS
+- **Search**: MiniSearch lazy-loaded from CDN with fallback
+- **Deployment**: GitHub Pages via Actions
+- **Styling**: CSS custom properties, responsive, dark theme default
+- **Accessibility**: Skip links, ARIA labels, keyboard navigation
+
+## CSS Patterns (from established landings)
+
+### Component Classes
+
+```css
+/* Buttons */
+.btn, .btn-primary, .btn-secondary, .btn-github-star, .btn-outline
+
+/* Cards */
+.feature-card, .comparison-card, .path-card
+
+/* Layout */
+.container, .features-grid, .hero, .section
+
+/* Utilities */
+.visually-hidden, .skip-link
+```
+
+### CSS Variables
+
+```css
+:root {
+  --color-bg: #0d1117;
+  --color-surface: #161b22;
+  --color-border: #30363d;
+  --color-text: #c9d1d9;
+  --color-text-muted: #8b949e;
+  --color-primary: #58a6ff;
+  --color-success: #3fb950;
+  --color-warning: #d29922;
+  --color-danger: #f85149;
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --radius: 6px;
 }
 ```
 
----
+## Example
 
-## Other Section Patterns
+**User**: `/landing-page-generator from ~/projects/my-project --risk-banner --pricing-table`
 
-### Feature Section (Alternating)
+**Output**:
 
-Map over a `features` array with `{ title, description, image, badge }`. Toggle layout direction with `i % 2 === 1 ? "lg:flex-row-reverse" : ""`. Use `<Image>` with explicit `width`/`height` and `rounded-2xl shadow-xl`. Wrap in `<section className="py-24">` with `max-w-6xl` container.
+Creates `~/projects/my-project-landing/` with:
+- Complete landing page showcasing the multi-provider router
+- Prominent ToS risk banner (orange, above fold)
+- Provider cards (Anthropic, Copilot, Ollama)
+- Pricing tables from README
+- Screenshots gallery
+- GitHub Pages deployment ready
 
-### Pricing Table
+## Tips
 
-Map over a `plans` array with `{ name, price, description, features[], cta, highlighted }`. Highlighted plan gets `border-2 border-violet-500 bg-violet-950/50 ring-4 ring-violet-500/20`; others get `border border-gray-800 bg-gray-900`. Render `null` price as "Custom". Use `<Check>` icon per feature row. Layout: `grid gap-8 lg:grid-cols-3`.
+- Always include `--risk-banner` for projects with legal/ToS considerations
+- Screenshots significantly improve landing quality - ensure assets/ is populated
+- The skill preserves README language (English/French)
+- Review generated FAQ - may need customization
+- Test responsive design after generation
 
-### FAQ with Schema Markup
+## References
 
-Inject `FAQPage` JSON-LD via `<script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />` inside the section. Map FAQs with `{ q, a }` into shadcn `<Accordion>` with `type="single" collapsible`. Container: `max-w-3xl`.
-
-### Testimonials, CTA, Footer
-
-- **Testimonials:** Grid (`grid-cols-1 md:grid-cols-3`) or single-quote hero block with avatar, name, role, and quote text.
-- **CTA Banner:** Full-width section with headline, subhead, and two buttons (primary + ghost). Add trust signals (money-back guarantee, logo strip) immediately below.
-- **Footer:** Logo + nav columns + social links + legal. Use `border-t border-gray-800` separator.
-
----
-
-## SEO Checklist
-
-- [ ] `<title>` tag: primary keyword + brand (50–60 chars)
-- [ ] Meta description: benefit + CTA (150–160 chars)
-- [ ] OG image: 1200×630px with product name and tagline
-- [ ] H1: one per page, includes primary keyword
-- [ ] Structured data: FAQPage, Product, or Organization schema
-- [ ] Canonical URL set
-- [ ] Image alt text on all `<Image>` components
-- [ ] robots.txt and sitemap.xml configured
-- [ ] Core Web Vitals: LCP < 1s, CLS < 0.1
-- [ ] Mobile viewport meta tag present
-- [ ] Internal linking to pricing and docs
-
-> **Validation step:** Before outputting final code, verify every checklist item above is satisfied. Fix any gaps inline — do not skip items.
-
----
-
-## Performance Targets
-
-| Metric | Target | Technique |
-|---|---|---|
-| LCP | < 1s | Preload hero image, use `priority` on Next/Image |
-| CLS | < 0.1 | Set explicit width/height on all images |
-| FID/INP | < 100ms | Defer non-critical JS, use `loading="lazy"` |
-| TTFB | < 200ms | Use ISR or static generation for landing pages |
-| Bundle | < 100KB JS | Audit with `@next/bundle-analyzer` |
-
----
-
-## Common Pitfalls
-
-- Hero image not preloaded — add `priority` prop to first `<Image>`
-- Missing mobile breakpoints — always design mobile-first with `sm:` prefixes
-- CTA copy too vague — "Get started" beats "Learn more"; "Start free trial" beats "Sign up"
-- Pricing page missing trust signals — add money-back guarantee and testimonials near CTA
-- No above-the-fold CTA on mobile — ensure button is visible without scrolling on 375px viewport
-
----
-
-## Related Skills
-
-- **Brand Voice Analyzer** (`marketing-skill/content-production/scripts/brand_voice_analyzer.py`) — Run before generation to establish voice profile and ensure copy consistency
-- **UI Design System** (`product-team/ui-design-system/`) — Generate design tokens from brand color before building the page
-- **Competitive Teardown** (`product-team/competitive-teardown/`) — Competitive positioning informs landing page messaging and differentiation
-
-## Limitations
-- Use this skill only when the task clearly matches the scope described above.
-- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
-- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
+See `references/landing-pattern.md` for detailed pattern documentation.
+See `assets/` for reusable templates and snippets.

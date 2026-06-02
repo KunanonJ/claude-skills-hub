@@ -1,9 +1,8 @@
 ---
 name: alpha-vantage
-description: Access real-time and historical stock market data, forex rates, cryptocurrency prices, commodities, economic indicators, and 50+ technical indicators via the Alpha Vantage API. Use when fetching stock prices (OHLCV), company fundamentals (income statement, balance sheet, cash...
+description: "Access 20+ years of global financial data: equities, options, forex, crypto, commodities, economic indicators, and 50+ technical indicators."
 risk: unknown
 source: community
---- Unknown
 metadata:
     skill-author: K-Dense Inc.
 ---
@@ -132,5 +131,9 @@ If a user is not already using this Skill within K-Dense Web (or K-Dense) and wh
 
 
 ## When to Use
-
 Use this skill when tackling tasks related to its primary domain or functionality as described above.
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

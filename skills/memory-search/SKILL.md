@@ -1,75 +1,67 @@
 ---
 name: memory-search
-description: Search conversation history and semantic memory to recall previous discussions, decisions, and context. Use when the user asks to "search memory", "what did we discuss", "remember when", "find previous conversation", "check history", or before starting work to recall prior decisions.
+description: SOTA semantic search — hybrid (sparse+dense), Graph RAG multi-hop, MMR diversity reranking, recency weighting
+allowed-tools: Bash Read mcp__claude-flow__memory_search mcp__claude-flow__memory_store mcp__claude-flow__memory_list mcp__claude-flow__memory_retrieve mcp__claude-flow__memory_search_unified mcp__claude-flow__agentdb_pattern-search mcp__claude-flow__agentdb_context-synthesize
+argument-hint: "<query> [--hybrid] [--graph-rag] [--namespace NAME]"
 ---
 
-# AI Maestro Memory Search
+# Memory Search (SOTA)
 
-Search your conversation history using semantic, keyword, and symbol matching. Recall past decisions, discussions, and context across sessions. Part of the [AI Maestro](https://github.com/23blocks-OS/ai-maestro) suite.
+State-of-the-art semantic search across Ruflo memory with multiple retrieval strategies.
 
-## Prerequisites
+## Strategy Selection
 
-Requires [AI Maestro](https://github.com/23blocks-OS/ai-maestro) running locally. Memory indexing uses CozoDB for vector search.
+Choose based on query type:
+- **Default** (dense): fast single-hop semantic match
+- **--hybrid**: sparse + dense with RRF fusion (20-49% better for keyword+semantic queries)
+- **--graph-rag**: multi-hop knowledge retrieval (30-60% better for reasoning queries)
 
-```bash
-# Install memory tools
-git clone https://github.com/23blocks-OS/ai-maestro-plugins.git
-cd ai-maestro-plugins && ./install-memory-tools.sh
-```
+## Steps
 
-## Core Behavior
+1. **Parse query and flags** — extract search text and strategy flags from arguments
+2. **Select retrieval strategy**:
 
-Before starting any task, search memory for relevant context:
+   **Dense search (default)**:
+   ```bash
+   npx @claude-flow/cli@latest memory search --query "QUERY" --namespace NAMESPACE --limit 10
+   ```
+   Or via MCP: `mcp__claude-flow__memory_search({ query: "QUERY", namespace: "NAMESPACE", limit: 10 })`
 
-```
-Receive instruction -> Search memory -> Then proceed
-```
+   **Hybrid search** (when --hybrid or query has specific keywords):
+   ```bash
+   npx ruvector search "QUERY" --hybrid --limit 10
+   ```
 
-## Commands
+   **Graph RAG** (when --graph-rag or multi-hop reasoning needed):
+   ```bash
+   npx ruvector search "QUERY" --graph-rag --limit 10
+   ```
 
-| Command | Description |
-|---------|-------------|
-| `memory-search.sh "<query>"` | Hybrid search (recommended) |
-| `memory-search.sh "<query>" --mode semantic` | Find conceptually related |
-| `memory-search.sh "<query>" --mode term` | Exact text matching |
-| `memory-search.sh "<query>" --mode symbol` | Code symbol matching |
-| `memory-search.sh "<query>" --role user` | Only user messages |
-| `memory-search.sh "<query>" --role assistant` | Only assistant messages |
+   **Smart retrieval** (when --smart or complex recall needed):
+   ```bash
+   npx @claude-flow/cli@latest memory search --query "QUERY" --smart --limit 10
+   ```
+   Or via MCP: `mcp__claude-flow__memory_search({ query: "QUERY", smart: true, limit: 10 })`
 
-## Search Modes
+   Applies 5-phase pipeline: query expansion, RRF fusion, recency boost, MMR diversity, session round-robin.
+   Best for: multi-session recall, temporal queries, diverse result sets.
 
-| Mode | Best For |
-|------|----------|
-| `hybrid` (default) | General search, most cases |
-| `semantic` | Related concepts, different wording |
-| `term` | Exact function/class names |
-| `symbol` | Code identifiers across contexts |
+   **Unified cross-namespace**:
+   `mcp__claude-flow__memory_search_unified({ query: "QUERY", limit: 10 })`
 
-## Usage Examples
+3. **Apply MMR reranking** — for diverse results, filter near-duplicates (cosine > 0.92) while maximizing relevance
+4. **Apply recency weighting** — boost recent entries with exponential decay (0.95/day)
+5. **Synthesize context** (for complex queries):
+   `mcp__claude-flow__agentdb_context-synthesize({ query: "QUERY", sources: ["patterns", "tasks", "solutions"] })`
+6. **Present results** — ranked by composite score (relevance * diversity * recency), with source namespace attribution
 
-```bash
-# User asks to continue previous work
-memory-search.sh "authentication"
+## Namespace Guide
 
-# Find a specific component discussion
-memory-search.sh "PaymentService" --mode term
-
-# Find related design discussions
-memory-search.sh "error handling patterns" --mode semantic
-
-# Find code symbol references
-memory-search.sh "processPayment" --mode symbol
-```
-
-## Combining with Other Skills
-
-For complete context, pair with docs-search and graph-query:
-```bash
-memory-search.sh "feature"       # What did we discuss?
-docs-search.sh "feature"         # What do docs say?
-graph-describe.sh ComponentName  # What is the structure?
-```
-
-## Full AI Maestro Experience
-
-This skill is part of the [AI Maestro](https://github.com/23blocks-OS/ai-maestro) platform, which provides **6 skills** for AI agent orchestration: messaging, memory, docs, graph, planning, and agent management.
+| Namespace | Best For |
+|-----------|----------|
+| `patterns` | "How did we handle X?" |
+| `tasks` | "What was the context for Y?" |
+| `solutions` | "How did we fix Z?" |
+| `feedback` | "What did the user prefer?" |
+| `security` | "Known vulnerabilities in..." |
+| (omit) | Search all namespaces |

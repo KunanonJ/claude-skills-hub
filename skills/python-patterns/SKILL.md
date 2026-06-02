@@ -12,7 +12,6 @@ date_added: "2026-02-27"
 > **Learn to THINK, not memorize patterns.**
 
 ## When to Use
-
 Use this skill when making Python architecture decisions, choosing frameworks, designing async patterns, or structuring Python projects.
 
 ---
@@ -445,3 +444,8 @@ Before implementing:
 ---
 
 > **Remember**: Python patterns are about decision-making for YOUR specific context. Don't copy code—think about what serves your application best.
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

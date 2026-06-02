@@ -1,112 +1,112 @@
 ---
 name: research-ops
-description: Evidence-first current-state research workflow for ECC. Use when the user wants fresh facts, comparisons, enrichment, or a recommendation built from current public evidence and any supplied local context.
+description: 証拠優先のECC現状調査ワークフロー。ユーザーが現在の公開証拠と提供されたローカルコンテキストに基づいて最新の事実、比較、情報の充実、または推奨事項を求める場合に使用する。
 origin: ECC
 ---
 
-# Research Ops
+# リサーチオペレーション
 
-Use this when the user asks to research something current, compare options, enrich people or companies, or turn repeated lookups into a monitored workflow.
+ユーザーが現在の情報の調査、オプションの比較、人物や企業情報の充実、または繰り返しのクエリをモニタリング可能なワークフローに変換することを求める場合に使用する。
 
-This is the operator wrapper around the repo's research stack. It is not a replacement for `deep-research`, `exa-search`, or `market-research`; it tells you when and how to use them together.
+これはリポジトリのリサーチスタックの操作ラッパーである。`deep-research`、`exa-search`、`market-research` の代替品ではなく、それらをいつどのように組み合わせて使うかを指示するものである。
 
-## Skill Stack
+## スキルスタック
 
-Pull these ECC-native skills into the workflow when relevant:
+関連する場面では、これらのECCネイティブスキルをワークフローに組み込む：
 
-- `exa-search` for fast current-web discovery
-- `deep-research` for multi-source synthesis with citations
-- `market-research` when the end result should be a recommendation or ranked decision
-- `lead-intelligence` when the task is people/company targeting instead of generic research
-- `knowledge-ops` when the result should be stored in durable context afterward
+* `exa-search`：現在のウェブ情報の素早い発見に使用
+* `deep-research`：引用付きの複数ソース統合に使用
+* `market-research`：最終結果が推奨または優先順位付け決定である場合に使用
+* `lead-intelligence`：タスクが一般的な調査ではなく人物/企業を対象とする場合に使用
+* `knowledge-ops`：結果を後続のコンテキスト用に永続的に保存する必要がある場合に使用
 
-## When to Use
+## 使用場面
 
-- user says "research", "look up", "compare", "who should I talk to", or "what's the latest"
-- the answer depends on current public information
-- the user already supplied evidence and wants it factored into a fresh recommendation
-- the task may be recurring enough that it should become a monitor instead of a one-off lookup
+* ユーザーが「調査」「調べる」「比較」「誰に連絡すべきか」「最新情報」に言及する場合
+* 答えが現在の公開情報に依存する場合
+* ユーザーが証拠を提供し、それを新しい推奨事項に組み込んでほしい場合
+* タスクが繰り返し発生する可能性があり、一回限りのクエリではなくモニタリングに転換すべき場合
 
-## Guardrails
+## 安全策
 
-- do not answer current questions from stale memory when fresh search is cheap
-- separate:
-  - sourced fact
-  - user-provided evidence
-  - inference
-  - recommendation
-- do not spin up a heavyweight research pass if the answer is already in local code or docs
+* 新鮮な検索が安価な場合、古い記憶に頼って現在の問いに答えない
+* 以下を区別する：
+  * 出典付きの事実
+  * ユーザーが提供した証拠
+  * 推論
+  * 推奨事項
+* 答えがローカルコードまたはドキュメントにすでに存在する場合、重い調査プロセスを起動しない
 
-## Workflow
+## ワークフロー
 
-### 1. Start from what the user already gave you
+### 1. ユーザーがすでに提供した情報から始める
 
-Normalize any supplied material into:
+提供された素材を以下に正規化する：
 
-- already-evidenced facts
-- needs verification
-- open questions
+* すでに証拠がある事実
+* 検証が必要な内容
+* 未解決の問い
 
-Do not restart the analysis from zero if the user already built part of the model.
+ユーザーがすでに部分的なモデルを構築している場合、ゼロから再分析しない。
 
-### 2. Classify the ask
+### 2. リクエストを分類する
 
-Choose the right lane before searching:
+検索前に正しいパスを選択する：
 
-- quick factual answer
-- comparison or decision memo
-- lead/enrichment pass
-- recurring monitoring candidate
+* 素早い事実的回答
+* 比較または意思決定メモ
+* リード/情報充実処理
+* 繰り返しモニタリング候補
 
-### 3. Take the lightest useful evidence path first
+### 3. 最も軽量な有効な証拠パスを優先する
 
-- use `exa-search` for fast discovery
-- escalate to `deep-research` when synthesis or multiple sources matter
-- use `market-research` when the outcome should end in a recommendation
-- hand off to `lead-intelligence` when the real ask is target ranking or warm-path discovery
+* `exa-search` を使って素早い発見を行う
+* 統合または複数ソース情報が必要な場合、`deep-research` にアップグレードする
+* 結果を推奨形式で提示する必要がある場合、`market-research` を使用する
+* 実際のニーズがターゲット優先順位付けやウォームパス発見の場合、`lead-intelligence` に転送する
 
-### 4. Report with explicit evidence boundaries
+### 4. 証拠の境界を明示してレポートする
 
-For important claims, say whether they are:
+重要な主張については、それが以下のどれであるかを述べる：
 
-- sourced facts
-- user-supplied context
-- inference
-- recommendation
+* 出典付きの事実
+* ユーザーが提供したコンテキスト
+* 推論
+* 推奨事項
 
-Freshness-sensitive answers should include concrete dates.
+時効性の高い回答には具体的な日付を含める。
 
-### 5. Decide whether the task should stay manual
+### 5. タスクを手動のままにすべきか決定する
 
-If the user is likely to ask the same research question repeatedly, say so explicitly and recommend a monitoring or workflow layer instead of repeating the same manual search forever.
+ユーザーが同じ調査の問いを繰り返す可能性がある場合、それを明示し、永遠に同じ手動検索を繰り返すのではなく、モニタリングまたはワークフローレイヤーの採用を提案する。
 
-## Output Format
+## 出力フォーマット
 
 ```text
-QUESTION TYPE
-- factual / comparison / enrichment / monitoring
+問いのタイプ
+- 事実的 / 比較的 / 補完的 / モニタリング的
 
-EVIDENCE
-- sourced facts
-- user-provided context
+証拠
+- 出典付きの事実
+- ユーザーが提供したコンテキスト
 
-INFERENCE
-- what follows from the evidence
+推論
+- 証拠から導かれた結論
 
-RECOMMENDATION
-- answer or next move
-- whether this should become a monitor
+推奨事項
+- 答えまたは次のアクション
+- モニタリング項目にすべきか否か
 ```
 
-## Pitfalls
+## よくある落とし穴
 
-- do not mix inference into sourced facts without labeling it
-- do not ignore user-provided evidence
-- do not use a heavy research lane for a question local repo context can answer
-- do not give freshness-sensitive answers without dates
+* 出典付きの事実と推論を、ラベルなしで混在させない
+* ユーザーが提供した証拠を無視しない
+* ローカルリポジトリのコンテキストで答えられる問いに重い調査パスを使わない
+* 日付のない時効性の高い答えを返さない
 
-## Verification
+## 検証
 
-- important claims are labeled by evidence type
-- freshness-sensitive outputs include dates
-- the final recommendation matches the actual research mode used
+* 重要な主張には証拠タイプのラベルを付ける
+* 時効性の高い出力には日付を含める
+* 最終的な推奨事項は実際に使用した調査モードと一致させる

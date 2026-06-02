@@ -1,60 +1,52 @@
 ---
 name: cost-tracking
-description: Track and report Claude Code token usage, spending, and budgets from a local cost-tracking database. Use when the user asks about costs, spending, usage, tokens, budgets, or cost breakdowns by project, tool, session, or date.
+description: ローカルのコスト追跡データベースからClaude Codeのトークン使用量、支出、予算を追跡・レポートします。コスト、支出、使用量、トークン、予算、またはプロジェクト、ツール、セッション、日付によるコスト内訳について質問する場合に使用します。
 origin: community
 ---
 
-# Cost Tracking
+# コスト追跡
 
-Use this skill to analyze Claude Code cost and usage history from a local SQLite
-database. It is intended for users who already have a cost-tracking hook or
-plugin writing usage rows to `~/.claude-cost-tracker/usage.db`.
+このスキルを使用して、ローカルSQLiteデータベースからClaude Codeのコストと使用履歴を分析します。これは、`~/.claude-cost-tracker/usage.db`に使用行を書き込むコスト追跡フックまたはプラグインをすでに持っているユーザーを対象としています。
 
-Source: salvaged from stale community PR #1304 by `MayurBhavsar`.
+出典: `MayurBhavsar`によるコミュニティのPR #1304から救済されました。
 
-## When to Use
+## 使用時期
 
-- The user asks "how much have I spent?", "what did this session cost?", or
-  "what is my token usage?"
-- The user mentions budgets, spending limits, overruns, or cost controls.
-- The user wants a cost breakdown by project, tool, session, model, or date.
-- The user wants to compare today against yesterday or inspect a recent trend.
-- The user asks for a CSV export of recent usage records.
+- ユーザーが「いくら使いましたか？」「このセッションのコストは？」「トークン使用量は？」と尋ねる場合
+- ユーザーが予算、支出制限、超過、またはコスト管理について言及する場合
+- ユーザーがプロジェクト、ツール、セッション、モデル、または日付ごとのコスト内訳を求める場合
+- ユーザーが今日と昨日を比較したい、または最近のトレンドを確認したい場合
+- ユーザーが最近の使用記録のCSVエクスポートを求める場合
 
-## How It Works
+## 動作方法
 
-First verify prerequisites:
+まず前提条件を確認します：
 
 ```bash
 command -v sqlite3 >/dev/null && echo "sqlite3 available" || echo "sqlite3 missing"
 test -f ~/.claude-cost-tracker/usage.db && echo "Database found" || echo "Database not found"
 ```
 
-If the database is missing, do not fabricate usage data. Tell the user that cost
-tracking is not configured and suggest installing or enabling a trusted local
-cost-tracking hook/plugin.
+データベースが見つからない場合、使用データを作成しません。ユーザーにコスト追跡が設定されていないことを伝え、信頼できるローカルコスト追跡フック/プラグインのインストールまたは有効化を提案します。
 
-The expected `usage` table usually contains one row per tool call or model
-interaction. Column names vary by tracker, but the examples below assume:
+期待される`usage`テーブルには通常、ツール呼び出しまたはモデルインタラクションごとに1行が含まれます。列名はトラッカーによって異なりますが、以下の例では次のように仮定します：
 
-| Column | Meaning |
+| 列 | 意味 |
 | --- | --- |
-| `timestamp` | ISO timestamp for the usage event |
-| `project` | Project or repository name |
-| `tool_name` | Tool or event name |
-| `input_tokens` | Input token count, when recorded |
-| `output_tokens` | Output token count, when recorded |
-| `cost_usd` | Precomputed cost in USD |
-| `session_id` | Claude Code session identifier |
-| `model` | Model used for the event |
+| `timestamp` | 使用イベントのISOタイムスタンプ |
+| `project` | プロジェクトまたはリポジトリ名 |
+| `tool_name` | ツールまたはイベント名 |
+| `input_tokens` | 記録された場合の入力トークン数 |
+| `output_tokens` | 記録された場合の出力トークン数 |
+| `cost_usd` | USDで事前計算されたコスト |
+| `session_id` | Claude Codeセッション識別子 |
+| `model` | イベントに使用されたモデル |
 
-Prefer `cost_usd` over hand-calculating pricing. Model prices and cache pricing
-change over time, and the tracker should be the source of truth for how each row
-was priced.
+`cost_usd`を使用して手動で価格計算するよりも優先します。モデルの価格とキャッシュ価格は時間とともに変化し、トラッカーが各行の価格設定の信頼できる情報源であるべきです。
 
-## Examples
+## 例
 
-### Quick Summary
+### クイックサマリー
 
 ```bash
 sqlite3 ~/.claude-cost-tracker/usage.db "
@@ -67,7 +59,7 @@ sqlite3 ~/.claude-cost-tracker/usage.db "
 "
 ```
 
-### Cost By Project
+### プロジェクト別コスト
 
 ```bash
 sqlite3 -header -column ~/.claude-cost-tracker/usage.db "
@@ -78,7 +70,7 @@ sqlite3 -header -column ~/.claude-cost-tracker/usage.db "
 "
 ```
 
-### Cost By Tool
+### ツール別コスト
 
 ```bash
 sqlite3 -header -column ~/.claude-cost-tracker/usage.db "
@@ -89,7 +81,7 @@ sqlite3 -header -column ~/.claude-cost-tracker/usage.db "
 "
 ```
 
-### Last Seven Days
+### 過去7日間
 
 ```bash
 sqlite3 -header -column ~/.claude-cost-tracker/usage.db "
@@ -101,7 +93,7 @@ sqlite3 -header -column ~/.claude-cost-tracker/usage.db "
 "
 ```
 
-### Session Drilldown
+### セッション詳細
 
 ```bash
 sqlite3 -header -column ~/.claude-cost-tracker/usage.db "
@@ -117,31 +109,29 @@ sqlite3 -header -column ~/.claude-cost-tracker/usage.db "
 "
 ```
 
-## Reporting Guidance
+## レポートガイダンス
 
-When presenting cost data, include:
+コストデータを表示する場合、以下を含めます：
 
-1. Today's spend and yesterday comparison.
-2. Total spend across the tracked database.
-3. Top projects ranked by cost.
-4. Top tools ranked by cost.
-5. Session count and average cost per session when enough data exists.
+1. 今日の支出と昨日の比較。
+2. 追跡されたデータベース全体の合計支出。
+3. コスト順にランク付けされた上位プロジェクト。
+4. コスト順にランク付けされた上位ツール。
+5. 十分なデータがある場合のセッション数とセッションごとの平均コスト。
 
-For small amounts, format currency with four decimal places. For larger amounts,
-two decimals are enough.
+少額の場合、通貨を小数点4桁でフォーマットします。大きな金額には2桁で十分です。
 
-## Anti-Patterns
+## アンチパターン
 
-- Do not estimate costs from raw token counts when `cost_usd` is present.
-- Do not assume the database exists without checking.
-- Do not run unbounded `SELECT *` exports on large databases.
-- Do not hard-code current model pricing in user-facing answers.
-- Do not recommend installing unreviewed hooks or plugins that execute arbitrary
-  code.
+- `cost_usd`が存在する場合に生のトークン数からコストを推定しないこと。
+- 確認せずにデータベースが存在すると仮定しないこと。
+- 大規模なデータベースで無制限の`SELECT *`エクスポートを実行しないこと。
+- ユーザー向けの回答で現在のモデル価格をハードコードしないこと。
+- 任意のコードを実行する未審査のフックやプラグインのインストールを推奨しないこと。
 
-## Related
+## 関連
 
-- `/cost-report` - Command-form report using the same database.
-- `cost-aware-llm-pipeline` - Model-routing and budget-design patterns.
-- `token-budget-advisor` - Context and token-budget planning.
-- `strategic-compact` - Context compaction to reduce repeated token spend.
+- `/cost-report` - 同じデータベースを使用するコマンド形式のレポート。
+- `cost-aware-llm-pipeline` - モデルルーティングと予算設計のパターン。
+- `token-budget-advisor` - コンテキストとトークン予算の計画。
+- `strategic-compact` - 繰り返しのトークン支出を削減するためのコンテキスト圧縮。

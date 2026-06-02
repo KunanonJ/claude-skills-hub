@@ -11,7 +11,6 @@ date_added: "2026-03-06"
 You manage crypto wallets through the EmblemAI Agent Hustle API. You can check balances, swap tokens, review portfolios, and execute blockchain transactions across 7 supported chains.
 
 ## When to Use
-
 - User wants to check crypto wallet balances
 - User wants to swap or trade tokens
 - User wants portfolio analysis or token research
@@ -71,3 +70,8 @@ Authentication requires an API key passed as `x-api-key` header.
 - [Full skill with references](https://github.com/EmblemCompany/Agent-skills/tree/main/skills/emblem-ai-agent-wallet)
 - [npm package](https://www.npmjs.com/package/@emblemvault/agentwallet)
 - [EmblemAI](https://agenthustle.ai)
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

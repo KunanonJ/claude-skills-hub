@@ -156,6 +156,67 @@ def train_grover(train_dataset, test_dataset, task_type='classification', n_task
     return model, results
 
 
+def train_molformer(train_dataset, valid_dataset, test_dataset, task_type='classification', n_tasks=1, n_epochs=10):
+    """
+    Fine-tune MolFormer on a dataset.
+
+    Args:
+        train_dataset: Training dataset
+        valid_dataset: Validation dataset
+        test_dataset: Test dataset
+        task_type: 'classification' or 'regression'
+        n_tasks: Number of prediction tasks
+        n_epochs: Number of fine-tuning epochs
+
+    Returns:
+        Trained model and evaluation results
+    """
+    print("=" * 70)
+    print("Fine-tuning MolFormer")
+    print("=" * 70)
+    print("\nMolFormer is a transformer pretrained on molecular structures.")
+    print("It uses SMILES strings as input via HuggingFaceModel.")
+
+    print(f"\nLoading pretrained MolFormer model...")
+    model = dc.models.HuggingFaceModel(
+        model=PRETRAINED_MODELS['molformer']['model_id'],
+        task=task_type,
+        n_tasks=n_tasks,
+        batch_size=32,
+        learning_rate=2e-5
+    )
+
+    print(f"\nFine-tuning for {n_epochs} epochs...")
+    print("(This may take a while on the first run as the model is downloaded)")
+    model.fit(train_dataset, nb_epoch=n_epochs)
+    print("Fine-tuning complete!")
+
+    print("\n" + "=" * 70)
+    print("Model Evaluation")
+    print("=" * 70)
+
+    if task_type == 'classification':
+        metrics = [
+            dc.metrics.Metric(dc.metrics.roc_auc_score, name='ROC-AUC'),
+            dc.metrics.Metric(dc.metrics.accuracy_score, name='Accuracy'),
+        ]
+    else:
+        metrics = [
+            dc.metrics.Metric(dc.metrics.r2_score, name='R²'),
+            dc.metrics.Metric(dc.metrics.mean_absolute_error, name='MAE'),
+        ]
+
+    results = {}
+    for name, dataset in [('Train', train_dataset), ('Valid', valid_dataset), ('Test', test_dataset)]:
+        print(f"\n{name} Set:")
+        scores = model.evaluate(dataset, metrics)
+        results[name] = scores
+        for metric_name, score in scores.items():
+            print(f"  {metric_name}: {score:.4f}")
+
+    return model, results
+
+
 def load_molnet_dataset(dataset_name, model_type):
     """
     Load a MoleculeNet dataset with appropriate featurization.
@@ -345,6 +406,13 @@ def main():
         elif args.model == 'grover':
             model, results = train_grover(
                 train, test,
+                task_type=task_type,
+                n_tasks=n_tasks,
+                n_epochs=args.epochs
+            )
+        elif args.model == 'molformer':
+            model, results = train_molformer(
+                train, valid, test,
                 task_type=task_type,
                 n_tasks=n_tasks,
                 n_epochs=args.epochs

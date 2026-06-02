@@ -1,125 +1,125 @@
 ---
 name: workspace-surface-audit
-description: Audit the active repo, MCP servers, plugins, connectors, env surfaces, and harness setup, then recommend the highest-value ECC-native skills, hooks, agents, and operator workflows. Use when the user wants help setting up Claude Code or understanding what capabilities are actually available in their environment.
+description: アクティブなリポジトリ、MCPサーバー、プラグイン、コネクター、環境サーフェス、ツールのセットアップを監査し、最も価値の高いECCネイティブスキル、フック、エージェント、オペレーターワークフローを推奨する。ユーザーがClaude Codeのセットアップを支援してほしい場合や、環境で実際に何が使えるかを理解したい場合に使用する。
 origin: ECC
 ---
 
-# Workspace Surface Audit
+# ワークスペースサーフェス監査
 
-Read-only audit skill for answering the question "what can this workspace and machine actually do right now, and what should we add or enable next?"
+読み取り専用の監査スキル。「このワークスペースとマシンが現在実際に何をできるか、次に何を追加または有効化すべきか？」という質問に答えるために使用する。
 
-This is the ECC-native answer to setup-audit plugins. It does not modify files unless the user explicitly asks for follow-up implementation.
+これはセットアップ監査プラグインに対するECCネイティブの回答である。ユーザーが明示的にフォローアップの実装を要求しない限り、ファイルを変更しない。
 
-## When to Use
+## 使用する場面
 
-- User says "set up Claude Code", "recommend automations", "what plugins or MCPs should I use?", or "what am I missing?"
-- Auditing a machine or repo before installing more skills, hooks, or connectors
-- Comparing official marketplace plugins against ECC-native coverage
-- Reviewing `.env`, `.mcp.json`, plugin settings, or connected-app surfaces to find missing workflow layers
-- Deciding whether a capability should be a skill, hook, agent, MCP, or external connector
+* ユーザーが「Claude Codeをセットアップする」「自動化を推奨する」「どのプラグインまたはMCPを使うべきか？」または「何が足りないか？」と言う
+* スキル、フック、コネクターをさらにインストールする前にマシンやリポジトリを監査する
+* 公式マーケットプラグインとECCネイティブのカバレッジを比較する
+* ワークフローレイヤーの欠落を見つけるために `.env`、`.mcp.json`、プラグイン設定、または接続されたアプリのサーフェスをレビューする
+* 機能がスキル、フック、エージェント、MCP、または外部コネクターのどれであるべきかを決定する
 
-## Non-Negotiable Rules
+## 交渉不可能なルール
 
-- Never print secret values. Surface only provider names, capability names, file paths, and whether a key or config exists.
-- Prefer ECC-native workflows over generic "install another plugin" advice when ECC can reasonably own the surface.
-- Treat external plugins as benchmarks and inspiration, not authoritative product boundaries.
-- Separate three things clearly:
-  - already available now
-  - available but not wrapped well in ECC
-  - not available and would require a new integration
+* シークレット値を決して印刷しない。プロバイダー名、機能名、ファイルパス、キーまたは設定が存在するかどうかのみを表示する。
+* ECCがそのサーフェスを合理的に所有できる場合は、一般的な「別のプラグインをインストール」という推奨よりECCネイティブワークフローを優先する。
+* 外部プラグインをベースラインとインスピレーションとして扱い、権威ある製品境界としてではない。
+* 3つのことを明確に区別する：
+  * 現在利用可能なもの
+  * 利用可能だがECCのカプセル化が不十分なもの
+  * 利用不可能で新しい統合が必要なもの
 
-## Audit Inputs
+## 監査の入力
 
-Inspect only the files and settings needed to answer the question well:
+質問に答えるために必要なファイルと設定のみを確認する：
 
-1. Repo surface
-   - `package.json`, lockfiles, language markers, framework config, `README.md`
-   - `.mcp.json`, `.lsp.json`, `.claude/settings*.json`, `.codex/*`
-   - `AGENTS.md`, `CLAUDE.md`, install manifests, hook configs
-2. Environment surface
-   - `.env*` files in the active repo and obvious adjacent ECC workspaces
-   - Surface only key names such as `STRIPE_API_KEY`, `TWILIO_AUTH_TOKEN`, `FAL_KEY`
-3. Connected tool surface
-   - Installed plugins, enabled connectors, MCP servers, LSPs, and app integrations
-4. ECC surface
-   - Existing skills, commands, hooks, agents, and install modules that already cover the need
+1. リポジトリサーフェス
+   * `package.json`、ロックファイル、言語マーカー、フレームワーク設定、`README.md`
+   * `.mcp.json`、`.lsp.json`、`.claude/settings*.json`、`.codex/*`
+   * `AGENTS.md`、`CLAUDE.md`、インストールマニフェスト、フック設定
+2. 環境サーフェス
+   * アクティブなリポジトリと明らかに隣接するECCワークスペース内の `.env*` ファイル
+   * キー名のみを表示する（`STRIPE_API_KEY`、`TWILIO_AUTH_TOKEN`、`FAL_KEY` など）
+3. 接続されたツールサーフェス
+   * インストール済みプラグイン、有効化されたコネクター、MCPサーバー、LSP、アプリ統合
+4. ECCサーフェス
+   * 要件をカバーする既存のスキル、コマンド、フック、エージェント、インストールモジュール
 
-## Audit Process
+## 監査プロセス
 
-### Phase 1: Inventory What Exists
+### フェーズ1：既存のものを棚卸しする
 
-Produce a compact inventory:
+簡潔なインベントリを生成する：
 
-- active harness targets
-- installed plugins and connected apps
-- configured MCP servers
-- configured LSP servers
-- env-backed services implied by key names
-- existing ECC skills already relevant to the workspace
+* アクティブなツールチェーンのターゲット
+* インストール済みプラグインと接続されたアプリ
+* 設定済みのMCPサーバー
+* 設定済みのLSPサーバー
+* キー名で示唆される環境ベースのサービス
+* ワークスペースに関連する既存のECCスキル
 
-If a surface exists only as a primitive, call that out. Example:
+サーフェスが生の形式でしか存在しない場合は指摘する。例：
 
-- "Stripe is available via connected app, but ECC lacks a billing-operator skill"
-- "Google Drive is connected, but there is no ECC-native Google Workspace operator workflow"
+* 「Stripeは接続されたアプリで利用可能だが、ECCには課金操作スキルがない」
+* 「Google Driveは接続されているが、ECCにはGoogle Workspaceネイティブの操作ワークフローがない」
 
-### Phase 2: Benchmark Against Official and Installed Surfaces
+### フェーズ2：公式およびインストール済みサーフェスとベンチマーク比較する
 
-Compare the workspace against:
+ワークスペースを以下と比較する：
 
-- official Claude plugins that overlap with setup, review, docs, design, or workflow quality
-- locally installed plugins in Claude or Codex
-- the user's currently connected app surfaces
+* セットアップ、レビュー、ドキュメント、デザイン、またはワークフロー品質と重複する公式Claudeプラグイン
+* ClaudeまたはCodexにローカルインストールされたプラグイン
+* ユーザーが現在接続しているアプリのサーフェス
 
-Do not just list names. For each comparison, answer:
+名前だけを列挙しない。各比較に対して以下を答える：
 
-1. what they actually do
-2. whether ECC already has parity
-3. whether ECC only has primitives
-4. whether ECC is missing the workflow entirely
+1. それらが実際に何をするか
+2. ECCが同等の機能をすでに持っているか
+3. ECCが生の形式のみを持っているか
+4. ECCがそのワークフローを完全に欠いているか
 
-### Phase 3: Turn Gaps Into ECC Decisions
+### フェーズ3：ギャップをECCの決定に変換する
 
-For every real gap, recommend the correct ECC-native shape:
+各実際のギャップについて、適切なECCネイティブの形式を推奨する：
 
-| Gap Type | Preferred ECC Shape |
+| ギャップの種類 | 優先するECC形式 |
 |----------|---------------------|
-| Repeatable operator workflow | Skill |
-| Automatic enforcement or side-effect | Hook |
-| Specialized delegated role | Agent |
-| External tool bridge | MCP server or connector |
-| Install/bootstrap guidance | Setup or audit skill |
+| 繰り返し可能な操作ワークフロー | スキル |
+| 自動実行または副作用 | フック |
+| 特殊な委任役割 | エージェント |
+| 外部ツールブリッジ | MCPサーバーまたはコネクター |
+| インストール/オンボーディングガイダンス | セットアップまたは監査スキル |
 
-Default to user-facing skills that orchestrate existing tools when the need is operational rather than infrastructural.
+ニーズが運用的であってインフラストラクチャ的でない場合は、デフォルトで既存のツールをオーケストレーションするユーザー向けスキルを使用する。
 
-## Output Format
+## 出力フォーマット
 
-Return five sections in this order:
+この順序で5つのセクションを返す：
 
-1. **Current surface**
-   - what is already usable right now
-2. **Parity**
-   - where ECC already matches or exceeds the benchmark
-3. **Primitive-only gaps**
-   - tools exist, but ECC lacks a clean operator skill
-4. **Missing integrations**
-   - capability not available yet
-5. **Top 3-5 next moves**
-   - concrete ECC-native additions, ordered by impact
+1. **現在のサーフェス**
+   * 現在利用可能なもの
+2. **同等の機能**
+   * ECCがベースラインに一致または超えている場所
+3. **生の形式のみのギャップ**
+   * ツールは存在するが、ECCには簡潔な操作スキルがない
+4. **欠けている統合**
+   * まだ利用できない機能
+5. **上位3-5の次のステップ**
+   * 影響度順の具体的なECCネイティブな追加
 
-## Recommendation Rules
+## 推奨ルール
 
-- Recommend at most 1-2 highest-value ideas per category.
-- Favor skills with obvious user intent and business value:
-  - setup audit
-  - billing/customer ops
-  - issue/program ops
-  - Google Workspace ops
-  - deployment/ops control
-- If a connector is company-specific, recommend it only when it is genuinely available or clearly useful to the user's workflow.
-- If ECC already has a strong primitive, propose a wrapper skill instead of inventing a brand-new subsystem.
+* 各カテゴリにつき最大1-2つの最も価値の高いアイデアを推奨する。
+* 明確なユーザー意図とビジネス価値を持つスキルを優先する：
+  * セットアップ監査
+  * 課金/顧客運用
+  * Issue/プロジェクト運用
+  * Google Workspace運用
+  * デプロイ/運用コントロール
+* コネクターが企業固有の場合、それが実際に利用可能またはユーザーのワークフローに明らかに有用な場合のみ推奨する。
+* ECCがすでに強力な生の形式を持っている場合は、まったく新しいサブシステムを発明するのではなくカプセル化スキルを提案する。
 
-## Good Outcomes
+## 良い結果
 
-- The user can immediately see what is connected, what is missing, and what ECC should own next.
-- Recommendations are specific enough to implement in the repo without another discovery pass.
-- The final answer is organized around workflows, not API brands.
+* ユーザーが接続されているもの、欠けているもの、ECCが次に持つべきものをすぐに確認できる。
+* 推奨事項は再発見なしにリポジトリで実装できるほど具体的。
+* 最終的な回答はAPIブランドではなくワークフローを中心に整理されている。

@@ -4,6 +4,8 @@ description: |
   CRITICAL: Use for Makepad Splash scripting language. Triggers on:
   splash language, makepad script, makepad scripting, script!, cx.eval,
   makepad dynamic, makepad AI, splash 语言, makepad 脚本
+risk: unknown
+source: community
 ---
 
 # Makepad Splash Skill
@@ -15,6 +17,11 @@ description: |
 You are an expert at Makepad Splash scripting language. Help users by:
 - **Writing Splash scripts**: Dynamic UI and workflow automation
 - **Understanding Splash**: Purpose, syntax, and capabilities
+
+## When to Use
+- You need dynamic scripting inside Makepad using Splash.
+- The task involves `script!`, `cx.eval`, runtime-generated UI, or workflow automation in Makepad.
+- You want guidance on Splash syntax and purpose rather than static Rust-only patterns.
 
 ## Documentation
 
@@ -211,3 +218,8 @@ create_form([
 3. Splash syntax is similar to JavaScript/Rust hybrid
 4. Scripts run in a sandboxed environment
 5. HTTP and timer APIs enable async operations
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

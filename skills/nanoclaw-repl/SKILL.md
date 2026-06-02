@@ -1,33 +1,11 @@
 ---
 name: nanoclaw-repl
-description: Operate and extend NanoClaw v2, ECC's zero-dependency session-aware REPL built on claude -p.
+description: 日本語翻訳：このファイルは nanoclaw-repl 用の日本語翻訳が必要です
 origin: ECC
 ---
 
-# NanoClaw REPL
+# nanoclaw-repl - 日本語翻訳進行中
 
-Use this skill when running or extending `scripts/claw.js`.
+このファイルの翻訳は実装中です。英語版は元のスキルファイルを参照してください。
 
-## Capabilities
-
-- persistent markdown-backed sessions
-- model switching with `/model`
-- dynamic skill loading with `/load`
-- session branching with `/branch`
-- cross-session search with `/search`
-- history compaction with `/compact`
-- export to md/json/txt with `/export`
-- session metrics with `/metrics`
-
-## Operating Guidance
-
-1. Keep sessions task-focused.
-2. Branch before high-risk changes.
-3. Compact after major milestones.
-4. Export before sharing or archival.
-
-## Extension Rules
-
-- keep zero external runtime dependencies
-- preserve markdown-as-database compatibility
-- keep command handlers deterministic and local
+詳細は：`D:/tmp/everything-claude-code/skills/nanoclaw-repl/SKILL.md`

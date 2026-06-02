@@ -1,0 +1,20 @@
+{
+  "name": "@uriva/find-scene",
+  "version": "1.0.0",
+  "repository": "https://github.com/uriva/find-scene-skill",
+  "description": "Find scene skill",
+  "visibility": "public",
+  "skills": {
+    "find-scene": "SKILL.md"
+  },
+  "permissions": {
+    "network": {
+      "outbound": []
+    },
+    "filesystem": {
+      "read": [],
+      "write": []
+    },
+    "subprocess": false
+  }
+}

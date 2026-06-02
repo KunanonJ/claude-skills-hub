@@ -1,6 +1,6 @@
 ---
 name: blockrun
-description: "Use when user needs capabilities Claude lacks (image generation, real-time X/Twitter data) or explicitly requests external models (\\\"blockrun\\\", \\\"use grok\\\", \\\"use gpt\\\", \\\"da..."
+description: "BlockRun works with Claude Code and Google Antigravity."
 risk: unknown
 source: community
 date_added: "2026-02-27"
@@ -49,7 +49,6 @@ print(f"💰 Total spent: ${spending['total_usd']:.4f} across {spending['calls']
 ```
 
 ## When to Use
-
 | Trigger | Your Action |
 |---------|-------------|
 | User explicitly requests ("blockrun second opinion with GPT on...", "use grok to check...", "generate image with dall-e") | Execute via BlockRun |
@@ -292,3 +291,8 @@ response = client.chat("xai/grok-3", "What's trending?", search=True)
 ```bash
 pip install --upgrade blockrun-llm
 ```
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

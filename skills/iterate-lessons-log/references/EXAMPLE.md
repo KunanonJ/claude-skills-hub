@@ -23,7 +23,7 @@ context: Production incident during high-traffic event
 
 ## Summary
 
-Our payment service experienced a 47-minute outage during Black Friday due to database connection pool exhaustion under 10x normal load. Despite running load tests, we didn't catch this because our synthetic load tests didn't replicate real traffic patterns—specifically the bursty, concentrated nature of flash sale traffic. Production traffic replay would have caught this.
+Our payment service experienced a 47-minute outage during Black Friday due to database connection pool exhaustion under 10x normal load. Despite running load tests, we didn't catch this because our synthetic load tests didn't replicate real traffic patterns.specifically the bursty, concentrated nature of flash sale traffic. Production traffic replay would have caught this.
 
 ---
 
@@ -37,7 +37,7 @@ Black Friday is our highest traffic day, typically 8-10x normal volume. The plat
 
 | Date | Event |
 |------|-------|
-| Oct 15 | Load testing complete—10x capacity validated |
+| Oct 15 | Load testing complete.10x capacity validated |
 | Oct 20 | Capacity review approved additional database instances |
 | Nov 1 | Infrastructure scaling deployed |
 | Nov 29 09:00 | Black Friday sale begins |
@@ -58,8 +58,8 @@ Black Friday is our highest traffic day, typically 8-10x normal volume. The plat
 
 ### Constraints
 
-- Black Friday is immovable—no option to delay or reschedule
-- Payment service is critical path—no graceful degradation possible
+- Black Friday is immovable.no option to delay or reschedule
+- Payment service is critical path.no graceful degradation possible
 - Real traffic replay wasn't available (privacy concerns, infrastructure gap)
 
 ---
@@ -70,7 +70,7 @@ Black Friday is our highest traffic day, typically 8-10x normal volume. The plat
 
 1. **Sale launch (09:00):** Traffic increased as expected. Systems initially handling load well.
 
-2. **Flash sale spike (09:02):** A limited-quantity flash sale created concentrated traffic—5,000 users hitting checkout simultaneously rather than distributed load.
+2. **Flash sale spike (09:02):** A limited-quantity flash sale created concentrated traffic.5,000 users hitting checkout simultaneously rather than distributed load.
 
 3. **Connection pool saturation (09:03):** Payment service database connections exhausted. Each flash sale request held connections longer due to inventory checks under contention.
 
@@ -97,7 +97,7 @@ Black Friday is our highest traffic day, typically 8-10x normal volume. The plat
 
 ### Outcome
 
-47-minute service outage during our highest-revenue hour. Estimated $340,000 direct revenue loss, unknown brand damage. Customer trust impacted—we received 400+ complaint tickets in the following week referencing the Black Friday experience.
+47-minute service outage during our highest-revenue hour. Estimated $340,000 direct revenue loss, unknown brand damage. Customer trust impacted.we received 400+ complaint tickets in the following week referencing the Black Friday experience.
 
 ---
 
@@ -106,13 +106,13 @@ Black Friday is our highest traffic day, typically 8-10x normal volume. The plat
 ### What We Learned
 
 **Primary Lesson:**
-Synthetic load tests with evenly distributed traffic don't catch burst-pattern failures. Production traffic replay—using anonymized real traffic patterns—reveals timing, distribution, and correlation patterns that synthetic tests miss.
+Synthetic load tests with evenly distributed traffic don't catch burst-pattern failures. Production traffic replay.using anonymized real traffic patterns.reveals timing, distribution, and correlation patterns that synthetic tests miss.
 
 **Supporting Observations:**
 - Our load test sent 100 requests/second evenly distributed. Real traffic came in bursts of 5,000 in 10 seconds.
 - Synthetic tests didn't simulate correlated requests (many users hitting the same flash sale item).
 - Connection pool math was correct for throughput but wrong for concurrency under burst.
-- The failure mode was predictable in retrospect—database contention under burst is a known pattern.
+- The failure mode was predictable in retrospect.database contention under burst is a known pattern.
 
 ### Why This Matters
 
@@ -141,7 +141,7 @@ Load testing is expensive and time-consuming. If we're going to invest in it, we
 
 ### Avoid This
 
-1. **Don't assume synthetic load tests prove production readiness.** Synthetic tests prove a specific pattern works—they don't prove all patterns work. Know what you haven't tested.
+1. **Don't assume synthetic load tests prove production readiness.** Synthetic tests prove a specific pattern works.they don't prove all patterns work. Know what you haven't tested.
 
 2. **Don't treat load testing as a one-time checkbox.** Traffic patterns change. Run load tests regularly, especially before major events or after significant changes.
 
@@ -193,9 +193,9 @@ Load testing is expensive and time-consuming. If we're going to invest in it, we
 
 ### Quotes
 
-> "The load test results looked great. We hit 10x traffic with no issues. What we didn't realize is that we were testing a fantasy version of 10x traffic." — Sarah Chen, Platform Engineering
+> "The load test results looked great. We hit 10x traffic with no issues. What we didn't realize is that we were testing a fantasy version of 10x traffic." . Sarah Chen, Platform Engineering
 
-> "In retrospect, of course flash sales create burst patterns. We just didn't think to simulate it." — Mike Johnson, Payment Service Owner
+> "In retrospect, of course flash sales create burst patterns. We just didn't think to simulate it." . Mike Johnson, Payment Service Owner
 
 ### Artifacts
 

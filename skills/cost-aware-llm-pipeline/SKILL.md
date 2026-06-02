@@ -1,49 +1,49 @@
 ---
 name: cost-aware-llm-pipeline
-description: Cost optimization patterns for LLM API usage — model routing by task complexity, budget tracking, retry logic, and prompt caching.
+description: LLM APIの使用量のコスト最適化パターン — タスクの複雑さによるモデルルーティング、予算追跡、リトライロジック、プロンプトキャッシング。
 origin: ECC
 ---
 
-# Cost-Aware LLM Pipeline
+# コスト認識LLMパイプライン
 
-Patterns for controlling LLM API costs while maintaining quality. Combines model routing, budget tracking, retry logic, and prompt caching into a composable pipeline.
+品質を維持しながらLLM APIのコストをコントロールするためのパターン。モデルルーティング、予算追跡、リトライロジック、プロンプトキャッシングを組み合わせた合成可能なパイプライン。
 
-## When to Activate
+## 起動条件
 
-- Building applications that call LLM APIs (Claude, GPT, etc.)
-- Processing batches of items with varying complexity
-- Need to stay within a budget for API spend
-- Optimizing cost without sacrificing quality on complex tasks
+- LLM APIを呼び出すアプリケーションの構築（Claude、GPTなど）
+- 複雑さが異なるアイテムのバッチ処理
+- API支出の予算内に収める必要がある場合
+- 複雑なタスクの品質を犠牲にせずにコストを最適化する場合
 
-## Core Concepts
+## コアコンセプト
 
-### 1. Model Routing by Task Complexity
+### 1. タスクの複雑さによるモデルルーティング
 
-Automatically select cheaper models for simple tasks, reserving expensive models for complex ones.
+シンプルなタスクには自動的に安価なモデルを選択し、複雑なタスクのために高価なモデルを予約します。
 
 ```python
 MODEL_SONNET = "claude-sonnet-4-6"
 MODEL_HAIKU = "claude-haiku-4-5-20251001"
 
-_SONNET_TEXT_THRESHOLD = 10_000  # chars
-_SONNET_ITEM_THRESHOLD = 30     # items
+_SONNET_TEXT_THRESHOLD = 10_000  # 文字数
+_SONNET_ITEM_THRESHOLD = 30     # アイテム数
 
 def select_model(
     text_length: int,
     item_count: int,
     force_model: str | None = None,
 ) -> str:
-    """Select model based on task complexity."""
+    """タスクの複雑さに基づいてモデルを選択。"""
     if force_model is not None:
         return force_model
     if text_length >= _SONNET_TEXT_THRESHOLD or item_count >= _SONNET_ITEM_THRESHOLD:
-        return MODEL_SONNET  # Complex task
-    return MODEL_HAIKU  # Simple task (3-4x cheaper)
+        return MODEL_SONNET  # 複雑なタスク
+    return MODEL_HAIKU  # シンプルなタスク（3〜4倍安価）
 ```
 
-### 2. Immutable Cost Tracking
+### 2. 不変のコスト追跡
 
-Track cumulative spend with frozen dataclasses. Each API call returns a new tracker — never mutates state.
+凍結データクラスで累積支出を追跡します。各API呼び出しは新しいトラッカーを返します — 状態を変更しません。
 
 ```python
 from dataclasses import dataclass
@@ -61,7 +61,7 @@ class CostTracker:
     records: tuple[CostRecord, ...] = ()
 
     def add(self, record: CostRecord) -> "CostTracker":
-        """Return new tracker with added record (never mutates self)."""
+        """追加されたレコードで新しいトラッカーを返す（selfは変更しない）。"""
         return CostTracker(
             budget_limit=self.budget_limit,
             records=(*self.records, record),
@@ -76,9 +76,9 @@ class CostTracker:
         return self.total_cost > self.budget_limit
 ```
 
-### 3. Narrow Retry Logic
+### 3. 狭いリトライロジック
 
-Retry only on transient errors. Fail fast on authentication or bad request errors.
+一時的なエラーのみリトライします。認証やリクエストエラーでは素早く失敗します。
 
 ```python
 from anthropic import (
@@ -91,20 +91,20 @@ _RETRYABLE_ERRORS = (APIConnectionError, RateLimitError, InternalServerError)
 _MAX_RETRIES = 3
 
 def call_with_retry(func, *, max_retries: int = _MAX_RETRIES):
-    """Retry only on transient errors, fail fast on others."""
+    """一時的なエラーのみリトライし、それ以外はすぐに失敗する。"""
     for attempt in range(max_retries):
         try:
             return func()
         except _RETRYABLE_ERRORS:
             if attempt == max_retries - 1:
                 raise
-            time.sleep(2 ** attempt)  # Exponential backoff
-    # AuthenticationError, BadRequestError etc. → raise immediately
+            time.sleep(2 ** attempt)  # 指数バックオフ
+    # AuthenticationError、BadRequestErrorなど → 即座に例外発生
 ```
 
-### 4. Prompt Caching
+### 4. プロンプトキャッシング
 
-Cache long system prompts to avoid resending them on every request.
+長いシステムプロンプトをキャッシュして、リクエストごとに再送信しないようにします。
 
 ```python
 messages = [
@@ -114,70 +114,70 @@ messages = [
             {
                 "type": "text",
                 "text": system_prompt,
-                "cache_control": {"type": "ephemeral"},  # Cache this
+                "cache_control": {"type": "ephemeral"},  # これをキャッシュ
             },
             {
                 "type": "text",
-                "text": user_input,  # Variable part
+                "text": user_input,  # 可変部分
             },
         ],
     }
 ]
 ```
 
-## Composition
+## 合成
 
-Combine all four techniques in a single pipeline function:
+4つのテクニックすべてを単一のパイプライン関数に組み合わせます：
 
 ```python
 def process(text: str, config: Config, tracker: CostTracker) -> tuple[Result, CostTracker]:
-    # 1. Route model
+    # 1. モデルをルーティング
     model = select_model(len(text), estimated_items, config.force_model)
 
-    # 2. Check budget
+    # 2. 予算を確認
     if tracker.over_budget:
         raise BudgetExceededError(tracker.total_cost, tracker.budget_limit)
 
-    # 3. Call with retry + caching
+    # 3. リトライ + キャッシングで呼び出し
     response = call_with_retry(lambda: client.messages.create(
         model=model,
         messages=build_cached_messages(system_prompt, text),
     ))
 
-    # 4. Track cost (immutable)
+    # 4. コストを追跡（不変）
     record = CostRecord(model=model, input_tokens=..., output_tokens=..., cost_usd=...)
     tracker = tracker.add(record)
 
     return parse_result(response), tracker
 ```
 
-## Pricing Reference (2025-2026)
+## 価格リファレンス（2025〜2026年）
 
-| Model | Input ($/1M tokens) | Output ($/1M tokens) | Relative Cost |
+| モデル | 入力（$/1Mトークン） | 出力（$/1Mトークン） | 相対コスト |
 |-------|---------------------|----------------------|---------------|
 | Haiku 4.5 | $0.80 | $4.00 | 1x |
-| Sonnet 4.6 | $3.00 | $15.00 | ~4x |
-| Opus 4.5 | $15.00 | $75.00 | ~19x |
+| Sonnet 4.6 | $3.00 | $15.00 | 約4x |
+| Opus 4.5 | $15.00 | $75.00 | 約19x |
 
-## Best Practices
+## ベストプラクティス
 
-- **Start with the cheapest model** and only route to expensive models when complexity thresholds are met
-- **Set explicit budget limits** before processing batches — fail early rather than overspend
-- **Log model selection decisions** so you can tune thresholds based on real data
-- **Use prompt caching** for system prompts over 1024 tokens — saves both cost and latency
-- **Never retry on authentication or validation errors** — only transient failures (network, rate limit, server error)
+- **最も安価なモデルから始める**、複雑さの閾値が満たされた場合にのみ高価なモデルにルーティングする
+- **バッチ処理の前に明示的な予算制限を設定する** — 過剰支出より早期に失敗する
+- **モデル選択の決定をログに記録する**、実際のデータに基づいて閾値を調整できるように
+- **1024トークンを超えるシステムプロンプトにはプロンプトキャッシングを使用する** — コストとレイテンシーの両方を節約
+- **認証またはバリデーションエラーではリトライしない** — 一時的な失敗のみ（ネットワーク、レート制限、サーバーエラー）
 
-## Anti-Patterns to Avoid
+## 避けるべきアンチパターン
 
-- Using the most expensive model for all requests regardless of complexity
-- Retrying on all errors (wastes budget on permanent failures)
-- Mutating cost tracking state (makes debugging and auditing difficult)
-- Hardcoding model names throughout the codebase (use constants or config)
-- Ignoring prompt caching for repetitive system prompts
+- 複雑さに関わらずすべてのリクエストに最も高価なモデルを使用すること
+- すべてのエラーでリトライすること（永続的な失敗で予算を無駄にする）
+- コスト追跡の状態を変更すること（デバッグと監査が困難になる）
+- コードベース全体にモデル名をハードコードすること（定数または設定を使用する）
+- 繰り返しのシステムプロンプトでプロンプトキャッシングを無視すること
 
-## When to Use
+## 使用すべき場合
 
-- Any application calling Claude, OpenAI, or similar LLM APIs
-- Batch processing pipelines where cost adds up quickly
-- Multi-model architectures that need intelligent routing
-- Production systems that need budget guardrails
+- Claude、OpenAI、または同様のLLM APIを呼び出すすべてのアプリケーション
+- コストが積み上がるバッチ処理パイプライン
+- インテリジェントルーティングが必要なマルチモデルアーキテクチャ
+- 予算ガードレールが必要な本番システム

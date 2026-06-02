@@ -1,10 +1,17 @@
 ---
 name: hugging-face-datasets
 description: Create and manage datasets on Hugging Face Hub. Supports initializing repos, defining configs/system prompts, streaming row updates, and SQL-based dataset querying/transformation. Designed to work alongside HF MCP server for comprehensive dataset workflows.
+risk: unknown
+source: community
 ---
 
 # Overview
 This skill provides tools to manage datasets on the Hugging Face Hub with a focus on creation, configuration, content management, and SQL-based data manipulation. It is designed to complement the existing Hugging Face MCP server by providing dataset editing and querying capabilities.
+
+## When to Use
+- You need to create, configure, or update datasets on the Hugging Face Hub.
+- You want SQL-style querying, transformation, or export flows over Hub datasets.
+- You are managing dataset content and metadata directly rather than only searching existing datasets.
 
 ## Integration with HF MCP Server
 - **Use HF MCP Server for**: Dataset discovery, search, and metadata retrieval
@@ -540,3 +547,8 @@ uv run scripts/dataset_manager.py add_rows \
   --template qa \
   --rows_json "$(cat processed_data.json)"
 ```
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

@@ -1,187 +1,197 @@
 ---
 name: unified-notifications-ops
-description: Operate notifications as one ECC-native workflow across GitHub, Linear, desktop alerts, hooks, and connected communication surfaces. Use when the real problem is alert routing, deduplication, escalation, or inbox collapse.
+description: GitHub、Linear、デスクトップアラート、フック、接続された通信インターフェースを網羅する、統合されたECCネイティブワークフローとして通知を運用する。真の問題がアラートルーティング、重複排除、エスカレーション、またはインボックス崩壊である場合に使用する。
 origin: ECC
 ---
 
-# Unified Notifications Ops
+# 統合通知運用
 
-Use this skill when the real problem is not a missing ping. The real problem is a fragmented notification system.
+真の問題が通知の欠如ではなく、通知システムの断片化にある場合にこのスキルを使用する。
 
-The job is to turn scattered events into one operator surface with:
-- clear severity
-- clear ownership
-- clear routing
-- clear follow-up action
+目標は、分散したイベントを単一のオペレーターインターフェースに統合することであり、以下を含む：
 
-## When to Use
+* 明確な重大度レベル
+* 明確な責任者
+* 明確なルーティング
+* 明確な次のアクション
 
-- the user wants a unified notification lane across GitHub, Linear, local hooks, desktop alerts, chat, or email
-- CI failures, review requests, issue updates, and operator events are arriving in disconnected places
-- the current setup creates noise instead of action
-- the user wants to consolidate overlapping notification branches or backlog proposals into one ECC-native lane
-- the workspace already has hooks, MCPs, or connected tools, but no coherent notification policy
+## 使用する場面
 
-## Preferred Surface
+* ユーザーがGitHub、Linear、ローカルフック、デスクトップアラート、チャット、メール間の統一通知チャネルを望んでいる
+* CI失敗、レビューリクエスト、Issue更新、オペレーターイベントが各所に散在している
+* 現在のセットアップがアクションではなくノイズを生成している
+* ユーザーが重複する通知ブランチや積み残しのプロポーザルを単一のECCネイティブチャネルに統合したい
+* ワークスペースにフック、MCP、または接続されたツールがあるが、一貫した通知戦略がない
 
-Start from what already exists:
-- GitHub issues, PRs, reviews, comments, and CI
-- Linear issue/project movement
-- local hook events and session lifecycle signals
-- desktop notification primitives
-- connected email/chat surfaces when they actually exist
+## 優先インターフェース
 
-Prefer ECC-native orchestration over telling the user to adopt a separate notification product.
+既存のものから始める：
 
-## Non-Negotiable Rules
+* GitHub Issues、PR、レビュー、コメント、CI
+* Linear Issues/プロジェクトのステータス変更
+* ローカルフックイベントとセッションライフサイクルシグナル
+* デスクトップ通知プリミティブ
+* 接続されたメール/チャットインターフェース（実際に存在する場合）
 
-- never expose tokens, secrets, webhook secrets, or internal identifiers
-- separate:
-  - event source
-  - severity
-  - routing channel
-  - operator action
-- default to digest-first when interruption cost is unclear
-- do not fan out every event to every channel
-- if the real fix is better issue triage, hook policy, or project flow, say so explicitly
+独立した通知製品をユーザーに勧めるより、ECCネイティブのオーケストレーションを優先する。
 
-## Event Pipeline
+## 絶対的なルール
 
-Treat the lane as:
+* トークン、シークレット、Webhookシークレット、内部識別子を決して公開しない
+* 以下を区別する：
+  * イベントソース
+  * 重大度レベル
+  * ルーティングチャネル
+  * オペレーターアクション
+* 中断コストが不明な場合はデフォルトでサマリーファーストアプローチを取る
+* すべてのチャネルにすべてのイベントをブロードキャストしない
+* 真の解決策がより良いIssueトリアージ、フック戦略、またはプロジェクトフローである場合は明示する
 
-1. **Capture** the event
-2. **Classify** urgency and owner
-3. **Route** to the correct channel
-4. **Collapse** duplicates and low-signal churn
-5. **Attach** the next operator action
+## イベントパイプライン
 
-The goal is fewer, better notifications.
+チャネルを以下として扱う：
 
-## Default Severity Model
+1. **キャプチャ** イベント
+2. **分類** 緊急度と責任者
+3. **ルーティング** 適切なチャネルへ
+4. **マージ** 重複と低シグナルノイズ
+5. **添付** 次のオペレーターアクション
 
-| Class | Examples | Default handling |
+目標はより少なく、より良い通知である。
+
+## デフォルト重大度モデル
+
+| レベル | 例 | デフォルト処理 |
 | --- | --- | --- |
-| Critical | broken default-branch CI, security issue, blocked release, failed deploy | interrupt now |
-| High | review requested, failing PR, owner-blocking handoff | same-day alert |
-| Medium | issue state changes, notable comments, backlog movement | digest or queue |
-| Low | repeat successes, routine churn, redundant lifecycle markers | suppress or fold |
+| クリティカル | デフォルトブランチのCI破損、セキュリティ問題、リリースブロック、デプロイ失敗 | 即座に中断 |
+| 高 | レビューリクエスト、PR失敗、責任者をブロックするハンドオフ | 当日アラート |
+| 中 | Issueステータス変更、重要なコメント、バックログ変更 | サマリーまたはキュー |
+| 低 | 繰り返しの成功、通常のノイズ、冗長なライフサイクルタグ | 抑制または折りたたみ |
 
-If the workspace has no severity model, build one before proposing automation.
+ワークスペースに重大度モデルがない場合は、自動化を提案する前にまず構築する。
 
-## Workflow
+## ワークフロー
 
-### 1. Inventory the current surface
+### 1. 現在のインターフェースの棚卸し
 
-List:
-- event sources
-- current channels
-- existing hooks/scripts that emit alerts
-- duplicate paths for the same event
-- silent failure cases where important things are not being surfaced
+以下を列挙する：
 
-Call out what ECC already owns.
+* イベントソース
+* 現在のチャネル
+* アラートを発するフック/スクリプト
+* 同じイベントの重複パス
+* 重要事項が表示されないサイレント失敗のケース
 
-### 2. Decide what deserves interruption
+ECCがすでに持っているものを指摘する。
 
-For each event family, answer:
-- who needs to know?
-- how fast do they need to know?
-- should this interrupt, batch, or just log?
+### 2. 何が中断を正当化するかを決定する
 
-Use these defaults:
-- interrupt for release, CI, security, and owner-blocking events
-- digest for medium-signal updates
-- log-only for telemetry and low-signal lifecycle markers
+各イベントファミリーについて答える：
 
-### 3. Collapse duplicates before adding channels
+* 誰が知る必要があるか？
+* どれくらい早く知る必要があるか？
+* 中断すべきか、バッチ処理すべきか、ログに記録するだけにすべきか？
 
-Look for:
-- the same PR event appearing in GitHub, Linear, and local logs
-- repeated hook notifications for the same failure
-- comments or status churn that should be summarized instead of forwarded raw
-- channels that duplicate each other without adding a better action path
+以下のデフォルトを使用する：
 
-Prefer:
-- one canonical summary
-- one owner
-- one primary channel
-- one fallback path
+* リリース、CI、セキュリティ、責任者をブロックするイベントは中断
+* 中程度のシグナル更新にはサマリーを使用
+* テレメトリと低シグナルライフサイクルタグはログ記録のみ
 
-### 4. Design the ECC-native workflow
+### 3. チャネルを追加する前に重複をマージする
 
-For each real notification need, define:
-- **source**
-- **gate**
-- **shape**: immediate alert, digest, queue, or dashboard-only
-- **channel**
-- **action**
+以下を確認する：
 
-If ECC already has the primitive, prefer:
-- a skill for operator triage
-- a hook for automatic emission/enforcement
-- an agent for delegated classification
-- an MCP/connector only when a real bridge is missing
+* 同じPRイベントがGitHub、Linear、ローカルログに表示されている
+* 同じ失敗に対する重複したフック通知
+* 直接転送するより要約すべきコメントやステータス変更
+* より良いアクションパスを提供せずに互いを複製しているチャネル
 
-### 5. Return an action-biased design
+以下を優先する：
 
-End with:
-- what to keep
-- what to suppress
-- what to merge
-- what ECC should wrap next
+* 1つの正規サマリー
+* 1人の責任者
+* 1つのプライマリチャネル
+* 1つのフォールバックパス
 
-## Output Format
+### 4. ECCネイティブワークフローを設計する
+
+各実際の通知ニーズについて定義する：
+
+* **ソース**
+* **ゲーティング**
+* **形式**：即時アラート、サマリー、キュー、またはダッシュボードのみ
+* **チャネル**
+* **アクション**
+
+ECCがすでにプリミティブを持っている場合は優先して使用する：
+
+* オペレータートリアージスキル
+* 自動トリガー/実行フック
+* 委譲されたトリアージのためのエージェント
+* 本当にブリッジが欠けている場合のみMCP/コネクター
+
+### 5. アクション指向の設計を返す
+
+最終出力：
+
+* 保持するもの
+* 抑制するもの
+* マージするもの
+* ECCが次にカプセル化すべきもの
+
+## 出力フォーマット
 
 ```text
-CURRENT SURFACE
-- sources
-- channels
-- duplicates
-- gaps
+現在のサーフェス
+- ソース
+- チャネル
+- 重複
+- ギャップ
 
-EVENT MODEL
-- critical
-- high
-- medium
-- low
+イベントモデル
+- クリティカル
+- 高
+- 中
+- 低
 
-ROUTING PLAN
-- source -> channel
-- why
-- operator owner
+ルーティング計画
+- ソース -> チャネル
+- 理由
+- オペレーター/担当者
 
-CONSOLIDATION
-- suppress
-- merge
-- canonical summaries
+統合
+- 抑制
+- マージ
+- 正規サマリー
 
-NEXT ECC MOVE
-- skill / hook / agent / MCP
-- exact workflow to build next
+次のECCアクション
+- スキル/フック/エージェント/MCP
+- 次に構築する具体的なワークフロー
 ```
 
-## Recommendation Rules
+## 推奨ルール
 
-- prefer one strong lane over many weak ones
-- prefer digests for medium and low-signal updates
-- prefer hooks when the signal should emit automatically
-- prefer operator skills when the work is triage, routing, and review-first decision-making
-- prefer `project-flow-ops` when the root cause is backlog / PR coordination rather than alerts
-- prefer `workspace-surface-audit` when the user first needs a source inventory
-- if desktop notifications are enough, do not invent an unnecessary external bridge
+* 複数の弱いチャネルより1つの強いチャネルを優先する
+* 中程度と低シグナルの更新にはサマリーを優先する
+* シグナルが自動トリガーされるべき場合はフックを優先する
+* 作業がトリアージ、ルーティング、レビュー決定を伴う場合はオペレータースキルを優先する
+* 根本原因がアラートではなくバックログ/PR調整である場合は `project-flow-ops` を優先する
+* ユーザーが最初にソースの棚卸しを必要とする場合は `workspace-surface-audit` を優先する
+* デスクトップ通知で十分な場合は不要な外部ブリッジを発明しない
 
-## Good Use Cases
+## 良いユースケース
 
-- "We have GitHub, Linear, and local hook alerts, but no single operator flow"
-- "Our CI failures are noisy and people ignore them"
-- "I want one notification policy across Claude, OpenCode, and Codex surfaces"
-- "Figure out what should interrupt versus land in a digest"
-- "Collapse overlapping notification PR ideas into one canonical ECC lane"
+* 「GitHub、Linear、ローカルフックアラートがあるが、統一されたオペレーターフローがない」
+* 「CIの失敗ノイズが多くて人々が無視している」
+* 「Claude、OpenCode、Codexインターフェース全体で統一された通知戦略が欲しい」
+* 「何を中断すべきで、何をサマリーに入れるべきかを判断してほしい」
+* 「重複する通知PRのアイデアを1つの正規ECCチャネルに統合してほしい」
 
-## Related Skills
+## 関連スキル
 
-- `workspace-surface-audit`
-- `project-flow-ops`
-- `github-ops`
-- `knowledge-ops`
-- `customer-billing-ops` when the notification pain is billing/customer operations rather than engineering
+* `workspace-surface-audit`
+* `project-flow-ops`
+* `github-ops`
+* `knowledge-ops`
+* `customer-billing-ops` 通知の痛みポイントがエンジニアリングではなく課金/顧客運用に関わる場合

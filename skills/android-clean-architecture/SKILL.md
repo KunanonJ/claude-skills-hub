@@ -1,56 +1,56 @@
 ---
 name: android-clean-architecture
-description: Clean Architecture patterns for Android and Kotlin Multiplatform projects — module structure, dependency rules, UseCases, Repositories, and data layer patterns.
+description: Android と Kotlin Multiplatform プロジェクトのクリーンアーキテクチャパターン — モジュール構造、依存関係ルール、UseCase、Repository、データ層パターン。
 origin: ECC
 ---
 
-# Android Clean Architecture
+# Android クリーンアーキテクチャ
 
-Clean Architecture patterns for Android and KMP projects. Covers module boundaries, dependency inversion, UseCase/Repository patterns, and data layer design with Room, SQLDelight, and Ktor.
+Android と KMP プロジェクトのクリーンアーキテクチャパターン。モジュール境界、依存関係の逆転、UseCase/Repository パターン、Room・SQLDelight・Ktor を使用したデータ層設計をカバーします。
 
-## When to Activate
+## 起動タイミング
 
-- Structuring Android or KMP project modules
-- Implementing UseCases, Repositories, or DataSources
-- Designing data flow between layers (domain, data, presentation)
-- Setting up dependency injection with Koin or Hilt
-- Working with Room, SQLDelight, or Ktor in a layered architecture
+- Android または KMP プロジェクトモジュールの構造化
+- UseCase、Repository、DataSource の実装
+- 層間のデータフロー設計（ドメイン、データ、プレゼンテーション）
+- Koin または Hilt による依存性注入のセットアップ
+- 層状アーキテクチャでの Room、SQLDelight、Ktor の使用
 
-## Module Structure
+## モジュール構造
 
-### Recommended Layout
+### 推奨レイアウト
 
 ```
 project/
-├── app/                  # Android entry point, DI wiring, Application class
-├── core/                 # Shared utilities, base classes, error types
-├── domain/               # UseCases, domain models, repository interfaces (pure Kotlin)
-├── data/                 # Repository implementations, DataSources, DB, network
-├── presentation/         # Screens, ViewModels, UI models, navigation
-├── design-system/        # Reusable Compose components, theme, typography
-└── feature/              # Feature modules (optional, for larger projects)
+├── app/                  # Android エントリポイント、DI ワイヤリング、Application クラス
+├── core/                 # 共有ユーティリティ、基底クラス、エラー型
+├── domain/               # UseCase、ドメインモデル、リポジトリインターフェース（純粋 Kotlin）
+├── data/                 # リポジトリ実装、DataSource、DB、ネットワーク
+├── presentation/         # スクリーン、ViewModel、UI モデル、ナビゲーション
+├── design-system/        # 再利用可能な Compose コンポーネント、テーマ、タイポグラフィ
+└── feature/              # フィーチャーモジュール（大規模プロジェクト向けのオプション）
     ├── auth/
     ├── settings/
     └── profile/
 ```
 
-### Dependency Rules
+### 依存関係ルール
 
 ```
 app → presentation, domain, data, core
 presentation → domain, design-system, core
 data → domain, core
-domain → core (or no dependencies)
-core → (nothing)
+domain → core（または依存関係なし）
+core → （なし）
 ```
 
-**Critical**: `domain` must NEVER depend on `data`, `presentation`, or any framework. It contains pure Kotlin only.
+**重要**: `domain` は `data`、`presentation`、またはどのフレームワークにも依存してはいけません。純粋な Kotlin のみを含みます。
 
-## Domain Layer
+## ドメイン層
 
-### UseCase Pattern
+### UseCase パターン
 
-Each UseCase represents one business operation. Use `operator fun invoke` for clean call sites:
+各 UseCase は 1 つのビジネス操作を表します。クリーンな呼び出しサイトのために `operator fun invoke` を使用します：
 
 ```kotlin
 class GetItemsByCategoryUseCase(
@@ -61,7 +61,7 @@ class GetItemsByCategoryUseCase(
     }
 }
 
-// Flow-based UseCase for reactive streams
+// リアクティブストリーム向けフローベースの UseCase
 class ObserveUserProgressUseCase(
     private val repository: UserRepository
 ) {
@@ -71,9 +71,9 @@ class ObserveUserProgressUseCase(
 }
 ```
 
-### Domain Models
+### ドメインモデル
 
-Domain models are plain Kotlin data classes — no framework annotations:
+ドメインモデルはプレーンな Kotlin データクラス — フレームワークのアノテーションなし：
 
 ```kotlin
 data class Item(
@@ -88,9 +88,9 @@ data class Item(
 enum class Status { DRAFT, ACTIVE, ARCHIVED }
 ```
 
-### Repository Interfaces
+### リポジトリインターフェース
 
-Defined in domain, implemented in data:
+ドメインで定義し、データで実装する：
 
 ```kotlin
 interface ItemRepository {
@@ -100,11 +100,11 @@ interface ItemRepository {
 }
 ```
 
-## Data Layer
+## データ層
 
-### Repository Implementation
+### リポジトリ実装
 
-Coordinates between local and remote data sources:
+ローカルとリモートのデータソース間を調整する：
 
 ```kotlin
 class ItemRepositoryImpl(
@@ -134,12 +134,12 @@ class ItemRepositoryImpl(
 }
 ```
 
-### Mapper Pattern
+### マッパーパターン
 
-Keep mappers as extension functions near the data models:
+マッパーはデータモデルの近くに拡張関数として保持する：
 
 ```kotlin
-// In data layer
+// データ層
 fun ItemEntity.toDomain() = Item(
     id = id,
     title = title,
@@ -159,7 +159,7 @@ fun ItemDto.toEntity() = ItemEntity(
 )
 ```
 
-### Room Database (Android)
+### Room データベース（Android）
 
 ```kotlin
 @Entity(tableName = "items")
@@ -185,7 +185,7 @@ interface ItemDao {
 }
 ```
 
-### SQLDelight (KMP)
+### SQLDelight（KMP）
 
 ```sql
 -- Item.sq
@@ -209,7 +209,7 @@ observeAll:
 SELECT * FROM ItemEntity;
 ```
 
-### Ktor Network Client (KMP)
+### Ktor ネットワーククライアント（KMP）
 
 ```kotlin
 class ItemRemoteDataSource(private val client: HttpClient) {
@@ -221,7 +221,7 @@ class ItemRemoteDataSource(private val client: HttpClient) {
     }
 }
 
-// HttpClient setup with content negotiation
+// コンテントネゴシエーション付き HttpClient セットアップ
 val httpClient = HttpClient {
     install(ContentNegotiation) { json(Json { ignoreUnknownKeys = true }) }
     install(Logging) { level = LogLevel.HEADERS }
@@ -229,32 +229,32 @@ val httpClient = HttpClient {
 }
 ```
 
-## Dependency Injection
+## 依存性注入
 
-### Koin (KMP-friendly)
+### Koin（KMP フレンドリー）
 
 ```kotlin
-// Domain module
+// ドメインモジュール
 val domainModule = module {
     factory { GetItemsByCategoryUseCase(get()) }
     factory { ObserveUserProgressUseCase(get()) }
 }
 
-// Data module
+// データモジュール
 val dataModule = module {
     single<ItemRepository> { ItemRepositoryImpl(get(), get()) }
     single { ItemLocalDataSource(get()) }
     single { ItemRemoteDataSource(get()) }
 }
 
-// Presentation module
+// プレゼンテーションモジュール
 val presentationModule = module {
     viewModelOf(::ItemListViewModel)
     viewModelOf(::DashboardViewModel)
 }
 ```
 
-### Hilt (Android-only)
+### Hilt（Android のみ）
 
 ```kotlin
 @Module
@@ -270,11 +270,11 @@ class ItemListViewModel @Inject constructor(
 ) : ViewModel()
 ```
 
-## Error Handling
+## エラー処理
 
-### Result/Try Pattern
+### Result/Try パターン
 
-Use `Result<T>` or a custom sealed type for error propagation:
+エラー伝播に `Result<T>` またはカスタムシール型を使用する：
 
 ```kotlin
 sealed interface Try<out T> {
@@ -288,7 +288,7 @@ sealed interface AppError {
     data object Unauthorized : AppError
 }
 
-// In ViewModel — map to UI state
+// ViewModel — UI 状態にマッピング
 viewModelScope.launch {
     when (val result = getItems(category)) {
         is Try.Success -> _state.update { it.copy(items = result.value, isLoading = false) }
@@ -297,9 +297,9 @@ viewModelScope.launch {
 }
 ```
 
-## Convention Plugins (Gradle)
+## コンベンションプラグイン（Gradle）
 
-For KMP projects, use convention plugins to reduce build file duplication:
+KMP プロジェクトでは、ビルドファイルの重複を削減するためにコンベンションプラグインを使用する：
 
 ```kotlin
 // build-logic/src/main/kotlin/kmp-library.gradle.kts
@@ -311,29 +311,29 @@ kotlin {
     androidTarget()
     iosX64(); iosArm64(); iosSimulatorArm64()
     sourceSets {
-        commonMain.dependencies { /* shared deps */ }
+        commonMain.dependencies { /* 共有依存関係 */ }
         commonTest.dependencies { implementation(kotlin("test")) }
     }
 }
 ```
 
-Apply in modules:
+モジュールに適用する：
 
 ```kotlin
 // domain/build.gradle.kts
 plugins { id("kmp-library") }
 ```
 
-## Anti-Patterns to Avoid
+## 避けるべきアンチパターン
 
-- Importing Android framework classes in `domain` — keep it pure Kotlin
-- Exposing database entities or DTOs to the UI layer — always map to domain models
-- Putting business logic in ViewModels — extract to UseCases
-- Using `GlobalScope` or unstructured coroutines — use `viewModelScope` or structured concurrency
-- Fat repository implementations — split into focused DataSources
-- Circular module dependencies — if A depends on B, B must not depend on A
+- `domain` に Android フレームワークのクラスをインポートする — 純粋な Kotlin に保つ
+- データベースエンティティや DTO を UI 層に公開する — 常にドメインモデルにマッピングする
+- ViewModel にビジネスロジックを配置する — UseCase に抽出する
+- `GlobalScope` や非構造化コルーチンを使用する — `viewModelScope` または構造化された並行処理を使用する
+- 肥大化したリポジトリ実装 — 焦点を絞った DataSource に分割する
+- 循環モジュール依存 — A が B に依存する場合、B は A に依存してはいけない
 
-## References
+## 参考資料
 
-See skill: `compose-multiplatform-patterns` for UI patterns.
-See skill: `kotlin-coroutines-flows` for async patterns.
+スキル参照: UI パターンは `compose-multiplatform-patterns` を参照。
+非同期パターンは `kotlin-coroutines-flows` を参照。

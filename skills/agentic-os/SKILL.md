@@ -1,216 +1,216 @@
 ---
 name: agentic-os
-description: Build persistent multi-agent operating systems on Claude Code. Covers kernel architecture, specialist agents, slash commands, file-based memory, scheduled automation, and state management without external databases.
+description: Claude Code 上に永続的なマルチエージェントオペレーティングシステムを構築します。カーネルアーキテクチャ、スペシャリストエージェント、スラッシュコマンド、ファイルベースのメモリ、スケジュールされた自動化、外部データベースなしの状態管理をカバーします。
 origin: ECC
 ---
 
-# Agentic OS
+# エージェニック OS
 
-Treat Claude Code as a persistent runtime / operating system rather than a chat session. This skill codifies the architecture used by production agentic setups: a kernel config that routes tasks to specialist agents, persistent file-based memory, scheduled automation, and a JSON/markdown data layer.
+Claude Code をチャットセッションではなく永続的なランタイム / オペレーティングシステムとして扱います。このスキルは本番のエージェニックセットアップで使用されるアーキテクチャを成文化します：スペシャリストエージェントにタスクをルーティングするカーネル設定、永続的なファイルベースのメモリ、スケジュールされた自動化、JSON/Markdown データ層。
 
-## When to Activate
+## 起動タイミング
 
-- Building a multi-agent workflow inside Claude Code
-- Setting up persistent Claude Code automation that survives session restarts
-- Creating a "personal OS" or "agentic OS" for recurring tasks
-- User says "agentic OS", "personal OS", "multi-agent", "agent coordinator", "persistent agent"
-- Structuring long-running projects where context must survive across sessions
+- Claude Code 内でマルチエージェントワークフローを構築する
+- セッション再起動後も維持される永続的な Claude Code 自動化をセットアップする
+- 繰り返しタスク向けの「パーソナル OS」または「エージェニック OS」を作成する
+- ユーザーが「エージェニック OS」、「パーソナル OS」、「マルチエージェント」、「エージェントコーディネーター」、「永続エージェント」と言う
+- コンテキストがセッションをまたいで維持される必要がある長期プロジェクトを構造化する
 
-## Architecture Overview
+## アーキテクチャ概要
 
-The Agentic OS has four layers. Each layer is a directory in your project root.
+エージェニック OS には 4 つの層があります。各層はプロジェクトルートのディレクトリです。
 
 ```
 project-root/
-├── CLAUDE.md          # Kernel: identity, routing rules, agent registry
-├── agents/            # Specialist agent definitions (markdown prompts)
-├── .claude/commands/  # Slash commands: user-facing CLI
-├── scripts/           # Daemon scripts: scheduled or event-driven tasks
-└── data/              # State: JSON/markdown filesystem, no external DB
+├── CLAUDE.md          # カーネル: アイデンティティ、ルーティングルール、エージェントレジストリ
+├── agents/            # スペシャリストエージェント定義（Markdown プロンプト）
+├── .claude/commands/  # スラッシュコマンド: ユーザー向け CLI
+├── scripts/           # デーモンスクリプト: スケジュールまたはイベント駆動タスク
+└── data/              # 状態: JSON/Markdown ファイルシステム、外部 DB なし
 ```
 
-### Layer Responsibilities
+### 層の責任
 
-| Layer | Purpose | Persistence |
+| 層 | 目的 | 永続化 |
 |---|---|---|
-| Kernel (`CLAUDE.md`) | Identity, routing, model policies, agent registry | Git-tracked |
-| Agents (`agents/`) | Specialist identities with scoped tools and memory | Git-tracked |
-| Commands (`.claude/commands/`) | User-facing slash commands (`/daily-sync`, `/outreach`) | Git-tracked |
-| Scripts (`scripts/`) | Python/JS daemons triggered by cron or webhooks | Git-tracked |
-| State (`data/`) | Append-only logs, project state, decision records | Git-ignored or tracked |
+| カーネル（`CLAUDE.md`） | アイデンティティ、ルーティング、モデルポリシー、エージェントレジストリ | Git 追跡 |
+| エージェント（`agents/`） | スコープされたツールとメモリを持つスペシャリストアイデンティティ | Git 追跡 |
+| コマンド（`.claude/commands/`） | ユーザー向けスラッシュコマンド（`/daily-sync`、`/outreach`） | Git 追跡 |
+| スクリプト（`scripts/`） | cron またはウェブフックによってトリガーされる Python/JS デーモン | Git 追跡 |
+| 状態（`data/`） | 追記専用ログ、プロジェクト状態、決定記録 | Git 無視または追跡 |
 
-## The Kernel
+## カーネル
 
-`CLAUDE.md` is the kernel. It acts as the COO / orchestrator. Claude reads it at session start and uses it to route work.
+`CLAUDE.md` はカーネルです。COO / オーケストレーターとして機能します。Claude はセッション開始時にそれを読み、作業をルーティングするために使用します。
 
-### Kernel Structure
+### カーネル構造
 
 ```markdown
-# CLAUDE.md - Agentic OS Kernel
+# CLAUDE.md - エージェニック OS カーネル
 
-## Identity
-You are the COO of [project-name]. You route tasks to specialist agents.
-You never write code directly. You delegate to the right agent and synthesize results.
+## アイデンティティ
+あなたは [project-name] の COO です。タスクをスペシャリストエージェントにルーティングします。
+コードは直接書きません。適切なエージェントに委任し、結果を統合します。
 
-## Agent Registry
+## エージェントレジストリ
 
-| Agent | Role | Trigger |
+| エージェント | ロール | トリガー |
 |---|---|---|
-| @dev | Code, architecture, debugging | User says "build", "fix", "refactor" |
-| @writer | Documentation, content, emails | User says "write", "draft", "blog" |
-| @researcher | Research, analysis, fact-checking | User says "research", "analyze", "compare" |
-| @ops | DevOps, deployment, infrastructure | User says "deploy", "CI", "server" |
+| @dev | コード、アーキテクチャ、デバッグ | ユーザーが「build」、「fix」、「refactor」と言う |
+| @writer | ドキュメント、コンテンツ、メール | ユーザーが「write」、「draft」、「blog」と言う |
+| @researcher | 調査、分析、事実確認 | ユーザーが「research」、「analyze」、「compare」と言う |
+| @ops | DevOps、デプロイ、インフラ | ユーザーが「deploy」、「CI」、「server」と言う |
 
-## Routing Rules
-1. Parse the user request for intent keywords
-2. Match to the Agent Registry trigger column
-3. Load the corresponding agent file from `agents/<name>.md`
-4. Hand off execution with full context
-5. Synthesize and present the result back to the user
+## ルーティングルール
+1. ユーザーリクエストのインテントキーワードを解析する
+2. エージェントレジストリのトリガー列にマッチさせる
+3. `agents/<name>.md` から対応するエージェントファイルをロードする
+4. 完全なコンテキストでハンドオフ実行する
+5. 結果を統合してユーザーに提示する
 
-## Model Policies
-- Default model: use the repository or harness default.
-- @dev tasks: prefer a higher-reasoning model for complex architecture.
-- @researcher tasks: use the configured research-capable model and approved search tools.
-- Cost ceiling: warn before exceeding the project's configured spend threshold.
+## モデルポリシー
+- デフォルトモデル: リポジトリまたはハーネスのデフォルトを使用する。
+- @dev タスク: 複雑なアーキテクチャには高い推論モデルを優先する。
+- @researcher タスク: 設定された調査対応モデルと承認された検索ツールを使用する。
+- コストの上限: プロジェクトの設定された支出閾値を超える前に警告する。
 ```
 
-### Key Principle
+### 重要な原則
 
-The kernel should be **small and declarative**. Routing logic lives in plain markdown tables, not code. This makes the system inspectable and editable without debugging.
+カーネルは**小さく宣言的**であるべきです。ルーティングロジックはコードではなく Markdown テーブルに記載します。これによりシステムはデバッグなしに検査・編集可能になります。
 
-## Specialist Agents
+## スペシャリストエージェント
 
-Each agent is a standalone markdown file in `agents/`. Claude loads the relevant agent file when routing a task.
+各エージェントは `agents/` のスタンドアロン Markdown ファイルです。Claude はタスクをルーティングする際に関連するエージェントファイルをロードします。
 
-### Agent Definition Format
+### エージェント定義フォーマット
 
 ```markdown
-# @dev - Software Engineer
+# @dev - ソフトウェアエンジニア
 
-## Identity
-You are a senior software engineer. You write clean, tested, production-grade code.
-You prefer simple solutions. You ask clarifying questions when requirements are ambiguous.
+## アイデンティティ
+あなたはシニアソフトウェアエンジニアです。クリーンで、テスト済みの、本番グレードのコードを書きます。
+シンプルなソリューションを好みます。要件が曖昧な場合は明確化の質問をします。
 
-## Memory Scope
-- Read `data/projects/<current-project>.md` for context
-- Read `data/decisions/` for architectural decisions
-- Append execution logs to `data/logs/<date>-@dev.md`
+## メモリスコープ
+- コンテキストのために `data/projects/<current-project>.md` を読む
+- アーキテクチャ決定のために `data/decisions/` を読む
+- 実行ログを `data/logs/<date>-@dev.md` に追記する
 
-## Tool Access
-- Full filesystem access within project root
-- Git operations (status, diff, commit, branch)
-- Test runner access
-- MCP servers as configured in `.claude/mcp.json`
+## ツールアクセス
+- プロジェクトルート内のフルファイルシステムアクセス
+- Git 操作（status、diff、commit、branch）
+- テストランナーアクセス
+- `.claude/mcp.json` で設定された MCP サーバー
 
-## Constraints
-- Always write tests for new features
-- Never commit directly to `main`; use feature branches
-- Prefer editing existing files over creating new ones
-- Keep functions under 50 lines when possible
+## 制約
+- 新機能には常にテストを書く
+- `main` に直接コミットしない；フィーチャーブランチを使用する
+- 新しいファイルを作成するより既存のファイルを編集することを優先する
+- 可能な限り関数を 50 行未満に保つ
 ```
 
-### Multi-Agent Collaboration Pattern
+### マルチエージェント連携パターン
 
-When a task spans multiple agents, the kernel runs them sequentially or in parallel:
+タスクが複数のエージェントにまたがる場合、カーネルはそれらを順次または並行して実行します：
 
 ```
-User: "Build a landing page and write the launch blog post"
+ユーザー: 「ランディングページを作ってローンチブログ記事を書いて」
 
-Kernel routing:
-1. @dev - "Build a landing page with [requirements]"
-2. @writer - "Write a launch blog post for [product] using the landing page copy"
-3. Kernel synthesizes both outputs into a unified response
+カーネルルーティング:
+1. @dev - 「[要件] でランディングページを作成する」
+2. @writer - 「ランディングページのコピーを使って [プロダクト] のローンチブログ記事を書く」
+3. カーネルが両方の出力を統合した応答に統合する
 ```
 
-For parallel execution, use Claude Code's background task capability or shell scripts that invoke Claude Code with specific agent contexts.
+並行実行のために、Claude Code のバックグラウンドタスク機能や特定のエージェントコンテキストで Claude Code を呼び出すシェルスクリプトを使用します。
 
-## Commands and Daily Workflows
+## コマンドと毎日のワークフロー
 
-Slash commands are markdown files in `.claude/commands/`. They define reusable workflows.
+スラッシュコマンドは `.claude/commands/` の Markdown ファイルです。再利用可能なワークフローを定義します。
 
-### Command Structure
+### コマンド構造
 
 ```markdown
 # /daily-sync
 
-Run the morning briefing:
+朝のブリーフィングを実行する：
 
-1. Read `data/logs/last-sync.md` for context
-2. Check project status: `git status`, pending PRs, CI health
-3. Review `data/inbox/` for new tasks or decisions needed
-4. Generate a summary of blockers, priorities, and next actions
-5. Append the briefing to `data/logs/daily/<date>.md`
+1. コンテキストのために `data/logs/last-sync.md` を読む
+2. プロジェクト状態を確認する：`git status`、保留中の PR、CI の健全性
+3. 新しいタスクや必要な決定のために `data/inbox/` を確認する
+4. ブロッカー、優先事項、次のアクションのサマリーを生成する
+5. ブリーフィングを `data/logs/daily/<date>.md` に追記する
 ```
 
-### Standard Command Set
+### 標準コマンドセット
 
-| Command | Purpose |
+| コマンド | 目的 |
 |---|---|
-| `/daily-sync` | Morning briefing: status, blockers, priorities |
-| `/outreach` | Run outreach workflow (email, LinkedIn, etc.) |
-| `/research <topic>` | Deep research with citation tracking |
-| `/apply-jobs` | Tailor resume + cover letter for a target role |
-| `/analytics` | Pull metrics from Stripe, GitHub, or custom sources |
-| `/interview-prep` | Generate flashcards or mock interview questions |
-| `/decision <topic>` | Log a decision with pros/cons and chosen path |
+| `/daily-sync` | 朝のブリーフィング：状態、ブロッカー、優先事項 |
+| `/outreach` | アウトリーチワークフローを実行する（メール、LinkedIn など） |
+| `/research <topic>` | 引用追跡付きの詳細な調査 |
+| `/apply-jobs` | 対象ロール向けに履歴書とカバーレターをカスタマイズする |
+| `/analytics` | Stripe、GitHub、またはカスタムソースからメトリクスを取得する |
+| `/interview-prep` | フラッシュカードまたはモック面接質問を生成する |
+| `/decision <topic>` | 賛否と選択したパスで決定を記録する |
 
-### Activating Commands
+### コマンドの有効化
 
-Place command files in `.claude/commands/<command-name>.md`. Claude Code auto-discovers them. Users invoke them with `/<command-name>`.
+コマンドファイルを `.claude/commands/<command-name>.md` に配置します。Claude Code はそれらを自動検出します。ユーザーは `/<command-name>` で呼び出します。
 
-## Persistent Memory
+## 永続メモリ
 
-Memory is file-based. No vector DB, no Redis, no PostgreSQL. JSON and markdown files in `data/` are the database.
+メモリはファイルベースです。ベクトル DB なし、Redis なし、PostgreSQL なし。`data/` の JSON と Markdown ファイルがデータベースです。
 
-### Memory Directory Structure
+### メモリディレクトリ構造
 
 ```
 data/
-├── daily-logs/         # Append-only daily activity logs
-├── projects/           # Per-project context files
-├── decisions/          # Architectural and business decisions (ADR format)
-├── inbox/              # New tasks or ideas awaiting triage
-├── contacts/           # People, companies, relationship notes
-└── templates/          # Reusable prompts and formats
+├── daily-logs/         # 追記専用の毎日のアクティビティログ
+├── projects/           # プロジェクトごとのコンテキストファイル
+├── decisions/          # アーキテクチャとビジネスの決定（ADR フォーマット）
+├── inbox/              # トリアージ待ちの新しいタスクやアイデア
+├── contacts/           # 人、会社、関係のノート
+└── templates/          # 再利用可能なプロンプトとフォーマット
 ```
 
-### Daily Log Format
+### 毎日のログフォーマット
 
 ```markdown
-# 2026-04-22 - Daily Log
+# 2026-04-22 - 毎日のログ
 
-## Sessions
-- 09:00 - Session 1: Refactored auth module (@dev)
-- 11:30 - Session 2: Drafted investor update (@writer)
+## セッション
+- 09:00 - セッション 1: 認証モジュールのリファクタリング（@dev）
+- 11:30 - セッション 2: 投資家向けアップデートの下書き（@writer）
 
-## Decisions
-- Switched from JWT to session cookies (see `data/decisions/2026-04-22-auth.md`)
+## 決定
+- JWT からセッション Cookie に切り替え（`data/decisions/2026-04-22-auth.md` を参照）
 
-## Blockers
-- Waiting on API key from vendor (follow up 2026-04-24)
+## ブロッカー
+- ベンダーからの API キー待ち（2026-04-24 にフォローアップ）
 
-## Next Actions
-- [ ] Merge auth refactor PR
-- [ ] Send investor update for review
+## 次のアクション
+- [ ] 認証リファクタリング PR をマージする
+- [ ] 投資家向けアップデートをレビュー用に送信する
 ```
 
-### Auto-Reflection Pattern
+### 自動リフレクションパターン
 
-At the end of each session, the kernel appends a reflection:
+各セッションの終わりに、カーネルはリフレクションを追記します：
 
 ```markdown
-## Reflection - Session 3
-- What worked: Parallel agent execution saved 20 minutes
-- What didn't: @researcher hit a paywalled source, need better source ranking
-- What to change: Add `source-tier` field to research notes (A/B/C credibility)
+## リフレクション - セッション 3
+- 機能したこと: 並行エージェント実行で 20 分節約
+- 機能しなかったこと: @researcher がペイウォールのあるソースにヒット、より良いソースランキングが必要
+- 変更すべきこと: 調査ノートに `source-tier` フィールドを追加する（A/B/C の信頼性）
 ```
 
-This creates a feedback loop that improves the system over time without code changes.
+これによりコードを変更することなく時間とともにシステムを改善するフィードバックループが作られます。
 
-## Scheduled Automation
+## スケジュールされた自動化
 
-Agentic OS tasks run on a schedule using external cron, not Claude Code's built-in cron (which dies when the session ends).
+エージェニック OS タスクは、セッションが終了すると停止する Claude Code の組み込み cron ではなく、外部 cron を使用してスケジュールで実行されます。
 
 ### macOS: LaunchAgent
 
@@ -243,7 +243,7 @@ Agentic OS tasks run on a schedule using external cron, not Claude Code's built-
 </plist>
 ```
 
-### Linux: systemd Timer
+### Linux: systemd タイマー
 
 ```ini
 # ~/.config/systemd/user/agentic-daily-sync.service
@@ -258,7 +258,7 @@ ExecStart=/usr/local/bin/claude --cwd /path/to/project --command /daily-sync
 ```ini
 # ~/.config/systemd/user/agentic-daily-sync.timer
 [Unit]
-Description=Run daily sync every morning
+Description=毎朝のデイリーシンクを実行する
 
 [Timer]
 OnCalendar=*-*-* 8:00:00
@@ -268,7 +268,7 @@ Persistent=true
 WantedBy=timers.target
 ```
 
-### Cross-Platform: pm2
+### クロスプラットフォーム: pm2
 
 ```bash
 # ecosystem.config.js
@@ -283,11 +283,11 @@ module.exports = {
 };
 ```
 
-## Data Layer
+## データ層
 
-The data layer is your filesystem. Use JSON for structured data and markdown for narrative content.
+データ層はファイルシステムです。構造化データには JSON を、ナラティブコンテンツには Markdown を使用します。
 
-### JSON for Structured State
+### 構造化状態用 JSON
 
 ```json
 // data/projects/website-v2.json
@@ -307,13 +307,13 @@ The data layer is your filesystem. Use JSON for structured data and markdown for
 }
 ```
 
-### Markdown for Narrative
+### ナラティブ用 Markdown
 
-Use markdown for anything a human reads: decisions, logs, research notes, contact records.
+決定、ログ、調査ノート、連絡先記録など人間が読むものには Markdown を使用します。
 
-### Schema Evolution
+### スキーマの進化
 
-Never rename existing fields. Add new fields and mark old ones deprecated:
+既存のフィールドを改名しないこと。新しいフィールドを追加し、古いものを非推奨としてマークする：
 
 ```json
 {
@@ -325,63 +325,63 @@ Never rename existing fields. Add new fields and mark old ones deprecated:
 }
 ```
 
-This keeps historical data readable without migration scripts.
+これにより移行スクリプトなしに過去のデータが読める状態を保ちます。
 
-## Anti-Patterns
+## アンチパターン
 
-### Monolithic Single Agent
+### モノリシックな単一エージェント
 
 ```markdown
-# BAD - One agent does everything
-You are a full-stack developer, writer, researcher, and DevOps engineer.
+# 悪い例 - 1 つのエージェントがすべてを行う
+あなたはフルスタック開発者、ライター、リサーチャー、DevOps エンジニアです。
 ```
 
-Split into specialist agents. The kernel handles routing.
+スペシャリストエージェントに分割します。カーネルがルーティングを処理します。
 
-### Stateless Sessions
+### ステートレスなセッション
 
 ```markdown
-# BAD - No memory between sessions
-Starting fresh every time Claude Code opens.
+# 悪い例 - セッション間にメモリなし
+Claude Code が開くたびに最初から始める。
 ```
 
-Always read `data/` at session start and write back at session end.
+セッション開始時に常に `data/` を読み、セッション終了時に書き戻します。
 
-### Hardcoded Credentials
+### ハードコードされた認証情報
 
 ```markdown
-# BAD - API keys in agent files or CLAUDE.md
-Your OpenAI API key is sk-xxxxxxxx
+# 悪い例 - エージェントファイルまたは CLAUDE.md に API キー
+あなたの OpenAI API キーは sk-xxxxxxxx です
 ```
 
-Use environment variables or a `.env` file loaded by scripts. Agents reference `process.env.API_KEY`.
+環境変数またはスクリプトによってロードされる `.env` ファイルを使用します。エージェントは `process.env.API_KEY` を参照します。
 
-### External Database for Simple State
+### シンプルな状態に外部データベース
 
 ```markdown
-# BAD - PostgreSQL for a solo user's agentic OS
+# 悪い例 - ソロユーザーのエージェニック OS に PostgreSQL
 ```
 
-Use JSON/markdown files until you have multiple concurrent users or GBs of data.
+複数の同時ユーザーまたはデータが GB になるまで JSON/Markdown ファイルを使用します。
 
-### Over-Engineered Routing
+### 過度にエンジニアリングされたルーティング
 
 ```markdown
-# BAD - Routing logic in code instead of markdown tables
+# 悪い例 - Markdown テーブルではなくコードのルーティングロジック
 if (intent.includes('deploy')) { agent = opsAgent; }
 ```
 
-Keep routing declarative in `CLAUDE.md` markdown tables. It is inspectable, editable, and debuggable.
+ルーティングを `CLAUDE.md` の Markdown テーブルで宣言的に保ちます。検査・編集・デバッグが可能です。
 
-## Best Practices
+## ベストプラクティス
 
-- [ ] `CLAUDE.md` is under 200 lines and fits in context window
-- [ ] Each agent file is under 100 lines and focused on one domain
-- [ ] `data/` is git-ignored for sensitive logs, git-tracked for decisions and specs
-- [ ] Commands use imperative names: `/daily-sync`, not `/run-daily-sync`
-- [ ] Logs are append-only; never edit past daily logs
-- [ ] Every agent has a `Memory Scope` section defining what files it reads
-- [ ] Reflections are written at the end of every session
-- [ ] Scheduled tasks use external cron (LaunchAgent, systemd, pm2), not Claude Code's session cron
-- [ ] Cost tracking: log API spend per session in `data/logs/<date>-costs.json`
-- [ ] One project = one Agentic OS. Do not share a single `CLAUDE.md` across unrelated projects.
+- [ ] `CLAUDE.md` は 200 行未満でコンテキストウィンドウに収まる
+- [ ] 各エージェントファイルは 100 行未満で 1 つのドメインに集中している
+- [ ] `data/` は機密ログは Git 無視、決定と仕様は Git 追跡
+- [ ] コマンドは命令形の名前を使用する：`/daily-sync`、`/run-daily-sync` ではない
+- [ ] ログは追記専用；過去の毎日のログを編集しない
+- [ ] すべてのエージェントには読むファイルを定義する `Memory Scope` セクションがある
+- [ ] リフレクションはすべてのセッションの終わりに書かれる
+- [ ] スケジュールされたタスクは Claude Code のセッション cron ではなく外部 cron（LaunchAgent、systemd、pm2）を使用する
+- [ ] コスト追跡: `data/logs/<date>-costs.json` にセッションごとの API 支出をログに記録する
+- [ ] 1 プロジェクト = 1 エージェニック OS。無関係なプロジェクト間で単一の `CLAUDE.md` を共有しない。

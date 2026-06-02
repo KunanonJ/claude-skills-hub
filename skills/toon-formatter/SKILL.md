@@ -232,16 +232,16 @@ A compiled Zig encoder (20x faster than JS) is available:
 
 ```bash
 # Encode JSON to TOON
-.claude/utils/toon/bin/toon encode data.json
+.Codex/utils/toon/bin/toon encode data.json
 
 # Decode TOON to JSON  
-.claude/utils/toon/bin/toon decode data.toon
+.Codex/utils/toon/bin/toon decode data.toon
 
 # Check if TOON recommended
-.claude/utils/toon/bin/toon check data.json
+.Codex/utils/toon/bin/toon check data.json
 
 # Analyze token savings
-.claude/utils/toon/bin/toon analyze data.json
+.Codex/utils/toon/bin/toon analyze data.json
 ```
 
 ## Commands
@@ -272,4 +272,4 @@ A compiled Zig encoder (20x faster than JS) is available:
 
 - **Specification**: https://github.com/toon-format/spec
 - **Website**: https://toonformat.dev
-- **Local Guide**: `.claude/utils/toon/toon-guide.md`
+- **Local Guide**: `.Codex/utils/toon/toon-guide.md`

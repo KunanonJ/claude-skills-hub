@@ -1,9 +1,14 @@
 ---
 name: playwright-skill
-description: "Complete browser automation with Playwright. Auto-detects dev servers, writes clean test scripts to /tmp. Test pages, fill forms, take screenshots, check responsive design, validate UX, test login ..."
+description: "IMPORTANT - Path Resolution: This skill can be installed in different locations (plugin system, manual installation, global, or project-specific). Before executing any commands, determine the skill directory based on where you loaded this SKILL.md file, and use that path in all commands below."
 risk: unknown
 source: community
 date_added: "2026-02-27"
+plugin:
+  setup:
+    type: manual
+    summary: "Run `npm run setup` in the skill directory before first use to install Playwright and Chromium."
+    docs: "SKILL.md"
 ---
 
 **IMPORTANT - Path Resolution:**
@@ -11,9 +16,9 @@ This skill can be installed in different locations (plugin system, manual instal
 
 Common installation paths:
 
-- Plugin system: `~/.claude/plugins/marketplaces/playwright-skill/skills/playwright-skill`
-- Manual global: `~/.claude/skills/playwright-skill`
-- Project-specific: `<project>/.claude/skills/playwright-skill`
+- Plugin system: `<plugin-root>/skills/playwright-skill`
+- Manual global: `<agent-home>/skills/playwright-skill`
+- Project-specific: `<project>/.agent/skills/playwright-skill`
 
 # Playwright Browser Automation
 
@@ -457,3 +462,8 @@ User: "Use 3001"
 
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

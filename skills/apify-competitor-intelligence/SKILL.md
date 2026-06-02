@@ -1,11 +1,18 @@
 ---
 name: apify-competitor-intelligence
 description: Analyze competitor strategies, content, pricing, ads, and market positioning across Google Maps, Booking.com, Facebook, Instagram, YouTube, and TikTok.
+risk: unknown
+source: community
 ---
 
 # Competitor Intelligence
 
 Analyze competitors using Apify Actors to extract data from multiple platforms.
+
+## When to Use
+- You need competitor benchmarks for content, reviews, pricing, ads, audience, or channel performance.
+- The task involves selecting Apify Actors to compare competitors across maps, booking, social, or video platforms.
+- You need structured competitor data plus synthesized takeaways for strategy or positioning.
 
 ## Prerequisites
 (No need to check it upfront)
@@ -121,7 +128,6 @@ After completion, report:
 - Key competitive insights
 - Suggested next steps (deeper analysis, benchmarking)
 
-
 ## Error Handling
 
 `APIFY_TOKEN not found` - Ask user to create `.env` with `APIFY_TOKEN=your_token`
@@ -129,3 +135,8 @@ After completion, report:
 `Actor not found` - Check Actor ID spelling
 `Run FAILED` - Ask user to check Apify console link in error output
 `Timeout` - Reduce input size or increase `--timeout`
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

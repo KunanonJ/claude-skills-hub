@@ -93,7 +93,12 @@ echo "Edit to add your API keys for enhanced research."
 **Step 1: Run the research script**
 
 ```bash
-python3 ~/.claude/skills/last30days/scripts/last30days.py "$ARGUMENTS" --emit=compact 2>&1
+TOPIC_FILE="$(mktemp)"
+trap 'rm -f "$TOPIC_FILE"' EXIT
+cat <<'LAST30DAYS_TOPIC' > "$TOPIC_FILE"
+$ARGUMENTS
+LAST30DAYS_TOPIC
+python3 ~/.claude/skills/last30days/scripts/last30days.py "$(cat "$TOPIC_FILE")" --emit=compact 2>&1
 ```
 
 The script will automatically:
@@ -420,3 +425,8 @@ Want another prompt? Just tell me what you're creating next.
 
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

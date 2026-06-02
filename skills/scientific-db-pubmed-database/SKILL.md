@@ -1,26 +1,24 @@
 ---
 name: pubmed-database
-description: Direct PubMed and NCBI E-utilities search workflows for biomedical literature, MeSH queries, PMID lookup, citation retrieval, and API-backed literature monitoring.
+description: 生物医学文献、MeSH クエリ、PMID 検索、引用取得、および API を利用した文献モニタリングのための PubMed および NCBI E-utilities の直接検索ワークフロー。
 origin: community
 ---
 
 # PubMed Database
 
-Use this skill when a task needs biomedical literature from PubMed rather than
-general web search.
+一般的なウェブ検索ではなく PubMed から生物医学文献が必要なタスクにこのスキルを使用します。
 
-## When to Use
+## 使用するタイミング
 
-- Searching MEDLINE or life-sciences literature.
-- Building PubMed queries with MeSH terms, field tags, dates, or article types.
-- Looking up PMIDs, abstracts, publication metadata, or related citations.
-- Running systematic-review search passes that need repeatable search strings.
-- Using NCBI E-utilities directly from Python, shell, or another HTTP client.
+- MEDLINE または生命科学文献の検索。
+- MeSH 用語、フィールドタグ、日付、または文献種別を使った PubMed クエリの構築。
+- PMID、アブストラクト、出版メタデータ、または関連引用の検索。
+- 再現可能な検索文字列が必要なシステマティックレビューの検索パスの実行。
+- Python、シェル、または別の HTTP クライアントから直接 NCBI E-utilities を使用。
 
-## Query Construction
+## クエリの構築
 
-Start with the research question, split it into concepts, then combine concepts
-with Boolean operators.
+研究質問から始め、概念に分割し、ブール演算子で概念を組み合わせます。
 
 ```text
 concept_1 AND concept_2 AND filter
@@ -28,20 +26,20 @@ synonym_a OR synonym_b
 NOT exclusion_term
 ```
 
-Useful PubMed field tags:
+有用な PubMed フィールドタグ:
 
-- `[ti]`: title
-- `[ab]`: abstract
-- `[tiab]`: title or abstract
-- `[au]`: author
-- `[ta]`: journal title abbreviation
-- `[mh]`: MeSH term
-- `[majr]`: major MeSH topic
-- `[pt]`: publication type
-- `[dp]`: date of publication
-- `[la]`: language
+- `[ti]`: タイトル
+- `[ab]`: アブストラクト
+- `[tiab]`: タイトルまたはアブストラクト
+- `[au]`: 著者
+- `[ta]`: 雑誌タイトル略語
+- `[mh]`: MeSH 用語
+- `[majr]`: 主要 MeSH トピック
+- `[pt]`: 出版種別
+- `[dp]`: 出版日
+- `[la]`: 言語
 
-Examples:
+例:
 
 ```text
 diabetes mellitus[mh] AND treatment[tiab] AND systematic review[pt] AND 2023:2026[dp]
@@ -49,24 +47,22 @@ diabetes mellitus[mh] AND treatment[tiab] AND systematic review[pt] AND 2023:202
 smith ja[au] AND cancer[tiab] AND 2026[dp] AND english[la]
 ```
 
-## MeSH and Subheadings
+## MeSH とサブヘッディング
 
-Prefer MeSH when the concept has a stable controlled-vocabulary term. Combine
-MeSH with title/abstract terms when the topic is new or terminology varies.
+概念が安定した統制語彙用語を持つ場合は MeSH を優先します。トピックが新しいまたは用語が多様な場合は MeSH とタイトル/アブストラクト用語を組み合わせます。
 
-Correct subheading syntax puts the subheading before the field tag:
+正しいサブヘッディング構文では、サブヘッディングをフィールドタグの前に置きます:
 
 ```text
 diabetes mellitus, type 2/drug therapy[mh]
 cardiovascular diseases/prevention & control[mh]
 ```
 
-Use `[majr]` only when the topic must be central to the paper. It can improve
-precision but may miss relevant work.
+`[majr]` は論文の中心的なトピックである必要がある場合にのみ使用します。精度は向上しますが、関連する研究を見逃す可能性があります。
 
-## Filters
+## フィルター
 
-Publication types:
+出版種別:
 
 - `clinical trial[pt]`
 - `meta-analysis[pt]`
@@ -75,7 +71,7 @@ Publication types:
 - `systematic review[pt]`
 - `guideline[pt]`
 
-Date filters:
+日付フィルター:
 
 ```text
 2026[dp]
@@ -83,24 +79,23 @@ Date filters:
 2026/03/15[dp]
 ```
 
-Availability filters:
+利用可能性フィルター:
 
 ```text
 free full text[sb]
 hasabstract[text]
 ```
 
-## E-utilities Workflow
+## E-utilities ワークフロー
 
-NCBI E-utilities supports repeatable API workflows:
+NCBI E-utilities は再現可能な API ワークフローをサポートします:
 
-1. `esearch.fcgi`: search and return PMIDs.
-2. `esummary.fcgi`: return lightweight article metadata.
-3. `efetch.fcgi`: fetch abstracts or full records in XML, MEDLINE, or text.
-4. `elink.fcgi`: find related articles and linked resources.
+1. `esearch.fcgi`: 検索して PMID を返す。
+2. `esummary.fcgi`: 軽量な記事メタデータを返す。
+3. `efetch.fcgi`: XML、MEDLINE、またはテキストでアブストラクトまたはフルレコードを取得。
+4. `elink.fcgi`: 関連記事とリンクされたリソースを検索。
 
-Use an email and API key for production scripts. Store API keys in environment
-variables, never in committed files or command history.
+本番スクリプトにはメールアドレスと API キーを使用します。API キーは環境変数に保存し、コミットされたファイルやコマンド履歴には絶対に入れないでください。
 
 ```python
 import os
@@ -133,43 +128,41 @@ pmids = esearch("hypertension[mh] AND randomized controlled trial[pt] AND 2024:2
 print(pmids)
 ```
 
-For batches, prefer NCBI history server parameters (`usehistory=y`,
-`WebEnv`, `query_key`) instead of passing very long PMID lists through URLs.
+バッチの場合、非常に長い PMID リストを URL に渡す代わりに、NCBI ヒストリーサーバーパラメーター（`usehistory=y`、`WebEnv`、`query_key`）を優先します。
 
-## Output Discipline
+## 出力の記録
 
-For each search pass, record:
+各検索パスについて以下を記録します:
 
-- exact search string
-- database searched
-- date searched
-- filters used
-- result count
-- export format
-- any manual exclusions
+- 正確な検索文字列
+- 検索したデータベース
+- 検索日
+- 使用したフィルター
+- 結果件数
+- エクスポート形式
+- 手動除外
 
-Example:
+例:
 
 ```markdown
-| Database | Date searched | Query | Filters | Results |
+| データベース | 検索日 | クエリ | フィルター | 結果 |
 | --- | --- | --- | --- | ---: |
 | PubMed | 2026-05-11 | `sickle cell disease[mh] AND CRISPR[tiab]` | 2020:2026[dp], English | 42 |
 ```
 
-## Review Checklist
+## レビューチェックリスト
 
-- Are field tags valid PubMed tags?
-- Are MeSH terms paired with free-text synonyms for newer topics?
-- Is the date range explicit and appropriate?
-- Does the search log include enough detail to reproduce the query?
-- Are API keys loaded from the environment?
-- Does HTTP code call `raise_for_status()` or otherwise handle non-200
-  responses before parsing?
-- Are rate limits respected?
+- フィールドタグは有効な PubMed タグか？
+- 新しいトピックについて MeSH 用語は自由テキストの同義語とペアになっているか？
+- 日付範囲は明示的で適切か？
+- 検索ログにクエリを再現するのに十分な詳細が含まれているか？
+- API キーは環境から読み込まれているか？
+- HTTP コードは解析前に `raise_for_status()` を呼び出しているか、または 200 以外のレスポンスを処理しているか？
+- レート制限は守られているか？
 
-## References
+## 参考文献
 
-- [PubMed help](https://pubmed.ncbi.nlm.nih.gov/help/)
-- [NCBI E-utilities documentation](https://www.ncbi.nlm.nih.gov/books/NBK25501/)
-- [NCBI API key guidance](https://support.nlm.nih.gov/kbArticle/?pn=KA-05317)
-- NCBI support: <eutilities@ncbi.nlm.nih.gov>
+- [PubMed ヘルプ](https://pubmed.ncbi.nlm.nih.gov/help/)
+- [NCBI E-utilities ドキュメント](https://www.ncbi.nlm.nih.gov/books/NBK25501/)
+- [NCBI API キーガイダンス](https://support.nlm.nih.gov/kbArticle/?pn=KA-05317)
+- NCBI サポート: <eutilities@ncbi.nlm.nih.gov>

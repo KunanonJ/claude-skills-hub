@@ -1,9 +1,6 @@
 ---
 name: reactome-database
-description: Query Reactome REST API for pathway analysis, enrichment, gene-pathway mapping, disease pathways, molecular interactions, expression analysis, for systems biology studies.
-license: Unknown
-metadata:
-    skill-author: K-Dense Inc.
+description: "Query Reactome REST API for pathway analysis, enrichment, gene-pathway mapping, disease pathways, molecular interactions, expression analysis, for systems biology studies."
 ---
 
 # Reactome Database
@@ -273,4 +270,3 @@ For comprehensive API endpoint documentation, see `references/api_reference.md` 
 - 2,176 small molecules
 - 1,070 drugs
 - 41,373 literature references
-

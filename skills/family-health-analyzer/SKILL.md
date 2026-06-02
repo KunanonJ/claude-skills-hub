@@ -2,9 +2,16 @@
 name: family-health-analyzer
 description: 分析家族病史、评估遗传风险、识别家庭健康模式、提供个性化预防建议
 allowed-tools: Read, Write, Grep, Glob
+risk: unknown
+source: community
 ---
 
 # 家庭健康分析技能
+
+## When to Use
+- 需要分析家族病史、遗传风险或家庭层面的健康模式时使用。
+- 任务涉及家庭健康报告、家族聚集性疾病识别或预防建议生成。
+- 需要把多个家庭成员的健康数据汇总后做趋势或风险评估。
 
 ## 技能概述
 
@@ -135,3 +142,8 @@ allowed-tools: Read, Write, Grep, Glob
 **技能版本**: v1.0
 **最后更新**: 2025-01-08
 **维护者**: WellAlly Tech
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

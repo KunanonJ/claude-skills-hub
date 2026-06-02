@@ -1,16 +1,16 @@
-<!-- PM-Skills | https://github.com/product-on-purpose/pm-skills | Apache 2.0 -->
 ---
 name: measure-instrumentation-spec
 description: Specifies event tracking and analytics instrumentation requirements for a feature. Use when defining what data to collect, ensuring consistent tracking implementation, or documenting analytics requirements for engineering.
-phase: measure
-version: "2.0.0"
-updated: 2026-01-26
 license: Apache-2.0
 metadata:
+  phase: measure
+  version: "2.0.0"
+  updated: 2026-01-26
   category: validation
   frameworks: [triple-diamond, lean-startup, design-thinking]
   author: product-on-purpose
 ---
+<!-- PM-Skills | https://github.com/product-on-purpose/pm-skills | Apache 2.0 -->
 # Instrumentation Spec
 
 An instrumentation spec defines what analytics events to track, when to fire them, and what properties to include. It serves as a contract between product and engineering, ensuring consistent data collection that enables accurate measurement. Good instrumentation specs prevent the "we can't answer that question because we didn't track it" problem.
@@ -43,7 +43,7 @@ When asked to create an instrumentation spec, follow these steps:
    Identify persistent user-level attributes that should be associated with all events (e.g., subscription tier, account creation date). These enable segmentation in analysis.
 
 6. **Address PII and Privacy**
-   Flag any properties that contain personally identifiable information. Document how PII should be handled — hashing, encryption, or exclusion.
+   Flag any properties that contain personally identifiable information. Document how PII should be handled . hashing, encryption, or exclusion.
 
 7. **Create Testing Checklist**
    Define how QA should verify that tracking is implemented correctly. Include steps to validate events fire at the right times with correct properties.

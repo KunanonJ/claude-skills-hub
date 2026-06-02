@@ -1,35 +1,35 @@
 ---
 name: error-handling
-description: Patterns for robust error handling across TypeScript, Python, and Go. Covers typed errors, error boundaries, retries, circuit breakers, and user-facing error messages.
+description: TypeScript、Python、Goにわたる堅牢なエラー処理のパターン。型付きエラー、エラー境界、リトライ、サーキットブレーカー、ユーザー向けエラーメッセージをカバーします。
 origin: ECC
 ---
 
-# Error Handling Patterns
+# エラー処理パターン
 
-Consistent, robust error handling patterns for production applications.
+本番アプリケーション向けの一貫した堅牢なエラー処理パターン。
 
-## When to Activate
+## アクティベートするタイミング
 
-- Designing error types or exception hierarchies for a new module or service
-- Adding retry logic or circuit breakers for unreliable external dependencies
-- Reviewing API endpoints for missing error handling
-- Implementing user-facing error messages and feedback
-- Debugging cascading failures or silent error swallowing
+- 新しいモジュールやサービスのエラー型や例外階層を設計する場合
+- 信頼性の低い外部依存関係に対してリトライロジックやサーキットブレーカーを追加する場合
+- APIエンドポイントでエラー処理の欠落をレビューする場合
+- ユーザー向けエラーメッセージとフィードバックを実装する場合
+- カスケード障害やサイレントなエラー飲み込みをデバッグする場合
 
-## Core Principles
+## コア原則
 
-1. **Fail fast and loudly** — surface errors at the boundary where they occur; don't bury them
-2. **Typed errors over string messages** — errors are first-class values with structure
-3. **User messages ≠ developer messages** — show friendly text to users, log full context server-side
-4. **Never swallow errors silently** — every `catch` block must either handle, re-throw, or log
-5. **Errors are part of your API contract** — document every error code a client may receive
+1. **早く大きく失敗する** — エラーが発生した境界で表面化させる。埋め込まない
+2. **文字列メッセージより型付きエラー** — エラーは構造を持つファーストクラスの値
+3. **ユーザーメッセージ ≠ 開発者メッセージ** — ユーザーには親しみやすいテキストを表示し、詳細なコンテキストはサーバー側でログに記録する
+4. **エラーをサイレントに飲み込まない** — すべての`catch`ブロックは処理、再スロー、またはログのいずれかを行う必要がある
+5. **エラーはAPIコントラクトの一部** — クライアントが受け取る可能性があるすべてのエラーコードをドキュメント化する
 
 ## TypeScript / JavaScript
 
-### Typed Error Classes
+### 型付きエラークラス
 
 ```typescript
-// Define an error hierarchy for your domain
+// ドメインのエラー階層を定義する
 export class AppError extends Error {
   constructor(
     message: string,
@@ -39,9 +39,9 @@ export class AppError extends Error {
   ) {
     super(message)
     this.name = this.constructor.name
-    // Maintain correct prototype chain in transpiled ES5 JavaScript.
-    // Required for `instanceof` checks (e.g., `error instanceof NotFoundError`)
-    // to work correctly when extending the built-in Error class.
+    // トランスパイルされたES5 JavaScriptでプロトタイプチェーンを正しく維持する。
+    // 組み込みのErrorクラスを拡張する際に`instanceof`チェック
+    // （例: `error instanceof NotFoundError`）が正しく動作するために必要。
     Object.setPrototypeOf(this, new.target.prototype)
   }
 }
@@ -71,9 +71,9 @@ export class RateLimitError extends AppError {
 }
 ```
 
-### Result Pattern (no-throw style)
+### Resultパターン（スロー不使用スタイル）
 
-For operations where failure is expected and common (parsing, external calls):
+失敗が想定され一般的な操作（パース、外部呼び出し）向け:
 
 ```typescript
 type Result<T, E = AppError> =
@@ -88,7 +88,7 @@ function err<E>(error: E): Result<never, E> {
   return { ok: false, error }
 }
 
-// Usage
+// 使用例
 async function fetchUser(id: string): Promise<Result<User>> {
   try {
     const user = await db.users.findUnique({ where: { id } })
@@ -101,21 +101,21 @@ async function fetchUser(id: string): Promise<Result<User>> {
 
 const result = await fetchUser('abc-123')
 if (!result.ok) {
-  // TypeScript knows result.error here
+  // TypeScriptはここでresult.errorを認識する
   logger.error('Failed to fetch user', { error: result.error })
   return
 }
-// TypeScript knows result.value here
+// TypeScriptはここでresult.valueを認識する
 console.log(result.value.email)
 ```
 
-### API Error Handler (Next.js / Express)
+### APIエラーハンドラー（Next.js / Express）
 
 ```typescript
 import { NextRequest, NextResponse } from 'next/server'
 
 function handleApiError(error: unknown): NextResponse {
-  // Known application error
+  // 既知のアプリケーションエラー
   if (error instanceof AppError) {
     return NextResponse.json(
       {
@@ -129,7 +129,7 @@ function handleApiError(error: unknown): NextResponse {
     )
   }
 
-  // Zod validation error
+  // Zodバリデーションエラー
   if (error instanceof z.ZodError) {
     return NextResponse.json(
       {
@@ -146,7 +146,7 @@ function handleApiError(error: unknown): NextResponse {
     )
   }
 
-  // Unexpected error — log details, return generic message
+  // 予期しないエラー — 詳細をログに記録し、汎用メッセージを返す
   console.error('Unexpected error:', error)
   return NextResponse.json(
     { error: { code: 'INTERNAL_ERROR', message: 'An unexpected error occurred' } },
@@ -156,14 +156,14 @@ function handleApiError(error: unknown): NextResponse {
 
 export async function POST(req: NextRequest) {
   try {
-    // ... handler logic
+    // ... ハンドラーロジック
   } catch (error) {
     return handleApiError(error)
   }
 }
 ```
 
-### React Error Boundary
+### ReactエラーバウンダリーII
 
 ```typescript
 import { Component, ErrorInfo, ReactNode } from 'react'
@@ -197,7 +197,7 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 }
 
-// Usage
+// 使用例
 <ErrorBoundary fallback={<p>Something went wrong. Please refresh.</p>}>
   <MyComponent />
 </ErrorBoundary>
@@ -205,11 +205,11 @@ export class ErrorBoundary extends Component<Props, State> {
 
 ## Python
 
-### Custom Exception Hierarchy
+### カスタム例外階層
 
 ```python
 class AppError(Exception):
-    """Base application error."""
+    """基底アプリケーションエラー。"""
     def __init__(self, message: str, code: str, status_code: int = 500):
         super().__init__(message)
         self.code = code
@@ -225,7 +225,7 @@ class ValidationError(AppError):
         self.details = details or []
 ```
 
-### FastAPI Global Exception Handler
+### FastAPIグローバル例外ハンドラー
 
 ```python
 from fastapi import FastAPI, Request
@@ -242,7 +242,7 @@ async def app_error_handler(request: Request, exc: AppError) -> JSONResponse:
 
 @app.exception_handler(Exception)
 async def generic_error_handler(request: Request, exc: Exception) -> JSONResponse:
-    # Log full details, return generic message
+    # 詳細をログに記録し、汎用メッセージを返す
     logger.exception("Unexpected error", exc_info=exc)
     return JSONResponse(
         status_code=500,
@@ -252,21 +252,21 @@ async def generic_error_handler(request: Request, exc: Exception) -> JSONRespons
 
 ## Go
 
-### Sentinel Errors and Error Wrapping
+### センチネルエラーとエラーラッピング
 
 ```go
 package domain
 
 import "errors"
 
-// Sentinel errors for type-checking
+// 型チェック用センチネルエラー
 var (
     ErrNotFound    = errors.New("not found")
     ErrUnauthorized = errors.New("unauthorized")
     ErrConflict     = errors.New("conflict")
 )
 
-// Wrap errors with context — never lose the original
+// コンテキスト付きでエラーをラップする — 元のエラーを失わない
 func (r *UserRepository) FindByID(ctx context.Context, id string) (*User, error) {
     user, err := r.db.QueryRow(ctx, "SELECT * FROM users WHERE id = $1", id)
     if errors.Is(err, sql.ErrNoRows) {
@@ -278,7 +278,7 @@ func (r *UserRepository) FindByID(ctx context.Context, id string) (*User, error)
     return user, nil
 }
 
-// At the handler level, unwrap to determine response
+// ハンドラーレベルでアンラップしてレスポンスを決定する
 func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
     user, err := h.service.GetUser(r.Context(), chi.URLParam(r, "id"))
     if err != nil {
@@ -297,7 +297,7 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 }
 ```
 
-## Retry with Exponential Backoff
+## 指数バックオフ付きリトライ
 
 ```typescript
 interface RetryOptions {
@@ -336,16 +336,16 @@ async function withRetry<T>(
   throw lastError
 }
 
-// Usage: retry transient network errors, not 4xx
+// 使用例: 一時的なネットワークエラーはリトライ、4xxはリトライしない
 const data = await withRetry(() => fetch('/api/data').then(r => r.json()), {
   maxAttempts: 3,
   retryIf: (error) => !(error instanceof AppError && error.statusCode < 500),
 })
 ```
 
-## User-Facing Error Messages
+## ユーザー向けエラーメッセージ
 
-Map error codes to human-readable messages. Keep technical details out of user-visible text.
+エラーコードを人間が読めるメッセージにマッピングする。技術的な詳細はユーザーに見えるテキストに含めない。
 
 ```typescript
 const USER_ERROR_MESSAGES: Record<string, string> = {
@@ -362,15 +362,15 @@ export function getUserMessage(code: string): string {
 }
 ```
 
-## Error Handling Checklist
+## エラー処理チェックリスト
 
-Before merging any code that touches error handling:
+エラー処理に触れるコードをマージする前に:
 
-- [ ] Every `catch` block handles, re-throws, or logs — no silent swallowing
-- [ ] API errors follow the standard envelope `{ error: { code, message } }`
-- [ ] User-facing messages contain no stack traces or internal details
-- [ ] Full error context is logged server-side
-- [ ] Custom error classes extend a base `AppError` with a `code` field
-- [ ] Async functions surface errors to callers — no fire-and-forget without fallback
-- [ ] Retry logic only retries retriable errors (not 4xx client errors)
-- [ ] React components are wrapped in `ErrorBoundary` for rendering errors
+- [ ] すべての`catch`ブロックが処理、再スロー、またはログを行っている — サイレントな飲み込みなし
+- [ ] APIエラーが標準エンベロープ`{ error: { code, message } }`に従っている
+- [ ] ユーザー向けメッセージにスタックトレースや内部詳細が含まれていない
+- [ ] サーバー側で完全なエラーコンテキストがログに記録されている
+- [ ] カスタムエラークラスが`code`フィールドを持つ基底`AppError`を継承している
+- [ ] 非同期関数がエラーを呼び出し元に伝播している — フォールバックなしの fire-and-forget なし
+- [ ] リトライロジックがリトライ可能なエラーのみをリトライしている（4xxクライアントエラーはリトライしない）
+- [ ] Reactコンポーネントがレンダリングエラーのために`ErrorBoundary`でラップされている

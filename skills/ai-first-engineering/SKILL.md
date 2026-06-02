@@ -1,51 +1,51 @@
 ---
 name: ai-first-engineering
-description: Engineering operating model for teams where AI agents generate a large share of implementation output.
+description: AI エージェントが大量の実装出力を生成するチームのためのエンジニアリング運用モデル。
 origin: ECC
 ---
 
-# AI-First Engineering
+# AI ファーストエンジニアリング
 
-Use this skill when designing process, reviews, and architecture for teams shipping with AI-assisted code generation.
+AI 支援コード生成でリリースするチームのプロセス、レビュー、アーキテクチャを設計する際にこのスキルを使用します。
 
-## Process Shifts
+## プロセスの変化
 
-1. Planning quality matters more than typing speed.
-2. Eval coverage matters more than anecdotal confidence.
-3. Review focus shifts from syntax to system behavior.
+1. 計画の品質はタイピングスピードより重要。
+2. 評価のカバレッジは個人的な自信より重要。
+3. レビューの焦点は構文からシステムの動作へ。
 
-## Architecture Requirements
+## アーキテクチャ要件
 
-Prefer architectures that are agent-friendly:
-- explicit boundaries
-- stable contracts
-- typed interfaces
-- deterministic tests
+エージェントフレンドリーなアーキテクチャを優先する：
+- 明示的な境界
+- 安定したコントラクト
+- 型付きインターフェース
+- 決定論的なテスト
 
-Avoid implicit behavior spread across hidden conventions.
+隠れた慣習に広がる暗黙の動作を避ける。
 
-## Code Review in AI-First Teams
+## AI ファーストチームでのコードレビュー
 
-Review for:
-- behavior regressions
-- security assumptions
-- data integrity
-- failure handling
-- rollout safety
+レビュー対象：
+- 動作のリグレッション
+- セキュリティの前提
+- データの整合性
+- 障害処理
+- ロールアウトの安全性
 
-Minimize time spent on style issues already covered by automation.
+自動化によって既にカバーされているスタイルの問題に費やす時間を最小化する。
 
-## Hiring and Evaluation Signals
+## 採用と評価シグナル
 
-Strong AI-first engineers:
-- decompose ambiguous work cleanly
-- define measurable acceptance criteria
-- produce high-signal prompts and evals
-- enforce risk controls under delivery pressure
+AI ファーストの強いエンジニア：
+- 曖昧な作業を明確に分解する
+- 測定可能な受け入れ基準を定義する
+- 高シグナルのプロンプトと評価を生成する
+- 納期プレッシャー下でリスクコントロールを強制する
 
-## Testing Standard
+## テスト標準
 
-Raise testing bar for generated code:
-- required regression coverage for touched domains
-- explicit edge-case assertions
-- integration checks for interface boundaries
+生成されたコードのテストバーを引き上げる：
+- 操作されたドメインに対する必須のリグレッションカバレッジ
+- 明示的なエッジケースのアサーション
+- インターフェース境界の統合チェック

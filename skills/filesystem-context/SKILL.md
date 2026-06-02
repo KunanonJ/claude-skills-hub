@@ -11,8 +11,7 @@ The filesystem provides a single interface through which agents can flexibly sto
 
 The core insight is that files enable dynamic context discovery: agents pull relevant context on demand rather than carrying everything in the context window. This contrasts with static context, which is always included regardless of relevance.
 
-## When to Activate
-
+## When to Use
 Activate this skill when:
 - Tool outputs are bloating the context window
 - Agents need to persist state across long trajectories
@@ -321,3 +320,7 @@ External resources:
 **Author**: Agent Skills for Context Engineering Contributors
 **Version**: 1.0.0
 
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

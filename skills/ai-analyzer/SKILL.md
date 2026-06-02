@@ -2,11 +2,18 @@
 name: ai-analyzer
 description: AI驱动的综合健康分析系统，整合多维度健康数据、识别异常模式、预测健康风险、提供个性化建议。支持智能问答和AI健康报告生成。
 allowed-tools: Read, Grep, Glob, Write
+risk: unknown
+source: community
 ---
 
 # AI健康分析器
 
 基于AI技术的综合健康分析系统，提供智能健康洞察、风险预测和个性化建议。
+
+## When to Use
+- The user wants AI-driven health analysis across multiple health datasets or lifestyle signals.
+- You need anomaly detection, risk prediction, or personalized recommendations based on health inputs.
+- You need generated health reports or question-answering over health metrics and trends.
 
 ## 核心功能
 
@@ -216,3 +223,8 @@ const allergies = exists('data/allergies.json') ? readFile('data/allergies.json'
 - 增量读取：仅读取指定时间范围的数据文件
 - 数据缓存：避免重复读取同一文件
 - 延迟计算：按需生成图表数据
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

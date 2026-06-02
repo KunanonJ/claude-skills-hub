@@ -1,9 +1,6 @@
 ---
 name: clinvar-database
-description: Query NCBI ClinVar for variant clinical significance. Search by gene/position, interpret pathogenicity classifications, access via E-utilities API or FTP, annotate VCFs, for genomic medicine.
-license: Unknown
-metadata:
-    skill-author: K-Dense Inc.
+description: "Query NCBI ClinVar for variant clinical significance. Search by gene/position, interpret pathogenicity classifications, access via E-utilities API or FTP, annotate VCFs, for genomic medicine."
 ---
 
 # ClinVar Database
@@ -357,4 +354,3 @@ This skill includes comprehensive reference documentation:
 ### Contact
 
 For questions about ClinVar or data submission: clinvar@ncbi.nlm.nih.gov
-

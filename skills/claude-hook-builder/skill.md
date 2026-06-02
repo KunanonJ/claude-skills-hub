@@ -1,15 +1,15 @@
 ---
-name: claude-hook-builder
-description: Interactive hook creator for Claude Code. Triggers when user mentions creating hooks, PreToolUse, PostToolUse, hook validation, hook configuration, settings.json hooks, or wants to automate tool execution workflows.
+name: Codex-hook-builder
+description: Interactive hook creator for Codex. Triggers when user mentions creating hooks, PreToolUse, PostToolUse, hook validation, hook configuration, settings.json hooks, or wants to automate tool execution workflows.
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash
 model: sonnet
 ---
 
-# Claude Code Hook Builder
+# Codex Hook Builder
 
 ## Purpose
 
-Guide users through creating effective Claude Code hooks for tool validation, automation, and workflow enhancement. Auto-invokes when users want to create or configure hooks.
+Guide users through creating effective Codex hooks for tool validation, automation, and workflow enhancement. Auto-invokes when users want to create or configure hooks.
 
 ## When to Use
 
@@ -22,9 +22,9 @@ Auto-invoke when users mention:
 
 ## Knowledge Base
 
-- Official docs: `.claude/skills/ai/claude-code/docs/code_claude_com/docs_en_hooks.md`
-- Hook guide: `.claude/skills/ai/claude-code/docs/code_claude_com/docs_en_hooks-guide.md`
-- Project guide: `.claude/docs/creating-components.md`
+- Official docs: `.Codex/skills/ai/Codex/docs/code_claude_com/docs_en_hooks.md`
+- Hook guide: `.Codex/skills/ai/Codex/docs/code_claude_com/docs_en_hooks-guide.md`
+- Project guide: `.Codex/docs/creating-components.md`
 
 ## Process
 
@@ -33,7 +33,7 @@ Auto-invoke when users mention:
 Ask the user:
 
 ```
-Let me help you create a Claude Code hook! I need some details:
+Let me help you create a Codex hook! I need some details:
 
 1. **What should this hook do?**
    Examples:
@@ -47,7 +47,7 @@ Let me help you create a Claude Code hook! I need some details:
    - PreToolUse (before tool execution)
    - PostToolUse (after tool execution)
    - UserPromptSubmit (when user sends message)
-   - Stop (when Claude finishes responding)
+   - Stop (when Codex finishes responding)
    - SubagentStop (when subagent finishes)
    - SessionStart (when session begins)
    - SessionEnd (when session ends)
@@ -63,13 +63,13 @@ Let me help you create a Claude Code hook! I need some details:
 4. **What should it return?**
    - Simple exit code (0 = success, 2 = block)
    - JSON with decision control
-   - Additional context for Claude
+   - Additional context for Codex
    - Modified tool inputs
 
 5. **Scope:**
-   - User-level (`~/.claude/settings.json`)
-   - Project-level (`.claude/settings.json`)
-   - Local project (`.claude/settings.local.json`)
+   - User-level (`~/.Codex/settings.json`)
+   - Project-level (`.Codex/settings.json`)
+   - Local project (`.Codex/settings.local.json`)
 ```
 
 ### 2. Determine Hook Type
@@ -89,7 +89,7 @@ Let me help you create a Claude Code hook! I need some details:
 ```json
 {
   "type": "prompt",
-  "prompt": "Evaluate if Claude should stop: $ARGUMENTS"
+  "prompt": "Evaluate if Codex should stop: $ARGUMENTS"
 }
 ```
 - Uses LLM for decision
@@ -137,7 +137,7 @@ Runs after tool completes.
   "reason": "Why blocking",
   "hookSpecificOutput": {
     "hookEventName": "PostToolUse",
-    "additionalContext": "Extra info for Claude"
+    "additionalContext": "Extra info for Codex"
   }
 }
 ```
@@ -164,7 +164,7 @@ Runs when user submits prompt.
 ```
 
 #### Stop / SubagentStop
-Runs when Claude/subagent finishes.
+Runs when Codex/subagent finishes.
 
 **Use for:**
 - Verify tasks completed
@@ -284,7 +284,7 @@ Add hook configuration:
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/format.sh"
+            "command": "$CLAUDE_PROJECT_DIR/.Codex/hooks/format.sh"
           }
         ]
       }
@@ -303,12 +303,12 @@ Add hook configuration:
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/format.sh",
+            "command": "$CLAUDE_PROJECT_DIR/.Codex/hooks/format.sh",
             "timeout": 30
           },
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/lint.sh",
+            "command": "$CLAUDE_PROJECT_DIR/.Codex/hooks/lint.sh",
             "timeout": 60
           }
         ]
@@ -320,7 +320,7 @@ Add hook configuration:
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/validate-bash.py"
+            "command": "$CLAUDE_PROJECT_DIR/.Codex/hooks/validate-bash.py"
           }
         ]
       }
@@ -338,7 +338,7 @@ Add hook configuration:
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/add-context.sh"
+            "command": "$CLAUDE_PROJECT_DIR/.Codex/hooks/add-context.sh"
           }
         ]
       }
@@ -398,7 +398,7 @@ Each event receives JSON on stdin:
   - JSON parsed if present
 
 - **2**: Blocking error
-  - stderr shown to Claude
+  - stderr shown to Codex
   - Operation blocked (behavior varies by event)
   - JSON in stdout ignored
 
@@ -417,16 +417,16 @@ echo '{
     "file_path": "test.txt",
     "content": "hello"
   }
-}' | .claude/hooks/your-hook.sh
+}' | .Codex/hooks/your-hook.sh
 
 # Check exit code
 echo $?
 ```
 
-**Test in Claude Code:**
+**Test in Codex:**
 ```
 1. Add hook to settings.json
-2. Restart Claude Code
+2. Restart Codex
 3. Run /hooks to verify it's loaded
 4. Trigger the hook (e.g., write a file)
 5. Check verbose mode (Ctrl+O) for output
@@ -434,7 +434,7 @@ echo $?
 
 **Debug mode:**
 ```bash
-claude --debug
+Codex --debug
 # Shows hook execution details
 ```
 
@@ -451,7 +451,7 @@ Show the complete configuration:
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/script.sh",
+            "command": "$CLAUDE_PROJECT_DIR/.Codex/hooks/script.sh",
             "timeout": 60
           }
         ]
@@ -465,7 +465,7 @@ Show the complete configuration:
 
 ### Example 1: Auto-Format Python Files
 
-**Hook script** (`.claude/hooks/format-python.sh`):
+**Hook script** (`.Codex/hooks/format-python.sh`):
 ```bash
 #!/usr/bin/env bash
 INPUT=$(cat)
@@ -496,7 +496,7 @@ exit 0
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/format-python.sh"
+            "command": "$CLAUDE_PROJECT_DIR/.Codex/hooks/format-python.sh"
           }
         ]
       }
@@ -507,7 +507,7 @@ exit 0
 
 ### Example 2: Validate Bash Commands
 
-**Hook script** (`.claude/hooks/validate-bash.py`):
+**Hook script** (`.Codex/hooks/validate-bash.py`):
 ```python
 #!/usr/bin/env python3
 import json
@@ -551,7 +551,7 @@ sys.exit(0)  # Allow
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/validate-bash.py"
+            "command": "$CLAUDE_PROJECT_DIR/.Codex/hooks/validate-bash.py"
           }
         ]
       }
@@ -562,7 +562,7 @@ sys.exit(0)  # Allow
 
 ### Example 3: Add Timestamp to Prompts
 
-**Hook script** (`.claude/hooks/add-timestamp.sh`):
+**Hook script** (`.Codex/hooks/add-timestamp.sh`):
 ```bash
 #!/usr/bin/env bash
 
@@ -581,7 +581,7 @@ exit 0
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/add-timestamp.sh"
+            "command": "$CLAUDE_PROJECT_DIR/.Codex/hooks/add-timestamp.sh"
           }
         ]
       }
@@ -592,7 +592,7 @@ exit 0
 
 ### Example 4: Auto-Approve Documentation Reads
 
-**Hook script** (`.claude/hooks/auto-approve-docs.py`):
+**Hook script** (`.Codex/hooks/auto-approve-docs.py`):
 ```python
 #!/usr/bin/env python3
 import json
@@ -631,7 +631,7 @@ sys.exit(0)
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/auto-approve-docs.py"
+            "command": "$CLAUDE_PROJECT_DIR/.Codex/hooks/auto-approve-docs.py"
           }
         ]
       }
@@ -642,7 +642,7 @@ sys.exit(0)
 
 ### Example 5: Prevent Sensitive File Access
 
-**Hook script** (`.claude/hooks/block-secrets.sh`):
+**Hook script** (`.Codex/hooks/block-secrets.sh`):
 ```bash
 #!/usr/bin/env bash
 INPUT=$(cat)
@@ -670,7 +670,7 @@ exit 0
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/block-secrets.sh"
+            "command": "$CLAUDE_PROJECT_DIR/.Codex/hooks/block-secrets.sh"
           }
         ]
       }
@@ -690,7 +690,7 @@ exit 0
         "hooks": [
           {
             "type": "prompt",
-            "prompt": "Evaluate whether Claude should stop. Context: $ARGUMENTS\n\nCheck if:\n1. All tasks are complete\n2. Tests are passing\n3. No errors need addressing\n\nRespond with JSON: {\"decision\": \"approve\" or \"block\", \"reason\": \"explanation\"}",
+            "prompt": "Evaluate whether Codex should stop. Context: $ARGUMENTS\n\nCheck if:\n1. All tasks are complete\n2. Tests are passing\n3. No errors need addressing\n\nRespond with JSON: {\"decision\": \"approve\" or \"block\", \"reason\": \"explanation\"}",
             "timeout": 30
           }
         ]
@@ -702,7 +702,7 @@ exit 0
 
 ### Example 7: Session Setup Hook
 
-**Hook script** (`.claude/hooks/session-setup.sh`):
+**Hook script** (`.Codex/hooks/session-setup.sh`):
 ```bash
 #!/usr/bin/env bash
 
@@ -736,7 +736,7 @@ exit 0
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/session-setup.sh"
+            "command": "$CLAUDE_PROJECT_DIR/.Codex/hooks/session-setup.sh"
           }
         ]
       }
@@ -850,12 +850,12 @@ Hooks execute arbitrary commands:
 2. Matcher pattern is correct (case-sensitive)
 3. Script has execute permissions: `chmod +x script.sh`
 4. Script shebang is correct: `#!/usr/bin/env bash`
-5. Restart Claude Code after config changes
+5. Restart Codex after config changes
 
 **Debug:**
 ```bash
 # Run with debug mode
-claude --debug
+Codex --debug
 
 # Check hook execution in output
 # Shows: "Executing hooks for PostToolUse:Write"
@@ -871,7 +871,7 @@ claude --debug
 
 **View errors:**
 - Verbose mode: Ctrl+O
-- Debug mode: `claude --debug`
+- Debug mode: `Codex --debug`
 - Check stderr output
 
 ### Permissions Issues
@@ -879,10 +879,10 @@ claude --debug
 **Check:**
 ```bash
 # Make script executable
-chmod +x .claude/hooks/script.sh
+chmod +x .Codex/hooks/script.sh
 
 # Verify permissions
-ls -la .claude/hooks/
+ls -la .Codex/hooks/
 ```
 
 ### JSON Parse Errors
@@ -900,7 +900,7 @@ echo '{}' | ./script.sh | jq .
 
 ## Resources
 
-- **Official Hook Docs:** `.claude/skills/ai/claude-code/docs/code_claude_com/docs_en_hooks.md`
-- **Hook Guide:** `.claude/skills/ai/claude-code/docs/code_claude_com/docs_en_hooks-guide.md`
-- **Settings Reference:** `.claude/skills/ai/claude-code/docs/code_claude_com/docs_en_settings.md`
-- **Project Guide:** `.claude/docs/creating-components.md`
+- **Official Hook Docs:** `.Codex/skills/ai/Codex/docs/code_claude_com/docs_en_hooks.md`
+- **Hook Guide:** `.Codex/skills/ai/Codex/docs/code_claude_com/docs_en_hooks-guide.md`
+- **Settings Reference:** `.Codex/skills/ai/Codex/docs/code_claude_com/docs_en_settings.md`
+- **Project Guide:** `.Codex/docs/creating-components.md`

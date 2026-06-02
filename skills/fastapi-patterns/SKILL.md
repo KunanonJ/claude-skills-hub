@@ -1,34 +1,34 @@
 ---
 name: fastapi-patterns
-description: FastAPI patterns for async APIs, dependency injection, Pydantic request and response models, OpenAPI docs, tests, security, and production readiness.
+description: 非同期API、依存性注入、Pydanticのリクエスト・レスポンスモデル、OpenAPIドキュメント、テスト、セキュリティ、本番対応のためのFastAPIパターン。
 origin: community
 ---
 
-# FastAPI Patterns
+# FastAPIパターン
 
-Production-oriented patterns for FastAPI services.
+本番指向のFastAPIサービスのためのパターン。
 
-## When to Use
+## 使用するタイミング
 
-- Building or reviewing a FastAPI app.
-- Splitting routers, schemas, dependencies, and database access.
-- Writing async endpoints that call a database or external service.
-- Adding authentication, authorization, OpenAPI docs, tests, or deployment settings.
-- Checking a FastAPI PR for copy-pasteable examples and production risks.
+- FastAPIアプリを構築またはレビューする場合。
+- ルーター、スキーマ、依存関係、データベースアクセスを分割する場合。
+- データベースや外部サービスを呼び出す非同期エンドポイントを記述する場合。
+- 認証、認可、OpenAPIドキュメント、テスト、またはデプロイ設定を追加する場合。
+- FastAPI PRをコピー可能な例とリスクについて確認する場合。
 
-## How It Works
+## 仕組み
 
-Treat the FastAPI app as a thin HTTP layer over explicit dependencies and service code:
+FastAPIアプリを明示的な依存関係とサービスコードの上の薄いHTTPレイヤーとして扱います:
 
-- `main.py` owns app construction, middleware, exception handlers, and router registration.
-- `schemas/` owns Pydantic request and response models.
-- `dependencies.py` owns database, auth, pagination, and request-scoped dependencies.
-- `services/` or `crud/` owns business and persistence operations.
-- `tests/` overrides dependencies instead of opening production resources.
+- `main.py` はアプリ構築、ミドルウェア、例外ハンドラー、ルーター登録を担当する。
+- `schemas/` はPydanticのリクエストとレスポンスモデルを担当する。
+- `dependencies.py` はデータベース、認証、ページネーション、リクエストスコープの依存関係を担当する。
+- `services/` または `crud/` はビジネスと永続化操作を担当する。
+- `tests/` は本番リソースを開かずに依存関係をオーバーライドする。
 
-Prefer small routers and explicit `response_model` declarations. Keep raw ORM objects, secrets, and framework globals out of response schemas.
+小さなルーターと明示的な`response_model`宣言を優先します。レスポンススキーマには生のORMオブジェクト、シークレット、フレームワークのグローバル変数を含めないでください。
 
-## Project Layout
+## プロジェクトレイアウト
 
 ```text
 app/
@@ -51,9 +51,9 @@ app/
 `-- tests/
 ```
 
-## Application Factory
+## アプリケーションファクトリー
 
-Use a factory so tests and workers can build the app with controlled settings.
+テストとワーカーが制御された設定でアプリをビルドできるように、ファクトリーを使用します。
 
 ```python
 from contextlib import asynccontextmanager
@@ -98,11 +98,11 @@ def create_app() -> FastAPI:
 app = create_app()
 ```
 
-Do not use `allow_origins=["*"]` with `allow_credentials=True`; browsers reject that combination and Starlette disallows it for credentialed requests.
+`allow_credentials=True`と一緒に`allow_origins=["*"]`を使用しないでください; ブラウザはその組み合わせを拒否し、Starletteは認証情報付きリクエストに対してそれを禁止します。
 
-## Pydantic Schemas
+## Pydanticスキーマ
 
-Keep request, update, and response models separate.
+リクエスト、更新、レスポンスのモデルを分離します。
 
 ```python
 from datetime import datetime
@@ -134,11 +134,11 @@ class UserResponse(UserBase):
     updated_at: datetime
 ```
 
-Response models must never include password hashes, access tokens, refresh tokens, or internal authorization state.
+レスポンスモデルにはパスワードハッシュ、アクセストークン、リフレッシュトークン、内部認可状態を含めてはなりません。
 
-## Dependencies
+## 依存関係
 
-Use dependency injection for request-scoped resources.
+リクエストスコープのリソースには依存性注入を使用します。
 
 ```python
 from collections.abc import AsyncIterator
@@ -178,11 +178,11 @@ async def get_current_user(
     return user
 ```
 
-Avoid creating sessions, clients, or credentials inline inside route handlers.
+ルートハンドラー内でインラインにセッション、クライアント、または認証情報を作成しないでください。
 
-## Async Endpoints
+## 非同期エンドポイント
 
-Keep route handlers async when they perform I/O, and use async libraries inside them.
+I/Oを実行する場合はルートハンドラーを非同期にし、その内部で非同期ライブラリを使用します。
 
 ```python
 from fastapi import APIRouter, Depends, Query
@@ -210,11 +210,11 @@ async def list_users(
     return result.scalars().all()
 ```
 
-Use `httpx.AsyncClient` for external HTTP calls from async handlers. Do not call `requests` in an async route.
+非同期ハンドラーからの外部HTTP呼び出しには`httpx.AsyncClient`を使用してください。非同期ルートで`requests`を呼び出さないでください。
 
-## Error Handling
+## エラー処理
 
-Centralize domain exceptions and keep response shapes stable.
+ドメイン例外を一元化し、レスポンスの形状を安定させます。
 
 ```python
 from fastapi import FastAPI, Request
@@ -237,9 +237,9 @@ def register_exception_handlers(app: FastAPI) -> None:
         )
 ```
 
-## OpenAPI Customization
+## OpenAPIカスタマイズ
 
-Assign the custom OpenAPI callable to `app.openapi`; do not just call the function once.
+カスタムOpenAPI呼び出し可能オブジェクトを`app.openapi`に割り当ててください; 関数を一度だけ呼び出さないでください。
 
 ```python
 from fastapi import FastAPI
@@ -260,9 +260,9 @@ def install_openapi(app: FastAPI) -> None:
     app.openapi = custom_openapi
 ```
 
-## Testing
+## テスト
 
-Override the dependency used by `Depends`, not an internal helper that route handlers never reference.
+ルートハンドラーが決して参照しない内部ヘルパーではなく、`Depends`で使用される依存関係をオーバーライドします。
 
 ```python
 import pytest
@@ -289,39 +289,39 @@ async def client(test_session: AsyncSession):
     app.dependency_overrides.clear()
 ```
 
-## Security Checklist
+## セキュリティチェックリスト
 
-- Hash passwords with `argon2-cffi`, `bcrypt`, or a current passlib-compatible hasher.
-- Validate JWT issuer, audience, expiry, and signing algorithm.
-- Keep CORS origins environment-specific.
-- Put rate limits on auth and write-heavy endpoints.
-- Use Pydantic models for all request bodies.
-- Use ORM parameter binding or SQLAlchemy Core expressions; never build SQL with f-strings.
-- Redact tokens, authorization headers, cookies, and passwords from logs.
-- Run dependency audit tooling in CI.
+- `argon2-cffi`、`bcrypt`、または現在のpasslib互換ハッシャーでパスワードをハッシュする。
+- JWTの発行者、オーディエンス、有効期限、署名アルゴリズムを検証する。
+- CORSオリジンを環境固有に保つ。
+- 認証と書き込み負荷の高いエンドポイントにレート制限を設ける。
+- すべてのリクエストボディにPydanticモデルを使用する。
+- ORMパラメーターバインディングまたはSQLAlchemy Coreの式を使用する; f文字列でSQLを構築しない。
+- ログからトークン、認可ヘッダー、クッキー、パスワードを削除する。
+- CIで依存関係の監査ツールを実行する。
 
-## Performance Checklist
+## パフォーマンスチェックリスト
 
-- Configure database connection pooling explicitly.
-- Add pagination to list endpoints.
-- Watch for N+1 queries and use eager loading intentionally.
-- Use async HTTP/database clients in async paths.
-- Add compression only after checking payload size and CPU tradeoffs.
-- Cache stable expensive reads behind explicit invalidation.
+- データベース接続プールを明示的に設定する。
+- リストエンドポイントにページネーションを追加する。
+- N+1クエリに注意し、イーガーローディングを意図的に使用する。
+- 非同期パスでは非同期HTTP/データベースクライアントを使用する。
+- ペイロードサイズとCPUのトレードオフを確認してから圧縮を追加する。
+- 明示的な無効化の後ろで安定した高コストの読み取りをキャッシュする。
 
-## Examples
+## 使用例
 
-Use these examples as patterns, not as project-wide templates:
+これらの例はプロジェクト全体のテンプレートではなく、パターンとして使用してください:
 
-- Application factory: configure middleware and routers once in `create_app`.
-- Schema split: `UserCreate`, `UserUpdate`, and `UserResponse` have different responsibilities.
-- Dependency override: tests override `get_db` directly.
-- OpenAPI customization: assign `app.openapi = custom_openapi`.
+- アプリケーションファクトリー: `create_app`でミドルウェアとルーターを一度設定する。
+- スキーマの分割: `UserCreate`、`UserUpdate`、`UserResponse`はそれぞれ異なる責務を持つ。
+- 依存関係のオーバーライド: テストは`get_db`を直接オーバーライドする。
+- OpenAPIのカスタマイズ: `app.openapi = custom_openapi`を割り当てる。
 
-## See Also
+## 関連情報
 
-- Agent: `fastapi-reviewer`
-- Command: `/fastapi-review`
-- Skill: `python-patterns`
-- Skill: `python-testing`
-- Skill: `api-design`
+- エージェント: `fastapi-reviewer`
+- コマンド: `/fastapi-review`
+- スキル: `python-patterns`
+- スキル: `python-testing`
+- スキル: `api-design`

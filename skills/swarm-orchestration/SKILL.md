@@ -1,179 +1,114 @@
 ---
-name: "Swarm Orchestration"
-description: "Orchestrate multi-agent swarms with agentic-flow for parallel task execution, dynamic topology, and intelligent coordination. Use when scaling beyond single agents, implementing complex workflows, or building distributed AI systems."
+name: swarm-orchestration
+description: >
+  Multi-agent swarm coordination for complex tasks. Uses hierarchical topology with specialized agents to break down and execute complex work across multiple files and modules.
+  Use when: 3+ files need changes, new feature implementation, cross-module refactoring, API changes with tests, security-related changes, performance optimization across codebase, database schema changes.
+  Skip when: single file edits, simple bug fixes (1-2 lines), documentation updates, configuration changes, quick exploration.
 ---
 
-# Swarm Orchestration
+# Swarm Orchestration Skill
 
-## What This Skill Does
+## Purpose
+Multi-agent swarm coordination for complex tasks. Uses hierarchical topology with specialized agents to break down and execute complex work across multiple files and modules.
 
-Orchestrates multi-agent swarms using agentic-flow's advanced coordination system. Supports mesh, hierarchical, and adaptive topologies with automatic task distribution, load balancing, and fault tolerance.
+## When to Trigger
+- 3+ files need changes
+- new feature implementation
+- cross-module refactoring
+- API changes with tests
+- security-related changes
+- performance optimization across codebase
+- database schema changes
 
-## Prerequisites
+## When to Skip
+- single file edits
+- simple bug fixes (1-2 lines)
+- documentation updates
+- configuration changes
+- quick exploration
 
-- agentic-flow v1.5.11+
-- Node.js 18+
-- Understanding of distributed systems (helpful)
+## Commands
 
-## Quick Start
-
-```bash
-# Initialize swarm
-npx agentic-flow hooks swarm-init --topology mesh --max-agents 5
-
-# Spawn agents
-npx agentic-flow hooks agent-spawn --type coder
-npx agentic-flow hooks agent-spawn --type tester
-npx agentic-flow hooks agent-spawn --type reviewer
-
-# Orchestrate task
-npx agentic-flow hooks task-orchestrate \
-  --task "Build REST API with tests" \
-  --mode parallel
-```
-
-## Topology Patterns
-
-### 1. Mesh (Peer-to-Peer)
-```typescript
-// Equal peers, distributed decision-making
-await swarm.init({
-  topology: 'mesh',
-  agents: ['coder', 'tester', 'reviewer'],
-  communication: 'broadcast'
-});
-```
-
-### 2. Hierarchical (Queen-Worker)
-```typescript
-// Centralized coordination, specialized workers
-await swarm.init({
-  topology: 'hierarchical',
-  queen: 'architect',
-  workers: ['backend-dev', 'frontend-dev', 'db-designer']
-});
-```
-
-### 3. Adaptive (Dynamic)
-```typescript
-// Automatically switches topology based on task
-await swarm.init({
-  topology: 'adaptive',
-  optimization: 'task-complexity'
-});
-```
-
-## Task Orchestration
-
-### Parallel Execution
-```typescript
-// Execute tasks concurrently
-const results = await swarm.execute({
-  tasks: [
-    { agent: 'coder', task: 'Implement API endpoints' },
-    { agent: 'frontend', task: 'Build UI components' },
-    { agent: 'tester', task: 'Write test suite' }
-  ],
-  mode: 'parallel',
-  timeout: 300000 // 5 minutes
-});
-```
-
-### Pipeline Execution
-```typescript
-// Sequential pipeline with dependencies
-await swarm.pipeline([
-  { stage: 'design', agent: 'architect' },
-  { stage: 'implement', agent: 'coder', after: 'design' },
-  { stage: 'test', agent: 'tester', after: 'implement' },
-  { stage: 'review', agent: 'reviewer', after: 'test' }
-]);
-```
-
-### Adaptive Execution
-```typescript
-// Let swarm decide execution strategy
-await swarm.autoOrchestrate({
-  goal: 'Build production-ready API',
-  constraints: {
-    maxTime: 3600,
-    maxAgents: 8,
-    quality: 'high'
-  }
-});
-```
-
-## Memory Coordination
-
-```typescript
-// Share state across swarm
-await swarm.memory.store('api-schema', {
-  endpoints: [...],
-  models: [...]
-});
-
-// Agents read shared memory
-const schema = await swarm.memory.retrieve('api-schema');
-```
-
-## Advanced Features
-
-### Load Balancing
-```typescript
-// Automatic work distribution
-await swarm.enableLoadBalancing({
-  strategy: 'dynamic',
-  metrics: ['cpu', 'memory', 'task-queue']
-});
-```
-
-### Fault Tolerance
-```typescript
-// Handle agent failures
-await swarm.setResiliency({
-  retry: { maxAttempts: 3, backoff: 'exponential' },
-  fallback: 'reassign-task'
-});
-```
-
-### Performance Monitoring
-```typescript
-// Track swarm metrics
-const metrics = await swarm.getMetrics();
-// { throughput, latency, success_rate, agent_utilization }
-```
-
-## Integration with Hooks
+### Initialize Swarm
+Start a new swarm with hierarchical topology (anti-drift)
 
 ```bash
-# Pre-task coordination
-npx agentic-flow hooks pre-task --description "Build API"
-
-# Post-task synchronization
-npx agentic-flow hooks post-task --task-id "task-123"
-
-# Session restore
-npx agentic-flow hooks session-restore --session-id "swarm-001"
+npx @claude-flow/cli swarm init --topology hierarchical --max-agents 8 --strategy specialized
 ```
+
+**Example:**
+```bash
+npx @claude-flow/cli swarm init --topology hierarchical --max-agents 6 --strategy specialized
+```
+
+### Route Task
+Route a task to the appropriate agents based on task type
+
+```bash
+npx @claude-flow/cli hooks route --task "[task description]"
+```
+
+**Example:**
+```bash
+npx @claude-flow/cli hooks route --task "implement OAuth2 authentication flow"
+```
+
+### Spawn Agent
+Spawn a specific agent type
+
+```bash
+npx @claude-flow/cli agent spawn --type [type] --name [name]
+```
+
+**Example:**
+```bash
+npx @claude-flow/cli agent spawn --type coder --name impl-auth
+```
+
+### Monitor Status
+Check the current swarm status
+
+```bash
+npx @claude-flow/cli swarm status --verbose
+```
+
+### Orchestrate Task
+Orchestrate a task across multiple agents
+
+```bash
+npx @claude-flow/cli task orchestrate --task "[task]" --strategy adaptive
+```
+
+**Example:**
+```bash
+npx @claude-flow/cli task orchestrate --task "refactor auth module" --strategy parallel --max-agents 4
+```
+
+### List Agents
+List all active agents
+
+```bash
+npx @claude-flow/cli agent list --filter active
+```
+
+
+## Scripts
+
+| Script | Path | Description |
+|--------|------|-------------|
+| `swarm-start` | `.agents/scripts/swarm-start.sh` | Initialize swarm with default settings |
+| `swarm-monitor` | `.agents/scripts/swarm-monitor.sh` | Real-time swarm monitoring dashboard |
+
+
+## References
+
+| Document | Path | Description |
+|----------|------|-------------|
+| `Agent Types` | `docs/agents.md` | Complete list of agent types and capabilities |
+| `Topology Guide` | `docs/topology.md` | Swarm topology configuration guide |
 
 ## Best Practices
-
-1. **Start small**: Begin with 2-3 agents, scale up
-2. **Use memory**: Share context through swarm memory
-3. **Monitor metrics**: Track performance and bottlenecks
-4. **Enable hooks**: Automatic coordination and sync
-5. **Set timeouts**: Prevent hung tasks
-
-## Troubleshooting
-
-### Issue: Agents not coordinating
-**Solution**: Verify memory access and enable hooks
-
-### Issue: Poor performance
-**Solution**: Check topology (use adaptive) and enable load balancing
-
-## Learn More
-
-- Swarm Guide: docs/swarm/orchestration.md
-- Topology Patterns: docs/swarm/topologies.md
-- Hooks Integration: docs/hooks/coordination.md
+1. Check memory for existing patterns before starting
+2. Use hierarchical topology for coordination
+3. Store successful patterns after completion
+4. Document any new learnings

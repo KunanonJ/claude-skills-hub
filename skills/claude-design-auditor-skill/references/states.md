@@ -1,0 +1,254 @@
+# UI States Reference
+
+Most beginner UIs only design the "happy path" — data loads perfectly and the user does everything right. In reality, users spend a surprising amount of time in other states. Each needs its own design.
+
+## The 9 States Every UI Component Can Be In
+
+| State | When | Design Priority |
+|---|---|---|
+| **Default** | Nothing has happened yet | ✅ Always designed |
+| **Hover** | Cursor over an interactive element | 🟡 Sometimes missing |
+| **Focus** | Element selected via keyboard | ⚠️ Often forgotten |
+| **Active** | Element being pressed/clicked | 🟡 Sometimes missing |
+| **Loading** | Waiting for data or an action to complete | ⚠️ Often forgotten |
+| **Error** | Something went wrong | ⚠️ Often forgotten |
+| **Empty** | No data exists yet | ⚠️ Often forgotten |
+| **Disabled** | Action not available | 🟡 Sometimes missing |
+| **Success** | Action completed | ⚠️ Often forgotten |
+
+Not every state applies to every component — a Button has no Empty state; a data table has no Active state. Use judgment. The States Coverage Map widget tracks all 9 and lets you mark cells N/A where a state genuinely can't apply.
+
+---
+
+## Loading States
+
+### When to use what
+
+| Pattern | Best For |
+|---|---|
+| **Skeleton screen** | Content-heavy layouts (feeds, cards, tables) |
+| **Spinner** | Short, action-triggered waits (button click, form submit) |
+| **Progress bar** | Long operations where progress can be measured (upload, export) |
+| **Shimmer / pulse** | Image placeholders and text blocks |
+
+### Rules
+- **Never show a blank screen.** Even a spinner is better than nothing.
+- **Skeleton screens beat spinners** for perceived performance — the layout already exists, so content "appears" rather than "loading."
+- **Show loading state immediately** — don't wait 500ms before showing anything. Users click again if nothing happens.
+- **Skeleton shapes should match real content shapes.** A skeleton for a card should have lines where the title, description, and image will be — not generic rectangles.
+- **Don't show too many spinners at once.** If five components all have their own spinner, the page feels broken. Consolidate into a page-level or section-level loading state.
+
+### Loading State Checklist
+- [ ] Every data fetch has a visual loading indicator
+- [ ] Skeleton shapes match actual content layout
+- [ ] Loading state matches the overall visual style (not plain gray boxes in an otherwise polished UI)
+- [ ] Buttons show a loading state when clicked (spinner inside, disabled)
+- [ ] Long operations have a progress indicator
+
+---
+
+## Empty States
+
+Empty states are one of the most underdesigned parts of any product. They're the first thing a brand new user sees — and often the thing that determines whether they come back.
+
+### Anatomy of a Good Empty State
+
+```
+[Illustration or icon]
+
+[Friendly headline]
+"You haven't added any tasks yet"
+
+[Helpful context — optional]
+"Tasks help you track work and stay on schedule."
+
+[Clear call to action]
+[+ Create your first task]
+```
+
+### Rules
+- **Always include a CTA.** An empty state without an action leaves the user stranded.
+- **Be specific.** "Nothing here yet" is useless. "You haven't connected any integrations — connect Slack to get started" is actionable.
+- **Match the tone of the product.** A playful product can have a fun illustration. An enterprise tool should stay professional.
+- **Don't use sad/broken imagery** (broken robots, crying faces) — it implies the product failed, not that the user just needs to add something.
+- **Search empty states are different** — "No results for 'purple elephant'" needs different copy and a different CTA (clear search, refine filters) than a true empty state.
+
+### Types of Empty States
+
+| Type | Example | CTA |
+|---|---|---|
+| **First-use** | New user, no data created yet | Create first item |
+| **Cleared** | User deleted everything | Undo or create new |
+| **Search/filter** | No results match the query | Clear filters |
+| **Error-caused** | Data failed to load | Retry |
+| **Permission** | User can't see data | Request access |
+
+### Empty State Checklist
+- [ ] Every list, table, feed, or grid has a designed empty state
+- [ ] Empty states include an illustration/icon, headline, and CTA
+- [ ] Search/filter empty state is distinct from first-use empty state
+- [ ] Copy is specific and helpful, not generic
+
+---
+
+## Error States
+
+### Levels of Error
+
+| Level | Examples | How to Handle |
+|---|---|---|
+| **Field validation** | Invalid email, password too short | Inline message below the field |
+| **Form-level** | Missing required fields on submit | Summary at top + highlight fields |
+| **Action failure** | "Save failed — try again" | Toast or inline error near the action |
+| **Page-level** | 404, server error, network offline | Full error page with recovery action |
+| **Partial failure** | 3 of 5 items loaded | Inline error on failed items, rest still usable |
+
+### Rules
+- **Say what went wrong AND what to do.** "Something went wrong" with no next step is a dead end.
+- **Don't blame the user.** "You entered an invalid email" vs "The email address doesn't look right — check for typos." The second is kinder.
+- **Error messages should be specific.** "Error 500" means nothing to a user. "We couldn't save your changes — check your connection and try again" is helpful.
+- **Position errors close to the cause.** Field errors below the field. Form errors near the submit button. Don't show errors at the top of the page for a field at the bottom.
+- **Preserve user input.** If a form fails, never clear the fields. Force the user to retype everything = guaranteed frustration.
+- **Retry should be one click.** If something fails, a "Try again" button should be immediately available.
+
+### Error State Checklist
+- [ ] Field validation errors appear inline, below the field
+- [ ] Error messages say what's wrong and how to fix it
+- [ ] Failed actions have a retry option
+- [ ] Page-level errors (404, 500) have a designed state, not a browser default
+- [ ] Error messages never clear user's input
+- [ ] Errors use both color AND text/icon (not color alone)
+
+---
+
+## Success States
+
+Success states close the loop — they tell the user "yes, it worked." Without them, users click submit buttons twice, refresh pages, or simply don't know if their action completed.
+
+### Patterns
+
+| Pattern | Best For | Duration |
+|---|---|---|
+| **Toast / snackbar** | Non-critical confirmations ("Saved", "Copied") | 3–5 seconds, then auto-dismiss |
+| **Inline confirmation** | Form submission, settings saved | Until next user action |
+| **State change** | Button changes to "Saved ✓", item marked complete | Persistent until state changes |
+| **Full screen** | Payment completed, account created | One-time, then redirect |
+| **Email confirmation** | Account verification, order placed | The page becomes a holding state |
+
+### Rules
+- **Be specific.** "Saved" is fine. "Project 'Q4 Launch' saved" is better.
+- **Auto-dismiss toasts after 3–5 seconds.** Persistent toasts that require manual dismissal block the UI.
+- **Don't use green for everything.** Reserve green for genuine success. Confirmations that aren't "good news" (e.g., "Your account has been deleted") shouldn't be green.
+- **Success states need to be accessible.** Toasts that appear and disappear must be announced to screen readers (`role="status"` or `aria-live="polite"`).
+
+### Success State Checklist
+- [ ] Every form submission has a visible success confirmation
+- [ ] Toasts auto-dismiss and are screen-reader accessible
+- [ ] Destructive actions (delete, cancel) confirm completion without using green
+
+---
+
+## Disabled States
+
+### Rules
+- **Look clearly different from enabled.** Reduced opacity (50–60%) is the standard pattern.
+- **Never remove disabled elements entirely** — this is confusing. Show them, just make them unclickable.
+- **Explain why when possible.** A tooltip on hover: "You need admin access to do this" is vastly better than a greyed-out button with no context.
+- **Don't use color alone** to signal disabled — combine reduced opacity with `cursor: not-allowed` and `aria-disabled="true"`.
+- **Disabled inputs** should still be readable (contrast ≥ 3:1 even in disabled state).
+
+### Disabled State Checklist
+- [ ] Disabled elements are visually distinct (opacity + cursor)
+- [ ] Disabled state doesn't remove elements from the layout
+- [ ] Where possible, a tooltip explains why the element is disabled
+- [ ] `aria-disabled="true"` set for screen readers
+
+---
+
+## Code-Specific State Checks
+
+When auditing HTML/CSS/React/Vue, the following state implementations can be verified directly from code — do not guess from visual inspection alone.
+
+### Loading state
+```
+aria-busy attribute:
+  → <section aria-busy="true"> during loading → ✅
+  → Loading state with no aria-busy → 🟢 Tip
+
+Skeleton screen HTML pattern:
+  → <div class="skeleton" aria-hidden="true"> → ✅ (hidden from AT, decorative)
+  → Skeleton without aria-hidden → 🟢 Tip
+
+Button loading pattern:
+  → <button disabled aria-disabled="true"><Spinner /> Saving...</button> → ✅
+  → <button> still interactive during async action → 🔴 Critical (double-submit risk)
+```
+
+### Error state
+```
+aria-invalid:
+  → <input aria-invalid="true"> on a field with a validation error → ✅
+  → Error visible but aria-invalid missing → 🟡 Warning
+
+aria-describedby linking error message:
+  → <input aria-describedby="field-error"> ... <span id="field-error">...</span> → ✅
+  → Error message not linked via aria-describedby → 🟡 Warning
+
+role="alert" on dynamic errors:
+  → <div role="alert"> for errors injected after page load → ✅ (announced immediately)
+  → Errors injected into DOM without role="alert" or aria-live → 🟡 Warning
+```
+
+### Success state (toasts and confirmations)
+```
+aria-live on toast containers:
+  → <div aria-live="polite" aria-atomic="true"> wrapping toast area → ✅
+  → Toast visible in DOM but no aria-live → 🟡 Warning (screen readers miss it)
+  → role="status" is equivalent to aria-live="polite" → ✅
+
+Auto-dismiss timing:
+  → Toast dismissed < 2 seconds → 🟡 (too fast for screen readers to announce)
+  → Toast dismissed at 3–5 seconds → ✅
+  → Toast never auto-dismissed → 🟢 Tip (blocks UI permanently)
+```
+
+### Disabled state
+```
+aria-disabled vs disabled attribute:
+  → <button disabled> removes from tab order (correct for forms) → ✅
+  → <button aria-disabled="true"> keeps in tab order (better for explaining why) → ✅
+  → Interactive element visually greyed out with neither disabled nor aria-disabled → 🔴
+
+cursor: not-allowed:
+  → disabled elements missing cursor: not-allowed → 🟢 Tip
+  → pointer-events: none alone (without aria-disabled) → 🟡 (keyboard still activatable)
+
+Opacity for disabled visual:
+  → opacity: 0.5 or 0.4 on disabled elements → ✅
+  → opacity: 0.15 or lower → 🟡 (contrast too low, violates WCAG disabled contrast guideline)
+```
+
+### Empty state
+```
+Empty state detection in code:
+  → Conditional render: {items.length === 0 && <EmptyState />} → ✅
+  → Array renders with no empty state fallback → 🟡 Warning
+  → Search/filter result with no "no results" state → 🟡 Warning
+
+Empty state accessibility:
+  → Empty state illustration should have aria-hidden="true" (decorative)
+  → Heading inside empty state should be a proper <h> level, not <p> or <div>
+```
+
+### Focus state
+```
+outline: none / outline: 0 detection:
+  → Any global *:focus { outline: none } → 🔴 Critical
+  → :focus-visible { outline: none } → 🔴 Critical (still removes focus for keyboard users)
+  → :focus { outline: none } with :focus-visible alternative → ✅ (progressive enhancement)
+
+Focus ring visibility:
+  → :focus-visible with visible outline (2px solid, not just color change) → ✅
+  → Focus managed only via box-shadow (no outline) → 🟡 (Windows High Contrast Mode loses it)
+  → Recommended: outline: 2px solid var(--color-focus); outline-offset: 2px → ✅
+```

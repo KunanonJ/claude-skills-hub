@@ -12,7 +12,7 @@ ESM C (Cambrian) is a family of protein language models optimized for representa
 |----------|-----------|--------|----------|
 | `esmc-300m` | 300M | 30 | Fast inference, lightweight applications |
 | `esmc-600m` | 600M | 36 | Balanced performance and quality |
-| `esmc-6b` | 6B | 80 | Maximum representation quality |
+| `esmc-6b-2024-12` | 6B | 80 | Maximum quality (Forge API; not open weights) |
 
 **Key Features:**
 - 3x faster inference than ESM2
@@ -45,15 +45,16 @@ model = ESMC.from_pretrained("esmc-300m").to("cuda")
 # Or specify device explicitly
 model = ESMC.from_pretrained("esmc-600m").to("cpu")
 
-# For maximum quality
-model = ESMC.from_pretrained("esmc-6b").to("cuda")
+# For maximum quality (local open weights: esmc-300m or esmc-600m)
+# For 6B hosted inference, use Forge with esmc-6b-2024-12 (see forge-api.md)
+model = ESMC.from_pretrained("esmc-600m").to("cuda")
 ```
 
 **Model Selection Criteria:**
 
 - **esmc-300m**: Development, real-time applications, batch processing of many sequences
 - **esmc-600m**: Production deployments, good quality/speed balance
-- **esmc-6b**: Research, maximum accuracy for downstream tasks
+- **esmc-6b-2024-12** (Forge): Research, maximum accuracy when 6B open weights are unavailable locally
 
 ### Basic Embedding Generation
 
@@ -335,7 +336,7 @@ class ProteinPropertyPredictor(nn.Module):
 
 # Use ESM C as frozen feature extractor
 esm_model = ESMC.from_pretrained("esmc-600m").to("cuda")
-esm_model.eval()  # Freeze
+esm_model.train(False)  # Inference mode (disables dropout; not Python eval)
 
 # Create task-specific model
 predictor = ProteinPropertyPredictor(
@@ -511,6 +512,29 @@ Key differences:
 - Simplified API through ESMProtein
 - Better support for long sequences
 - More efficient memory usage
+
+### Hosted 6B Embeddings via Forge
+
+The 6B model is available through Forge (not as open local weights). Use `LogitsConfig` to return embeddings:
+
+```python
+import os
+from esm.sdk.forge import ESM3ForgeInferenceClient
+from esm.sdk.api import ESMProtein, LogitsConfig
+
+client = ESM3ForgeInferenceClient(
+    model="esmc-6b-2024-12",
+    url="https://forge.evolutionaryscale.ai",
+    token=os.environ["ESM_API_KEY"],
+)
+
+protein = ESMProtein(sequence="MPRTKEINDAGLIVHSPQWFYK")
+protein_tensor = client.encode(protein)
+output = client.logits(protein_tensor, LogitsConfig(sequence=True, return_embeddings=True))
+embeddings = output.embeddings
+```
+
+SDK v3.2+ also supports `mean_hidden_state` on forward passes for pooled representations.
 
 ## Advanced Topics
 

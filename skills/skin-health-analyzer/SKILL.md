@@ -1,7 +1,7 @@
 ---
 name: skin-health-analyzer
 description: Analyze skin health data, identify skin problem patterns, assess skin health status. Supports correlation analysis with nutrition, chronic diseases, and medication data.
-risk: unknown
+risk: safe
 source: community
 ---
 
@@ -706,7 +706,10 @@ source: community
 **最后更新**: 2025-01-06
 **维护者**: WellAlly Tech
 
-
 ## When to Use
-
 Use this skill when tackling tasks related to its primary domain or functionality as described above.
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

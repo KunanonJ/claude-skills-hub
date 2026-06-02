@@ -1,7 +1,12 @@
 ---
 name: search-first
-description: Research-before-coding workflow. Search for existing tools, libraries, and patterns before writing custom code. Invokes the researcher agent.
-origin: ECC
+description: >
+  Research-before-coding workflow. Search for existing tools, libraries, and
+  patterns before writing custom code. Systematizes the "search for existing
+  solutions before implementing" approach. Use when starting new features or
+  adding functionality.
+metadata:
+  origin: ECC
 ---
 
 # /search-first — Research Before You Code
@@ -15,6 +20,12 @@ Use this skill when:
 - Adding a dependency or integration
 - The user asks "add X functionality" and you're about to write code
 - Before creating a new utility, helper, or abstraction
+
+## Scope and Approval Rules
+
+Default to read-only research: inspect the repo, package metadata, docs, and public examples before recommending a dependency or integration. Do not install packages, configure MCP servers, publish artifacts, open PRs, or make external write actions from this skill unless the user has explicitly approved that action in the current task.
+
+When a candidate requires credentials, paid services, network writes, or project-wide config changes, return a recommendation and approval checkpoint instead of applying it directly.
 
 ## Workflow
 
@@ -40,9 +51,9 @@ Use this skill when:
 │     │ as-is   │  │  /Wrap   │  │  Custom  │  │
 │     └─────────┘  └──────────┘  └─────────┘  │
 ├─────────────────────────────────────────────┤
-│  5. IMPLEMENT                               │
-│     Install package / Configure MCP /       │
-│     Write minimal custom code               │
+│  5. APPROVAL CHECKPOINT / IMPLEMENT         │
+│     Recommend package / MCP / custom code   │
+│     Apply only after explicit approval      │
 └─────────────────────────────────────────────┘
 ```
 
@@ -50,10 +61,10 @@ Use this skill when:
 
 | Signal | Action |
 |--------|--------|
-| Exact match, well-maintained, MIT/Apache | **Adopt** — install and use directly |
-| Partial match, good foundation | **Extend** — install + write thin wrapper |
-| Multiple weak matches | **Compose** — combine 2-3 small packages |
-| Nothing suitable found | **Build** — write custom, but informed by research |
+| Exact match, well-maintained, MIT/Apache | **Adopt** — recommend the package and request approval before install or config changes |
+| Partial match, good foundation | **Extend** — recommend the package plus a thin wrapper, then wait for approval before applying |
+| Multiple weak matches | **Compose** — propose 2-3 small packages and the integration plan before installing anything |
+| Nothing suitable found | **Build** — explain why custom code is warranted, then implement only within the approved task scope |
 
 ## How to Use
 
@@ -61,25 +72,24 @@ Use this skill when:
 
 Before writing a utility or adding functionality, mentally run through:
 
-0. Does this already exist in the repo? → `rg` through relevant modules/tests first
+0. Does this already exist in the repo? → Search through relevant modules/tests first
 1. Is this a common problem? → Search npm/PyPI
-2. Is there an MCP for this? → Check `~/.claude/settings.json` and search
-3. Is there a skill for this? → Check `~/.claude/skills/`
+2. Is there an MCP for this? → Check MCP configuration and search
+3. Is there a skill for this? → Check available skills
 4. Is there a GitHub implementation/template? → Run GitHub code search for maintained OSS before writing net-new code
 
-### Full Mode (agent)
+### Full Mode (subagent)
 
-For non-trivial functionality, launch the researcher agent:
+For non-trivial functionality, delegate to a research-focused subagent:
 
 ```
-Task(subagent_type="general-purpose", prompt="
-  Research existing tools for: [DESCRIPTION]
-  Language/framework: [LANG]
-  Constraints: [ANY]
+Invoke subagent with prompt:
+  "Research existing tools for: [DESCRIPTION]
+   Language/framework: [LANG]
+   Constraints: [ANY]
 
-  Search: npm/PyPI, MCP servers, Claude Code skills, GitHub
-  Return: Structured comparison with recommendation
-")
+   Search: npm/PyPI, MCP servers, skills, GitHub
+   Return: Structured comparison with recommendation"
 ```
 
 ## Search Shortcuts by Category
@@ -91,7 +101,7 @@ Task(subagent_type="general-purpose", prompt="
 - Pre-commit → `husky`, `lint-staged`, `pre-commit`
 
 ### AI/LLM Integration
-- Claude SDK → Context7 for latest docs
+- Claude SDK → Check for latest docs
 - Prompt management → Check MCP servers
 - Document processing → `unstructured`, `pdfplumber`, `mammoth`
 
@@ -131,8 +141,8 @@ Combine for progressive discovery:
 Need: Check markdown files for broken links
 Search: npm "markdown dead link checker"
 Found: textlint-rule-no-dead-link (score: 9/10)
-Action: ADOPT — npm install textlint-rule-no-dead-link
-Result: Zero custom code, battle-tested solution
+Action: ADOPT — recommend `textlint-rule-no-dead-link` and ask before installing it
+Result: Zero custom code if approved, battle-tested solution
 ```
 
 ### Example 2: "Add HTTP client wrapper"
@@ -140,8 +150,8 @@ Result: Zero custom code, battle-tested solution
 Need: Resilient HTTP client with retries and timeout handling
 Search: npm "http client retry", PyPI "httpx retry"
 Found: got (Node) with retry plugin, httpx (Python) with built-in retry
-Action: ADOPT — use got/httpx directly with retry config
-Result: Zero custom code, production-proven libraries
+Action: ADOPT — recommend `got`/`httpx` directly with retry config and ask before changing dependencies
+Result: Zero custom code if approved, production-proven libraries
 ```
 
 ### Example 3: "Add config file linter"
@@ -149,8 +159,8 @@ Result: Zero custom code, production-proven libraries
 Need: Validate project config files against a schema
 Search: npm "config linter schema", "json schema validator cli"
 Found: ajv-cli (score: 8/10)
-Action: ADOPT + EXTEND — install ajv-cli, write project-specific schema
-Result: 1 package + 1 schema file, no custom validation logic
+Action: ADOPT + EXTEND — recommend `ajv-cli` plus a project-specific schema, then wait for approval before install/write
+Result: 1 package + 1 schema file if approved, no custom validation logic
 ```
 
 ## Anti-Patterns
@@ -159,3 +169,11 @@ Result: 1 package + 1 schema file, no custom validation logic
 - **Ignoring MCP**: Not checking if an MCP server already provides the capability
 - **Over-customizing**: Wrapping a library so heavily it loses its benefits
 - **Dependency bloat**: Installing a massive package for one small feature
+
+## When to Use This Skill
+
+- Starting new features
+- Adding dependencies or integrations
+- Before writing utilities or helpers
+- When evaluating technology choices
+- Planning architecture decisions

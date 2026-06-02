@@ -1,0 +1,11 @@
+﻿{
+    "vco":  {
+                "skill_root":  "~/.codex/skills",
+                "rules_root":  "~/.codex/rules",
+                "mcp_profile":  "full"
+            },
+    "env":  {
+                "VCO_PROFILE":  "full",
+                "VCO_CODEX_MODE":  "true"
+            }
+}

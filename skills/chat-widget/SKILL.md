@@ -1,6 +1,8 @@
 ---
 name: chat-widget
 description: Build a real-time support chat system with a floating widget for users and an admin dashboard for support staff. Use when the user wants live chat, customer support chat, real-time messaging, or in-app support.
+risk: unknown
+source: community
 ---
 
 # Live Support Chat Widget
@@ -893,3 +895,8 @@ if (!websocket.connected) {
   }, 5000)
 }
 ```
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

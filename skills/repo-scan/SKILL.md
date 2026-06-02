@@ -1,21 +1,21 @@
 ---
 name: repo-scan
-description: Cross-stack source code asset audit — classifies every file, detects embedded third-party libraries, and delivers actionable four-level verdicts per module with interactive HTML reports.
+description: クロススタックのソースコード資産監査——各ファイルを分類し、埋め込まれたサードパーティライブラリを検出し、各モジュールに対してインタラクティブなHTMLレポートとともに実用的な4段階の判定を提供する。
 origin: community
 ---
 
 # repo-scan
 
-> Every ecosystem has its own dependency manager, but no tool looks across C++, Android, iOS, and Web to tell you: how much code is actually yours, what's third-party, and what's dead weight.
+> どのエコシステムにも独自の依存関係マネージャーがあるが、C++、Android、iOS、Web をまたいで「どのコードが本当に自分のもので、どれがサードパーティで、どれが余分な負担か」を教えてくれるツールはない。
 
-## When to Use
+## 適用場面
 
-- Taking over a large legacy codebase and need a structural overview
-- Before major refactoring — identify what's core, what's duplicate, what's dead
-- Auditing third-party dependencies embedded directly in source (not declared in package managers)
-- Preparing architecture decision records for monorepo reorganization
+* 大規模なレガシーコードベースを引き継ぎ、全体的な構造を把握する必要がある場合
+* 大規模なリファクタリング前——コアコード、重複コード、廃止コードを特定する
+* パッケージマネージャーで宣言せずにソースに直接埋め込まれたサードパーティの依存関係を監査する
+* モノレポの再編成に向けたアーキテクチャ決定記録を準備する
 
-## Installation
+## インストール
 
 ```bash
 # Fetch only the pinned commit for reproducibility
@@ -28,51 +28,52 @@ git checkout --detach FETCH_HEAD
 cp -r . ~/.claude/skills/repo-scan
 ```
 
-> Review the source before installing any agent skill.
+> エージェントスキルをインストールする前に、ソースコードをレビューしてください。
 
-## Core Capabilities
+## コア機能
 
-| Capability | Description |
+| 機能 | 説明 |
 |---|---|
-| **Cross-stack scanning** | C/C++, Java/Android, iOS (OC/Swift), Web (TS/JS/Vue) in one pass |
-| **File classification** | Every file tagged as project code, third-party, or build artifact |
-| **Library detection** | 50+ known libraries (FFmpeg, Boost, OpenSSL…) with version extraction |
-| **Four-level verdicts** | Core Asset / Extract & Merge / Rebuild / Deprecate |
-| **HTML reports** | Interactive dark-theme pages with drill-down navigation |
-| **Monorepo support** | Hierarchical scanning with summary + sub-project reports |
+| **クロススタックスキャン** | C/C++、Java/Android、iOS（OC/Swift）、Web（TS/JS/Vue）を一度にスキャン |
+| **ファイル分類** | 各ファイルをプロジェクトコード、サードパーティコード、またはビルドアーティファクトとしてマーク |
+| **ライブラリ検出** | 50以上の既知ライブラリ（FFmpeg、Boost、OpenSSL…）を識別しバージョン番号を抽出 |
+| **4段階の判定** | コア資産 / 抽出・統合 / 再構築 / 廃止 |
+| **HTMLレポート** | 階層的なドリルダウンナビゲーションに対応したインタラクティブなダークテーマページ |
+| **モノレポサポート** | 階層的スキャンによるサマリー + サブプロジェクトレポート |
 
-## Analysis Depth Levels
+## 分析の深さレベル
 
-| Level | Files Read | Use Case |
+| レベル | 読み取りファイル数 | 適用場面 |
 |---|---|---|
-| `fast` | 1-2 per module | Quick inventory of huge directories |
-| `standard` | 2-5 per module | Default audit with full dependency + architecture checks |
-| `deep` | 5-10 per module | Adds thread safety, memory management, API consistency |
-| `full` | All files | Pre-merge comprehensive review |
+| `fast` | モジュールあたり1〜2個 | 大規模ディレクトリの素早い棚卸し |
+| `standard` | モジュールあたり2〜5個 | デフォルト監査、完全な依存関係 + アーキテクチャチェック |
+| `deep` | モジュールあたり5〜10個 | スレッド安全性、メモリ管理、API一貫性チェックを追加 |
+| `full` | 全ファイル | 統合前の包括的レビュー |
 
-## How It Works
+## 動作原理
 
-1. **Classify the repo surface**: enumerate files, then tag each as project code, embedded third-party code, or build artifact.
-2. **Detect embedded libraries**: inspect directory names, headers, license files, and version markers to identify bundled dependencies and likely versions.
-3. **Score each module**: group files by module or subsystem, then assign one of the four verdicts based on ownership, duplication, and maintenance cost.
-4. **Highlight structural risks**: call out dead-weight artifacts, duplicated wrappers, outdated vendored code, and modules that should be extracted, rebuilt, or deprecated.
-5. **Produce the report**: return a concise summary plus the interactive HTML output with per-module drill-down so the audit can be reviewed asynchronously.
+1. **リポジトリの表面を分類**：ファイルを列挙し、各ファイルをプロジェクトコード、埋め込みサードパーティコード、ビルドアーティファクトとしてマークする。
+2. **埋め込みライブラリを検出**：ディレクトリ名、ヘッダーファイル、ライセンスファイル、バージョンマーカーを検査して、バンドルされた依存関係とその可能性のあるバージョンを識別する。
+3. **各モジュールをスコアリング**：ファイルをモジュールまたはサブシステムにグループ化し、所有権、重複度、保守コストに基づいて4つの判定のいずれかを割り当てる。
+4. **構造的リスクを強調**：冗長なアーティファクト、重複したラッパー、古いベンダーコード、および抽出・再構築・廃止すべきモジュールを指摘する。
+5. **レポートを生成**：簡潔なサマリーとインタラクティブなHTML出力を返し、モジュールごとのドリルダウンにより監査結果を非同期でレビューできる。
 
-## Examples
+## 例
 
-On a 50,000-file C++ monorepo:
-- Found FFmpeg 2.x (2015 vintage) still in production
-- Discovered the same SDK wrapper duplicated 3 times
-- Identified 636 MB of committed Debug/ipch/obj build artifacts
-- Classified: 3 MB project code vs 596 MB third-party
+50,000ファイルのC++モノレポで：
 
-## Best Practices
+* FFmpeg 2.x（2015年版）がまだ使用されていることを発見
+* 同じSDKラッパーが3回重複していることを発見
+* 636 MBのコミット済みDebug/ipch/objビルドアーティファクトを識別
+* 分類結果：3 MBのプロジェクトコード vs 596 MBのサードパーティコード
 
-- Start with `standard` depth for first-time audits
-- Use `fast` for monorepos with 100+ modules to get a quick inventory
-- Run `deep` incrementally on modules flagged for refactoring
-- Review the cross-module analysis for duplicate detection across sub-projects
+## ベストプラクティス
 
-## Links
+* 初回監査は `standard` の深さから始める
+* 100以上のモジュールを含むモノレポには `fast` で素早く棚卸しする
+* リファクタリングが必要とフラグ立てされたモジュールに対して段階的に `deep` を実行する
+* クロスモジュール分析の結果をレビューして、サブプロジェクト間の重複コードを検出する
 
-- [GitHub Repository](https://github.com/haibindev/repo-scan)
+## リンク
+
+* [GitHub リポジトリ](https://github.com/haibindev/repo-scan)

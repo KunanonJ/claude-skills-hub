@@ -1,61 +1,61 @@
 ---
 name: opensource-pipeline
-description: "Open-source pipeline: fork, sanitize, and package private projects for safe public release. Chains 3 agents (forker, sanitizer, packager). Triggers: '/opensource', 'open source this', 'make this public', 'prepare for open source'."
+description: "オープンソースパイプライン: プライベートプロジェクトをフォーク、サニタイズし、安全な公開リリースのためにパッケージ化する。3つのエージェント（フォーカー、サニタイザー、パッケージャー）を連鎖させる。トリガー: '/opensource'、'open source this'、'make this public'、'prepare for open source'。"
 origin: ECC
 ---
 
-# Open-Source Pipeline Skill
+# オープンソースパイプラインスキル
 
-Safely open-source any project through a 3-stage pipeline: **Fork** (strip secrets) → **Sanitize** (verify clean) → **Package** (CLAUDE.md + setup.sh + README).
+3段階のパイプラインを通じて任意のプロジェクトを安全にオープンソース化する: **フォーク**（シークレット除去）→ **サニタイズ**（クリーンな状態を確認）→ **パッケージ**（CLAUDE.md + setup.sh + README）。
 
-## When to Activate
+## アクティベートするタイミング
 
-- User says "open source this project" or "make this public"
-- User wants to prepare a private repo for public release
-- User needs to strip secrets before pushing to GitHub
-- User invokes `/opensource fork`, `/opensource verify`, or `/opensource package`
+- ユーザーが「このプロジェクトをオープンソース化する」または「これを公開する」と言うとき
+- ユーザーがプライベートリポジトリを公開リリースのために準備したいとき
+- ユーザーがGitHubにプッシュする前にシークレットを除去する必要があるとき
+- ユーザーが`/opensource fork`、`/opensource verify`、または`/opensource package`を呼び出すとき
 
-## Commands
+## コマンド
 
-| Command | Action |
+| コマンド | アクション |
 |---------|--------|
-| `/opensource fork PROJECT` | Full pipeline: fork + sanitize + package |
-| `/opensource verify PROJECT` | Run sanitizer on existing repo |
-| `/opensource package PROJECT` | Generate CLAUDE.md + setup.sh + README |
-| `/opensource list` | Show all staged projects |
-| `/opensource status PROJECT` | Show reports for a staged project |
+| `/opensource fork PROJECT` | 完全なパイプライン: フォーク + サニタイズ + パッケージ |
+| `/opensource verify PROJECT` | 既存のリポジトリにサニタイザーを実行 |
+| `/opensource package PROJECT` | CLAUDE.md + setup.sh + READMEを生成 |
+| `/opensource list` | ステージングされたすべてのプロジェクトを表示 |
+| `/opensource status PROJECT` | ステージングされたプロジェクトのレポートを表示 |
 
-## Protocol
+## プロトコル
 
 ### /opensource fork PROJECT
 
-**Full pipeline — the main workflow.**
+**完全なパイプライン — メインワークフロー。**
 
-#### Step 1: Gather Parameters
+#### ステップ1: パラメータを収集する
 
-Resolve the project path. If PROJECT contains `/`, treat as a path (absolute or relative). Otherwise check: current working directory, `$HOME/PROJECT`, then ask the user.
+プロジェクトパスを解決する。PROJECTに`/`が含まれる場合、パス（絶対または相対）として扱う。それ以外の場合: 現在の作業ディレクトリ、`$HOME/PROJECT`をチェックし、見つからない場合はユーザーに尋ねる。
 
 ```
-SOURCE_PATH="<resolved absolute path>"
+SOURCE_PATH="<解決された絶対パス>"
 STAGING_PATH="$HOME/opensource-staging/${PROJECT_NAME}"
 ```
 
-Ask the user:
-1. "Which project?" (if not found)
-2. "License? (MIT / Apache-2.0 / GPL-3.0 / BSD-3-Clause)"
-3. "GitHub org or username?" (default: detect via `gh api user -q .login`)
-4. "GitHub repo name?" (default: project name)
-5. "Description for README?" (analyze project for suggestion)
+ユーザーに尋ねる:
+1. 「どのプロジェクト？」（見つからない場合）
+2. 「ライセンス？（MIT / Apache-2.0 / GPL-3.0 / BSD-3-Clause）」
+3. 「GitHubのorgまたはユーザー名？」（デフォルト: `gh api user -q .login`で検出）
+4. 「GitHubリポジトリ名？」（デフォルト: プロジェクト名）
+5. 「READMEの説明？」（提案のためにプロジェクトを分析）
 
-#### Step 2: Create Staging Directory
+#### ステップ2: ステージングディレクトリを作成する
 
 ```bash
 mkdir -p $HOME/opensource-staging/
 ```
 
-#### Step 3: Run Forker Agent
+#### ステップ3: フォーカーエージェントを実行する
 
-Spawn the `opensource-forker` agent:
+`opensource-forker`エージェントをスポーン:
 
 ```
 Agent(
@@ -79,11 +79,11 @@ Follow the full forking protocol:
 )
 ```
 
-Wait for completion. Read `{STAGING_PATH}/FORK_REPORT.md`.
+完了を待つ。`{STAGING_PATH}/FORK_REPORT.md`を読む。
 
-#### Step 4: Run Sanitizer Agent
+#### ステップ4: サニタイザーエージェントを実行する
 
-Spawn the `opensource-sanitizer` agent:
+`opensource-sanitizer`エージェントをスポーン:
 
 ```
 Agent(
@@ -108,17 +108,17 @@ Generate SANITIZATION_REPORT.md inside {STAGING_PATH}/ with PASS/FAIL verdict.
 )
 ```
 
-Wait for completion. Read `{STAGING_PATH}/SANITIZATION_REPORT.md`.
+完了を待つ。`{STAGING_PATH}/SANITIZATION_REPORT.md`を読む。
 
-**If FAIL:** Show findings to user. Ask: "Fix these and re-scan, or abort?"
-- If fix: Apply fixes, re-run sanitizer (maximum 3 retry attempts — after 3 FAILs, present all findings and ask user to fix manually)
-- If abort: Clean up staging directory
+**FAILの場合:** 結果をユーザーに表示する。「これらを修正して再スキャンしますか、それとも中止しますか？」と尋ねる。
+- 修正する場合: 修正を適用し、サニタイザーを再実行する（最大3回の再試行 — 3回のFAIL後、すべての結果を提示しユーザーに手動で修正するよう依頼する）
+- 中止する場合: ステージングディレクトリをクリーンアップする
 
-**If PASS or PASS WITH WARNINGS:** Continue to Step 5.
+**PASSまたはWARNINGS付きPASSの場合:** ステップ5に進む。
 
-#### Step 5: Run Packager Agent
+#### ステップ5: パッケージャーエージェントを実行する
 
-Spawn the `opensource-packager` agent:
+`opensource-packager`エージェントをスポーン:
 
 ```
 Agent(
@@ -144,9 +144,9 @@ Generate:
 )
 ```
 
-#### Step 6: Final Review
+#### ステップ6: 最終レビュー
 
-Present to user:
+ユーザーに提示する:
 ```
 Open-Source Fork Ready: {PROJECT_NAME}
 
@@ -170,7 +170,7 @@ Next steps:
 Proceed with GitHub creation? (yes/no/review first)
 ```
 
-#### Step 7: GitHub Publish (on user approval)
+#### ステップ7: GitHubへの公開（ユーザーの承認後）
 
 ```bash
 cd "{STAGING_PATH}"
@@ -181,7 +181,7 @@ gh repo create "{github_org}/{github_repo}" --public --source=. --push --descrip
 
 ### /opensource verify PROJECT
 
-Run sanitizer independently. Resolve path: if PROJECT contains `/`, treat as a path. Otherwise check `$HOME/opensource-staging/PROJECT`, then `$HOME/PROJECT`, then current directory.
+サニタイザーを独立して実行する。パスを解決: PROJECTに`/`が含まれる場合、パスとして扱う。それ以外の場合は`$HOME/opensource-staging/PROJECT`、`$HOME/PROJECT`、現在のディレクトリを確認する。
 
 ```
 Agent(
@@ -194,7 +194,7 @@ Agent(
 
 ### /opensource package PROJECT
 
-Run packager independently. Ask for "License?" and "Description?", then:
+パッケージャーを独立して実行する。「ライセンス？」と「説明？」を尋ねてから:
 
 ```
 Agent(
@@ -211,7 +211,7 @@ Agent(
 ls -d $HOME/opensource-staging/*/
 ```
 
-Show each project with pipeline progress (FORK_REPORT.md, SANITIZATION_REPORT.md, CLAUDE.md presence).
+FORK_REPORT.md、SANITIZATION_REPORT.md、CLAUDE.mdの存在でパイプラインの進捗を各プロジェクトと共に表示する。
 
 ---
 
@@ -222,34 +222,34 @@ cat $HOME/opensource-staging/${PROJECT}/SANITIZATION_REPORT.md
 cat $HOME/opensource-staging/${PROJECT}/FORK_REPORT.md
 ```
 
-## Staging Layout
+## ステージングレイアウト
 
 ```
 $HOME/opensource-staging/
   my-project/
-    FORK_REPORT.md           # From forker agent
-    SANITIZATION_REPORT.md   # From sanitizer agent
-    CLAUDE.md                # From packager agent
-    setup.sh                 # From packager agent
-    README.md                # From packager agent
-    .env.example             # From forker agent
-    ...                      # Sanitized project files
+    FORK_REPORT.md           # フォーカーエージェントから
+    SANITIZATION_REPORT.md   # サニタイザーエージェントから
+    CLAUDE.md                # パッケージャーエージェントから
+    setup.sh                 # パッケージャーエージェントから
+    README.md                # パッケージャーエージェントから
+    .env.example             # フォーカーエージェントから
+    ...                      # サニタイズされたプロジェクトファイル
 ```
 
-## Anti-Patterns
+## アンチパターン
 
-- **Never** push to GitHub without user approval
-- **Never** skip the sanitizer — it is the safety gate
-- **Never** proceed after a sanitizer FAIL without fixing all critical findings
-- **Never** leave `.env`, `*.pem`, or `credentials.json` in the staging directory
+- ユーザーの承認なしにGitHubにプッシュすることは**絶対にしない**
+- サニタイザーをスキップすることは**絶対にしない** — これは安全ゲートである
+- 重大な結果をすべて修正せずにサニタイザーのFAIL後に続行することは**絶対にしない**
+- ステージングディレクトリに`.env`、`*.pem`、または`credentials.json`を残すことは**絶対にしない**
 
-## Best Practices
+## ベストプラクティス
 
-- Always run the full pipeline (fork → sanitize → package) for new releases
-- The staging directory persists until explicitly cleaned up — use it for review
-- Re-run the sanitizer after any manual fixes before publishing
-- Parameterize secrets rather than deleting them — preserve project functionality
+- 新しいリリースには常に完全なパイプライン（フォーク → サニタイズ → パッケージ）を実行する
+- ステージングディレクトリは明示的にクリーンアップされるまで持続する — レビューに使用する
+- 公開前に手動修正後にサニタイザーを再実行する
+- 削除ではなくシークレットをパラメータ化する — プロジェクトの機能を維持する
 
-## Related Skills
+## 関連スキル
 
-See `security-review` for secret detection patterns used by the sanitizer.
+サニタイザーが使用するシークレット検出パターンについては`security-review`を参照。

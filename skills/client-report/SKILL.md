@@ -1,100 +1,68 @@
 ---
 name: client-report
-description: |
-  Generate professional client-facing performance reports with portfolio returns, allocation breakdowns, and market commentary. Suitable for quarterly or annual distribution. Triggers on "client report", "performance report", "quarterly report for [client]", "generate reports", or "client statement".
+description: "Generate client-facing reports. Use when: white-labeled performance report with KPIs, trends, strategic recommendations."
 ---
 
-# Client Report
+# /digital-marketing-pro:client-report
 
-## Workflow
+## Purpose
 
-### Step 1: Report Parameters
+Generate a professional, white-labeled client report for a specific brand. Uses agency voice (not brand voice), includes KPI performance, channel breakdowns, strategic recommendations, and next steps. Designed for external client delivery via Slack, email, Google Sheets, or markdown — with approval gating before any external send to prevent accidental disclosure or premature delivery of draft findings.
 
-- **Client name** and household
-- **Reporting period**: Quarter, YTD, annual, custom range
-- **Accounts**: All accounts or specific account
-- **Benchmark**: S&P 500, 60/40 blend, custom benchmark matching IPS
-- **Firm branding**: Logo, colors, disclaimers
+## Input Required
 
-### Step 2: Performance Summary
+The user must provide (or will be prompted for):
 
-**Household Summary:**
+- **Brand slug**: The brand this report covers — must match a configured brand in `~/.claude-marketing/brands/`
+- **Report type**: One of:
+  - Weekly pulse: Quick KPI snapshot with 3-5 key metrics and brief commentary
+  - Monthly review: Full performance analysis with channel breakdowns and recommendations
+  - QBR: Quarterly deep-dive with strategic roadmap and forward plan
+- **Date range**: Specific start and end dates for the reporting period — defines what data is pulled and analyzed
+- **Delivery channel**: Where the report should be sent — slack, email, google-sheets, or markdown-only (no external delivery, just generate the artifact)
+- **Custom sections (optional)**: Any additional sections the client has requested — competitive update, creative performance breakdown, audience insights, attribution deep-dive, or ad-hoc investigation topic
+- **Comparison period**: What to compare against — prior period, same period last year, plan/target, or all three simultaneously
+- **Recipient list (optional)**: Specific client contacts who should receive the report if delivering via email or Slack — names and handles/addresses
+- **Narrative emphasis (optional)**: What the client cares most about this period — growth, efficiency, brand awareness, pipeline generation, or revenue — influences which metrics are highlighted first and how insights are framed
+- **Include appendix**: Whether to attach raw data tables and campaign-level detail as an appendix — defaults to yes for monthly and QBR, no for weekly pulse
+- **White-label settings (optional)**: Agency logo placement, color scheme, and disclaimer text — pulled from agency profile if configured, otherwise uses clean defaults
 
-| | QTD | YTD | 1-Year | 3-Year Ann. | 5-Year Ann. | ITD Ann. |
-|---|-----|-----|--------|-------------|-------------|----------|
-| Portfolio | | | | | | |
-| Benchmark | | | | | | |
-| +/- | | | | | | |
+## Process
 
-**By Account:**
+1. **Load brand context**: Read `~/.claude-marketing/brands/_active-brand.json` for the active slug, then load `~/.claude-marketing/brands/{slug}/profile.json`. Apply brand voice, compliance rules for target markets (`skills/context-engine/compliance-rules.md`), and industry context. Also check for guidelines at `~/.claude-marketing/brands/{slug}/guidelines/_manifest.json` — if present, load restrictions. Check for agency SOPs at `~/.claude-marketing/sops/`. If no brand exists, ask: "Set up a brand first (/digital-marketing-pro:brand-setup)?" — or proceed with defaults.
+2. **Pull all metrics for the brand**: Query connected MCP servers and run `campaign-tracker.py --brand {slug} --action metrics` to gather performance data across all active channels for the specified date range
+3. **Gather campaign history and execution log**: Run `execution-tracker.py --brand {slug} --action list --period {date_range}` to compile all deliverables completed, campaigns launched, optimizations made, and tests concluded during the period
+4. **Calculate KPIs vs targets and vs comparison period**: Compute actuals against the brand's stated KPI targets from `profile.json` and against the selected comparison period — calculate deltas, percentage changes, trend direction, and statistical significance where sample sizes allow
+5. **Break down performance by channel**: Segment metrics by channel (paid search, paid social, organic search, email, display, video, affiliate, etc.) with per-channel KPIs, spend, efficiency metrics (CPC, CPA, ROAS, CTR), and contribution percentage to overall goals
+6. **Identify top wins and attribution**: Select the 3-5 best-performing campaigns or initiatives from the period — document what was done, what drove the result, audience and creative insights, and how it connects to business outcomes
+7. **Analyze underperformance with root causes**: For any KPI that missed target, identify root causes:
+   - External factors: market shifts, seasonality, competitive moves, platform algorithm changes
+   - Internal factors: budget constraints, creative fatigue, audience saturation, timing misalignment
+   - Corrective actions: what was already done and what is recommended for next period
+8. **Generate strategic recommendations**: Based on performance data, formulate 3-5 actionable recommendations — what to scale, what to pause, what to test next, where budget should shift, and what new opportunities to explore
+9. **Write report in agency voice**: Draft the full report using professional, third-person agency voice — NOT the brand's personality. Focus on clarity, data-backed insights, actionable next steps, and a confident but honest tone that builds client trust
+10. **Format for delivery channel**: Run `report-generator.py --brand {slug} --format {channel} --type {report_type}` to produce the channel-specific format (Slack blocks, email HTML, Google Sheets layout, or clean markdown)
+11. **Create approval checkpoint**: Present the full report preview for review. Risk level: low. Require explicit approval before any external delivery — highlight any sensitive data, unexpected results, or negative findings that may need pre-briefing with the client
+12. **Deliver via MCP if approved**: On approval, send via the appropriate MCP integration (Slack MCP, email MCP, Google Sheets MCP) if a delivery channel was specified. Handle delivery errors gracefully with retry guidance
+13. **Log delivery and archive**: Record the report delivery in the execution log with timestamp, recipients, delivery confirmation status, report version, and a reference to the archived report for future comparison
 
-| Account | Type | Value | QTD | YTD | Benchmark |
-|---------|------|-------|-----|-----|-----------|
-| Joint Taxable | Brokerage | | | | |
-| John IRA | Traditional | | | | |
-| Jane Roth | Roth IRA | | | | |
-| 529 Plan | Education | | | | |
-| **Total** | | | | | |
+## Output
 
-### Step 3: Allocation Overview
+A structured client report containing:
 
-Current allocation with visual (pie chart or bar chart):
+- **Executive summary**: 3-5 sentence overview of the period — headline result, key wins, areas of focus, outlook for next period, and one recommended action for the client
+- **KPI scorecard**: Actuals vs targets vs comparison period in a scannable table with color-coded status indicators (exceeded, on track, at risk, missed) and trend arrows showing directional momentum
+- **Channel performance breakdown**: Per-channel metrics with spend, results, efficiency metrics (CPC, CPA, ROAS, CTR), contribution percentage to overall goals, and channel health assessment
+- **Campaign highlights with attribution**: Top-performing campaigns with what drove success, creative and audience insights, measured impact, and replication recommendations for future campaigns
+- **Underperformance analysis**: Honest assessment of any misses with root cause categorization (external vs internal), impact quantification, corrective actions taken, and preventive measures for next period
+- **Strategic recommendations (3-5)**: Data-backed next steps with expected impact, investment required, implementation timeline, priority ranking, and connection to the client's stated business objectives
+- **Budget efficiency analysis**: Spend vs return summary by channel, cost trend lines over the period, budget utilization rate, and efficiency comparison to prior periods with improvement/decline indicators
+- **Upcoming deliverables and timeline**: What the agency will deliver next period with dates, milestones, dependencies, and any client actions required to keep the plan on track
+- **Appendix (if requested)**: Raw data tables, campaign-level breakdowns, full metric exports, creative performance data, and supporting calculations for detailed review
+- **Delivery confirmation**: Channel, timestamp, recipients, delivery status, and report version — or markdown artifact if no external delivery was requested
 
-| Asset Class | % of Portfolio | $ Value | Benchmark % |
-|------------|---------------|---------|-------------|
-| | | | |
+## Agents Used
 
-### Step 4: Holdings Detail
-
-| Security | Asset Class | Shares | Price | Value | % of Portfolio | QTD Return |
-|----------|-----------|--------|-------|-------|---------------|-----------|
-| | | | | | | |
-
-### Step 5: Market Commentary
-
-Brief market summary tailored to the client's level of sophistication:
-- What happened in markets this quarter (2-3 sentences)
-- How it affected the portfolio
-- Outlook and positioning rationale (2-3 sentences)
-- No jargon for retail clients; can be more technical for sophisticated investors
-
-### Step 6: Activity Summary
-
-- Trades executed during the period
-- Contributions and withdrawals
-- Dividends and interest received
-- Fees charged
-- Rebalancing activity
-
-### Step 7: Planning Notes
-
-- Progress toward financial goals (retirement, education, etc.)
-- Any plan changes or recommendations
-- Upcoming action items
-- Next review date
-
-### Step 8: Output
-
-- PDF report (8-12 pages) with firm branding
-- Word document for customization
-- Excel data appendix (optional)
-
-**Report Structure:**
-1. Cover page (client name, period, firm logo)
-2. Executive summary (1 page)
-3. Performance summary (1-2 pages)
-4. Allocation overview with charts (1 page)
-5. Holdings detail (1-2 pages)
-6. Market commentary (1 page)
-7. Activity summary (1 page)
-8. Planning notes (1 page)
-9. Disclosures and disclaimers (1 page)
-
-## Important Notes
-
-- Performance must be calculated net of fees unless client/compliance requires gross
-- Always include appropriate disclaimers and disclosures (past performance, risk factors)
-- Reports should be consistent across clients — use a standard template
-- Match the level of detail to the client — some want every holding, others want a one-page summary
-- Benchmark selection matters — use the benchmark from the IPS, not whatever looks best
-- Review for compliance approval before first distribution of a new template
+- **agency-operations** — Report voice and tone (agency professional, not brand personality), client context awareness, approval workflow management, white-label formatting, and delivery coordination
+- **analytics-analyst** — Metrics analysis, KPI calculations, channel breakdowns, trend analysis, comparison computations, attribution modeling, statistical significance checks, and recommendation data support
+- **execution-coordinator** — Report formatting for delivery channels, MCP integration delivery, execution logging, delivery error handling, and archival

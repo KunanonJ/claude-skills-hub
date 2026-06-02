@@ -1,9 +1,8 @@
 ---
 name: token-audit
-description: Audit Claude Code configuration to measure fixed-context token overhead and produce a prioritized action plan
+description: "Audit Claude Code configuration to measure fixed-context token overhead and produce a prioritized action plan. Use when hitting rate limits, experiencing early context compression, or after adding significant config files."
 effort: medium
-tags: [tokens, optimization, context, audit, configuration]
-allowed-tools: Read, Grep, Glob, Bash
+allowed-tools: Read Grep Glob Bash
 ---
 
 # /token-audit — Context Token Audit

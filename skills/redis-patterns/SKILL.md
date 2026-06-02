@@ -1,25 +1,25 @@
 ---
 name: redis-patterns
-description: Redis data structure patterns, caching strategies, distributed locks, rate limiting, pub/sub, and connection management for production applications.
+description: Redisデータ構造パターン、キャッシング戦略、分散ロック、レート制限、Pub/Sub、本番アプリケーション用コネクション管理。
 origin: ECC
 ---
 
 # Redis Patterns
 
-Quick reference for Redis best practices across common backend use cases.
+一般的なバックエンド使用例に対するRedisベストプラクティスの参考資料。
 
 ## How It Works
 
-Redis is an in-memory data structure store that supports strings, hashes, lists, sets, sorted sets, streams, and more. Individual Redis commands are atomic on a single instance; multi-step workflows require Lua scripts, MULTI/EXEC transactions, or explicit synchronization to stay atomic. Data is optionally persisted via RDB snapshots or AOF logs. Clients communicate over TCP using the RESP protocol; connection pools are essential to avoid per-request handshake overhead.
+Redisはメモリ内データ構造ストアで、文字列、ハッシュ、リスト、セット、ソート済みセット、ストリームなどをサポートします。単一インスタンスでは個々のRedisコマンドは原子的ですが、マルチステップワークフローはLuaスクリプト、MULTI/EXECトランザクション、または明示的な同期化が必要です。RDBスナップショットまたはAOFログを通じてデータをオプションで永続化します。クライアントはRESPプロトコルを使用してTCP経由で通信します。接続プール不可欠でリクエストごとのハンドシェイクオーバーヘッドを回避します。
 
 ## When to Activate
 
-- Adding caching to an application
-- Implementing rate limiting or throttling
-- Building distributed locks or coordination
-- Setting up session or token storage
-- Using Pub/Sub or Redis Streams for messaging
-- Configuring Redis in production (pooling, eviction, clustering)
+- アプリケーションにキャッシング追加
+- レート制限またはスロットリング実装
+- 分散ロックまたはコーディネーション構築
+- セッションまたはトークンストレージ設定
+- Pub/SubまたはRedis Streams for messaging使用
+- 本番環境でRedis設定（プール、削除、クラスタリング）
 
 ## Data Structure Cheat Sheet
 
@@ -60,10 +60,10 @@ def get_product(product_id: int):
 
 ```python
 def update_product(product_id: int, data: dict):
-    # Write to DB first
+    # DB書き込み先
     db.execute("UPDATE products SET ... WHERE id = %s", product_id)
 
-    # Immediately update cache
+    # キャッシュを即座に更新
     cache_key = f"product:{product_id}"
     r.setex(cache_key, 3600, json.dumps(data))
 ```
@@ -71,7 +71,7 @@ def update_product(product_id: int, data: dict):
 ### Cache Invalidation
 
 ```python
-# Tag-based invalidation — group related keys under a set
+# タグベース削除 — セット内で関連キーをグループ化
 def cache_product(product_id: int, category_id: int, data: dict):
     key = f"product:{product_id}"
     tag = f"tag:category:{category_id}"
@@ -195,7 +195,7 @@ if token:
         release_lock("order:payment:123", token)
 ```
 
-> For multi-node setups use the `redlock-py` library which implements the full Redlock algorithm.
+> マルチノード設定の場合、フルRedlockアルゴリズムを実装する `redlock-py` ライブラリを使用してください。
 
 ## Pub/Sub & Streams
 
@@ -237,7 +237,7 @@ def consume(stream: str, group: str, consumer: str):
                 r.xack(stream, group, msg_id)
 ```
 
-> Prefer **Streams** over Pub/Sub when you need delivery guarantees, consumer groups, or replay.
+> 配信保証、コンシューマーグループ、または再生が必要な場合、Pub/Sub代わりに**Streams**を優先してください。
 
 ## Key Design
 
@@ -268,7 +268,7 @@ stats:pageviews:2024-01-01
 | Leaderboard | 1h–24h |
 | Static/reference data | 1h–1 week |
 
-Always set a TTL. Keys without TTL accumulate indefinitely and cause memory pressure.
+常にTTLを設定してください。TTLなしのキーは無限に蓄積してメモリ圧力を引き起こします。
 
 ## Connection Management
 
@@ -325,7 +325,7 @@ replica = sentinel.slave_for('mymaster', decode_responses=True)
 | `allkeys-lfu` | Evict least frequently used | Skewed access patterns |
 | `volatile-ttl` | Evict soonest-to-expire | Prioritize long-lived data |
 
-Set via `redis.conf`: `maxmemory-policy allkeys-lru`
+`redis.conf`を通じて設定：`maxmemory-policy allkeys-lru`
 
 ## Anti-Patterns
 
@@ -365,21 +365,21 @@ def get_with_lock(key: str, fetch_fn, ttl: int = 300):
         return value
 ```
 
-> Note: for multi-process deployments, replace the in-process lock with `acquire_lock`/`release_lock` from the Distributed Locks section above.
+> マルチプロセスデプロイメント：インプロセスロックを上記の分散ロックセクション から `acquire_lock`/`release_lock` に置き換えてください。
 
 ## Examples
 
-**Add caching to a Django/Flask API endpoint:**
-Use cache-aside with `setex` and a 5-minute TTL on the response. Key on the request parameters.
+**Django/Flask APIエンドポイントにキャッシング追加：**
+レスポンスに5分TTLでCache-asideを使用。リクエストパラメータでキーを指定。
 
-**Rate-limit an API by user:**
-Use fixed-window with `pipeline(transaction=True)` for low-traffic endpoints; use sliding-window Lua for accurate per-user throttling.
+**ユーザーごとにAPIレート制限：**
+低トラフィックエンドポイントに固定ウィンドウを `pipeline(transaction=True)` で使用；正確なユーザーごと制限にはsliding-windowの Lua使用。
 
-**Coordinate a background job across workers:**
-Use `acquire_lock` with a TTL that exceeds the expected job duration. Always release in a `finally` block.
+**ワーカー間のバックグラウンドジョブ調整：**
+予想ジョブ期間を超えるTTLで `acquire_lock` を使用。常に `finally` ブロックでリリース。
 
-**Fan-out notifications to multiple subscribers:**
-Use Pub/Sub for fire-and-forget. Switch to Streams if you need guaranteed delivery or replay for late consumers.
+**複数購読者への通知のファンアウト：**
+ファイアアンドフォーゲットにPub/Subを使用。保証配信または再生が必要な場合、Streamsに切り替え。
 
 ## Quick Reference
 
@@ -396,8 +396,8 @@ Use Pub/Sub for fire-and-forget. Switch to Streams if you need guaranteed delive
 
 ## Related
 
-- Skill: `postgres-patterns` — relational data patterns
-- Skill: `backend-patterns` — API and service layer patterns
-- Skill: `database-migrations` — schema versioning
-- Skill: `django-patterns` — Django cache framework integration
-- Agent: `database-reviewer` — full database review workflow
+- Skill: `postgres-patterns` — リレーショナルデータパターン
+- Skill: `backend-patterns` — APIおよびサービスレイヤーパターン
+- Skill: `database-migrations` — スキーマバージョニング
+- Skill: `django-patterns` — Djangoキャッシュフレームワーク統合
+- Agent: `database-reviewer` — 全データベースレビューワークフロー

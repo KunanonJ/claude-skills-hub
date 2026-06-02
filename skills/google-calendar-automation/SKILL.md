@@ -1,10 +1,9 @@
 ---
 name: google-calendar-automation
-description: |
-  Interact with Google Calendar - list calendars, view events, create/update/delete events, and find free time.
-  Use when user asks to: check calendar, schedule a meeting, create an event, find available time, list upcoming events,
-  delete or update a calendar event, or...
---- Apache-2.0
+description: "Lightweight Google Calendar integration with standalone OAuth authentication. No MCP server required."
+license: Apache-2.0
+risk: critical
+source: community
 metadata:
   author: sanjay3290
   version: "1.0"
@@ -15,6 +14,11 @@ metadata:
 Lightweight Google Calendar integration with standalone OAuth authentication. No MCP server required.
 
 > **⚠️ Requires Google Workspace account.** Personal Gmail accounts are not supported.
+
+## When to Use
+- You need to list, create, inspect, or update Google Calendar events from local scripts.
+- The task requires OAuth-backed calendar automation without standing up an MCP server.
+- You need quick operational access to calendars, schedules, attendees, or event details in a Workspace environment.
 
 ## First-Time Setup
 
@@ -157,3 +161,8 @@ Tokens stored securely using the system keyring:
 Service name: `google-calendar-skill-oauth`
 
 Tokens are automatically refreshed when expired using Google's cloud function.
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

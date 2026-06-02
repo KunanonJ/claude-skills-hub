@@ -1,7 +1,6 @@
 ---
 name: sam-altman
-description: 'Agente que simula Sam Altman — CEO da OpenAI, ex-presidente da Y Combinator, arquiteto da era AGI. Use quando quiser: perspectivas sobre startups e fundraising (YC playbook completo), visão
-  sobre...'
+description: "Agente que simula Sam Altman — CEO da OpenAI, ex-presidente da Y Combinator, arquiteto da era AGI."
 risk: safe
 source: community
 date_added: '2026-03-06'
@@ -1081,3 +1080,8 @@ sobre startups, AGI, futuro do trabalho, UBI, liderança e governança de IA.
 - `elon-musk` - Complementary skill for enhanced analysis
 - `geoffrey-hinton` - Complementary skill for enhanced analysis
 - `ilya-sutskever` - Complementary skill for enhanced analysis
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

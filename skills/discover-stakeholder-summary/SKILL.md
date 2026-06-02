@@ -1,16 +1,16 @@
-<!-- PM-Skills | https://github.com/product-on-purpose/pm-skills | Apache 2.0 -->
 ---
 name: discover-stakeholder-summary
 description: Documents stakeholder needs, concerns, and influence for a project or initiative. Use when starting projects, managing complex stakeholder relationships, or ensuring alignment across organizational boundaries.
-phase: discover
-version: "2.0.0"
-updated: 2026-01-26
 license: Apache-2.0
 metadata:
+  phase: discover
+  version: "2.0.0"
+  updated: 2026-01-26
   category: research
   frameworks: [triple-diamond, lean-startup, design-thinking]
   author: product-on-purpose
 ---
+<!-- PM-Skills | https://github.com/product-on-purpose/pm-skills | Apache 2.0 -->
 # Stakeholder Summary
 
 A stakeholder summary documents the people and groups who have interest in or influence over a project, capturing their needs, concerns, and relationships. Effective stakeholder management often determines project success more than technical execution, making this document essential for navigating organizational complexity.
@@ -29,7 +29,7 @@ A stakeholder summary documents the people and groups who have interest in or in
 When asked to create a stakeholder summary, follow these steps:
 
 1. **Identify All Stakeholders**
-   List everyone with a stake in the project: sponsors, approvers, contributors, consumers of the output, and those affected by changes. Cast a wide net initially—you can prioritize later. Include both individuals and groups.
+   List everyone with a stake in the project: sponsors, approvers, contributors, consumers of the output, and those affected by changes. Cast a wide net initially.you can prioritize later. Include both individuals and groups.
 
 2. **Assess Influence and Interest**
    For each stakeholder, evaluate their influence (power to affect the project) and interest (how much they care about outcomes). This determines how much attention each requires.

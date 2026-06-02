@@ -1,6 +1,6 @@
 ---
-name: claude-skill-builder
-description: Interactive skill creator for Claude Code and Agent Skills ecosystem. Build SKILL.md files with proper frontmatter, triggers, and structure. Triggers on creating skills, building skills, skill templates, skill frontmatter, allowed-tools, npx add-skill, agent skills.
+name: Codex-skill-builder
+description: Interactive skill creator for Codex and Agent Skills ecosystem. Build SKILL.md files with proper frontmatter, triggers, and structure. Triggers on creating skills, building skills, skill templates, skill frontmatter, allowed-tools, npx add-skill, agent skills.
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash
 model: sonnet
 license: MIT
@@ -9,9 +9,9 @@ metadata:
   version: "1.0"
 ---
 
-# Claude Code Skill Builder
+# Codex Skill Builder
 
-Create well-structured skills compatible with Claude Code and the Agent Skills specification (used by `npx add-skill`).
+Create well-structured skills compatible with Codex and the Agent Skills specification (used by `npx add-skill`).
 
 ## When to Use
 
@@ -210,8 +210,8 @@ npx add-skill https://github.com/user/repo/tree/main/skills/my-skill
 
 | Scope | Path | Use Case |
 |-------|------|----------|
-| Personal | `~/.claude/skills/` | Your own tools |
-| Project | `.claude/skills/` | Team-shared skills |
+| Personal | `~/.Codex/skills/` | Your own tools |
+| Project | `.Codex/skills/` | Team-shared skills |
 
 ## Interactive Skill Creation
 
@@ -244,9 +244,9 @@ Before publishing:
 
 1. Check description has specific keywords
 2. Verify file is named `SKILL.md` (uppercase)
-3. Confirm path: `~/.claude/skills/name/SKILL.md` or `.claude/skills/name/SKILL.md`
+3. Confirm path: `~/.Codex/skills/name/SKILL.md` or `.Codex/skills/name/SKILL.md`
 4. Validate YAML syntax (no tabs, proper indentation)
-5. Restart Claude Code
+5. Restart Codex
 
 ### Skill Conflicts
 
@@ -258,5 +258,5 @@ Multiple skills with similar triggers:
 ## Resources
 
 - **Agent Skills Spec:** https://agentskills.io
-- **Claude Code Docs:** https://docs.anthropic.com/en/docs/claude-code
+- **Codex Docs:** https://docs.anthropic.com/en/docs/Codex
 - **npx add-skill:** https://github.com/vercel-labs/add-skill

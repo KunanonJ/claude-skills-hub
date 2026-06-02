@@ -7,7 +7,6 @@ date_added: "2026-02-27"
 ---
 
 ## When to Use
-
 Use this skill when you need to automate LinkedIn tasks such as profile fetching, connection management, or post creation via CLI, especially when integrated into automated workflows.
 
 # LinkedIn Skill
@@ -36,8 +35,7 @@ Once the user provides the tokens, run:
 linkedin setup --linked-api-token=TOKEN --identification-token=TOKEN
 ```
 
-## When to Use
-
+### When to Use
 Use this skill when you need to **orchestrate LinkedIn actions from scripts or an AI agent** instead of clicking through the web UI:
 
 - Building outreach, research, or recruiting workflows that rely on LinkedIn data and messaging.
@@ -535,3 +533,8 @@ linkedin reset --all                             # Remove all accounts
 - **Action limits.** Per-account limits are configurable on the platform. A `limitExceeded` error means the limit was reached.
 - **URL normalization.** All LinkedIn URLs in responses are normalized to `https://www.linkedin.com/...` format without trailing slashes.
 - **Null fields.** Fields that are unavailable are returned as `null` or `[]`, not omitted.
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

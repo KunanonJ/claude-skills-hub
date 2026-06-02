@@ -64,6 +64,7 @@ class OutlineConfig:
     api_url: str
     api_key: str
     timeout: int = 30
+    verify_ssl: bool = True
 
 
 @dataclass
@@ -131,6 +132,7 @@ class OutlineClient:
         self.client = httpx.Client(
             base_url=config.api_url,
             timeout=config.timeout,
+            verify=config.verify_ssl,
             headers={
                 "Content-Type": "application/json",
                 "Accept": "application/json",
@@ -317,7 +319,9 @@ def get_config() -> OutlineConfig:
     except ValueError:
         timeout = 30
 
-    return OutlineConfig(api_url=api_url, api_key=api_key, timeout=timeout)
+    verify_ssl = os.environ.get("OUTLINE_VERIFY_SSL", "true").lower() not in ("false", "0", "no")
+
+    return OutlineConfig(api_url=api_url, api_key=api_key, timeout=timeout, verify_ssl=verify_ssl)
 
 
 def format_document(doc: OutlineDocument, verbose: bool = False) -> str:

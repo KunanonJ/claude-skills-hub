@@ -1,9 +1,11 @@
 ---
 name: statsmodels
-description: Statistical models library for Python. Use when you need specific model classes (OLS, GLM, mixed models, ARIMA) with detailed diagnostics, residuals, and inference. Best for econometrics, time series, rigorous inference with coefficient tables. For...
+description: "Statsmodels is Python's premier library for statistical modeling, providing tools for estimation, inference, and diagnostics across a wide range of statistical methods."
 license: BSD-3-Clause license
 metadata:
     skill-author: K-Dense Inc.
+risk: unknown
+source: community
 ---
 
 # Statsmodels: Statistical Modeling and Econometrics
@@ -610,3 +612,7 @@ For detailed documentation and examples:
 - Examples: https://www.statsmodels.org/stable/examples/index.html
 - API reference: https://www.statsmodels.org/stable/api.html
 
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

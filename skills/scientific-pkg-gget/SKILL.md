@@ -1,32 +1,26 @@
 ---
 name: gget
-description: gget CLI and Python workflow for quick genomic database queries, sequence lookup, BLAST-style searches, enrichment checks, and reproducible bioinformatics evidence logs.
+description: ゲノムデータベースへのクイック検索、配列検索、BLAST スタイルの検索、エンリッチメントチェック、および再現可能なバイオインフォマティクス証拠ログのための gget CLI および Python ワークフロー。
 origin: community
 ---
 
 # gget
 
-Use this skill when a task needs quick bioinformatics lookup across genomic
-reference databases with the `gget` CLI or Python package.
+`gget` CLI または Python パッケージを使用してゲノム参照データベースにわたるクイックバイオインフォマティクス検索が必要なタスクにこのスキルを使用します。
 
-## When to Use
+## 使用するタイミング
 
-- Finding Ensembl IDs, gene metadata, transcript details, or sequences.
-- Running quick BLAST or BLAT lookups without building a full local pipeline.
-- Fetching reference genome links and annotations from Ensembl.
-- Querying protein structure, pathway, cancer, expression, or disease-association
-  modules through a single interface.
-- Creating a reproducible first-pass evidence log before moving to heavier
-  tools such as Biopython, Snakemake, Nextflow, BLAST+, or database-specific
-  clients.
+- Ensembl ID、遺伝子メタデータ、転写産物の詳細、または配列の検索。
+- フルローカルパイプラインを構築せずにクイックな BLAST または BLAT 検索を実行。
+- Ensembl から参照ゲノムリンクとアノテーションを取得。
+- 単一のインターフェースを通してタンパク質構造、パスウェイ、がん、発現、または疾患関連モジュールを照会。
+- Biopython、Snakemake、Nextflow、BLAST+、またはデータベース固有のクライアントなどの重いツールに移行する前に再現可能な最初の証拠ログを作成。
 
-Use a dedicated workflow instead of `gget` when the task requires regulated
-clinical interpretation, high-throughput production pipelines, or fine-grained
-control over database versions and local indexes.
+タスクが規制対象の臨床解釈、高スループット本番パイプライン、またはデータベースバージョンとローカルインデックスの細かい制御を必要とする場合は、`gget` の代わりに専用のワークフローを使用します。
 
-## Installation
+## インストール
 
-Use a clean Python environment.
+クリーンな Python 環境を使用します。
 
 ```bash
 python -m venv .venv
@@ -36,7 +30,7 @@ python -m pip install --upgrade gget
 gget --help
 ```
 
-If `uv` is available:
+`uv` が利用可能な場合:
 
 ```bash
 uv venv
@@ -44,18 +38,17 @@ uv venv
 uv pip install gget
 ```
 
-Before relying on an older environment, upgrade `gget` and re-check the module
-docs. The upstream databases queried by `gget` change over time.
+古い環境を使用する前に、`gget` をアップグレードしてモジュールドキュメントを再確認します。`gget` が照会するアップストリームデータベースは時間とともに変化します。
 
-## Basic Patterns
+## 基本パターン
 
-CLI shape:
+CLI の形式:
 
 ```bash
 gget <module> [arguments] [options]
 ```
 
-Python shape:
+Python の形式:
 
 ```python
 import gget
@@ -64,63 +57,58 @@ result = gget.search(["BRCA1"], species="human")
 print(result)
 ```
 
-Common workflow:
+一般的なワークフロー:
 
-1. Identify the species, assembly, gene ID type, and database needed.
-2. Check the current module documentation for arguments.
-3. Run a small query first.
-4. Save output with an explicit filename and date.
-5. Record module name, version, arguments, and database assumptions.
+1. 必要な種、アセンブリ、遺伝子 ID タイプ、データベースを特定する。
+2. 引数に関する現在のモジュールドキュメントを確認する。
+3. まず小さなクエリを実行する。
+4. 明示的なファイル名と日付で出力を保存する。
+5. モジュール名、バージョン、引数、データベースの前提条件を記録する。
 
-## Common Modules
+## 主要なモジュール
 
-Use current upstream docs for exact arguments. These modules are common first
-choices:
+正確な引数については現在のアップストリームドキュメントを使用してください。これらのモジュールは一般的な最初の選択肢です:
 
-- `gget search`: find Ensembl IDs from search terms.
-- `gget info`: retrieve metadata for Ensembl, UniProt, or related IDs.
-- `gget seq`: fetch nucleotide or amino-acid sequences.
-- `gget ref`: retrieve reference genome download links.
-- `gget blast`: run a quick BLAST query.
-- `gget blat`: locate a sequence against supported genome assemblies.
-- `gget muscle`: run multiple sequence alignment.
-- `gget diamond`: run local sequence alignment against reference sequences.
-- `gget alphafold` and `gget pdb`: inspect protein-structure references.
-- `gget enrichr`, `gget opentargets`, `gget archs4`, `gget bgee`, `gget cbio`,
-  and `gget cosmic`: explore enrichment, target, expression, cancer, and disease
-  association data.
+- `gget search`: 検索語から Ensembl ID を検索。
+- `gget info`: Ensembl、UniProt、または関連 ID のメタデータを取得。
+- `gget seq`: ヌクレオチドまたはアミノ酸配列を取得。
+- `gget ref`: 参照ゲノムのダウンロードリンクを取得。
+- `gget blast`: クイック BLAST クエリを実行。
+- `gget blat`: サポートされているゲノムアセンブリに対して配列を配置。
+- `gget muscle`: 多重配列アライメントを実行。
+- `gget diamond`: 参照配列に対してローカル配列アライメントを実行。
+- `gget alphafold` と `gget pdb`: タンパク質構造参照を調べる。
+- `gget enrichr`、`gget opentargets`、`gget archs4`、`gget bgee`、`gget cbio`、`gget cosmic`: エンリッチメント、ターゲット、発現、がん、疾患関連データを探索。
 
-Do not assume every module supports every Python version or dependency set.
-Some optional scientific dependencies have narrower version support than the
-core package.
+すべてのモジュールがすべての Python バージョンまたは依存関係セットをサポートするとは限りません。一部のオプションの科学的依存関係は、コアパッケージよりも狭いバージョンサポートを持ちます。
 
-## Quick Examples
+## クイック例
 
-Find genes:
+遺伝子を検索:
 
 ```bash
 gget search -s human brca1 dna repair -o brca1-search.json
 ```
 
-Fetch gene metadata:
+遺伝子メタデータを取得:
 
 ```bash
 gget info ENSG00000012048 -o brca1-info.json
 ```
 
-Fetch a sequence:
+配列を取得:
 
 ```bash
 gget seq ENSG00000012048 -o brca1-seq.fa
 ```
 
-Run a small BLAST query:
+小さな BLAST クエリを実行:
 
 ```bash
 gget blast "MEEPQSDPSVEPPLSQETFSDLWKLLPEN" -l 10 -o blast-results.json
 ```
 
-Python example:
+Python の例:
 
 ```python
 import gget
@@ -130,37 +118,37 @@ info = gget.info(["ENSG00000012048"])
 sequence = gget.seq("ENSG00000012048")
 ```
 
-## Reproducibility Log
+## 再現性ログ
 
-For scientific outputs, include enough metadata to replay the query.
+科学的な出力については、クエリを再現するのに十分なメタデータを含めます。
 
 ```markdown
-| Date | gget version | Module | Query | Species/assembly | Output | Notes |
+| 日付 | gget バージョン | モジュール | クエリ | 種/アセンブリ | 出力 | 注記 |
 | --- | --- | --- | --- | --- | --- | --- |
-| 2026-05-11 | `gget --version` | search | `BRCA1 DNA repair` | human | `brca1-search.json` | Docs checked before run |
+| 2026-05-11 | `gget --version` | search | `BRCA1 DNA repair` | human | `brca1-search.json` | 実行前にドキュメントを確認 |
 ```
 
-Also record:
+以下も記録します:
 
-- Python version and environment manager.
-- Any optional dependency installed through `gget setup`.
-- Database-specific identifiers returned by the query.
-- Whether output is JSON, CSV, FASTA, or a DataFrame export.
-- Any failures that were resolved by upgrading `gget`.
+- Python バージョンと環境マネージャー。
+- `gget setup` を通してインストールされたオプションの依存関係。
+- クエリによって返されたデータベース固有の識別子。
+- 出力が JSON、CSV、FASTA、または DataFrame エクスポートのいずれであるか。
+- `gget` のアップグレードで解決された障害。
 
-## Review Checklist
+## レビューチェックリスト
 
-- Did you upgrade or verify the installed `gget` version?
-- Did you check the current upstream module docs before using arguments?
-- Is the species or assembly explicit?
-- Are identifiers preserved exactly, including Ensembl/UniProt prefixes?
-- Is the result labeled as database output rather than clinical interpretation?
-- Is the query reproducible from the saved command or Python snippet?
-- Are optional dependencies installed in an isolated environment?
+- インストールされた `gget` バージョンをアップグレードまたは確認したか？
+- 引数を使用する前に現在のアップストリームモジュールドキュメントを確認したか？
+- 種またはアセンブリは明示的か？
+- Ensembl/UniProt プレフィックスを含む識別子は正確に保存されているか？
+- 結果は臨床解釈ではなくデータベース出力としてラベル付けされているか？
+- 保存されたコマンドまたは Python スニペットからクエリを再現できるか？
+- オプションの依存関係は隔離された環境にインストールされているか？
 
-## References
+## 参考文献
 
-- [gget documentation](https://pachterlab.github.io/gget/)
-- [gget updates](https://pachterlab.github.io/gget/en/updates.html)
-- [gget GitHub repository](https://github.com/pachterlab/gget)
-- [gget Bioinformatics paper](https://doi.org/10.1093/bioinformatics/btac836)
+- [gget ドキュメント](https://pachterlab.github.io/gget/)
+- [gget アップデート](https://pachterlab.github.io/gget/en/updates.html)
+- [gget GitHub リポジトリ](https://github.com/pachterlab/gget)
+- [gget Bioinformatics 論文](https://doi.org/10.1093/bioinformatics/btac836)

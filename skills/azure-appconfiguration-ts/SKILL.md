@@ -1,6 +1,6 @@
 ---
 name: azure-appconfiguration-ts
-description: "Build applications using Azure App Configuration SDK for JavaScript (@azure/app-configuration). Use when working with configuration settings, feature flags, Key Vault references, dynamic refresh, o..."
+description: "Centralized configuration management with feature flags and dynamic refresh."
 risk: unknown
 source: community
 date_added: "2026-02-27"
@@ -352,3 +352,8 @@ import {
 
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

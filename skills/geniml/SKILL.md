@@ -3,7 +3,8 @@ name: geniml
 description: This skill should be used when working with genomic interval data (BED files) for machine learning tasks. Use for training region embeddings (Region2Vec, BEDspace), single-cell ATAC-seq analysis (scEmbed), building consensus peaks (universes), or any ML-based analysis of genomic regions. Applies to BED file collections, scATAC-seq data, chromatin accessibility datasets, and region-based genomic feature learning.
 license: BSD-2-Clause license
 metadata:
-    skill-author: K-Dense Inc.
+  version: "1.0"
+  skill-author: K-Dense Inc.
 ---
 
 # Geniml: Genomic Interval Machine Learning
@@ -17,19 +18,19 @@ Geniml is a Python package for building machine learning models on genomic inter
 Install geniml using uv:
 
 ```bash
-uv uv pip install geniml
+uv pip install geniml
 ```
 
 For ML dependencies (PyTorch, etc.):
 
 ```bash
-uv uv pip install 'geniml[ml]'
+uv pip install 'geniml[ml]'
 ```
 
 Development version from GitHub:
 
 ```bash
-uv uv pip install git+https://github.com/databio/geniml.git
+uv pip install git+https://github.com/databio/geniml.git
 ```
 
 ## Core Capabilities

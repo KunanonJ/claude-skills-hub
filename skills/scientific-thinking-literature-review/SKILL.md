@@ -1,192 +1,184 @@
 ---
 name: literature-review
-description: Systematic literature-review workflow for academic, biomedical, technical, and scientific topics, including search planning, source screening, synthesis, citation checks, and evidence logging.
+description: 学術、生物医学、技術、科学的なトピックに対するシステマティックな文献レビューワークフロー。検索計画、ソースのスクリーニング、統合、引用確認、証拠ログを含む。
 origin: community
 ---
 
 # Literature Review
 
-Use this skill when the task is to find, screen, synthesize, and cite a body of
-academic or technical literature.
+学術的または技術的な文献の本体を検索、スクリーニング、統合、引用するタスクにこのスキルを使用します。
 
-## When to Use
+## 使用するタイミング
 
-- Building a systematic, scoping, or narrative literature review.
-- Synthesizing the state of the art for a research question.
-- Finding gaps, contradictions, or future-work directions.
-- Preparing citation-backed background sections for papers or reports.
-- Comparing evidence across peer-reviewed papers, preprints, patents, and
-  technical reports.
+- システマティック、スコーピング、またはナラティブな文献レビューの構築。
+- 研究質問に対する最先端の状態を統合する。
+- ギャップ、矛盾、または今後の研究方向性を見つける。
+- 論文やレポートの引用に裏付けられた背景セクションの準備。
+- 査読済み論文、プレプリント、特許、技術レポートにわたる証拠の比較。
 
-## Review Types
+## レビューの種類
 
-- **Narrative review**: broad synthesis; useful for orientation.
-- **Scoping review**: maps concepts, methods, and evidence gaps.
-- **Systematic review**: predefined protocol, reproducible search, explicit
-  screening and exclusion.
-- **Meta-analysis**: systematic review plus quantitative effect aggregation.
+- **ナラティブレビュー**: 広範な統合；方向性把握に有用。
+- **スコーピングレビュー**: 概念、方法、証拠のギャップをマッピング。
+- **システマティックレビュー**: 事前定義されたプロトコル、再現可能な検索、明示的なスクリーニングと除外。
+- **メタ分析**: システマティックレビューに量的効果の集計を加えたもの。
 
-Ask the user which level of rigor is needed. If unspecified, default to a
-scoping review for exploratory work and a systematic review for publication or
-clinical claims.
+どのレベルの厳密さが必要かをユーザーに確認してください。未指定の場合、探索的作業にはスコーピングレビュー、公開または臨床的主張にはシステマティックレビューをデフォルトとします。
 
-## Workflow
+## ワークフロー
 
-### 1. Define the Question
+### 1. 質問の定義
 
-Convert the prompt into a searchable research question.
+プロンプトを検索可能な研究質問に変換します。
 
-For clinical or biomedical work, use PICO:
+臨床または生物医学的作業には PICO を使用:
 
-- Population
-- Intervention or exposure
-- Comparator
-- Outcome
+- 対象集団（Population）
+- 介入または暴露（Intervention or exposure）
+- 比較対象（Comparator）
+- アウトカム（Outcome）
 
-For technical work, use:
+技術的な作業には以下を使用:
 
-- system or domain
-- method or intervention
-- comparison baseline
-- evaluation metric
+- システムまたはドメイン
+- 方法または介入
+- 比較ベースライン
+- 評価メトリクス
 
-### 2. Plan the Search
+### 2. 検索計画
 
-Create a search protocol before collecting sources:
+ソースを収集する前に検索プロトコルを作成します:
 
-- databases to search
-- date range
-- languages
-- publication types
-- inclusion criteria
-- exclusion criteria
-- exact search strings
+- 検索するデータベース
+- 日付範囲
+- 言語
+- 出版種別
+- 包含基準
+- 除外基準
+- 正確な検索文字列
 
-Minimum useful database set:
+最低限必要なデータベースセット:
 
-- PubMed for biomedical and life-sciences literature.
-- arXiv for CS, math, physics, quantitative biology, and preprints.
-- Semantic Scholar or Crossref for broad academic discovery.
-- Domain-specific sources when relevant, such as clinical-trial registries,
-  patent databases, standards bodies, or official technical docs.
+- 生物医学・生命科学文献には PubMed。
+- CS、数学、物理、定量生物学、プレプリントには arXiv。
+- 広範な学術発見には Semantic Scholar または Crossref。
+- 臨床試験レジストリ、特許データベース、標準化機関、公式技術ドキュメントなど関連する場合はドメイン固有のソース。
 
-### 3. Search and Log Evidence
+### 3. 検索と証拠のログ
 
-Keep a search log that makes the review reproducible:
+レビューを再現可能にする検索ログを記録します:
 
 ```markdown
-| Database | Date searched | Query | Filters | Results | Export |
+| データベース | 検索日 | クエリ | フィルター | 結果 | エクスポート |
 | --- | --- | --- | --- | ---: | --- |
-| PubMed | 2026-05-11 | `("CRISPR"[tiab] OR "Cas9"[tiab]) AND "sickle cell"[tiab]` | 2020:2026, English | 86 | PMID list |
+| PubMed | 2026-05-11 | `("CRISPR"[tiab] OR "Cas9"[tiab]) AND "sickle cell"[tiab]` | 2020:2026, English | 86 | PMID リスト |
 | arXiv | 2026-05-11 | `CRISPR sickle cell gene editing` | q-bio, 2020:2026 | 9 | BibTeX |
 ```
 
-Save raw IDs, URLs, DOIs, abstracts, and notes separately from the final prose.
+未加工の ID、URL、DOI、アブストラクト、注記を最終的な散文とは別に保存します。
 
-### 4. Deduplicate
+### 4. 重複の排除
 
-Deduplicate in this order:
+以下の順序で重複を排除します:
 
 1. DOI
-2. PMID or arXiv ID
-3. exact title
-4. normalized title plus first author and year
+2. PMID または arXiv ID
+3. 正確なタイトル
+4. 正規化されたタイトルに加えて第一著者と年
 
-Record how many duplicates were removed.
+削除された重複の数を記録します。
 
-### 5. Screen Sources
+### 5. ソースのスクリーニング
 
-Screen in stages:
+段階的にスクリーニングします:
 
-1. title
-2. abstract
-3. full text
+1. タイトル
+2. アブストラクト
+3. 全文
 
-For systematic work, record exclusion reasons:
+システマティックな作業では、除外理由を記録します:
 
-- wrong population
-- wrong intervention
-- wrong outcome
-- not primary research
-- duplicate
-- unavailable full text
-- outside date range
+- 対象集団が異なる
+- 介入が異なる
+- アウトカムが異なる
+- 一次研究でない
+- 重複
+- 全文が入手不可
+- 日付範囲外
 
-### 6. Extract Data
+### 6. データの抽出
 
-Use a structured extraction table:
+構造化された抽出テーブルを使用します:
 
 ```markdown
-| Study | Design | Population/Data | Method | Comparator | Outcome | Key finding | Limitations |
+| 研究 | デザイン | 集団/データ | 方法 | 比較対象 | アウトカム | 主要所見 | 限界 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Author Year | RCT/cohort/review/etc. | sample or corpus | method | baseline | measured outcome | result | caveat |
+| 著者 年 | RCT/コホート/レビューなど | サンプルまたはコーパス | 方法 | ベースライン | 測定されたアウトカム | 結果 | 注意点 |
 ```
 
-For technical papers, include dataset, benchmark, metric, baseline, and
-reproducibility notes.
+技術論文には、データセット、ベンチマーク、メトリクス、ベースライン、再現性の注記を含めます。
 
-### 7. Synthesize
+### 7. 統合
 
-Group evidence by theme rather than summarizing papers one by one.
+論文を一つ一つ要約するのではなく、テーマ別に証拠をグループ化します。
 
-Useful synthesis lenses:
+有用な統合の視点:
 
-- strongest evidence
-- conflicting evidence
-- methodological weaknesses
-- population or dataset limits
-- recency and replication
-- practical implications
-- unanswered questions
+- 最も強い証拠
+- 相反する証拠
+- 方法論上の弱点
+- 集団またはデータセットの限界
+- 最近性と再現性
+- 実践的な示唆
+- 未回答の質問
 
-Separate claims by confidence:
+信頼度別に主張を区別します:
 
-- **High confidence**: replicated, high-quality evidence across sources.
-- **Medium confidence**: plausible but limited by sample, method, or recency.
-- **Low confidence**: early, speculative, single-source, or weakly measured.
+- **高い信頼度**: 複数のソースにわたって再現された高品質な証拠。
+- **中程度の信頼度**: もっともらしいが、サンプル、方法、または最近性によって限定される。
+- **低い信頼度**: 初期段階、投機的、単一ソース、または弱い測定。
 
-### 8. Verify Citations
+### 8. 引用の確認
 
-Before finalizing:
+最終化する前に:
 
-- verify DOI, PMID, arXiv ID, or official URL
-- check author names and publication year
-- do not cite a paper for a claim it does not make
-- mark preprints as preprints
-- distinguish reviews from primary evidence
+- DOI、PMID、arXiv ID、または公式 URL を確認
+- 著者名と出版年を確認
+- 論文が述べていない主張のために論文を引用しない
+- プレプリントはプレプリントとしてマーク
+- レビューと一次証拠を区別する
 
-## Output Template
+## 出力テンプレート
 
 ```markdown
-# Literature Review: <Topic>
+# 文献レビュー: <トピック>
 
-Generated: <date>
-Review type: <narrative | scoping | systematic | meta-analysis>
-Search window: <dates>
-Databases: <list>
+作成日: <日付>
+レビューの種類: <ナラティブ | スコーピング | システマティック | メタ分析>
+検索期間: <日付>
+データベース: <リスト>
 
-## Research Question
+## 研究質問
 
-## Search Strategy
+## 検索戦略
 
-## Inclusion and Exclusion Criteria
+## 包含・除外基準
 
-## Evidence Summary
+## 証拠のサマリー
 
-## Thematic Synthesis
+## テーマ別統合
 
-## Gaps and Limitations
+## ギャップと限界
 
-## References
+## 参考文献
 
-## Search Log
+## 検索ログ
 ```
 
-## Pitfalls
+## 落とし穴
 
-- Do not treat search snippets as evidence.
-- Do not mix preprints, reviews, and primary studies without labeling them.
-- Do not omit negative or conflicting findings.
-- Do not claim systematic-review rigor without a reproducible protocol.
-- Do not use a single database for a broad claim unless the scope is explicitly
-  limited to that database.
+- 検索スニペットを証拠として扱わない。
+- プレプリント、レビュー、一次研究にラベルを付けずに混在させない。
+- 否定的または相反する所見を省略しない。
+- 再現可能なプロトコルなしにシステマティックレビューの厳密さを主張しない。
+- 範囲が明示的にそのデータベースに限定されている場合を除き、広範な主張に単一のデータベースを使用しない。

@@ -135,8 +135,8 @@ Conversion Rate by Day
 | Step | Control Drop-off | Treatment Drop-off | Improvement |
 |------|------------------|-------------------|-------------|
 | Cart → Checkout | 21.8% | 20.9% | +0.9% |
-| Shipping info | 8.4% | N/A (combined) | — |
-| Payment info | 5.2% | N/A (combined) | — |
+| Shipping info | 8.4% | N/A (combined) | . |
+| Payment info | 5.2% | N/A (combined) | . |
 | Review → Purchase | 4.1% | 3.5% | +0.6% |
 | **Total checkout drop** | 37.6% | 34.4% | **+3.2%** |
 
@@ -179,7 +179,7 @@ Conversion Rate by Day
 
 The experiment delivered a clear, statistically significant improvement that exceeded our success threshold. The +3.2% lift in checkout conversion represents approximately $840K in additional annual revenue at current traffic levels. No guardrail metrics were violated, and the improvement was consistent across the experiment duration.
 
-The segment analysis reveals even higher impact on mobile and new customers—our strategic growth priorities.
+The segment analysis reveals even higher impact on mobile and new customers.our strategic growth priorities.
 
 ### Shipping Plan
 

@@ -21,7 +21,7 @@ Provide comprehensive, accurate guidance for integrating Stripe payment infrastr
 **Note:** Documentation must be pulled separately:
 ```bash
 pipx install docpull
-docpull https://docs.stripe.com -o .claude/skills/stripe/docs
+docpull https://docs.stripe.com -o .Codex/skills/stripe/docs
 ```
 
 **Major Areas:**
@@ -2043,13 +2043,13 @@ Use Grep to search the 3,253 documentation files:
 
 ```bash
 # Search all docs
-grep -r "search term" .claude/skills/api/stripe/docs/
+grep -r "search term" .Codex/skills/api/stripe/docs/
 
 # Search API references only
-grep -r "search term" .claude/skills/api/stripe/docs/api/
+grep -r "search term" .Codex/skills/api/stripe/docs/api/
 
 # Find specific endpoint
-ls .claude/skills/api/stripe/docs/api/payment_intents/
+ls .Codex/skills/api/stripe/docs/api/payment_intents/
 ```
 
 **Common doc locations:**

@@ -4,12 +4,19 @@ argument-hint: [path to source image]
 description: Generate favicons from a source image
 allowed-tools: Bash(magick *), Bash(which *), Bash(cp *), Bash(mkdir *)
 context: fork
+risk: unknown
+source: community
 metadata:
   author: Shpigford
   version: "1.0"
 ---
 
 Generate a complete set of favicons from the source image at `$1` and update the project's HTML with the appropriate link tags.
+
+## When to Use
+- You need to generate a complete favicon set from a single source image.
+- The task includes placing the assets in the correct framework-specific static directory and updating HTML link tags.
+- You want one workflow that validates the source image, detects the project type, and writes the right favicon outputs.
 
 ## Prerequisites
 
@@ -229,3 +236,8 @@ Report completion with:
 - If the source image doesn't exist, report the exact path that was tried and stop
 - If ImageMagick commands fail, report the specific error message
 - If the layout file cannot be found for HTML updates, generate files anyway and instruct on manual HTML addition
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

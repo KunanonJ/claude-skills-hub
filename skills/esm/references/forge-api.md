@@ -21,22 +21,44 @@ Sign up and get your API token at: https://forge.evolutionaryscale.ai
 ### 2. Install ESM SDK
 
 ```bash
-pip install esm
+uv pip install "esm==3.2.3"
 ```
 
-The Forge client is included in the standard ESM package.
+Requires Python 3.12. The Forge client is included in the standard PyPI package.
 
-### 3. Basic Connection
+### 3. Set API Key
+
+Export your Forge API key (never hardcode in source files):
+
+```bash
+export ESM_API_KEY="your-key-from-forge-console"
+```
+
+`esm.sdk.client()` reads `ESM_API_KEY` by default when `token` is omitted.
+
+### 4. Basic Connection
+
+**Recommended (unified client):**
 
 ```python
+import os
+import esm
+from esm.sdk.api import ESMProtein, GenerationConfig
+
+client = esm.sdk.client("esm3-medium-2024-08", token=os.environ["ESM_API_KEY"])
+```
+
+**Explicit Forge client (equivalent):**
+
+```python
+import os
 from esm.sdk.forge import ESM3ForgeInferenceClient
 from esm.sdk.api import ESMProtein, GenerationConfig
 
-# Initialize client
 client = ESM3ForgeInferenceClient(
     model="esm3-medium-2024-08",
     url="https://forge.evolutionaryscale.ai",
-    token="<your-token-here>"
+    token=os.environ["ESM_API_KEY"],
 )
 
 # Test connection
@@ -66,27 +88,24 @@ print(result.sequence)
 ### Initialization
 
 ```python
+import os
+import esm
 from esm.sdk.forge import ESM3ForgeInferenceClient
 
-# Basic initialization
-client = ESM3ForgeInferenceClient(
-    model="esm3-medium-2024-08",
-    token="<your-token>"
-)
+token = os.environ["ESM_API_KEY"]
 
-# With custom URL (for enterprise deployments)
+# Recommended shorthand
+client = esm.sdk.client("esm3-medium-2024-08", token=token)
+
+# With custom URL (enterprise deployments)
 client = ESM3ForgeInferenceClient(
     model="esm3-medium-2024-08",
     url="https://custom.forge.instance.com",
-    token="<your-token>"
+    token=token,
 )
 
-# With timeout configuration
-client = ESM3ForgeInferenceClient(
-    model="esm3-medium-2024-08",
-    token="<your-token>",
-    timeout=300  # 5 minutes
-)
+# With request timeout (seconds)
+client = esm.sdk.client("esm3-medium-2024-08", token=token, request_timeout=300)
 ```
 
 ### Synchronous Generation
@@ -605,7 +624,7 @@ For dedicated infrastructure and enterprise use:
 
 ## Best Practices Summary
 
-1. **Authentication**: Store tokens securely (environment variables, secrets manager)
+1. **Authentication**: Use `ESM_API_KEY` environment variable or a secrets manager — never hardcode tokens
 2. **Rate Limiting**: Implement exponential backoff and respect limits
 3. **Error Handling**: Always handle network errors and retries
 4. **Caching**: Cache results for repeated queries
@@ -649,9 +668,14 @@ def validate_token(token):
         raise
 ```
 
+## Biohub Migration
+
+Some newer APIs (notably ESMFold2 structure prediction) run on [biohub.ai](https://biohub.ai) while SDK modules still use `esm.sdk.forge` naming. See `biohub-platform.md` for ESMFold2 setup and Biohub developer-console authentication.
+
 ## Additional Resources
 
 - **Forge Platform**: https://forge.evolutionaryscale.ai
-- **API Documentation**: Check Forge dashboard for latest API specs
+- **Biohub Platform**: https://biohub.ai
+- **API Documentation**: Check Forge or Biohub dashboard for latest API specs
 - **Community Support**: Slack community at https://bit.ly/3FKwcWd
 - **Enterprise Contact**: Contact EvolutionaryScale for custom deployments

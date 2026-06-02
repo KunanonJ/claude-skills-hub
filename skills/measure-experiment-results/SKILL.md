@@ -1,16 +1,16 @@
-<!-- PM-Skills | https://github.com/product-on-purpose/pm-skills | Apache 2.0 -->
 ---
 name: measure-experiment-results
 description: Documents the results of a completed experiment or A/B test with statistical analysis, learnings, and recommendations. Use after experiments conclude to communicate findings, inform decisions, and build organizational knowledge.
-phase: measure
-version: "2.0.0"
-updated: 2026-01-26
 license: Apache-2.0
 metadata:
+  phase: measure
+  version: "2.0.0"
+  updated: 2026-01-26
   category: reflection
   frameworks: [triple-diamond, lean-startup, design-thinking]
   author: product-on-purpose
 ---
+<!-- PM-Skills | https://github.com/product-on-purpose/pm-skills | Apache 2.0 -->
 # Experiment Results
 
 An experiment results document captures what happened when you tested a hypothesis, including statistical outcomes, segment analysis, learnings, and clear recommendations. Good results documentation turns individual experiments into organizational knowledge that improves future decision-making.
@@ -37,7 +37,7 @@ When asked to document experiment results, follow these steps:
    Show the primary metric outcome clearly: what were the values for control and treatment? Include statistical significance (p-value), confidence intervals, and sample sizes. Be honest about whether results are conclusive.
 
 4. **Analyze Secondary Metrics**
-   Present guardrail metrics that ensure you didn't cause unintended harm. Note any secondary metrics that moved unexpectedly—both positive and negative.
+   Present guardrail metrics that ensure you didn't cause unintended harm. Note any secondary metrics that moved unexpectedly.both positive and negative.
 
 5. **Segment the Data**
    Look for differential effects across user segments (platform, tenure, plan type, etc.). Sometimes overall results mask important segment-level insights.
@@ -49,7 +49,7 @@ When asked to document experiment results, follow these steps:
    Be clear: should we ship, iterate, or kill? Support the recommendation with the evidence. If the decision is nuanced, explain the trade-offs.
 
 8. **Define Next Steps**
-   Specify what happens now—engineering work to ship, follow-up experiments, metrics to continue monitoring, or documentation to update.
+   Specify what happens now.engineering work to ship, follow-up experiments, metrics to continue monitoring, or documentation to update.
 
 ## Output Format
 

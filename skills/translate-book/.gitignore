@@ -1,0 +1,23 @@
+# Translation temp directories
+*_temp/
+
+# Full-pipeline test artifacts
+tests/.artifacts/*
+!tests/.artifacts/.gitkeep
+!tests/.artifacts/README.md
+
+# OS files
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+
+# Calibre intermediates
+*.htmlz
+
+# Local AI agent / tooling configs and caches
+.agents/
+.claude/*
+!.claude/commands/
+_bmad/

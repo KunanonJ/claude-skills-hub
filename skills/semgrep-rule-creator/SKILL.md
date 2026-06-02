@@ -9,6 +9,8 @@ allowed-tools:
   - Glob
   - Grep
   - WebFetch
+risk: unknown
+source: community
 ---
 
 # Semgrep Rule Creator
@@ -16,7 +18,6 @@ allowed-tools:
 Create production-quality Semgrep rules with proper testing and validation.
 
 ## When to Use
-
 **Ideal scenarios:**
 - Writing Semgrep rules for specific bug patterns
 - Writing rules to detect security vulnerabilities in your codebase
@@ -166,3 +167,8 @@ Semgrep Rule Progress:
 3. [ToB Testing Handbook - Semgrep](https://appsec.guide/docs/static-analysis/semgrep/advanced/)
 4. [Constant propagation](https://semgrep.dev/docs/writing-rules/data-flow/constant-propagation)
 5. [Writing Rules Index](https://github.com/semgrep/semgrep-docs/tree/main/docs/writing-rules/)
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

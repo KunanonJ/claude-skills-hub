@@ -173,17 +173,25 @@ curl -X GET \
 - Share credentials via email or chat
 - Store credentials in plain text files
 
-**Example with Environment Variables:**
+**Example with scoped environment variables:**
 ```python
 import os
-from dotenv import load_dotenv  # python-dotenv package
+from benchling_sdk.benchling import Benchling
+from benchling_sdk.auth.api_key_auth import ApiKeyAuth
 
-# Load from .env file (add .env to .gitignore!)
-load_dotenv()
+api_key = os.environ.get("BENCHLING_API_KEY")
+tenant_url = os.environ.get("BENCHLING_TENANT_URL")
 
-api_key = os.environ["BENCHLING_API_KEY"]
-tenant = os.environ["BENCHLING_TENANT_URL"]
+if not api_key or not tenant_url:
+    raise ValueError("Set BENCHLING_API_KEY and BENCHLING_TENANT_URL")
+
+benchling = Benchling(
+    url=tenant_url,
+    auth_method=ApiKeyAuth(api_key),
+)
 ```
+
+Do not call `load_dotenv()` without filtering, and never iterate over `os.environ` to collect secrets.
 
 ### Credential Rotation
 
@@ -323,30 +331,33 @@ except Exception as e:
 
 ## Multi-Tenant Considerations
 
-If working with multiple Benchling tenants:
+If working with multiple Benchling tenants, use separate named keys per tenant (for example `BENCHLING_PROD_API_KEY` and `BENCHLING_STAGING_API_KEY`) rather than reading the entire environment:
 
 ```python
-# Configuration for multiple tenants
+import os
+from benchling_sdk.benchling import Benchling
+from benchling_sdk.auth.api_key_auth import ApiKeyAuth
+
 tenants = {
     "production": {
-        "url": "https://prod.benchling.com",
-        "api_key": os.environ["PROD_API_KEY"]
+        "url": os.environ.get("BENCHLING_PROD_TENANT_URL"),
+        "api_key": os.environ.get("BENCHLING_PROD_API_KEY"),
     },
     "staging": {
-        "url": "https://staging.benchling.com",
-        "api_key": os.environ["STAGING_API_KEY"]
-    }
+        "url": os.environ.get("BENCHLING_STAGING_TENANT_URL"),
+        "api_key": os.environ.get("BENCHLING_STAGING_API_KEY"),
+    },
 }
 
-# Initialize clients
 clients = {}
 for name, config in tenants.items():
+    if not config["url"] or not config["api_key"]:
+        raise ValueError(f"Missing credentials for {name} tenant")
     clients[name] = Benchling(
         url=config["url"],
-        auth_method=ApiKeyAuth(config["api_key"])
+        auth_method=ApiKeyAuth(config["api_key"]),
     )
 
-# Use specific client
 prod_sequences = clients["production"].dna_sequences.list()
 ```
 

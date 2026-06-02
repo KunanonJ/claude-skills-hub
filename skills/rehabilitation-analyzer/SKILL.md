@@ -2,9 +2,16 @@
 name: rehabilitation-analyzer
 description: 分析康复训练数据、识别康复模式、评估康复进展，并提供个性化康复建议
 allowed-tools: Read, Grep, Glob, Write, Edit
+risk: unknown
+source: community
 ---
 
 # 康复训练分析技能
+
+## When to Use
+- 需要分析康复训练记录、功能恢复趋势或康复阶段进展时使用。
+- 任务涉及 ROM、肌力、疼痛、依从性或康复目标达成率分析。
+- 用户请求康复报告、趋势分析或训练计划优化建议时使用。
 
 ## 核心功能
 
@@ -592,7 +599,7 @@ allowed-tools: Read, Grep, Glob, Write, Edit
 - 用药与训练强度的关系
 - 疼痛控制与用药依从性
 
-## 使用示例
+### 使用示例
 
 ### 场景1：新用户开始康复
 ```
@@ -634,3 +641,8 @@ allowed-tools: Read, Grep, Glob, Write, Edit
 **技能版本**: v1.0
 **最后更新**: 2026-01-06
 **维护者**: WellAlly Tech
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

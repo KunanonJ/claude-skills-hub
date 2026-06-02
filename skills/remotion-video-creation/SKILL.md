@@ -1,43 +1,43 @@
 ---
 name: remotion-video-creation
-description: Best practices for Remotion - Video creation in React. 29 domain-specific rules covering 3D, animations, audio, captions, charts, transitions, and more.
+description: Remotion のベストプラクティス - React で動画を作成する。3D、アニメーション、音声、字幕、チャート、トランジションなどをカバーするドメイン固有の29のルール。
 metadata:
   tags: remotion, video, react, animation, composition, three.js, lottie
 ---
 
-## When to use
+## 使用場面
 
-Use this skills whenever you are dealing with Remotion code to obtain the domain-specific knowledge.
+Remotion のコードを扱い、ドメイン固有の知識が必要な場合にこのスキルを使用してください。
 
-## How to use
+## 使い方
 
-Read individual rule files for detailed explanations and code examples:
+詳細な説明とコード例については、各ルールファイルをお読みください：
 
-- [rules/3d.md](rules/3d.md) - 3D content in Remotion using Three.js and React Three Fiber
-- [rules/animations.md](rules/animations.md) - Fundamental animation skills for Remotion
-- [rules/assets.md](rules/assets.md) - Importing images, videos, audio, and fonts into Remotion
-- [rules/audio.md](rules/audio.md) - Using audio and sound in Remotion - importing, trimming, volume, speed, pitch
-- [rules/calculate-metadata.md](rules/calculate-metadata.md) - Dynamically set composition duration, dimensions, and props
-- [rules/can-decode.md](rules/can-decode.md) - Check if a video can be decoded by the browser using Mediabunny
-- [rules/charts.md](rules/charts.md) - Chart and data visualization patterns for Remotion
-- [rules/compositions.md](rules/compositions.md) - Defining compositions, stills, folders, default props and dynamic metadata
-- [rules/display-captions.md](rules/display-captions.md) - Displaying captions in Remotion with TikTok-style pages and word highlighting
-- [rules/extract-frames.md](rules/extract-frames.md) - Extract frames from videos at specific timestamps using Mediabunny
-- [rules/fonts.md](rules/fonts.md) - Loading Google Fonts and local fonts in Remotion
-- [rules/get-audio-duration.md](rules/get-audio-duration.md) - Getting the duration of an audio file in seconds with Mediabunny
-- [rules/get-video-dimensions.md](rules/get-video-dimensions.md) - Getting the width and height of a video file with Mediabunny
-- [rules/get-video-duration.md](rules/get-video-duration.md) - Getting the duration of a video file in seconds with Mediabunny
-- [rules/gifs.md](rules/gifs.md) - Displaying GIFs synchronized with Remotion's timeline
-- [rules/images.md](rules/images.md) - Embedding images in Remotion using the Img component
-- [rules/import-srt-captions.md](rules/import-srt-captions.md) - Importing .srt subtitle files into Remotion using @remotion/captions
-- [rules/lottie.md](rules/lottie.md) - Embedding Lottie animations in Remotion
-- [rules/measuring-dom-nodes.md](rules/measuring-dom-nodes.md) - Measuring DOM element dimensions in Remotion
-- [rules/measuring-text.md](rules/measuring-text.md) - Measuring text dimensions, fitting text to containers, and checking overflow
-- [rules/sequencing.md](rules/sequencing.md) - Sequencing patterns for Remotion - delay, trim, limit duration of items
-- [rules/tailwind.md](rules/tailwind.md) - Using TailwindCSS in Remotion
-- [rules/text-animations.md](rules/text-animations.md) - Typography and text animation patterns for Remotion
-- [rules/timing.md](rules/timing.md) - Interpolation curves in Remotion - linear, easing, spring animations
-- [rules/transcribe-captions.md](rules/transcribe-captions.md) - Transcribing audio to generate captions in Remotion
-- [rules/transitions.md](rules/transitions.md) - Scene transition patterns for Remotion
-- [rules/trimming.md](rules/trimming.md) - Trimming patterns for Remotion - cut the beginning or end of animations
-- [rules/videos.md](rules/videos.md) - Embedding videos in Remotion - trimming, volume, speed, looping, pitch
+* [rules/3d.md](rules/3d.md) - Three.js と React Three Fiber を使用して Remotion で 3D コンテンツを作成する
+* [rules/animations.md](rules/animations.md) - Remotion の基本的なアニメーションスキル
+* [rules/assets.md](rules/assets.md) - Remotion で画像、動画、音声、フォントをインポートする
+* [rules/audio.md](rules/audio.md) - Remotion での音声とサウンドの使用——インポート、トリミング、音量、速度、ピッチ
+* [rules/calculate-metadata.md](rules/calculate-metadata.md) - コンポジションの長さ、サイズ、プロパティを動的に設定する
+* [rules/can-decode.md](rules/can-decode.md) - Mediabunny を使用してブラウザが動画をデコードできるか確認する
+* [rules/charts.md](rules/charts.md) - Remotion のチャートとデータビジュアライゼーションパターン
+* [rules/compositions.md](rules/compositions.md) - コンポジション、静止画、フォルダー、デフォルトプロパティ、動的メタデータの定義
+* [rules/display-captions.md](rules/display-captions.md) - TikTok スタイルのページと単語ハイライトに対応した Remotion での字幕表示
+* [rules/extract-frames.md](rules/extract-frames.md) - Mediabunny を使用して指定タイムスタンプの動画フレームを抽出する
+* [rules/fonts.md](rules/fonts.md) - Remotion で Google フォントとローカルフォントを読み込む
+* [rules/get-audio-duration.md](rules/get-audio-duration.md) - Mediabunny を使用して音声ファイルの長さ（秒）を取得する
+* [rules/get-video-dimensions.md](rules/get-video-dimensions.md) - Mediabunny を使用して動画ファイルの幅と高さを取得する
+* [rules/get-video-duration.md](rules/get-video-duration.md) - Mediabunny を使用して動画ファイルの長さ（秒）を取得する
+* [rules/gifs.md](rules/gifs.md) - Remotion のタイムラインと同期した GIF を表示する
+* [rules/images.md](rules/images.md) - Img コンポーネントを使用して Remotion に画像を埋め込む
+* [rules/import-srt-captions.md](rules/import-srt-captions.md) - @remotion/captions を使用して .srt 字幕ファイルを Remotion にインポートする
+* [rules/lottie.md](rules/lottie.md) - Remotion に Lottie アニメーションを埋め込む
+* [rules/measuring-dom-nodes.md](rules/measuring-dom-nodes.md) - Remotion で DOM 要素のサイズを測定する
+* [rules/measuring-text.md](rules/measuring-text.md) - テキストサイズの測定、コンテナへのテキスト適合、オーバーフローの確認
+* [rules/sequencing.md](rules/sequencing.md) - Remotion のシーケンスパターン——遅延、トリミング、項目の長さ制限
+* [rules/tailwind.md](rules/tailwind.md) - Remotion で TailwindCSS を使用する
+* [rules/text-animations.md](rules/text-animations.md) - Remotion のタイポグラフィとテキストアニメーションパターン
+* [rules/timing.md](rules/timing.md) - Remotion の補間曲線——線形、イージング、スプリングアニメーション
+* [rules/transcribe-captions.md](rules/transcribe-captions.md) - Remotion で字幕を生成するための音声文字起こし
+* [rules/transitions.md](rules/transitions.md) - Remotion のシーントランジションパターン
+* [rules/trimming.md](rules/trimming.md) - Remotion のトリミングパターン——アニメーションの最初または最後をトリミングする
+* [rules/videos.md](rules/videos.md) - Remotion への動画埋め込み——トリミング、音量、速度、ループ、ピッチ

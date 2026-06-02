@@ -2,8 +2,11 @@
 name: deepchem
 description: Molecular ML with diverse featurizers and pre-built datasets. Use for property prediction (ADMET, toxicity) with traditional ML or GNNs when you want extensive featurization options and MoleculeNet benchmarks. Best for quick experiments with pre-trained models, diverse molecular representations. For graph-first PyTorch workflows use torchdrug; for benchmark datasets use pytdc.
 license: MIT license
+allowed-tools: Read Write Edit Bash
+compatibility: Requires Python 3.7–3.11 (PyPI 2.8.0 caps at <3.12). Install PyTorch, TensorFlow, or JAX before the matching deepchem extra. RDKit is a core dependency.
 metadata:
-    skill-author: K-Dense Inc.
+  version: "1.1"
+  skill-author: K-Dense Inc.
 ---
 
 # DeepChem
@@ -11,6 +14,8 @@ metadata:
 ## Overview
 
 DeepChem is a comprehensive Python library for applying machine learning to chemistry, materials science, and biology. Enable molecular property prediction, drug discovery, materials design, and biomolecule analysis through specialized neural networks, molecular featurization methods, and pretrained models.
+
+**Version note:** Examples target **deepchem 2.8.0** (PyPI stable, Apr 2024). Requires **Python 3.7–3.11** (`<3.12` on PyPI). Core utilities (loaders, featurizers, MoleculeNet) work without a DL backend; GNN and transformer models need the matching extra (`torch`, `tensorflow`, or `jax`). Install the backend framework first when using GPU builds.
 
 ## When to Use This Skill
 
@@ -438,7 +443,7 @@ python scripts/graph_neural_network.py \
 ```
 
 ### 3. `transfer_learning.py`
-Fine-tune pretrained models (ChemBERTa, GROVER) on molecular property prediction tasks.
+Fine-tune pretrained models (ChemBERTa, GROVER, MolFormer) on molecular property prediction tasks.
 
 ```bash
 # Fine-tune ChemBERTa on BBBP
@@ -528,15 +533,17 @@ model = dc.models.GCNModel(batch_size=32)  # Instead of 128
 - Collect more data
 
 ### Issue 4: Import Errors
-**Problem**: Module not found errors.
-**Solution**: Ensure DeepChem is installed with required dependencies:
+**Problem**: `No module named 'torch'` / `No module named 'tensorflow'` warnings, or model classes fail to import.
+**Solution**: DeepChem loads lazily — install the backend that matches your model, then add the matching extra:
 ```bash
-uv pip install deepchem
-# For PyTorch models
-uv pip install deepchem[torch]
-# For all features
-uv pip install deepchem[all]
+uv pip install deepchem              # loaders, featurizers, MoleculeNet only
+uv pip install 'deepchem[torch]'       # GCN, GAT, AttentiveFP, HuggingFaceModel, GroverModel
+uv pip install 'deepchem[tensorflow]'  # legacy Keras models
+uv pip install 'deepchem[jax]'         # Haiku/JAX models
 ```
+Install PyTorch or TensorFlow with the correct CUDA build **before** the extra when using GPUs. Quote extras in zsh: `'deepchem[torch]'`.
+
+**Conda + PyTorch users:** If `import deepchem` fails with `undefined symbol: iJIT_NotifyEvent`, pin MKL below 2025 (`conda install "mkl<2025"`) — PyTorch wheels may be incompatible with MKL 2025.0.0.
 
 ## Reference Documentation
 
@@ -567,24 +574,26 @@ Eight detailed end-to-end workflows:
 
 **When to reference**: Use these workflows as templates for implementing complete solutions.
 
-## Installation Notes
+## Installation
 
-Basic installation:
+Core package (data loaders, featurizers, MoleculeNet, scikit-learn wrappers):
+
 ```bash
 uv pip install deepchem
 ```
 
-For PyTorch models (GCN, GAT, etc.):
+Add the extra that matches your model backend (install PyTorch/TensorFlow/JAX first for GPU builds):
+
 ```bash
-uv pip install deepchem[torch]
+uv pip install 'deepchem[torch]'       # GNNs, TorchModel, HuggingFaceModel, GroverModel
+uv pip install 'deepchem[tensorflow]'  # Keras/TensorFlow models
+uv pip install 'deepchem[jax]'         # JAX/Haiku models
+uv pip install 'deepchem[dqc]'         # Differentiable quantum chemistry (torch + xitorch)
 ```
 
-For all features:
-```bash
-uv pip install deepchem[all]
-```
+Nightly builds: `uv pip install --pre deepchem` (same extras apply with `--pre`).
 
-If import errors occur, the user may need specific dependencies. Check the DeepChem documentation for detailed installation instructions.
+See [installation guide](https://deepchem.readthedocs.io/en/latest/get_started/installation.html) and [soft requirements](https://deepchem.readthedocs.io/en/latest/requirements.html) for optional dependencies per model class.
 
 ## Additional Resources
 

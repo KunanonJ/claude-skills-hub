@@ -1,109 +1,109 @@
 ---
 name: automation-audit-ops
-description: Evidence-first automation inventory and overlap audit workflow for ECC. Use when the user wants to know which jobs, hooks, connectors, MCP servers, or wrappers are live, broken, redundant, or missing before fixing anything.
+description: ECC用の証拠ベースの自動化インベントリとオーバーラップ監査ワークフロー。ユーザーがどのジョブ、フック、コネクタ、MCPサーバー、またはラッパーがライブか、壊れているか、冗長であるか、修正前に不足しているかを知りたい場合に使用します。
 origin: ECC
 ---
 
-# Automation Audit Ops
+# 自動化監査オペレーション
 
-Use this when the user asks what automations are live, which jobs are broken, where overlap exists, or what tooling and connectors are actually doing useful work right now.
+ユーザーがどの自動化がライブであるか、どのジョブが壊れているか、どこにオーバーラップが存在するか、またはどのツール検およびコネクタが実際に有用な作業をしているかについて尋ねるときに使用します。
 
-This is an audit-first operator skill. The job is to produce an evidence-backed inventory and a keep / merge / cut / fix-next recommendation set before rewriting anything.
+これは監査優先のオペレータスキルです。ジョブは、何かを書き直す前に、証拠に裏付けられたインベントリと保持/マージ/カット/修正次の推奨セットを生成することです。
 
-## Skill Stack
+## スキルスタック
 
-Pull these ECC-native skills into the workflow when relevant:
+関連するときにこれらのECC固有のスキルをワークフローに取り込みます：
 
-- `workspace-surface-audit` for connector, MCP, hook, and app inventory
-- `knowledge-ops` when the audit needs to reconcile live repo truth with durable context
-- `github-ops` when the answer depends on CI, scheduled workflows, issues, or PR automation
-- `ecc-tools-cost-audit` when the real problem is webhook fanout, queued jobs, or billing burn in the sibling app repo
-- `research-ops` when local inventory must be compared against current platform support or public docs
-- `verification-loop` for proving post-fix state instead of relying on assumed recovery
+- `workspace-surface-audit` コネクタ、MCP、フック、およびアプリインベントリ用
+- `knowledge-ops` 監査がライブリポ真実と耐久性のあるコンテキストを調和させる必要がある場合
+- `github-ops` 答えがCI、スケジュール済みワークフロー、問題、またはPR自動化に依存する場合
+- `ecc-tools-cost-audit` 実際の問題がWebhookファンアウト、キュー済みジョブ、または兄弟アプリリポの請求バーンである場合
+- `research-ops` ローカルインベントリを現在のプラットフォームサポートまたは公開ドキュメントと比較する必要がある場合
+- `verification-loop` 仮定された回復に依存する代わりに、修正後の状態を証明するため
 
-## When to Use
+## 使用時期
 
-- user asks "what automations do I have", "what is live", "what is broken", or "what overlaps"
-- the task spans cron jobs, GitHub Actions, local hooks, MCP servers, connectors, wrappers, or app integrations
-- the user wants to know what was ported from another agent system and what still needs to be rebuilt inside ECC
-- the workspace has accumulated multiple ways to do the same thing and the user wants one canonical lane
+- ユーザーが「どの自動化があるか」、「ライブのか」、「壊れているのか」、「何がオーバーラップするか」と尋ねる
+- タスクはcrondジョブ、GitHub Actions、ローカルフック、MCPサーバー、コネクタ、ラッパー、またはアプリ統合にまたがる
+- ユーザーが別のエージェントシステムからポートされたものを知りたい、そしてECC内で何がまだ再構築される必要があるか
+- ワークスペースが同じことをする複数の方法を蓄積し、ユーザーが1つの正規レーンを望む
 
-## Guardrails
+## ガードレール
 
-- start read-only unless the user explicitly asked for fixes
-- separate:
-  - configured
-  - authenticated
-  - recently verified
-  - stale or broken
-  - missing entirely
-- do not claim a tool is live just because a skill or config references it
-- do not merge or delete overlapping surfaces until the evidence table exists
+- ユーザーが明示的に修正を求めない限り、読み取り専用で開始
+- 分離：
+  - 構成済み
+  - 認証済み
+  - 最近検証済み
+  - 古いまたは壊れている
+  - 完全に不足している
+- スキルまたはコンフィグが参照しているだけという理由で、ツールがライブであると主張しないでください
+- 証拠テーブルが存在するまで、オーバーラップするサーフェースをマージまたは削除しないでください
 
-## Workflow
+## ワークフロー
 
-### 1. Inventory the real surface
+### 1. 実際のサーフェースをインベントリする
 
-Read the current live surface before theorizing:
+理論化する前に現在のライブサーフェースを読む：
 
-- repo hooks and local hook scripts
-- GitHub Actions and scheduled workflows
-- MCP configs and enabled servers
-- connector- or app-backed integrations
-- wrapper scripts and repo-specific automation entrypoints
+- リポフックとローカルフックスクリプト
+- GitHub Actionsとスケジュール済みワークフロー
+- MCPコンフィグと有効なサーバー
+- コネクタまたはアプリに支持された統合
+- ラッパースクリプトとリポ固有の自動化エントリポイント
 
-Group them by surface:
+サーフェスごとにグループ化：
 
-- local runtime
-- repo CI / automation
-- connected external systems
-- messaging / notifications
-- billing / customer operations
-- research / monitoring
+- ローカルランタイム
+- リポCI/自動化
+- 接続された外部システム
+- メッセージング/通知
+- 請求/顧客オペレーション
+- 研究/監視
 
-### 2. Classify each item by live state
+### 2. 各項目をライブ状態で分類する
 
-For every surfaced automation, mark:
+表面化されたすべての自動化について、マーク：
 
-- configured
-- authenticated
-- recently verified
-- stale or broken
-- missing
+- 構成済み
+- 認証済み
+- 最近検証済み
+- 古いまたは壊れている
+- 不足している
 
-Then classify the problem type:
+次に、問題タイプを分類します：
 
-- active breakage
-- auth outage
-- stale status
-- overlap or redundancy
-- missing capability
+- アクティブなブレークエージ
+- 認証停止
+- 古い状態
+- オーバーラップまたは冗長性
+- 不足している機能
 
-### 3. Trace the proof path
+### 3. 証拠パスを追跡する
 
-Back every important claim with a concrete source:
+すべての重要なクレームを具体的なソースで支える：
 
-- file path
-- workflow run
-- hook log
-- config entry
-- recent command output
-- exact failure signature
+- ファイルパス
+- ワークフロー実行
+- フックログ
+- コンフィグエントリ
+- 最近のコマンド出力
+- 正確な障害署名
 
-If the current state is ambiguous, say so directly instead of pretending the audit is complete.
+現在の状態が曖昧な場合は、監査が完了していると装うのではなく、直接言ってください。
 
-### 4. End with keep / merge / cut / fix-next
+### 4. 保持/マージ/カット/修正次で終了
 
-For each overlapping or suspect surface, return one call:
+オーバーラップするまたは疑わしいサーフェスごとに、1つのコールを返します：
 
 - keep
 - merge
 - cut
 - fix next
 
-The value is in collapsing noisy automation into one canonical ECC lane, not in preserving every historical path.
+値はノイズの多い自動化を1つの正規ECCレーンに折りたたむことであり、すべての履歴パスを保存することではありません。
 
-## Output Format
+## 出力形式
 
 ```text
 CURRENT SURFACE
@@ -128,15 +128,15 @@ NEXT ECC MOVE
 - exact skill / hook / workflow / app lane to strengthen
 ```
 
-## Pitfalls
+## 落とし穴
 
-- do not answer from memory when the live inventory can be read
-- do not treat "present in config" as "working"
-- do not fix lower-value redundancy before naming the broken high-signal path
-- do not widen the task into a repo rewrite if the user asked for inventory first
+- ライブインベントリが読み取れるときは、メモリから答えないでください
+- 「構成に存在」を「機能している」として扱わない
+- 壊れた高信号パスに名前を付ける前に、低価値の冗長性を修正しないでください
+- ユーザーがインベントリを最初に要求した場合、タスクをリポ書き直しに広げないでください
 
-## Verification
+## 検証
 
-- important claims cite a live proof path
-- each surfaced automation is labeled with a clear live-state category
-- the final recommendation distinguishes keep / merge / cut / fix-next
+- 重要なクレームはライブ証拠パスを引用
+- 表面化されたすべての自動化は、明確なライブ状態カテゴリでラベル付けされている
+- 最終的な推奨事項は、保持/マージ/カット/修正次を区別

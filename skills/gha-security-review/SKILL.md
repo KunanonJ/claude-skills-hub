@@ -1,6 +1,9 @@
 ---
 name: gha-security-review
-description: GitHub Actions security review for workflow exploitation vulnerabilities. Use when asked to "review GitHub Actions", "audit workflows", "check CI security", "GHA security", "workflow security review", or review .github/workflows/ for pwn requests, expression injection,...
+description: "Find exploitable vulnerabilities in GitHub Actions workflows. Every finding MUST include a concrete exploitation scenario — if you can't build the attack, don't report it."
+risk: safe
+source: community
+date_added: 2026-03-16
 ---
 
 <!--
@@ -13,6 +16,11 @@ by StepSecurity (2025): https://www.stepsecurity.io/blog/hackerbot-claw-github-a
 Find exploitable vulnerabilities in GitHub Actions workflows. Every finding MUST include a concrete exploitation scenario — if you can't build the attack, don't report it.
 
 This skill encodes attack patterns from real GitHub Actions exploits — not generic CI/CD theory.
+
+## When to Use
+- You are reviewing GitHub Actions workflows for exploitable security issues.
+- The task requires tracing a concrete attack path from an external attacker to workflow execution or secret exposure.
+- You need a security review of workflow files, composite actions, or workflow-related scripts with evidence-based findings only.
 
 ## Scope
 
@@ -183,3 +191,8 @@ If any link is broken, mark MEDIUM (needs verification) or drop the finding.
 ````
 
 If no findings: "No exploitable vulnerabilities identified. All workflows reviewed and cleared."
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

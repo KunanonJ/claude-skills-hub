@@ -1,0 +1,580 @@
+# Sheet Music Publisher - Workflow Detail
+
+Detailed workflow phases, error handling, tips, and tool reference for the sheet-music-publisher skill.
+
+---
+
+## Phase 1: Setup Verification
+
+### Check AnthemScore
+
+**macOS locations:**
+```bash
+# Check standard install
+ls -l "/Applications/AnthemScore.app/Contents/MacOS/AnthemScore"
+
+# Try Homebrew
+which anthemscore
+```
+
+**Linux locations:**
+```bash
+which anthemscore
+ls -l /usr/bin/anthemscore /usr/local/bin/anthemscore
+```
+
+**Windows locations:**
+```
+C:\Program Files\AnthemScore\AnthemScore.exe
+C:\Program Files (x86)\AnthemScore\AnthemScore.exe
+```
+
+**If not found**, tell user:
+```
+AnthemScore not found. Install from: https://www.lunaverus.com/
+
+Recommended edition: Professional ($42) - full editing + CLI
+Free trial available: 30 seconds per song, 100 total transcriptions
+
+After installing, run this command again.
+```
+
+### Check MuseScore
+
+**macOS locations:**
+```bash
+ls -l "/Applications/MuseScore 4.app/Contents/MacOS/mscore"
+ls -l "/Applications/MuseScore 3.app/Contents/MacOS/mscore"
+```
+
+**Linux locations:**
+```bash
+which mscore
+ls -l /usr/bin/musescore /usr/local/bin/musescore
+```
+
+**Windows locations:**
+```
+C:\Program Files\MuseScore 4\bin\MuseScore4.exe
+C:\Program Files\MuseScore 3\bin\MuseScore3.exe
+```
+
+**If not found**, tell user:
+```
+MuseScore not found. Install from: https://musescore.org/
+
+Free and open source. Required for:
+- Polishing transcriptions
+- Fixing titles (re-exporting PDFs)
+- Manual editing
+
+After installing, run this command again.
+```
+
+### Check Python Dependencies (Songbook Only)
+
+If user wants to create a songbook, call `get_python_command()` to verify the venv exists, then check songbook deps:
+```bash
+{python_from_get_python_command} -c "import pypdf, reportlab"
+```
+
+**If missing:**
+```
+Songbook dependencies missing. Install with:
+
+  ~/.bitwize-music/venv/bin/pip install pypdf reportlab
+
+These are only needed for songbook creation (optional).
+```
+
+## Phase 2: Track Selection
+
+**List mastered tracks:**
+```bash
+ls -1 {audio_root}/artists/{artist}/albums/{genre}/{album}/*.wav
+```
+
+**Ask user which tracks to transcribe:**
+```
+Found N mastered WAV files.
+
+Sheet music works best for:
+✓ Melodic tracks (clear vocal/instrumental lines)
+✓ Singer-songwriter, folk, acoustic
+✓ Simple arrangements
+
+Challenging:
+⚠ Dense electronic music
+⚠ Heavy distortion
+⚠ Rapid rap vocals
+
+Which tracks should I transcribe?
+  1. All tracks
+  2. Specific tracks (you'll select)
+  3. Let me recommend based on metadata
+```
+
+**If user chooses option 3**, read track files from content directory to check for:
+- Explicit vocal mentions in Suno Style Box
+- Melodic genres (folk, country, singer-songwriter)
+- Simple instrumentation descriptions
+
+**Recommend tracks** that mention:
+- "vocals", "singing", "melodic"
+- "acoustic", "piano", "folk"
+- Avoid: "aggressive", "distorted", "dense"
+
+## Phase 3: Automated Transcription
+
+**Run transcription via MCP:**
+```
+transcribe_audio(album_slug)
+```
+
+**The script will:**
+1. Read config to locate audio files
+2. Find AnthemScore based on OS
+3. Create output directory: `{audio_root}/artists/{artist}/albums/{genre}/{album}/sheet-music/source/`
+4. Process each WAV (~30-60 seconds per track)
+5. Generate PDF + MusicXML + MIDI for each track
+
+**Monitor progress** and report to user:
+```
+Transcribing tracks...
+
+✓ Track 01: ocean-of-tears.wav - Complete
+  → sheet-music/source/01-ocean-of-tears.pdf
+  → sheet-music/source/01-ocean-of-tears.xml
+  → sheet-music/source/01-ocean-of-tears.mid
+
+✓ Track 02: run-away.wav - Complete
+  → sheet-music/source/02-run-away.pdf
+  → sheet-music/source/02-run-away.xml
+  → sheet-music/source/02-run-away.mid
+
+Transcription complete: N tracks processed
+```
+
+## Phase 4: Quality Review & Polish
+
+**After transcription completes**, recommend review:
+```
+Transcription complete. Generated PDFs are in:
+  {audio_root}/artists/{artist}/albums/{genre}/{album}/sheet-music/
+
+Next: Review transcriptions for accuracy
+
+Automated transcription accuracy: 70-95% depending on arrangement
+
+Recommend polish in MuseScore?
+  - Fix notation errors (wrong notes, durations)
+  - Add dynamics (p, mf, f)
+  - Adjust key/time signatures
+  - Format for print
+
+Options:
+  1. Yes - I'll polish in MuseScore now (pause here)
+  2. Skip - PDFs are good enough
+  3. Only specific tracks need polish (which ones?)
+```
+
+**If user chooses polish:**
+```
+Opening MusicXML files in MuseScore for editing...
+
+Polish checklist:
+  [ ] Key signature correct
+  [ ] Time signature correct
+  [ ] Note durations correct
+  [ ] Rests complete measures
+  [ ] Dynamics added (p, mf, f)
+  [ ] Tempo marking added
+  [ ] Title/composer in score properties
+
+After editing in MuseScore:
+  1. File → Export → PDF (300 DPI)
+  2. Save MuseScore project (.mscz)
+  3. Tell me when done: "polish complete"
+
+I'll wait for your confirmation before proceeding.
+```
+
+## Phase 5: Prepare Singles
+
+**After polish (or if skipped)**, prepare consumer-ready singles via MCP:
+```
+prepare_singles(album_slug)
+```
+
+**What this does:**
+- Reads numbered source files from `sheet-music/source/`
+- Applies smart title casing (e.g., "01-ocean-of-tears" → "Ocean of Tears")
+- Updates MusicXML `<work-title>` tags
+- Writes clean-titled files to `sheet-music/singles/` (PDF, XML, MIDI)
+- Creates `.manifest.json` for track ordering
+- Source files are never modified
+
+**Report:**
+```
+Preparing singles...
+
+✓ Prepared 5 tracks in singles/
+✓ Created .manifest.json
+
+Files ready for website distribution.
+```
+
+## Phase 6: Songbook Creation (Optional)
+
+**Ask user:**
+```
+Create a combined songbook PDF?
+
+This creates a distribution-ready book with:
+  - Title page (with album art if available)
+  - Copyright page
+  - Table of contents
+  - All tracks in order
+
+Perfect for:
+  - Website distribution (free download)
+  - Licensing packages
+  - Fan resources
+
+Create songbook? [Y/n]
+```
+
+**If yes, run via MCP:**
+```
+create_songbook(album_slug, title="{album_title} Songbook", page_size="letter")
+```
+
+**Detect page size from config:**
+- Read `~/.bitwize-music/config.yaml` → `sheet_music.page_size`
+- Default: `letter`
+
+**Detect cover art:**
+```bash
+# Check standard location
+ls -l {audio_root}/artists/{artist}/albums/{genre}/{album}/album.png
+```
+
+**Report:**
+```
+Creating songbook...
+
+✓ Found album art: album.png
+✓ Songbook created: {album}/sheet-music/{Album}_Songbook.pdf
+
+Contents:
+  - Title page (with album art)
+  - Copyright page
+  - Table of contents (N tracks)
+  - N tracks (XX pages total)
+
+Ready for website distribution.
+```
+
+## Phase 7: Summary & Next Steps
+
+**Final summary:**
+```
+✅ SHEET MUSIC GENERATION COMPLETE
+
+Album: {album_name}
+Tracks transcribed: N
+Output: {audio_root}/artists/{artist}/albums/{genre}/{album}/sheet-music/
+
+Files generated:
+  - N × PDF (individual tracks)
+  - N × MusicXML (editable source)
+  [- 1 × Songbook PDF (combined)]
+
+Next steps:
+  1. Review PDFs for accuracy
+  2. Upload singles + songbook to your website
+  3. [Optional] Include in licensing packages
+  4. [Optional] Share on social media
+
+See publishing guide for distribution instructions:
+  ${CLAUDE_PLUGIN_ROOT}/skills/sheet-music-publisher/publishing-guide.md
+```
+
+## Error Handling
+
+### AnthemScore Not Found
+
+**Error message:**
+```
+AnthemScore not detected on your system.
+
+Install from: https://www.lunaverus.com/
+
+Editions:
+  - Lite: $31 (basic transcription, no editing)
+  - Professional: $42 (full editing + CLI) ← Recommended
+  - Studio: $107 (lifetime updates)
+
+Free trial: 30 seconds per song, 100 total transcriptions
+
+After installing, run this command again.
+```
+
+### MuseScore Not Found
+
+**If only needed for title fixing:**
+```
+MuseScore not found. Options:
+
+1. Install MuseScore (free): https://musescore.org/
+   Then I'll fix titles and re-export PDFs
+
+2. Skip title fixing
+   PDFs will have track numbers in titles (e.g., "01 - Song Name")
+   You can fix this manually later
+
+Which option?
+```
+
+### No WAV Files Found
+
+```
+No WAV files found in: {audio_root}/artists/{artist}/albums/{genre}/{album}/
+
+Expected location based on config:
+  audio_root: {audio_root}
+  artist: {artist}
+  album: {album}
+
+Check:
+  1. Album name spelled correctly?
+  2. Audio files in correct location?
+  3. Files are .wav format (not .mp3)?
+
+Use /bitwize-music:import-audio to move files if needed.
+```
+
+### Python Dependencies Missing
+
+```
+Songbook dependencies missing. Install with:
+
+  pip install pypdf reportlab
+
+Note: Only needed for songbook creation. Individual PDFs are already generated.
+
+Install and retry? [Y/n]
+```
+
+### Track Transcription Failed
+
+**If AnthemScore returns error:**
+```
+⚠ Track failed: {track_name}
+
+Possible causes:
+  - File is corrupted or unreadable
+  - Format not supported (use WAV)
+  - AnthemScore license issue
+
+Try:
+  1. Verify file plays in audio player
+  2. Re-export from DAW as WAV
+  3. Check AnthemScore license status
+
+Skip this track and continue? [Y/n]
+```
+
+## Tips for Better Results
+
+### Audio Quality Matters
+
+Tell user:
+```
+Better source = better transcription
+
+Best practices:
+  ✓ Use mastered WAV files (not MP3)
+  ✓ Ensure no clipping
+  ✓ Clear, well-mixed audio
+  ✗ Avoid overly compressed audio
+  ✗ Avoid heavy distortion
+```
+
+### When to Recommend Stem Separation
+
+**If user has dense/complex tracks**, suggest:
+```
+For complex arrangements, stem separation can improve accuracy:
+
+1. Install Demucs: pip install demucs
+2. Separate stems: demucs {track.wav}
+3. Transcribe vocals.wav and other.wav separately
+4. Combine in MuseScore
+
+Use for:
+  - Dense rock/pop arrangements
+  - Buried melodies
+  - Professional licensing needs
+
+Skip for:
+  - Simple acoustic tracks
+  - Quick reference sheets
+
+Want to try stem separation? [y/N]
+```
+
+### Piano Reduction Philosophy
+
+**If user asks about transcription approach:**
+```
+AnthemScore creates "piano reduction" - a playable piano arrangement.
+
+It captures:
+  ✓ Main melody
+  ✓ Bass line
+  ✓ Harmonic structure
+  ✓ Characteristic riffs
+
+It simplifies/omits:
+  ✗ Drum patterns
+  ✗ Doubled/layered parts
+  ✗ Complex backgrounds
+  ✗ Sound effects
+
+Goal: Playable by intermediate pianist, captures song essence
+```
+
+## Integration with Main Workflow
+
+**When to proactively offer this skill:**
+
+1. **After album mastering complete:**
+   - User says "mastering done"
+   - All tracks marked `Final`
+   → Ask: "Want to generate sheet music for this album?"
+
+2. **User mentions licensing:**
+   - "I want to license this"
+   - "preparing licensing package"
+   → Suggest: "Sheet music is valuable for sync licensing. Generate now?"
+
+3. **User mentions publishing or distribution:**
+   - "distribute sheet music"
+   - "create a songbook"
+   → Invoke this skill automatically
+
+**Position in workflow:**
+```
+Generate → Master → [Sheet Music] → Release
+                        ↑
+                   Optional enhancement
+```
+
+## Config Integration
+
+**Always read config first:**
+```bash
+cat ~/.bitwize-music/config.yaml
+```
+
+**Extract values:**
+- `artist.name` → For songbook metadata
+- `paths.audio_root` → Where mastered audio lives
+- `paths.content_root` → Where album metadata is
+- `urls.soundcloud` (or other) → For website field in songbook
+- `sheet_music.page_size` → For songbook dimensions (default: letter)
+- `sheet_music.section_headers` → Whether to add section headers (default: false)
+
+**Path construction:**
+```
+Input audio:  {audio_root}/artists/{artist}/albums/{genre}/{album}/*.wav
+Output:       {audio_root}/artists/{artist}/albums/{genre}/{album}/sheet-music/
+```
+
+## MCP Tool Reference
+
+### transcribe_audio
+
+```
+# All tracks
+transcribe_audio(album_slug)
+
+# Single track
+transcribe_audio(album_slug, track_filename="01-track-name.wav")
+
+# PDF only (no MusicXML)
+transcribe_audio(album_slug, formats="pdf")
+
+# Dry run
+transcribe_audio(album_slug, dry_run=True)
+```
+
+### prepare_singles
+
+```
+# Prepare clean-titled singles (PDF, XML, MIDI)
+prepare_singles(album_slug)
+
+# Dry run (preview only)
+prepare_singles(album_slug, dry_run=True)
+
+# XML only (skip PDF/MIDI)
+prepare_singles(album_slug, xml_only=True)
+```
+
+### create_songbook
+
+```
+# Standard songbook
+create_songbook(album_slug, title="Sample Album Songbook")
+
+# With page size
+create_songbook(album_slug, title="Sample Album Songbook", page_size="9x12")
+```
+
+## Quality Standards
+
+**Publishing-ready sheet music includes:**
+- ✓ Clean, readable notation
+- ✓ Correct key/time signatures
+- ✓ Proper credits and copyright
+- ✓ Playable by intermediate pianist
+- ✓ No track number prefixes in titles
+- ✓ Consistent formatting
+
+**Minimum viable:**
+- ✓ Correct notes (mostly)
+- ✓ Readable layout
+- ✓ Title and composer
+- ~ May need polish for errors
+
+**Set user expectations:**
+```
+Automated transcription accuracy: 70-95%
+
+Perfect for:
+  - Reference sheets
+  - Licensing packages
+  - Fan resources
+
+May need polish for:
+  - Professional publishing
+  - Teaching materials
+  - Critical accuracy needs
+```
+
+## Workflow State Tracking
+
+**Update album README after sheet music generation:**
+
+If user confirms "done with sheet music", suggest:
+```
+Update Album Completion Checklist?
+
+Add:
+  - [✓] Sheet music generated (N tracks)
+
+This helps track release readiness.
+```
+

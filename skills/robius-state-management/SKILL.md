@@ -5,6 +5,8 @@ description: |
   AppState, persistence, theme switch, 状态管理,
   Scope::with_data, save state, load state, serde,
   状态持久化, 主题切换
+risk: unknown
+source: community
 ---
 
 # Robius State Management Skill
@@ -15,8 +17,7 @@ Best practices for state management and persistence in Makepad applications base
 - **Robrix**: Matrix chat client - AppState, SelectedRoom, persistence via serde
 - **Moly**: AI chat application - Central Store pattern, async initialization, Preferences
 
-## Triggers
-
+## When to Use
 Use this skill when:
 - Designing application state structure
 - Implementing state persistence
@@ -409,3 +410,8 @@ pub fn clear_ui_cache(_cx: &mut Cx) {
   - Submodule state managers (Search, Downloads, Chats)
   - Provider syncing status tracking
   - Store action forwarding to submodules
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

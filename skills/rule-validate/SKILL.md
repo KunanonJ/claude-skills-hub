@@ -1,6 +1,6 @@
 ---
 name: rule-validate
-description: Validate implemented React Doctor rules before PR or merge. Use after rule tests pass to review correctness, run RDE against OSS, inspect false positives, write PR descriptions, and triage bot or human review comments.
+description: Validate implemented React Doctor rules before PR or merge. Use after rule tests pass to review correctness, run RDE against OSS, inspect false positives, generate changesets, write PR descriptions, and triage bot or human review comments.
 ---
 
 # Rule Validate
@@ -11,7 +11,7 @@ Pipeline:
 
 1. `rule-research` defines the rule contract.
 2. `rule-writing` turns the contract into tests and implementation.
-3. `rule-validate` verifies noise, correctness, PR copy, and review feedback.
+3. `rule-validate` verifies noise, correctness, changesets, PR copy, and review feedback.
 
 Validation is not just running tests. It checks whether the rule still matches the contract on real code.
 
@@ -53,6 +53,8 @@ Review the diff like a rule reviewer. Lead with bugs:
 - Imported or unknown code reported without support.
 - Diagnostic wording that overclaims.
 - Missing valid or invalid regression tests.
+
+Before approving a new helper or utility in the diff, confirm it does not duplicate an existing symbol with `truffler` (the `find-similar-functions` skill): `bunx @rayhanadev/truffler "<helper name>" packages --kind function,method,interface,type,constant --limit 20`.
 
 Fix every real implementation bug with a targeted regression test.
 
@@ -96,11 +98,13 @@ Catches <specific issue>.
 <Runtime reason in 1-3 sentences.>
 
 Before:
+
 ```tsx
 <bad example>
 ```
 
 After:
+
 ```tsx
 <good example>
 ```
@@ -115,14 +119,14 @@ After:
 
 ## Eval results
 
-| Check | Result |
-| --- | --- |
-| Repos scanned | `<distinct repo count>` |
-| RootDir scans | `<manifest/rootDir entries>` |
-| Target rule | `<rule-name>` |
-| Diagnostics | `<target-rule diagnostics>` |
-| False positives found | `<count after manual inspection>` |
-| Output artifact | `<filtered JSONL or summary path>` |
+| Check                 | Result                             |
+| --------------------- | ---------------------------------- |
+| Repos scanned         | `<distinct repo count>`            |
+| RootDir scans         | `<manifest/rootDir entries>`       |
+| Target rule           | `<rule-name>`                      |
+| Diagnostics           | `<target-rule diagnostics>`        |
+| False positives found | `<count after manual inspection>`  |
+| Output artifact       | `<filtered JSONL or summary path>` |
 
 ## Test plan
 
@@ -132,6 +136,18 @@ After:
 ````
 
 Do not include the eval table if RDE was not run; state why it was skipped when useful.
+
+## Changeset
+
+Generate a changeset after validation and before PR copy for user-facing changes to published packages.
+
+Required handling:
+
+- Use `nr changeset` unless the user explicitly asks for a manual file.
+- Select the affected published package or packages.
+- Use `patch` for new rules, bug fixes, false-positive fixes, diagnostic wording changes, and test-backed behavior refinements unless the release impact clearly requires otherwise.
+- Summarize the user-visible behavior, including the rule name and the runtime problem it catches or avoids.
+- Skip the changeset only for private-only, docs-only, test-only, or tooling-only changes, and record why it was skipped.
 
 ## Review Comment Triage
 
@@ -150,15 +166,19 @@ Return:
 
 ```md
 Validation summary:
+
 - <commands and results>
 - <implementation review findings>
 - <RDE summary or skip reason>
 - <false positives found and fixed>
 - <regression tests added>
+- <changeset path or skip reason>
 
 PR-ready notes:
+
 - <Why/What/Test plan highlights>
 
 Residual risk:
+
 - <known v1 non-goals or unchecked areas>
 ```

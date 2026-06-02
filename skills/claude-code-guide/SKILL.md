@@ -1,6 +1,6 @@
 ---
 name: claude-code-guide
-description: "Master guide for using Claude Code effectively. Includes configuration templates, prompting strategies \\\"Thinking\\\" keywords, debugging techniques, and best practices for interacting wit..."
+description: "To provide a comprehensive reference for configuring and using Claude Code (the agentic coding tool) to its full potential. This skill synthesizes best practices, configuration templates, and advanced usage patterns."
 risk: unknown
 source: community
 date_added: "2026-02-27"
@@ -72,3 +72,8 @@ Based on [Claude Code Guide by zebbern](https://github.com/zebbern/claude-code-g
 
 ## When to Use
 This skill is applicable to execute the workflow or actions described in the overview.
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

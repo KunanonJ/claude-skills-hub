@@ -1,28 +1,17 @@
 ---
 name: springboot-security
 description: Spring Security best practices for authn/authz, validation, CSRF, secrets, headers, rate limiting, and dependency security in Java Spring Boot services.
-origin: ECC
 ---
 
-# Spring Boot Security Review
+# Spring Boot セキュリティレビュー
 
-Use when adding auth, handling input, creating endpoints, or dealing with secrets.
+認証の追加、入力処理、エンドポイント作成、またはシークレット処理時に使用します。
 
-## When to Activate
+## 認証
 
-- Adding authentication (JWT, OAuth2, session-based)
-- Implementing authorization (@PreAuthorize, role-based access)
-- Validating user input (Bean Validation, custom validators)
-- Configuring CORS, CSRF, or security headers
-- Managing secrets (Vault, environment variables)
-- Adding rate limiting or brute-force protection
-- Scanning dependencies for CVEs
-
-## Authentication
-
-- Prefer stateless JWT or opaque tokens with revocation list
-- Use `httpOnly`, `Secure`, `SameSite=Strict` cookies for sessions
-- Validate tokens with `OncePerRequestFilter` or resource server
+- ステートレスJWTまたは失効リスト付き不透明トークンを優先
+- セッションには `httpOnly`、`Secure`、`SameSite=Strict` クッキーを使用
+- `OncePerRequestFilter` またはリソースサーバーでトークンを検証
 
 ```java
 @Component
@@ -47,98 +36,27 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 }
 ```
 
-## Authorization
+## 認可
 
-- Enable method security: `@EnableMethodSecurity`
-- Use `@PreAuthorize("hasRole('ADMIN')")` or `@PreAuthorize("@authz.canEdit(#id)")`
-- Deny by default; expose only required scopes
+- メソッドセキュリティを有効化: `@EnableMethodSecurity`
+- `@PreAuthorize("hasRole('ADMIN')")` または `@PreAuthorize("@authz.canEdit(#id)")` を使用
+- デフォルトで拒否し、必要なスコープのみ公開
 
-```java
-@RestController
-@RequestMapping("/api/admin")
-public class AdminController {
+## 入力検証
 
-  @PreAuthorize("hasRole('ADMIN')")
-  @GetMapping("/users")
-  public List<UserDto> listUsers() {
-    return userService.findAll();
-  }
+- `@Valid` を使用してコントローラーでBean Validationを使用
+- DTOに制約を適用: `@NotBlank`、`@Email`、`@Size`、カスタムバリデーター
+- レンダリング前にホワイトリストでHTMLをサニタイズ
 
-  @PreAuthorize("@authz.isOwner(#id, authentication)")
-  @DeleteMapping("/users/{id}")
-  public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-    userService.delete(id);
-    return ResponseEntity.noContent().build();
-  }
-}
-```
+## SQLインジェクション防止
 
-## Input Validation
+- Spring Dataリポジトリまたはパラメータ化クエリを使用
+- ネイティブクエリには `:param` バインディングを使用し、文字列を連結しない
 
-- Use Bean Validation with `@Valid` on controllers
-- Apply constraints on DTOs: `@NotBlank`, `@Email`, `@Size`, custom validators
-- Sanitize any HTML with a whitelist before rendering
+## CSRF保護
 
-```java
-// BAD: No validation
-@PostMapping("/users")
-public User createUser(@RequestBody UserDto dto) {
-  return userService.create(dto);
-}
-
-// GOOD: Validated DTO
-public record CreateUserDto(
-    @NotBlank @Size(max = 100) String name,
-    @NotBlank @Email String email,
-    @NotNull @Min(0) @Max(150) Integer age
-) {}
-
-@PostMapping("/users")
-public ResponseEntity<UserDto> createUser(@Valid @RequestBody CreateUserDto dto) {
-  return ResponseEntity.status(HttpStatus.CREATED)
-      .body(userService.create(dto));
-}
-```
-
-## SQL Injection Prevention
-
-- Use Spring Data repositories or parameterized queries
-- For native queries, use `:param` bindings; never concatenate strings
-
-```java
-// BAD: String concatenation in native query
-@Query(value = "SELECT * FROM users WHERE name = '" + name + "'", nativeQuery = true)
-
-// GOOD: Parameterized native query
-@Query(value = "SELECT * FROM users WHERE name = :name", nativeQuery = true)
-List<User> findByName(@Param("name") String name);
-
-// GOOD: Spring Data derived query (auto-parameterized)
-List<User> findByEmailAndActiveTrue(String email);
-```
-
-## Password Encoding
-
-- Always hash passwords with BCrypt or Argon2 — never store plaintext
-- Use `PasswordEncoder` bean, not manual hashing
-
-```java
-@Bean
-public PasswordEncoder passwordEncoder() {
-  return new BCryptPasswordEncoder(12); // cost factor 12
-}
-
-// In service
-public User register(CreateUserDto dto) {
-  String hashedPassword = passwordEncoder.encode(dto.password());
-  return userRepository.save(new User(dto.email(), hashedPassword));
-}
-```
-
-## CSRF Protection
-
-- For browser session apps, keep CSRF enabled; include token in forms/headers
-- For pure APIs with Bearer tokens, disable CSRF and rely on stateless auth
+- ブラウザセッションアプリの場合はCSRFを有効にし、フォーム/ヘッダーにトークンを含める
+- Bearerトークンを使用する純粋なAPIの場合は、CSRFを無効にしてステートレス認証に依存
 
 ```java
 http
@@ -146,32 +64,13 @@ http
   .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 ```
 
-## Secrets Management
+## シークレット管理
 
-- No secrets in source; load from env or vault
-- Keep `application.yml` free of credentials; use placeholders
-- Rotate tokens and DB credentials regularly
+- ソースコードにシークレットを含めない。環境変数またはvaultから読み込む
+- `application.yml` を認証情報から解放し、プレースホルダーを使用
+- トークンとDB認証情報を定期的にローテーション
 
-```yaml
-# BAD: Hardcoded in application.yml
-spring:
-  datasource:
-    password: mySecretPassword123
-
-# GOOD: Environment variable placeholder
-spring:
-  datasource:
-    password: ${DB_PASSWORD}
-
-# GOOD: Spring Cloud Vault integration
-spring:
-  cloud:
-    vault:
-      uri: https://vault.example.com
-      token: ${VAULT_TOKEN}
-```
-
-## Security Headers
+## セキュリティヘッダー
 
 ```java
 http
@@ -183,90 +82,38 @@ http
     .referrerPolicy(rp -> rp.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER)));
 ```
 
-## CORS Configuration
+## レート制限
 
-- Configure CORS at the security filter level, not per-controller
-- Restrict allowed origins — never use `*` in production
+- 高コストなエンドポイントにBucket4jまたはゲートウェイレベルの制限を適用
+- バーストをログに記録してアラートを送信し、リトライヒント付きで429を返す
 
-```java
-@Bean
-public CorsConfigurationSource corsConfigurationSource() {
-  CorsConfiguration config = new CorsConfiguration();
-  config.setAllowedOrigins(List.of("https://app.example.com"));
-  config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
-  config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
-  config.setAllowCredentials(true);
-  config.setMaxAge(3600L);
+## 依存関係のセキュリティ
 
-  UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-  source.registerCorsConfiguration("/api/**", config);
-  return source;
-}
+- CIでOWASP Dependency Check / Snykを実行
+- Spring BootとSpring Securityをサポートされているバージョンに保つ
+- 既知のCVEでビルドを失敗させる
 
-// In SecurityFilterChain:
-http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
-```
+## ロギングとPII
 
-## Rate Limiting
+- シークレット、トークン、パスワード、完全なPANデータをログに記録しない
+- 機密フィールドを編集し、構造化JSONロギングを使用
 
-- Apply Bucket4j or gateway-level limits on expensive endpoints
-- Log and alert on bursts; return 429 with retry hints
+## ファイルアップロード
 
-```java
-// Using Bucket4j for per-endpoint rate limiting
-@Component
-public class RateLimitFilter extends OncePerRequestFilter {
-  private final Map<String, Bucket> buckets = new ConcurrentHashMap<>();
+- サイズ、コンテンツタイプ、拡張子を検証
+- Webルート外に保存し、必要に応じてスキャン
 
-  private Bucket createBucket() {
-    return Bucket.builder()
-        .addLimit(Bandwidth.classic(100, Refill.intervally(100, Duration.ofMinutes(1))))
-        .build();
-  }
+## リリース前チェックリスト
 
-  @Override
-  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-      FilterChain chain) throws ServletException, IOException {
-    String clientIp = request.getRemoteAddr();
-    Bucket bucket = buckets.computeIfAbsent(clientIp, k -> createBucket());
+- [ ] 認証トークンが正しく検証され、期限切れになっている
+- [ ] すべての機密パスに認可ガードがある
+- [ ] すべての入力が検証およびサニタイズされている
+- [ ] 文字列連結されたSQLがない
+- [ ] アプリケーションタイプに対してCSRF対策が正しい
+- [ ] シークレットが外部化され、コミットされていない
+- [ ] セキュリティヘッダーが設定されている
+- [ ] APIにレート制限がある
+- [ ] 依存関係がスキャンされ、最新である
+- [ ] ログに機密データがない
 
-    if (bucket.tryConsume(1)) {
-      chain.doFilter(request, response);
-    } else {
-      response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
-      response.getWriter().write("{\"error\": \"Rate limit exceeded\"}");
-    }
-  }
-}
-```
-
-## Dependency Security
-
-- Run OWASP Dependency Check / Snyk in CI
-- Keep Spring Boot and Spring Security on supported versions
-- Fail builds on known CVEs
-
-## Logging and PII
-
-- Never log secrets, tokens, passwords, or full PAN data
-- Redact sensitive fields; use structured JSON logging
-
-## File Uploads
-
-- Validate size, content type, and extension
-- Store outside web root; scan if required
-
-## Checklist Before Release
-
-- [ ] Auth tokens validated and expired correctly
-- [ ] Authorization guards on every sensitive path
-- [ ] All inputs validated and sanitized
-- [ ] No string-concatenated SQL
-- [ ] CSRF posture correct for app type
-- [ ] Secrets externalized; none committed
-- [ ] Security headers configured
-- [ ] Rate limiting on APIs
-- [ ] Dependencies scanned and up to date
-- [ ] Logs free of sensitive data
-
-**Remember**: Deny by default, validate inputs, least privilege, and secure-by-configuration first.
+**注意**: デフォルトで拒否し、入力を検証し、最小権限を適用し、設定によるセキュリティを優先します。

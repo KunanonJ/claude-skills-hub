@@ -1,109 +1,109 @@
 ---
 name: terminal-ops
-description: Evidence-first repo execution workflow for ECC. Use when the user wants a command run, a repo checked, a CI failure debugged, or a narrow fix pushed with exact proof of what was executed and verified.
+description: ECCのための証拠優先のリポジトリ実行ワークフロー。ユーザーがコマンドの実行、リポジトリの確認、CIの失敗のデバッグ、正確な実行と検証の証明を伴う狭い修正のプッシュを必要とする場合に使用する。
 origin: ECC
 ---
 
-# Terminal Ops
+# ターミナルオペレーション
 
-Use this when the user wants real repo execution: run commands, inspect git state, debug CI or builds, make a narrow fix, and report exactly what changed and what was verified.
+ユーザーが実際のリポジトリ実行を必要とする場合にこのスキルを使用する：コマンドの実行、git状態の確認、CIまたはビルドのデバッグ、狭い修正の実施、変更と検証内容の正確なレポート。
 
-This skill is intentionally narrower than general coding guidance. It is an operator workflow for evidence-first terminal execution.
+このスキルは意図的に汎用的なコーディングガイダンスよりも範囲が狭い。これは証拠優先のターミナル実行操作ワークフローである。
 
-## Skill Stack
+## スキルスタック
 
-Pull these ECC-native skills into the workflow when relevant:
+関連する場合、これらのECCネイティブスキルをワークフローに組み込む：
 
-- `verification-loop` for exact proving steps after changes
-- `tdd-workflow` when the right fix needs regression coverage
-- `security-review` when secrets, auth, or external inputs are involved
-- `github-ops` when the task depends on CI runs, PR state, or release status
-- `knowledge-ops` when the verified outcome needs to be captured into durable project context
+* `verification-loop` は変更後の正確な検証ステップに使用
+* `tdd-workflow` は正しい修正に回帰カバレッジが必要な場合に使用
+* `security-review` はキー、認証、外部入力が絡む場合に使用
+* `github-ops` はタスクがCI実行、PRステータス、またはリリース状態に依存する場合に使用
+* `knowledge-ops` は検証結果を永続的なプロジェクトコンテキストに保存する必要がある場合に使用
 
-## When to Use
+## 使用場面
 
-- user says "fix", "debug", "run this", "check the repo", or "push it"
-- the task depends on command output, git state, test results, or a verified local fix
-- the answer must distinguish changed locally, verified locally, committed, and pushed
+* ユーザーが「修正」「デバッグ」「これを実行」「リポジトリを確認」「プッシュ」と言う場合
+* タスクがコマンド出力、git状態、テスト結果、または検証済みのローカル修正に依存する場合
+* 答えが以下を区別する必要がある場合：ローカルで変更済み、ローカルで検証済み、コミット済み、プッシュ済み
 
-## Guardrails
+## 安全策
 
-- inspect before editing
-- stay read-only if the user asked for audit/review only
-- prefer repo-local scripts and helpers over improvised ad hoc wrappers
-- do not claim fixed until the proving command was rerun
-- do not claim pushed unless the branch actually moved upstream
+* 編集前に確認する
+* ユーザーが監査/レビューのみを要求している場合は読み取り専用を維持する
+* アドホックなラッパーではなく、リポジトリローカルのスクリプトとヘルパーを優先する
+* 検証コマンドが再実行されるまで、修正済みと主張しない
+* ブランチが実際に上流にプッシュされるまで、プッシュ済みと主張しない
 
-## Workflow
+## ワークフロー
 
-### 1. Resolve the working surface
+### 1. 作業サーフェスを特定する
 
-Settle:
+以下を明確にする：
 
-- exact repo path
-- branch
-- local diff state
-- requested mode:
-  - inspect
-  - fix
-  - verify
-  - push
+* 正確なリポジトリパス
+* ブランチ
+* ローカル差分の状態
+* 要求されたモード：
+  * 確認
+  * 修正
+  * 検証
+  * プッシュ
 
-### 2. Read the failing surface first
+### 2. まず失敗サーフェスを読み取る
 
-Before changing anything:
+何かを変更する前に：
 
-- inspect the error
-- inspect the file or test
-- inspect git state
-- use any already-supplied logs or context before re-reading blindly
+* エラーを確認する
+* ファイルまたはテストを確認する
+* git状態を確認する
+* 盲目的に再読み込みする前に、提供されたログまたはコンテキストを使用する
 
-### 3. Keep the fix narrow
+### 3. 修正を狭い範囲に保つ
 
-Solve one dominant failure at a time:
+一度に1つの主な失敗に対処する：
 
-- use the smallest useful proving command first
-- only escalate to a bigger build/test pass after the local failure is addressed
-- if a command keeps failing with the same signature, stop broad retries and narrow scope
+* 最初に最小限の有用な検証コマンドを使用する
+* ローカルの失敗が解決した後のみ、より大きなビルド/テストプロセスにエスカレートする
+* コマンドが同じ特性で失敗し続ける場合、広範囲なリトライを停止して絞り込む
 
-### 4. Report exact execution state
+### 4. 正確な実行状態をレポートする
 
-Use exact status words:
+正確な状態語を使用する：
 
-- inspected
-- changed locally
-- verified locally
-- committed
-- pushed
-- blocked
+* 確認済み
+* ローカルで変更済み
+* ローカルで検証済み
+* コミット済み
+* プッシュ済み
+* ブロック済み
 
-## Output Format
+## 出力フォーマット
 
 ```text
-SURFACE
-- repo
-- branch
-- requested mode
+サーフェス
+- リポジトリ
+- ブランチ
+- 要求されたモード
 
-EVIDENCE
-- failing command / diff / test
+証拠
+- 失敗したコマンド / 差分 / テスト
 
-ACTION
-- what changed
+アクション
+- 変更した内容
 
-STATUS
-- inspected / changed locally / verified locally / committed / pushed / blocked
+状態
+- 確認済み / ローカルで変更済み / ローカルで検証済み / コミット済み / プッシュ済み / ブロック済み
 ```
 
-## Pitfalls
+## 落とし穴
 
-- do not work from stale memory when the live repo state can be read
-- do not widen a narrow fix into repo-wide churn
-- do not use destructive git commands
-- do not ignore unrelated local work
+* ライブなリポジトリ状態を読み取れる場合に古い記憶に頼らない
+* 狭い修正をリポジトリ全体の変更に拡大しない
+* 破壊的なgitコマンドを使用しない
+* 関連のないローカル作業を無視しない
 
-## Verification
+## 検証
 
-- the response names the proving command or test
-- git-related work names the repo path and branch
-- any push claim includes the target branch and exact result
+* レスポンスには検証コマンドまたはテストを示す
+* gitに関する作業にはリポジトリパスとブランチを示す
+* プッシュの主張には対象ブランチと正確な結果を含める

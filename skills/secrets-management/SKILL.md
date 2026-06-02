@@ -1,6 +1,6 @@
 ---
 name: secrets-management
-description: "Implement secure secrets management for CI/CD pipelines using Vault, AWS Secrets Manager, or native platform solutions. Use when handling sensitive credentials, rotating secrets, or securing CI/CD ..."
+description: "Secure secrets management practices for CI/CD pipelines using Vault, AWS Secrets Manager, and other tools."
 risk: unknown
 source: community
 date_added: "2026-02-27"
@@ -365,3 +365,8 @@ secret-scan:
 - `github-actions-templates` - For GitHub Actions integration
 - `gitlab-ci-patterns` - For GitLab CI integration
 - `deployment-pipeline-design` - For pipeline architecture
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

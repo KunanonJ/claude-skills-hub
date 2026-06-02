@@ -1,6 +1,6 @@
 ---
 name: skill-developer
-description: "Create and manage Claude Code skills following Anthropic best practices. Use when creating new skills, modifying skill-rules.json, understanding trigger patterns, working with hooks, debugging skil..."
+description: "Comprehensive guide for creating and managing skills in Claude Code with auto-activation system, following Anthropic's official best practices including the 500-line rule and progressive disclosure pattern."
 risk: unknown
 source: community
 date_added: "2026-02-27"
@@ -427,3 +427,8 @@ See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for complete debugging guide.
 **Progressive Disclosure**: Reference files for detailed information ✅
 
 **Next**: Create more skills, refine patterns based on usage
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

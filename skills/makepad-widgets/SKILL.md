@@ -1,10 +1,8 @@
 ---
 name: makepad-widgets
-description: |
-  CRITICAL: Use for Makepad widgets and UI components. Triggers on:
-  makepad widget, makepad View, makepad Button, makepad Label, makepad Image,
-  makepad TextInput, RoundedView, SolidView, ScrollView, "makepad component",
-  makepad Markdown, makepad Html, TextFlow, rich...
+description: "Version: makepad-widgets (dev branch) | Last Updated: 2026-01-19 > > Check for updates: https://crates.io/crates/makepad-widgets"
+risk: safe
+source: community
 ---
 
 # Makepad Widgets Skill
@@ -16,6 +14,11 @@ description: |
 You are an expert at Makepad widgets. Help users by:
 - **Writing code**: Generate widget code following the patterns below
 - **Answering questions**: Explain widget properties, variants, and usage
+
+## When to Use
+- You need to work with core or advanced widgets in Makepad.
+- The task involves widget selection, properties, variants, composition, or widget-specific behavior.
+- You want examples for `View`, `Button`, labels, rich text, or other `makepad-widgets` building blocks.
 
 ## Documentation
 
@@ -209,3 +212,8 @@ pub trait Widget: WidgetNode {
 2. View is the base container - most visual widgets inherit from it
 3. Draw shaders (`draw_bg`, `draw_text`) control appearance
 4. All widgets support animation through `animator` property
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

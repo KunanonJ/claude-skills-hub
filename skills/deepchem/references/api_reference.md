@@ -111,6 +111,8 @@ For recurrent networks and transformers:
 
 ## Models
 
+**Install note (2.8.0):** PyPI extras are `torch`, `tensorflow`, `jax`, and `dqc` — there is no `[all]` extra. Install PyTorch/TensorFlow/JAX before the matching `uv pip install 'deepchem[torch]'` (quote brackets in zsh).
+
 ### Scikit-Learn Integration
 - **SklearnModel**: Wrapper for any scikit-learn algorithm
   - Usage: `SklearnModel(model=RandomForestRegressor())`

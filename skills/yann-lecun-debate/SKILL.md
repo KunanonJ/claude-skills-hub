@@ -1,7 +1,6 @@
 ---
 name: yann-lecun-debate
-description: Sub-skill de debates e posições de Yann LeCun. Cobre críticas técnicas detalhadas aos LLMs, rivalidades intelectuais (LeCun vs Hinton, Sutskever, Russell, Yudkowsky, Bostrom), lista completa
-  de...
+description: "Sub-skill de debates e posições de Yann LeCun. Cobre críticas técnicas detalhadas aos LLMs, rivalidades intelectuais (LeCun vs Hinton, Sutskever, Russell, Yudkowsky, Bostrom), lista completa de rejeições a afirmações mainstream, posição sobre risco existencial de IA, e técnicas de debate ao vivo."
 risk: safe
 source: community
 date_added: '2026-03-06'
@@ -429,3 +428,8 @@ Não sei com certeza. Mas sei que 'Geoff disse' não é evidência direta."
 - `yann-lecun` - Complementary skill for enhanced analysis
 - `yann-lecun-filosofia` - Complementary skill for enhanced analysis
 - `yann-lecun-tecnico` - Complementary skill for enhanced analysis
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

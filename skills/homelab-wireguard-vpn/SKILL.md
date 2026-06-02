@@ -1,6 +1,6 @@
 ---
 name: homelab-wireguard-vpn
-description: WireGuard VPN server setup, peer configuration, key generation, split tunneling vs full tunnel routing, and remote access to a home network from mobile and laptop clients.
+description: ホームラボWireGuard VPN設定、リモートアクセス、キー管理、およびエンドツーエンド暗号化。
 origin: community
 ---
 

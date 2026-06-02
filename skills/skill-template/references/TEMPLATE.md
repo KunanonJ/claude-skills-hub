@@ -7,22 +7,38 @@ status: draft
 
 # <Artifact Title>
 
-## Section 1
-<!-- Guidance on what goes here -->
+## Context
+<!-- State the situation, user/problem, and why this artifact exists. -->
 
-[Content]
+**Background**
+- <Relevant context>
+- <Constraint, trigger, or dependency>
 
-## Section 2
-<!-- Guidance on what goes here -->
+**Goal**
+- <Primary outcome this artifact supports>
 
-[Content]
+## Analysis
+<!-- Summarize findings, assumptions, tradeoffs, or evidence. Use bullets or tables when helpful. -->
 
-## Section 3
-<!-- Guidance on what goes here -->
+### Key Findings
+- <Finding 1>
+- <Finding 2>
+- <Finding 3>
 
-[Content]
+### Risks / Tradeoffs
+| Risk or Tradeoff | Why it matters | Mitigation / Decision |
+|------------------|----------------|-----------------------|
+| <Risk> | <Impact> | <Mitigation> |
 
-## Section 4
-<!-- Guidance on what goes here -->
+## Recommendation
+<!-- Make the core recommendation, decision, or specification explicit. -->
 
-[Content]
+1. <Decision or action 1>
+2. <Decision or action 2>
+3. <Decision or action 3>
+
+## Open Questions
+<!-- Capture unresolved questions, dependencies, or follow-up work. -->
+
+- <Open question or dependency>
+- <Assumption that still needs validation>

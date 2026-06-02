@@ -51,7 +51,7 @@ Often mentally starts in the car or during commute. Physical planning/shopping c
 
 **Urgency:**
 
-High urgency—there's a hard deadline (hungry family) and the window to decide narrows as time passes. By 5pm, options become limited.
+High urgency.there's a hard deadline (hungry family) and the window to decide narrows as time passes. By 5pm, options become limited.
 
 ---
 
@@ -100,7 +100,7 @@ Identify a dinner option, ensure ingredients are available or obtainable, and pr
 
 | Desired Feeling | Why It Matters |
 |-----------------|----------------|
-| Confident | Know the meal will work out—no anxiety about failure |
+| Confident | Know the meal will work out.no anxiety about failure |
 | Calm | Peaceful transition from work to home, not frantic |
 | In control | Having a plan reduces chaos of the "witching hour" |
 | Proud | Providing good food for family feels like caregiving |
@@ -210,7 +210,7 @@ Identify a dinner option, ensure ingredients are available or obtainable, and pr
 
 ## Insights and Implications
 
-**Key Insight 1:** The hardest part isn't cooking—it's deciding. By 5pm, mental energy is depleted and any decision feels hard. Solutions that require browsing and choosing from options fail at the moment of need.
+**Key Insight 1:** The hardest part isn't cooking.it's deciding. By 5pm, mental energy is depleted and any decision feels hard. Solutions that require browsing and choosing from options fail at the moment of need.
 - Product Implication: Make one strong recommendation rather than presenting options. "Here's what you should make tonight" beats "Here are 12 recipes you might like."
 
 **Key Insight 2:** "What's in my kitchen" is the real constraint, not "what sounds good." Parents are willing to make almost anything if they know they have the ingredients and it's fast.
@@ -223,13 +223,13 @@ Identify a dinner option, ensure ingredients are available or obtainable, and pr
 
 ## Supporting Quotes
 
-> "By 5pm, I literally cannot make another decision. I've made 400 decisions at work. Don't show me 50 recipes—just tell me what to make." — P4, working mom of 2
+> "By 5pm, I literally cannot make another decision. I've made 400 decisions at work. Don't show me 50 recipes.just tell me what to make." . P4, working mom of 2
 
-> "I'll open the meal planning app on Sunday with great intentions. By Tuesday, everything's gone off-script and I'm back to 'what's for dinner?'" — P7, dad of 3
+> "I'll open the meal planning app on Sunday with great intentions. By Tuesday, everything's gone off-script and I'm back to 'what's for dinner?'" . P7, dad of 3
 
-> "I know I should meal plan, but when I actually look at those apps, I just feel worse about myself. Like I can't even do this basic adult thing." — P11, working mom of 1
+> "I know I should meal plan, but when I actually look at those apps, I just feel worse about myself. Like I can't even do this basic adult thing." . P11, working mom of 1
 
-> "The best nights are when I don't have to think. Someone just says 'we're having this' and I make it." — P2, stay-at-home dad of 2
+> "The best nights are when I don't have to think. Someone just says 'we're having this' and I make it." . P2, stay-at-home dad of 2
 
 ---
 

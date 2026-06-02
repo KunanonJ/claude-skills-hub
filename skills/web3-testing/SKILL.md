@@ -1,6 +1,6 @@
 ---
 name: web3-testing
-description: "Test smart contracts comprehensively using Hardhat and Foundry with unit tests, integration tests, and mainnet forking. Use when testing Solidity contracts, setting up blockchain test suites, or va..."
+description: "Master comprehensive testing strategies for smart contracts using Hardhat, Foundry, and advanced testing patterns."
 risk: unknown
 source: community
 date_added: "2026-02-27"
@@ -428,3 +428,8 @@ jobs:
 8. **Mainnet Fork**: Test with real contracts
 9. **Fuzzing**: Use property-based testing
 10. **CI/CD**: Automate testing on every commit
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

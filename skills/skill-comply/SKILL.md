@@ -1,34 +1,35 @@
 ---
 name: skill-comply
-description: Visualize whether skills, rules, and agent definitions are actually followed — auto-generates scenarios at 3 prompt strictness levels, runs agents, classifies behavioral sequences, and reports compliance rates with full tool call timelines
+description: スキル、ルール、エージェント定義が実際に遵守されているかを可視化する——3種類のプロンプト厳格度レベルのシナリオを自動生成し、エージェントを実行し、動作シーケンスを分類し、完全なツール呼び出しタイムラインの遵守率をレポートする
 origin: ECC
 tools: Read, Bash
 ---
 
-# skill-comply: Automated Compliance Measurement
+# skill-comply：自動化された遵守測定
 
-Measures whether coding agents actually follow skills, rules, or agent definitions by:
-1. Auto-generating expected behavioral sequences (specs) from any .md file
-2. Auto-generating scenarios with decreasing prompt strictness (supportive → neutral → competing)
-3. Running `claude -p` and capturing tool call traces via stream-json
-4. Classifying tool calls against spec steps using LLM (not regex)
-5. Checking temporal ordering deterministically
-6. Generating self-contained reports with spec, prompts, and timelines
+コーディングエージェントがスキル、ルール、またはエージェント定義を実際に遵守しているかを以下の方法で測定する：
 
-## Supported Targets
+1. 任意の .md ファイルから期待される動作シーケンス（仕様）を自動生成する
+2. プロンプトの厳格度が段階的に低下するシナリオを自動生成する（支持的 → 中立的 → 競合的）
+3. `claude -p` を実行し、stream-json 経由でツール呼び出しトレースを取得する
+4. 正規表現ではなくLLMを使用してツール呼び出しを仕様ステップに分類する
+5. 決定論的に時系列順を確認する
+6. 仕様、プロンプト、タイムラインを含む自己完結型レポートを生成する
 
-- **Skills** (`skills/*/SKILL.md`): Workflow skills like search-first, TDD guides
-- **Rules** (`rules/common/*.md`): Mandatory rules like testing.md, security.md, git-workflow.md
-- **Agent definitions** (`agents/*.md`): Whether an agent gets invoked when expected (internal workflow verification not yet supported)
+## サポートされるターゲット
 
-## When to Activate
+* **スキル**（`skills/*/SKILL.md`）：検索優先、TDDガイドなどのワークフロースキル
+* **ルール**（`rules/common/*.md`）：testing.md、security.md、git-workflow.md などの強制的なルール
+* **エージェント定義**（`agents/*.md`）：エージェントが期待される場面で呼び出されるか（内部ワークフロー検証は未サポート）
 
-- User runs `/skill-comply <path>`
-- User asks "is this rule actually being followed?"
-- After adding new rules/skills, to verify agent compliance
-- Periodically as part of quality maintenance
+## 起動条件
 
-## Usage
+* ユーザーが `/skill-comply <path>` を実行する
+* ユーザーが「このルールは本当に遵守されているか？」と尋ねる
+* 新しいルール/スキルを追加した後、エージェントの遵守を確認する
+* 品質メンテナンスの一環として定期的に実行する
+
+## 使い方
 
 ```bash
 # Full run
@@ -41,18 +42,19 @@ uv run python -m scripts.run --dry-run ~/.claude/skills/search-first/SKILL.md
 uv run python -m scripts.run --gen-model haiku --model sonnet <path>
 ```
 
-## Key Concept: Prompt Independence
+## 重要なコンセプト：プロンプト独立性
 
-Measures whether a skill/rule is followed even when the prompt doesn't explicitly support it.
+プロンプトが明示的にサポートしていない場合でも、スキル/ルールが遵守されるかどうかを測定する。
 
-## Report Contents
+## レポートの内容
 
-Reports are self-contained and include:
-1. Expected behavioral sequence (auto-generated spec)
-2. Scenario prompts (what was asked at each strictness level)
-3. Compliance scores per scenario
-4. Tool call timelines with LLM classification labels
+レポートは自己完結型で、以下を含む：
 
-### Advanced (optional)
+1. 期待される動作シーケンス（自動生成された仕様）
+2. シナリオプロンプト（各厳格度レベルで尋ねる内容）
+3. 各シナリオの遵守スコア
+4. LLM分類ラベル付きのツール呼び出しタイムライン
 
-For users familiar with hooks, reports also include hook promotion recommendations for steps with low compliance. This is informational — the main value is the compliance visibility itself.
+### 高度な内容（オプション）
+
+フックに精通したユーザー向けに、レポートには遵守率が低いステップに対するフック強化の推奨事項も含まれる。これは参考情報——主要な価値は遵守性自体の可視化にある。

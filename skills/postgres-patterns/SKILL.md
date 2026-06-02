@@ -1,7 +1,12 @@
 ---
 name: postgres-patterns
-description: PostgreSQL database patterns for query optimization, schema design, indexing, and security. Based on Supabase best practices.
-origin: ECC
+description: >
+  PostgreSQL database patterns for query optimization, schema design, indexing,
+  and security. Quick reference for common patterns, index types, data types,
+  and anti-pattern detection. Based on Supabase best practices.
+metadata:
+  origin: ECC
+  credit: Supabase team (MIT License)
 ---
 
 # PostgreSQL Patterns
@@ -139,8 +144,17 @@ SELECT pg_reload_conf();
 ## Related
 
 - Agent: `database-reviewer` - Full database review workflow
-- Skill: `clickhouse-io` - ClickHouse analytics patterns
 - Skill: `backend-patterns` - API and backend patterns
+- Skill: `database-migrations` - Safe schema changes
+
+## When to Use This Skill
+
+- Writing SQL queries
+- Designing database schemas
+- Optimizing query performance
+- Implementing Row Level Security
+- Troubleshooting database issues
+- Setting up PostgreSQL configuration
 
 ---
 

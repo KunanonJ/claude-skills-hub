@@ -30,7 +30,7 @@ If the user asked for direct implementation, keep the plan short and proceed.
 ## Implementation Workflow
 
 1. Read the rule contract and `docs/HOW_TO_WRITE_A_RULE.md` when available.
-2. Inspect nearby rules and utilities before adding new abstractions.
+2. Inspect nearby rules and utilities before adding new abstractions. Use `truffler` (the `find-similar-functions` skill) to fuzzy-search for an existing detector or utility to reuse or extend before writing one: `bunx @rayhanadev/truffler "<symbol or behavior>" packages/oxlint-plugin-react-doctor/src/plugin --kind function,interface,type,constant --limit 20`.
 3. Write detector pseudocode before editing files.
 4. Write or update adversarial tests first when practical.
 5. Implement the detector to match the rule contract exactly.
@@ -107,18 +107,23 @@ When the writing stage is done, report:
 
 ```md
 Implemented:
+
 - <rule, tests, registry, utilities>
 
 Detector behavior:
+
 - <what reports>
 - <what intentionally stays quiet>
 
 Validation run:
+
 - <focused tests/checks>
 
 Known v1 non-goals:
+
 - <unsupported cases preserved from the rule contract>
 
 Next stage:
+
 - Run `rule-validate`.
 ```

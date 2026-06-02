@@ -1,0 +1,611 @@
+param(
+    [Parameter(Mandatory)] [string]$Task,
+    [string]$Mode = 'interactive_governed',
+    [string]$RunId = '',
+    [string]$RequirementDocPath = '',
+    [string]$RuntimeInputPacketPath = '',
+    [string]$PlanMemoryContextPath = '',
+    [string]$ArtifactRoot = '',
+    [AllowEmptyString()] [string]$GovernanceScope = '',
+    [AllowEmptyString()] [string]$RootRunId = '',
+    [AllowEmptyString()] [string]$ParentRunId = '',
+    [AllowEmptyString()] [string]$ParentUnitId = '',
+    [AllowEmptyString()] [string]$InheritedRequirementDocPath = '',
+    [AllowEmptyString()] [string]$InheritedExecutionPlanPath = '',
+    [AllowEmptyString()] [string]$DelegationEnvelopePath = ''
+)
+
+Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
+
+. (Join-Path $PSScriptRoot 'VibeRuntime.Common.ps1')
+. (Join-Path $PSScriptRoot 'VibeSkillUsage.Common.ps1')
+. (Join-Path $PSScriptRoot 'VibeSkillRouting.Common.ps1')
+. (Join-Path $PSScriptRoot 'VibeExecution.Common.ps1')
+. (Join-Path $PSScriptRoot '..\common\AntiProxyGoalDrift.ps1')
+
+function Get-VibeSelectedCapsuleList {
+    param(
+        [AllowNull()] [object]$ContextPack = $null
+    )
+
+    if (
+        $null -eq $ContextPack -or
+        -not ($ContextPack.PSObject.Properties.Name -contains 'selected_capsules') -or
+        $null -eq $ContextPack.selected_capsules
+    ) {
+        return @()
+    }
+
+    return @($ContextPack.selected_capsules | Where-Object { $null -ne $_ })
+}
+
+function Get-VibeDispatchPlanLines {
+    param(
+        [Parameter(Mandatory)] [AllowEmptyCollection()] [object[]]$Recommendations,
+        [switch]$SuggestionMode
+    )
+
+    $lines = @()
+    foreach ($recommendation in @($Recommendations)) {
+        if ($SuggestionMode) {
+            $lines += @(
+                ('- Suggest {0}.' -f [string]$recommendation.skill_id),
+                ('  Proposed phase: {0}; lane policy: {1}; write scope: {2}' -f [string]$recommendation.dispatch_phase, [string]$recommendation.lane_policy, [string]$recommendation.write_scope),
+                ('  Reason: {0}' -f [string]$recommendation.reason),
+                '  Escalation required: true'
+            )
+        } else {
+            $lines += @(
+                ('- Dispatch {0} as {1}.' -f [string]$recommendation.skill_id, [string]$recommendation.bounded_role),
+                ('  Binding profile: {0}; dispatch phase: {1}; lane policy: {2}; parallel in XL: {3}' -f [string]$recommendation.binding_profile, [string]$recommendation.dispatch_phase, [string]$recommendation.lane_policy, [bool]$recommendation.parallelizable_in_root_xl),
+                ('  Write scope: {0}; review mode: {1}; execution priority: {2}' -f [string]$recommendation.write_scope, [string]$recommendation.review_mode, [int]$recommendation.execution_priority),
+                ('  Reason: {0}' -f [string]$recommendation.reason),
+                ('  Required inputs: {0}' -f [string]::Join(', ', @($recommendation.required_inputs))),
+                ('  Expected outputs: {0}' -f [string]::Join(', ', @($recommendation.expected_outputs))),
+                ('  Verification: {0}' -f [string]$recommendation.verification_expectation)
+            )
+        }
+        if (
+            $recommendation.PSObject.Properties.Name -contains 'host_selection_action' -and
+            -not [string]::IsNullOrWhiteSpace([string]$recommendation.host_selection_action)
+        ) {
+            $lines += ('  Host selection: {0} ({1})' -f [string]$recommendation.host_selection_action, [string]$recommendation.host_selection_mode)
+        }
+    }
+
+    return @($lines)
+}
+
+function Get-VibeRecommendationPhaseId {
+    param(
+        [AllowNull()] [object]$Recommendation = $null
+    )
+
+    if (
+        $null -eq $Recommendation -or
+        -not ($Recommendation.PSObject.Properties.Name -contains 'phase_id')
+    ) {
+        return ''
+    }
+
+    return [string]$Recommendation.phase_id
+}
+
+$runtime = Get-VibeRuntimeContext -ScriptPath $PSCommandPath
+if ([string]::IsNullOrWhiteSpace($RunId)) {
+    $RunId = New-VibeRunId
+}
+
+$sessionRoot = Ensure-VibeSessionRoot -RepoRoot $runtime.repo_root -RunId $RunId -Runtime $runtime -ArtifactRoot $ArtifactRoot
+$hierarchyState = Get-VibeHierarchyState `
+    -GovernanceScope $GovernanceScope `
+    -RunId $RunId `
+    -RootRunId $RootRunId `
+    -ParentRunId $ParentRunId `
+    -ParentUnitId $ParentUnitId `
+    -InheritedRequirementDocPath $InheritedRequirementDocPath `
+    -InheritedExecutionPlanPath $InheritedExecutionPlanPath `
+    -DelegationEnvelopePath $DelegationEnvelopePath `
+    -HierarchyContract $runtime.runtime_input_packet_policy.hierarchy_contract
+$runtimeInputPath = if (-not [string]::IsNullOrWhiteSpace($RuntimeInputPacketPath)) {
+    $RuntimeInputPacketPath
+} else {
+    Get-VibeRuntimeInputPacketPath -RepoRoot $runtime.repo_root -RunId $RunId -ArtifactRoot $ArtifactRoot
+}
+$runtimeInputPacket = if (-not [string]::IsNullOrWhiteSpace($runtimeInputPath) -and (Test-Path -LiteralPath $runtimeInputPath)) {
+    Get-Content -LiteralPath $runtimeInputPath -Raw -Encoding UTF8 | ConvertFrom-Json
+} else {
+    $null
+}
+$skillUsage = if ($runtimeInputPacket -and $runtimeInputPacket.PSObject.Properties.Name -contains 'skill_usage') {
+    Read-VibeSkillUsageArtifact -SessionRoot $sessionRoot -Fallback $runtimeInputPacket.skill_usage
+} else {
+    Read-VibeSkillUsageArtifact -SessionRoot $sessionRoot -Fallback $null
+}
+$selectedUsageSkill = if ($runtimeInputPacket -and $runtimeInputPacket.route_snapshot) {
+    [string]$runtimeInputPacket.route_snapshot.selected_skill
+} else {
+    ''
+}
+$requestedGradeFloor = if (
+    $runtimeInputPacket -and
+    $runtimeInputPacket.PSObject.Properties.Name -contains 'requested_grade_floor' -and
+    -not [string]::IsNullOrWhiteSpace([string]$runtimeInputPacket.requested_grade_floor)
+) {
+    [string]$runtimeInputPacket.requested_grade_floor
+} else {
+    ''
+}
+$entryIntentId = if (
+    $runtimeInputPacket -and
+    $runtimeInputPacket.PSObject.Properties.Name -contains 'entry_intent_id' -and
+    -not [string]::IsNullOrWhiteSpace([string]$runtimeInputPacket.entry_intent_id)
+) {
+    [string]$runtimeInputPacket.entry_intent_id
+} else {
+    'vibe'
+}
+$requestedStageStop = if (
+    $runtimeInputPacket -and
+    $runtimeInputPacket.PSObject.Properties.Name -contains 'requested_stage_stop' -and
+    -not [string]::IsNullOrWhiteSpace([string]$runtimeInputPacket.requested_stage_stop)
+) {
+    [string]$runtimeInputPacket.requested_stage_stop
+} else {
+    'phase_cleanup'
+}
+$requestedGradeFloorDisplay = if ([string]::IsNullOrWhiteSpace($requestedGradeFloor)) { 'none' } else { $requestedGradeFloor }
+$grade = Get-VibeInternalGrade -Task $Task -RequestedGradeFloor $requestedGradeFloor
+$isChildScope = ([string]$hierarchyState.governance_scope -eq 'child')
+$planPath = if ($isChildScope) {
+    if ([string]::IsNullOrWhiteSpace([string]$hierarchyState.inherited_execution_plan_path)) {
+        throw 'Child-governed plan stage requires InheritedExecutionPlanPath.'
+    }
+    [string]$hierarchyState.inherited_execution_plan_path
+} else {
+    Get-VibeExecutionPlanPath -RepoRoot $runtime.repo_root -Task $Task -ArtifactRoot $ArtifactRoot
+}
+$requirementPath = if (-not [string]::IsNullOrWhiteSpace($RequirementDocPath)) { $RequirementDocPath } else { Get-VibeRequirementDocPath -RepoRoot $runtime.repo_root -Task $Task -ArtifactRoot $ArtifactRoot }
+$antiDriftDraft = Get-VgoAntiProxyGoalDriftPacketFromRequirementDoc -RequirementDocPath $requirementPath
+$requirementDocLines = if (Test-Path -LiteralPath $requirementPath) {
+    @(Get-Content -LiteralPath $requirementPath -Encoding UTF8)
+} else {
+    @()
+}
+$requirementSections = Get-VgoMarkdownSectionMap -Lines $requirementDocLines
+$frozenCodeTaskTddEvidenceRequirements = @(Get-VgoMarkdownSectionList -Sections $requirementSections -Heading 'Code Task TDD Evidence Requirements' | Where-Object { -not ([string]$_).StartsWith('No code-task TDD evidence requirements were frozen', [System.StringComparison]::OrdinalIgnoreCase) })
+$frozenCodeTaskTddExceptions = @(Get-VgoMarkdownSectionList -Sections $requirementSections -Heading 'Code Task TDD Exceptions' | Where-Object { -not ([string]$_).StartsWith('No code-task TDD exceptions were frozen', [System.StringComparison]::OrdinalIgnoreCase) })
+$hasFrozenCodeTaskTddObligations = (@($frozenCodeTaskTddEvidenceRequirements).Count -gt 0 -or @($frozenCodeTaskTddExceptions).Count -gt 0)
+$specialistDecision = if (
+    $runtimeInputPacket -and
+    $runtimeInputPacket.PSObject.Properties.Name -contains 'specialist_decision' -and
+    $null -ne $runtimeInputPacket.specialist_decision
+) {
+    $runtimeInputPacket.specialist_decision
+} else {
+    $null
+}
+$hostSkillExecutionDecision = if (
+    $runtimeInputPacket -and
+    $runtimeInputPacket.PSObject.Properties.Name -contains 'host_skill_execution_decision' -and
+    $null -ne $runtimeInputPacket.host_skill_execution_decision
+) {
+    $runtimeInputPacket.host_skill_execution_decision
+} else {
+    $null
+}
+$planMemoryContext = if (-not [string]::IsNullOrWhiteSpace($PlanMemoryContextPath) -and (Test-Path -LiteralPath $PlanMemoryContextPath)) {
+    Get-Content -LiteralPath $PlanMemoryContextPath -Raw -Encoding UTF8 | ConvertFrom-Json
+} else {
+    $null
+}
+$stageLifecycleDisclosure = New-VibeSpecialistLifecycleDisclosureProjection `
+    -RuntimeInputPacket $runtimeInputPacket
+$selectedSkillRouting = @(Get-VibeSkillRoutingSelected -RuntimeInputPacket $runtimeInputPacket)
+$approvedDispatch = @(Convert-VibeSkillRoutingSelectedToDispatch -RuntimeInputPacket $runtimeInputPacket)
+$localSuggestions = @()
+$executionPhaseDecomposition = if (
+    $runtimeInputPacket -and
+    $runtimeInputPacket.PSObject.Properties.Name -contains 'execution_phase_decomposition' -and
+    $null -ne $runtimeInputPacket.execution_phase_decomposition
+) {
+    $runtimeInputPacket.execution_phase_decomposition
+} else {
+    $null
+}
+$executionTopology = New-VibeExecutionTopology `
+    -RunId $RunId `
+    -Grade $grade `
+    -GovernanceScope ([string]$hierarchyState.governance_scope) `
+    -ExecutionPolicy $runtime.execution_runtime_policy `
+    -TopologyPolicy $runtime.execution_topology_policy `
+    -ApprovedDispatch @() `
+    -SelectedSkills @($approvedDispatch)
+$executionTopologyPath = Get-VibeExecutionTopologyPath -RepoRoot $runtime.repo_root -RunId $RunId -ArtifactRoot $ArtifactRoot
+Write-VibeJsonArtifact -Path $executionTopologyPath -Value $executionTopology
+
+$waveLines = switch ($grade) {
+    'XL' {
+        @(
+            '- Wave 1: skeleton, intent freeze, and requirement validation',
+            '- Wave 2: implementation decomposition and bounded ownership assignment',
+            '- Wave 3: verification, reconciliation, and cleanup handoff'
+        )
+    }
+    'L' {
+        @(
+            '- Wave 1: design confirmation and implementation preparation',
+            '- Wave 2: implementation and targeted verification',
+            '- Wave 3: cleanup and residual-risk review'
+        )
+    }
+    default {
+        @(
+            '- Wave 1: direct implementation with narrow verification',
+            '- Wave 2: cleanup and completion evidence'
+        )
+    }
+}
+
+$lines = @(
+    "# $(Get-VibeTitleFromTask -Task $Task)",
+    '',
+    '## Execution Summary',
+    "Governed runtime execution plan for ``vibe`` in mode $Mode.",
+    '',
+    '## Frozen Inputs',
+    "- Requirement doc: $([System.IO.Path]::GetFullPath($requirementPath))",
+    "- Runtime input packet: $runtimeInputPath",
+    "- Source task: $Task"
+)
+$lines += @('')
+if ($runtimeInputPacket) {
+    $lines += @(
+        "- Governance scope: $([string]$runtimeInputPacket.governance_scope)",
+        "- Root run id: $([string]$runtimeInputPacket.hierarchy.root_run_id)",
+        "- Entry intent: $entryIntentId",
+        "- Requested stop stage: $requestedStageStop",
+        "- Requested grade floor: $requestedGradeFloorDisplay",
+        "- Frozen route pack: $([string]$runtimeInputPacket.route_snapshot.selected_pack)",
+        "- Frozen route skill: $([string]$runtimeInputPacket.route_snapshot.selected_skill)",
+        "- Frozen route mode: $([string]$runtimeInputPacket.route_snapshot.route_mode)",
+        "- Router/runtime skill mismatch: $([bool]$runtimeInputPacket.divergence_shadow.skill_mismatch)"
+    )
+    $hostReentryAction = if (
+        $runtimeInputPacket.PSObject.Properties.Name -contains 'host_reentry_action' -and
+        -not [string]::IsNullOrWhiteSpace([string]$runtimeInputPacket.host_reentry_action)
+    ) {
+        [string]$runtimeInputPacket.host_reentry_action
+    } elseif (
+        $runtimeInputPacket.PSObject.Properties.Name -contains 'continuation_context' -and
+        $null -ne $runtimeInputPacket.continuation_context -and
+        $runtimeInputPacket.continuation_context.PSObject.Properties.Name -contains 'reentry_action'
+    ) {
+        [string]$runtimeInputPacket.continuation_context.reentry_action
+    } else {
+        ''
+    }
+    $hostRevisionTargetStage = if (
+        $runtimeInputPacket.PSObject.Properties.Name -contains 'host_revision_target_stage' -and
+        -not [string]::IsNullOrWhiteSpace([string]$runtimeInputPacket.host_revision_target_stage)
+    ) {
+        [string]$runtimeInputPacket.host_revision_target_stage
+    } elseif (
+        $runtimeInputPacket.PSObject.Properties.Name -contains 'continuation_context' -and
+        $null -ne $runtimeInputPacket.continuation_context -and
+        $runtimeInputPacket.continuation_context.PSObject.Properties.Name -contains 'revision_target_stage'
+    ) {
+        [string]$runtimeInputPacket.continuation_context.revision_target_stage
+    } else {
+        ''
+    }
+    $hostRevisionDelta = if (
+        $runtimeInputPacket.PSObject.Properties.Name -contains 'host_revision_delta' -and
+        $null -ne $runtimeInputPacket.host_revision_delta
+    ) {
+        @(Get-VibeNormalizedStringList -Values $runtimeInputPacket.host_revision_delta)
+    } elseif (
+        $runtimeInputPacket.PSObject.Properties.Name -contains 'continuation_context' -and
+        $null -ne $runtimeInputPacket.continuation_context -and
+        $runtimeInputPacket.continuation_context.PSObject.Properties.Name -contains 'revision_delta'
+    ) {
+        @(Get-VibeNormalizedStringList -Values $runtimeInputPacket.continuation_context.revision_delta)
+    } else {
+        @()
+    }
+    if ([string]$hostReentryAction -eq 'revise' -and @($hostRevisionDelta).Count -gt 0) {
+        $lines += @(
+            '',
+            '## Host Revision Delta',
+            ('- Re-entry action: {0}' -f [string]$hostReentryAction),
+            ('- Revision target stage: {0}' -f $(if ([string]::IsNullOrWhiteSpace($hostRevisionTargetStage)) { 'xl_plan' } else { [string]$hostRevisionTargetStage }))
+        )
+        $lines += @($hostRevisionDelta | ForEach-Object { "- $_" })
+    }
+}
+$lines += @(
+    "- Execution topology companion: $executionTopologyPath"
+)
+$lines += @(Get-VgoAntiProxyGoalDriftPlanLines -Packet $antiDriftDraft)
+$lines += @(
+    '',
+    '## Internal Grade Decision',
+    "- Grade: $grade",
+    '- User-facing runtime remains fixed; grade is internal only.',
+    '- `vibe` remains the governor and final authority for execution flow.',
+    '',
+    '## Wave Plan'
+)
+$lines += $waveLines
+$executionPhaseLines = @(Get-VibeExecutionPhaseMarkdownLines -PhaseDecomposition $executionPhaseDecomposition)
+if (@($executionPhaseLines).Count -gt 0) {
+    $lines += @(
+        '',
+        '## Execution Phase Plan'
+    )
+    $lines += @($executionPhaseLines)
+}
+$deliveryAcceptanceReportPath = Join-Path $sessionRoot 'delivery-acceptance-report.json'
+$lines += @(
+    '',
+    '## Delivery Acceptance Plan',
+    '- Freeze downstream product acceptance inside the governed requirement doc and reuse it rather than inventing closeout claims later.',
+    '- Emit a per-run delivery-acceptance report during `phase_cleanup` so runtime/process success is kept separate from project-delivery success.',
+    ('- Delivery-acceptance report: {0}' -f $deliveryAcceptanceReportPath),
+    '- If manual spot checks are declared in the requirement doc, final completion wording stays blocked until they are cleared or explicitly downgraded to manual review.',
+    '- Release truth aggregation remains an outer-layer gate; this run emits the per-run delivery-truth report only.'
+)
+$lines += @(
+    '',
+    '## Artifact Review Strategy',
+    '- If the frozen requirement doc declares `Artifact Review Requirements`, execution must leave behind explicit artifact-review evidence rather than relying on generic completion wording.',
+    '- Artifact review may be recorded inline in `phase-execute.json` or through a dedicated `artifact-review.json` sidecar, but one of those governed surfaces must exist when direct artifact review is required.',
+    '- Product acceptance stays blocked when required artifact review remains missing, partial, degraded, or manual-review-only.',
+    '',
+    '## Code Task TDD Evidence Plan'
+)
+if ($hasFrozenCodeTaskTddObligations) {
+    $lines += @(
+        '- Reuse the frozen `Code Task TDD Evidence Requirements` section from the requirement doc rather than inventing late closeout claims.',
+        '- Reuse the frozen `Code Task TDD Exceptions` section when strict failing-first sequencing is intentionally exempted.',
+        '- Map each frozen requirement or exception to an implementation step, a targeted verification command, and a proof artifact.',
+        '- If strict failing-first sequencing is blocked, execution must record the bounded reason and fallback evidence explicitly.'
+    )
+} else {
+    $lines += 'TDD mode is not_applicable for this plan; do not block execution on red/green evidence unless a later host/runtime decision explicitly freezes code-task TDD obligations.'
+}
+$lines += @(
+    '',
+    '## Baseline Document Quality Mapping',
+    '- Use the frozen `Baseline Document Quality Dimensions` section in the requirement doc as the authoritative list of document-artifact quality dimensions that artifact review must cover before a document delivery can claim full completion.',
+    '- Track each baseline document dimension through artifact-review annotations so the delivery-acceptance report can show which structure, formatting, completeness, reference integrity, layout stability, and output fidelity expectations were inspected.',
+    '- Treat missing document-dimension coverage as a manual-review-required hit and keep this mapping separate from UI baselines and code-task TDD evidence.',
+    '',
+    '## Baseline UI Quality Mapping',
+    '- Use the frozen `Baseline UI Quality Dimensions` section in the requirement doc as the authoritative list of dimensions that artifact review must cover before a UI delivery can claim full completion.',
+    '- Track each baseline dimension through execution and artifact-review annotations so the delivery-acceptance report can show which structure, interaction, state, consistency, responsiveness, and fidelity expectations were inspected.',
+    '- Treat missing dimension coverage as a manual-review-required hit and include explicit mapping steps or targeted verification units that drive reviewers to capture the evidence the requirement doc established.',
+    '',
+    '## Task-Specific Acceptance Mapping',
+    '- Reuse frozen task-specific acceptance extensions from the requirement doc instead of inventing late closeout criteria.',
+    '- Keep base delivery truth separate from task-specific expectations so each can be inspected independently during review.',
+    '',
+    '## Research Augmentation Plan',
+    '- Preserve any frozen research augmentation sources from the requirement doc so later reviewers can tell which external standards strengthened the brief.',
+    '- Research augmentation may strengthen rough asks, but it must not replace the user-owned requirement surface.'
+)
+$lines += @(
+    '',
+    '## Execution Topology Snapshot',
+    "- Delegation mode: $([string]$executionTopology.delegation_mode)",
+    "- Review mode: $([string]$executionTopology.review_mode)",
+    "- Specialist execution mode: $([string]$executionTopology.specialist_execution_mode)",
+    "- Max parallel units: $([int]$executionTopology.max_parallel_units)"
+)
+foreach ($topologyWave in @($executionTopology.waves)) {
+    $lines += ('- Wave `{0}` has {1} executable step(s).' -f [string]$topologyWave.wave_id, @($topologyWave.steps).Count)
+    foreach ($step in @($topologyWave.steps)) {
+        $lines += ('  Step `{0}` -> mode `{1}`, units `{2}`.' -f [string]$step.step_id, [string]$step.execution_mode, @($step.units).Count)
+    }
+}
+if ($specialistDecision) {
+    $lines += @(
+        '',
+        '## Skill Execution Decision Plan',
+        '- The governed runtime must keep one explicit skill execution decision surface from freeze through delivery acceptance.',
+        ('- Frozen decision state: {0}' -f [string]$specialistDecision.decision_state),
+        ('- Frozen resolution mode: {0}' -f [string]$specialistDecision.resolution_mode),
+        ('- Frozen decision notes: {0}' -f [string]$specialistDecision.notes)
+    )
+    if ([string]$specialistDecision.resolution_mode -eq 'pending_resolution') {
+        $lines += '- If no dedicated selected skill is available but execution relies on repo-local assets instead, record the skill execution decision payload with asset paths, fallback reason, legal basis, and traceability basis before closeout.'
+    } elseif ([string]$specialistDecision.resolution_mode -eq 'repo_asset_fallback') {
+        $lines += ('- Repo-asset fallback assets: {0}' -f [string]::Join(', ', @($specialistDecision.repo_asset_fallback.asset_paths)))
+    }
+}
+if ($hostSkillExecutionDecision) {
+    $lines += @(
+        '',
+        '## Host Skill Execution Decision'
+    )
+    $lines += @(Get-VibeHostSkillExecutionDecisionMarkdownLines -Decision $hostSkillExecutionDecision)
+}
+if (@($approvedDispatch).Count -gt 0) {
+    $lines += @(
+        '',
+        '## Selected Skill Execution Plan',
+        '- Selected skill execution is mandatory and bounded inside governed `vibe`; it does not transfer runtime authority away from vibe.',
+        '- This section lists only skills selected into the six-stage work through `skill_routing.selected`.',
+        '- Before specialist execution starts, governed `vibe` emits one unified disclosure for selected skills using each skill''s real `skill_md_path` or `native_skill_entrypoint`.',
+        '- Each selected skill must be invoked through its native workflow, input contract, and validation style.',
+        '- Selected skill outputs remain subordinate to the frozen requirement and the governed plan.'
+    )
+    if ($executionPhaseDecomposition -and @($executionPhaseDecomposition.phases).Count -gt 0) {
+        $declaredPhaseIds = @($executionPhaseDecomposition.phases | ForEach-Object { [string]$_.phase_id } | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+        foreach ($phase in @($executionPhaseDecomposition.phases)) {
+            $targetPhaseId = [string]$phase.phase_id
+            $phaseDispatches = @($approvedDispatch | Where-Object { (Get-VibeRecommendationPhaseId -Recommendation $_) -eq $targetPhaseId })
+            if (@($phaseDispatches).Count -eq 0) {
+                continue
+            }
+
+            $lines += @(
+                '',
+                ('### Phase `{0}` [{1} -> {2}] order `{3}`: {4}' -f [string]$phase.phase_id, [string]$phase.stage_type, [string]$phase.dispatch_phase, [int]$phase.stage_order, [string]$phase.stage_label)
+            )
+            $lines += @(Get-VibeDispatchPlanLines -Recommendations @($phaseDispatches))
+        }
+
+        $ungroupedApprovedDispatch = @($approvedDispatch | Where-Object {
+            $phaseId = Get-VibeRecommendationPhaseId -Recommendation $_
+            [string]::IsNullOrWhiteSpace($phaseId) -or $declaredPhaseIds -notcontains $phaseId
+        })
+        if (@($ungroupedApprovedDispatch).Count -gt 0) {
+            $lines += @(
+                '',
+                '### Phase `ungrouped`: fallback skill execution'
+            )
+            $lines += @(Get-VibeDispatchPlanLines -Recommendations @($ungroupedApprovedDispatch))
+        }
+    } else {
+        $lines += @(Get-VibeDispatchPlanLines -Recommendations @($approvedDispatch))
+    }
+}
+if (@($localSuggestions).Count -gt 0) {
+    $lines += @(
+        '',
+        '## Skill Execution Audit',
+        ('Local skill suggestion count: {0}. These suggestions remain audit-only until a host decision adopts them; do not ask the user to delete or manually prune them from the plan.' -f @($localSuggestions).Count)
+    )
+}
+$currentLifecycleLayerIds = @('discussion_routing')
+$lifecycleLines = Get-VibeSpecialistLifecycleDisclosureMarkdownLines `
+    -LifecycleDisclosure $stageLifecycleDisclosure `
+    -IncludeLayerIds @($currentLifecycleLayerIds)
+if (@($lifecycleLines).Count -gt 0) {
+    $lines += @('', @($lifecycleLines))
+}
+$selectedPlanMemoryCapsules = @(Get-VibeSelectedCapsuleList -ContextPack $planMemoryContext)
+if ($planMemoryContext -and ((@($planMemoryContext.items).Count -gt 0) -or (@($selectedPlanMemoryCapsules).Count -gt 0))) {
+    $lines += @(
+        '',
+        '## Memory Context',
+        'Bounded stage-aware memory context injected into execution planning:',
+        ('- Disclosure level: {0}' -f [string]$planMemoryContext.disclosure_level)
+    )
+    if (@($selectedPlanMemoryCapsules).Count -gt 0) {
+        foreach ($capsule in @($selectedPlanMemoryCapsules)) {
+            $lines += @(
+                ('- Capsule [{0}] {1}' -f [string]$capsule.capsule_id, [string]$capsule.title),
+                ('  Owner: {0}' -f [string]$capsule.owner),
+                ('  Why now: {0}' -f [string]$capsule.why_now),
+                ('  Expansion Ref: {0}' -f [string]$capsule.expansion_ref)
+            )
+            $lines += @($capsule.summary_lines | ForEach-Object { '  Summary: ' + [string]$_ })
+        }
+    } else {
+        $lines += @($planMemoryContext.items | ForEach-Object { "- $_" })
+    }
+}
+if ($skillUsage -and -not [string]::IsNullOrWhiteSpace($selectedUsageSkill)) {
+    $skillUsage = Update-VibeSkillUsageArtifactImpact `
+        -SkillUsage $skillUsage `
+        -SkillId $selectedUsageSkill `
+        -Stage 'xl_plan' `
+        -ArtifactRef ([System.IO.Path]::GetFileName($planPath)) `
+        -ImpactSummary ('Execution plan carries the loaded {0} SKILL.md workflow authority into the planned verification and completion path.' -f $selectedUsageSkill)
+    $lines += @(
+        '',
+        '## Binary Skill Usage Plan',
+        ('- Used skill candidate: `{0}`.' -f $selectedUsageSkill),
+        '- Execution must preserve the loaded skill workflow and report final use only from `skill_usage.used` / `skill_usage.unused`.',
+        '- Legacy routing fields remain audit data, not usage proof.'
+    )
+    Write-VibeJsonArtifact -Path (Get-VibeSkillUsagePath -SessionRoot $sessionRoot) -Value $skillUsage
+}
+$lines += @(
+    '',
+    '## Completion Language Rules',
+    '- Do not report runtime completion as downstream project delivery unless the delivery-acceptance report returns `PASS`.',
+    '- `completed_with_failures`, degraded execution, or pending manual actions must downgrade completion wording.',
+    '- Child-governed completion remains local-scope only and cannot justify root-level completion language.',
+    '',
+    '## Ownership Boundaries',
+    '- One owner per artifact set.',
+    '- Parallel work must use disjoint write scopes.',
+    '- Subagent prompts must end with `$vibe`.',
+    '- Specialist help stays bounded and native-mode; it must not become a second planner or a second runtime.',
+    '',
+    '## Verification Commands',
+    '- Run targeted repo verification for changed surfaces.',
+    '- Run runtime contract gate before claiming completion.',
+    '- Review the delivery-acceptance report emitted during `phase_cleanup` before using full completion language.',
+    '- Re-run mirror sync and parity validation before release claims.',
+    '',
+    '## Rollback Plan',
+    '- Revert only the governed-runtime change set if verification fails.',
+    '- Do not roll back unrelated user changes.',
+    '',
+    '## Phase Cleanup Contract',
+    '- Remove temp artifacts created by the wave.',
+    '- Run node audit and cleanup when needed.',
+    '- Write cleanup receipt before completion.'
+)
+
+$childHandoffPath = $null
+if ($isChildScope) {
+    if (-not (Test-Path -LiteralPath $planPath)) {
+        throw ("Child-governed plan stage cannot inherit missing canonical execution plan: {0}" -f $planPath)
+    }
+
+    $childHandoffPath = Join-Path $sessionRoot 'child-execution-handoff.md'
+    $handoffLines = @(
+        "# Child Execution Handoff",
+        '',
+        '- governance_scope: child',
+        ('- inherited_execution_plan: {0}' -f $planPath),
+        ('- root_run_id: {0}' -f [string]$hierarchyState.root_run_id),
+        ('- parent_run_id: {0}' -f [string]$hierarchyState.parent_run_id),
+        ('- parent_unit_id: {0}' -f [string]$hierarchyState.parent_unit_id),
+        '- canonical_write_allowed: false',
+        ('- selected_skill_execution_count: {0}' -f @($approvedDispatch).Count),
+        ('- local_specialist_suggestion_count: {0}' -f @($localSuggestions).Count),
+        '',
+        'Child-governed lanes inherit the frozen root plan and may not create a second canonical execution-plan surface.'
+    )
+    Write-VibeMarkdownArtifact -Path $childHandoffPath -Lines $handoffLines
+} else {
+    Write-VibeMarkdownArtifact -Path $planPath -Lines $lines
+}
+
+$receipt = [pscustomobject]@{
+    stage = 'xl_plan'
+    run_id = $RunId
+    governance_scope = [string]$hierarchyState.governance_scope
+    mode = $Mode
+    internal_grade = $grade
+    requirement_doc_path = $requirementPath
+    execution_plan_path = $planPath
+    child_execution_handoff_path = $childHandoffPath
+    canonical_write_allowed = -not $isChildScope
+    inherited_execution_plan_path = if ($isChildScope) { $planPath } else { $null }
+    runtime_input_packet_path = $runtimeInputPath
+    skill_usage_path = if ($skillUsage) { Get-VibeSkillUsagePath -SessionRoot $sessionRoot } else { $null }
+    skill_usage = $skillUsage
+    plan_memory_context_path = $PlanMemoryContextPath
+    plan_memory_disclosure_level = if ($planMemoryContext -and $planMemoryContext.PSObject.Properties.Name -contains 'disclosure_level') { [string]$planMemoryContext.disclosure_level } else { $null }
+    plan_memory_capsule_count = @($selectedPlanMemoryCapsules).Count
+    execution_topology_path = $executionTopologyPath
+    generated_at = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')
+}
+$receiptPath = Join-Path $sessionRoot 'execution-plan-receipt.json'
+Write-VibeJsonArtifact -Path $receiptPath -Value $receipt
+
+[pscustomobject]@{
+    run_id = $RunId
+    session_root = $sessionRoot
+    execution_plan_path = $planPath
+    receipt_path = $receiptPath
+    receipt = $receipt
+}

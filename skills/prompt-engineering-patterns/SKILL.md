@@ -1,6 +1,6 @@
 ---
 name: prompt-engineering-patterns
-description: "Master advanced prompt engineering techniques to maximize LLM performance, reliability, and controllability in production. Use when optimizing prompts, improving LLM outputs, or designing productio..."
+description: "Master advanced prompt engineering techniques to maximize LLM performance, reliability, and controllability."
 risk: unknown
 source: community
 date_added: "2026-02-27"
@@ -214,3 +214,8 @@ Track these KPIs for your prompts:
 3. Implement prompt versioning and A/B testing
 4. Set up automated evaluation pipelines
 5. Document your prompt engineering decisions and learnings
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

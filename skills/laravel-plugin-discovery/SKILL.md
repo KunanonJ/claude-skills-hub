@@ -1,6 +1,6 @@
 ---
 name: laravel-plugin-discovery
-description: Discover and evaluate Laravel packages via LaraPlugins.io MCP. Use when the user wants to find plugins, check package health, or assess Laravel/PHP compatibility.
+description: Laravel プラグイン検出、パッケージ管理、依存関係解決、およびサービスプロバイダ統合。
 origin: ECC
 ---
 

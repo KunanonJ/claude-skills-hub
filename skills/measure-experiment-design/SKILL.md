@@ -1,16 +1,16 @@
-<!-- PM-Skills | https://github.com/product-on-purpose/pm-skills | Apache 2.0 -->
 ---
 name: measure-experiment-design
 description: Designs an A/B test or experiment with clear hypothesis, variants, success metrics, sample size, and duration. Use when planning experiments to validate product changes or test hypotheses.
-phase: measure
-version: "2.0.0"
-updated: 2026-01-26
 license: Apache-2.0
 metadata:
+  phase: measure
+  version: "2.0.0"
+  updated: 2026-01-26
   category: validation
   frameworks: [triple-diamond, lean-startup, design-thinking]
   author: product-on-purpose
 ---
+<!-- PM-Skills | https://github.com/product-on-purpose/pm-skills | Apache 2.0 -->
 # Experiment Design
 
 An experiment design document defines all parameters needed to run a rigorous A/B test or controlled experiment. It ensures the team aligns on what you're testing, how you'll measure success, and how long to run the test before drawing conclusions. Good experiment design prevents common pitfalls: underpowered tests, unclear success criteria, and decisions based on noise rather than signal.
@@ -28,7 +28,7 @@ An experiment design document defines all parameters needed to run a rigorous A/
 When asked to design an experiment, follow these steps:
 
 1. **Articulate the Hypothesis**
-   Write a clear, testable hypothesis in the format: "We believe [change] for [users] will [outcome] as measured by [metric]." One hypothesis per experiment — if you're testing multiple things, run multiple experiments.
+   Write a clear, testable hypothesis in the format: "We believe [change] for [users] will [outcome] as measured by [metric]." One hypothesis per experiment . if you're testing multiple things, run multiple experiments.
 
 2. **Define the Variants**
    Describe the control (current experience) and treatment (new experience) in sufficient detail. Include screenshots, mockups, or precise descriptions so anyone can understand what users will see.
@@ -40,7 +40,7 @@ When asked to design an experiment, follow these steps:
    Determine how many users you need per variant to detect your minimum detectable effect (MDE) with statistical significance. Specify your significance level (typically 0.05) and power (typically 0.80).
 
 5. **Estimate Duration**
-   Based on sample size and available traffic, calculate how long the experiment needs to run. Account for weekly patterns — avoid ending mid-week if behavior varies by day.
+   Based on sample size and available traffic, calculate how long the experiment needs to run. Account for weekly patterns . avoid ending mid-week if behavior varies by day.
 
 6. **Define Targeting and Allocation**
    Specify which users are eligible for the experiment and how traffic is split between variants. Document any exclusions (e.g., employees, specific segments).

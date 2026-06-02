@@ -1,4 +1,0 @@
-interface:
-  display_name: "AI-Native Founder"
-  short_description: "Stage startup work with evidence gates"
-  default_prompt: "Use $founder-ai-native-startup to turn this startup idea into staged evidence gates and next actions."

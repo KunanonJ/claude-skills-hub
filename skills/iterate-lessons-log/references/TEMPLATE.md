@@ -24,7 +24,7 @@ status: draft
 
 <!-- One paragraph summary of the lesson for quick scanning -->
 
-[Brief summary of what happened and what was learned—someone should be able to decide if this is relevant from this paragraph alone]
+[Brief summary of what happened and what was learned.someone should be able to decide if this is relevant from this paragraph alone]
 
 ---
 
@@ -80,7 +80,7 @@ status: draft
 
 <!-- What was the result? -->
 
-[Description of the outcome—good, bad, or mixed]
+[Description of the outcome.good, bad, or mixed]
 
 ---
 
@@ -180,7 +180,7 @@ status: draft
 
 <!-- Relevant quotes from team members or stakeholders -->
 
-> "[Quote]" — [Attribution]
+> "[Quote]" . [Attribution]
 
 ### Artifacts
 

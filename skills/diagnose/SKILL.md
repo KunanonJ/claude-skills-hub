@@ -1,117 +1,214 @@
 ---
 name: diagnose
-description: Disciplined diagnosis loop for hard bugs and performance regressions. Reproduce → minimise → hypothesise → instrument → fix → regression-test. Use when user says "diagnose this" / "debug this", reports a bug, says something is broken/throwing/failing, or describes a performance regression.
+description: Interactive troubleshooting assistant for Claude Code issues
+argument-hint: <error_or_symptom>
+effort: medium
+disable-model-invocation: true
 ---
 
-# Diagnose
+# Claude Code Diagnostic Assistant
 
-A discipline for hard bugs. Skip phases only when explicitly justified.
+Interactive troubleshooting assistant for Claude Code issues. Supports FR/EN.
 
-When exploring the codebase, use the project's domain glossary to get a clear mental model of the relevant modules, and check ADRs in the area you're touching.
+## Instructions
 
-## Phase 1 — Build a feedback loop
+You are an expert diagnostic assistant for Claude Code problems. Your role is to identify issues and provide targeted solutions.
 
-**This is the skill.** Everything else is mechanical. If you have a fast, deterministic, agent-runnable pass/fail signal for the bug, you will find the cause — bisection, hypothesis-testing, and instrumentation all just consume that signal. If you don't have one, no amount of staring at code will save you.
+### Step 1: Language Detection
 
-Spend disproportionate effort here. **Be aggressive. Be creative. Refuse to give up.**
+Detect the user's language from their input. If ambiguous, ask:
+> "FR or EN? / Français ou English?"
 
-### Ways to construct one — try them in roughly this order
+Respond in the detected language throughout the session.
 
-1. **Failing test** at whatever seam reaches the bug — unit, integration, e2e.
-2. **Curl / HTTP script** against a running dev server.
-3. **CLI invocation** with a fixture input, diffing stdout against a known-good snapshot.
-4. **Headless browser script** (Playwright / Puppeteer) — drives the UI, asserts on DOM/console/network.
-5. **Replay a captured trace.** Save a real network request / payload / event log to disk; replay it through the code path in isolation.
-6. **Throwaway harness.** Spin up a minimal subset of the system (one service, mocked deps) that exercises the bug code path with a single function call.
-7. **Property / fuzz loop.** If the bug is "sometimes wrong output", run 1000 random inputs and look for the failure mode.
-8. **Bisection harness.** If the bug appeared between two known states (commit, dataset, version), automate "boot at state X, check, repeat" so you can `git bisect run` it.
-9. **Differential loop.** Run the same input through old-version vs new-version (or two configs) and diff outputs.
-10. **HITL bash script.** Last resort. If a human must click, drive _them_ with `scripts/hitl-loop.template.sh` so the loop is still structured. Captured output feeds back to you.
+### Step 2: Fetch Knowledge Base
 
-Build the right feedback loop, and the bug is 90% fixed.
+Silently fetch the troubleshooting reference:
 
-### Iterate on the loop itself
+```bash
+# Fetch the latest troubleshooting guide from the repo
+curl -sL "https://raw.githubusercontent.com/flobby41/claude-code-ultimate-guide/main/guide/ultimate-guide.md" | head -n 3000
+```
 
-Treat the loop as a product. Once you have _a_ loop, ask:
+Use Section 10.4 (Troubleshooting) as your primary reference.
 
-- Can I make it faster? (Cache setup, skip unrelated init, narrow the test scope.)
-- Can I make the signal sharper? (Assert on the specific symptom, not "didn't crash".)
-- Can I make it more deterministic? (Pin time, seed RNG, isolate filesystem, freeze network.)
+### Step 3: Environment Scan
 
-A 30-second flaky loop is barely better than no loop. A 2-second deterministic loop is a debugging superpower.
+Run the audit scanner to understand the user's setup:
 
-### Non-deterministic bugs
+```bash
+# Run audit-scan.sh in JSON mode for structured data
+curl -sL "https://raw.githubusercontent.com/flobby41/claude-code-ultimate-guide/main/examples/scripts/audit-scan.sh" | bash -s -- --json 2>/dev/null
+```
 
-The goal is not a clean repro but a **higher reproduction rate**. Loop the trigger 100×, parallelise, add stress, narrow timing windows, inject sleeps. A 50%-flake bug is debuggable; 1% is not — keep raising the rate until it's debuggable.
+If the script fails, fall back to manual checks:
 
-### When you genuinely cannot build a loop
+```bash
+# Global config
+cat ~/.claude/settings.json 2>/dev/null || echo "No global settings"
 
-Stop and say so explicitly. List what you tried. Ask the user for: (a) access to whatever environment reproduces it, (b) a captured artifact (HAR file, log dump, core dump, screen recording with timestamps), or (c) permission to add temporary production instrumentation. Do **not** proceed to hypothesise without a loop.
+# Project config
+cat .claude/settings.json 2>/dev/null || echo "No project settings"
 
-Do not proceed to Phase 2 until you have a loop you believe in.
+# CLAUDE.md files
+ls -la CLAUDE.md .claude/CLAUDE.md ~/.claude/CLAUDE.md 2>/dev/null
 
-## Phase 2 — Reproduce
+# MCP config
+cat ~/.claude.json 2>/dev/null | jq '.mcpServers // empty' || echo "No MCP config"
+```
 
-Run the loop. Watch the bug appear.
+### Step 4: Present Categories
 
-Confirm:
+If the user hasn't described a specific problem, present these categories:
 
-- [ ] The loop produces the failure mode the **user** described — not a different failure that happens to be nearby. Wrong bug = wrong fix.
-- [ ] The failure is reproducible across multiple runs (or, for non-deterministic bugs, reproducible at a high enough rate to debug against).
-- [ ] You have captured the exact symptom (error message, wrong output, slow timing) so later phases can verify the fix actually addresses it.
+---
 
-Do not proceed until you reproduce the bug.
+**Permissions**
+1. Repeated permission prompts despite settings.json / Demandes répétées malgré settings.json
+2. Actions blocked by hooks / Actions bloquées par hooks
 
-## Phase 3 — Hypothesise
+**MCP Servers**
+3. Server not found / connection failed / Serveur non trouvé
+4. MCP tool not recognized / Outil MCP non reconnu
 
-Generate **3–5 ranked hypotheses** before testing any of them. Single-hypothesis generation anchors on the first plausible idea.
+**Configuration**
+5. settings.json ignored / settings.json ignoré
+6. CLAUDE.md not read / CLAUDE.md non lu
+7. Hooks not triggering / Hooks ne se déclenchent pas
 
-Each hypothesis must be **falsifiable**: state the prediction it makes.
+**Performance**
+8. Context saturated (>75%) / Contexte saturé
+9. Slow responses / Réponses lentes
 
-> Format: "If <X> is the cause, then <changing Y> will make the bug disappear / <changing Z> will make it worse."
+**Installation**
+10. Installation/update errors / Erreurs installation
 
-If you cannot state the prediction, the hypothesis is a vibe — discard or sharpen it.
+**Other**
+11. Agents/Skills issues / Problèmes agents/skills
+12. Other → describe freely / Autre → décrivez
 
-**Show the ranked list to the user before testing.** They often have domain knowledge that re-ranks instantly ("we just deployed a change to #3"), or know hypotheses they've already ruled out. Cheap checkpoint, big time saver. Don't block on it — proceed with your ranking if the user is AFK.
+---
 
-## Phase 4 — Instrument
+### Step 5: Correlate & Diagnose
 
-Each probe must map to a specific prediction from Phase 3. **Change one variable at a time.**
+Cross-reference:
+- User's symptom/category choice
+- Environment scan results
+- Knowledge base patterns
 
-Tool preference:
+Ask targeted follow-up questions if the cause is ambiguous. Examples:
+- "What exact error message do you see?"
+- "When did this start happening?"
+- "Did you recently update Claude Code or change configuration?"
 
-1. **Debugger / REPL inspection** if the env supports it. One breakpoint beats ten logs.
-2. **Targeted logs** at the boundaries that distinguish hypotheses.
-3. Never "log everything and grep".
+### Step 6: Prescription
 
-**Tag every debug log** with a unique prefix, e.g. `[DEBUG-a4f2]`. Cleanup at the end becomes a single grep. Untagged logs survive; tagged logs die.
+Format your response as:
 
-**Perf branch.** For performance regressions, logs are usually wrong. Instead: establish a baseline measurement (timing harness, `performance.now()`, profiler, query plan), then bisect. Measure first, fix second.
+---
 
-## Phase 5 — Fix + regression test
+### Diagnostic
 
-Write the regression test **before the fix** — but only if there is a **correct seam** for it.
+[Root cause identified based on scan + symptom correlation]
 
-A correct seam is one where the test exercises the **real bug pattern** as it occurs at the call site. If the only available seam is too shallow (single-caller test when the bug needs multiple callers, unit test that can't replicate the chain that triggered the bug), a regression test there gives false confidence.
+### Solution
 
-**If no correct seam exists, that itself is the finding.** Note it. The codebase architecture is preventing the bug from being locked down. Flag this for the next phase.
+1. [Step 1 - most critical action]
+2. [Step 2]
+3. [Step 3 if needed]
 
-If a correct seam exists:
+### Template (if applicable)
 
-1. Turn the minimised repro into a failing test at that seam.
-2. Watch it fail.
-3. Apply the fix.
-4. Watch it pass.
-5. Re-run the Phase 1 feedback loop against the original (un-minimised) scenario.
+Link to relevant template:
+- Config: `https://github.com/flobby41/claude-code-ultimate-guide/tree/main/examples/config`
+- Hooks: `https://github.com/flobby41/claude-code-ultimate-guide/tree/main/examples/hooks`
 
-## Phase 6 — Cleanup + post-mortem
+### Reference
 
-Required before declaring done:
+Section X.Y of the guide: [Brief description]
+`https://github.com/flobby41/claude-code-ultimate-guide`
 
-- [ ] Original repro no longer reproduces (re-run the Phase 1 loop)
-- [ ] Regression test passes (or absence of seam is documented)
-- [ ] All `[DEBUG-...]` instrumentation removed (`grep` the prefix)
-- [ ] Throwaway prototypes deleted (or moved to a clearly-marked debug location)
-- [ ] The hypothesis that turned out correct is stated in the commit / PR message — so the next debugger learns
+---
 
-**Then ask: what would have prevented this bug?** If the answer involves architectural change (no good test seam, tangled callers, hidden coupling) hand off to the `/improve-codebase-architecture` skill with the specifics. Make the recommendation **after** the fix is in, not before — you have more information now than when you started.
+## Common Patterns
+
+### Pattern: Repeated Permission Prompts
+
+**Symptoms**: Claude keeps asking for permission despite settings.json configuration
+
+**Likely causes**:
+1. Pattern mismatch (e.g., `npm *` but using `pnpm`)
+2. Wrong file location (global vs project)
+3. Malformed JSON syntax
+
+**Quick diagnostic**:
+```bash
+# Check what's actually in settings
+cat ~/.claude/settings.json | jq '.permissions.allow'
+```
+
+### Pattern: MCP Server Not Found
+
+**Symptoms**: "Tool not found" or "Server not responding"
+
+**Likely causes**:
+1. Server not installed globally
+2. Wrong path in MCP config
+3. Missing environment variables
+
+**Quick diagnostic**:
+```bash
+# Check MCP config
+cat ~/.claude.json | jq '.mcpServers'
+
+# Check if server binary exists
+which mcp-server-sequential
+```
+
+### Pattern: Context Saturation
+
+**Symptoms**: Claude loses context, forgets earlier discussion
+
+**Likely causes**:
+1. Large files read into context
+2. Long conversation without summary
+3. Too many parallel operations
+
+**Quick diagnostic**: Check context usage in Claude Code status bar
+
+## Examples
+
+### Example 1: Permission Pattern Mismatch
+
+**User**: "Claude keeps asking me to approve `pnpm install`"
+
+**Scan reveals**:
+```json
+{
+  "permissions": {
+    "allow": ["Bash(npm *)"]
+  }
+}
+```
+
+**Diagnosis**: Pattern `npm *` doesn't match `pnpm` commands.
+
+**Solution**:
+1. Edit `~/.claude/settings.json`
+2. Add `"Bash(pnpm *)"` to allow array
+3. Restart Claude Code session
+
+### Example 2: Hooks Not Triggering
+
+**User**: "My pre-commit hook doesn't run"
+
+**Scan reveals**: No hooks directory or wrong event name
+
+**Diagnosis**: Hook file naming or location issue.
+
+**Solution**:
+1. Verify hooks are configured in `.claude/settings.json` or `~/.claude/settings.json`
+2. Check event name matches a valid hook event: `PreToolUse`, `PostToolUse`, `Notification`, etc.
+3. Ensure the command referenced in the hook exists and is executable
+
+$ARGUMENTS

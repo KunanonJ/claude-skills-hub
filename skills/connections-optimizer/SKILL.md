@@ -1,141 +1,141 @@
 ---
 name: connections-optimizer
-description: Reorganize the user's X and LinkedIn network with review-first pruning, add/follow recommendations, and channel-specific warm outreach drafted in the user's real voice. Use when the user wants to clean up following lists, grow toward current priorities, or rebalance a social graph around higher-signal relationships.
+description: レビュー優先の整理、フォロー/追加の推薦、ユーザーの実際の声で書かれたチャネル別ウォームアウトリーチのドラフトを通じて、ユーザーのXとLinkedInネットワークを再編成します。フォローリストを整理したい、現在の優先事項に向けて成長したい、または高品質な関係を中心にソーシャルグラフのバランスを取り直したい場合に使用します。
 origin: ECC
 ---
 
-# Connections Optimizer
+# コネクションオプティマイザー
 
-Reorganize the user's network instead of treating outbound as a one-way prospecting list.
+アウトバウンドを一方向の見込み客リストとして扱うのではなく、ユーザーのネットワークを再編成します。
 
-This skill handles:
+このスキルが扱うこと：
 
-- X following cleanup and expansion
-- LinkedIn follow and connection analysis
-- review-first prune queues
-- add and follow recommendations
-- warm-path identification
-- Apple Mail, X DM, and LinkedIn draft generation in the user's real voice
+- Xのフォロー整理と拡大
+- LinkedInのフォローとコネクション分析
+- レビュー優先の整理キュー
+- 追加とフォローの推薦
+- ウォームパスの特定
+- ユーザーの実際の声でのApple Mail、X DM、LinkedInのドラフト生成
 
-## When to Activate
+## 起動条件
 
-- the user wants to prune their X following
-- the user wants to rebalance who they follow or stay connected to
-- the user says "clean up my network", "who should I unfollow", "who should I follow", "who should I reconnect with"
-- outreach quality depends on network structure, not just cold list generation
+- ユーザーがXのフォローを整理したい場合
+- ユーザーがフォローまたはコネクションのバランスを取り直したい場合
+- ユーザーが「ネットワークを整理したい」「フォロー解除すべき人は」「フォローすべき人は」「再接続すべき人は」と言った場合
+- アウトリーチの品質がコールドリスト生成だけでなくネットワーク構造に依存する場合
 
-## Required Inputs
+## 必要な入力
 
-Collect or infer:
+以下を収集または推測します：
 
-- current priorities and active work
-- target roles, industries, geos, or ecosystems
-- platform selection: X, LinkedIn, or both
-- do-not-touch list
-- mode: `light-pass`, `default`, or `aggressive`
+- 現在の優先事項と進行中の作業
+- ターゲットの役割、業界、地域、またはエコシステム
+- プラットフォーム選択：X、LinkedIn、または両方
+- 操作しないリスト
+- モード: `light-pass`、`default`、または`aggressive`
 
-If the user does not specify a mode, use `default`.
+ユーザーがモードを指定しない場合は`default`を使用します。
 
-## Tool Requirements
+## ツール要件
 
-### Preferred
+### 推奨
 
-- `x-api` for X graph inspection and recent activity
-- `lead-intelligence` for target discovery and warm-path ranking
-- `social-graph-ranker` when the user wants bridge value scored independently of the broader lead workflow
-- Exa / deep research for person and company enrichment
-- `brand-voice` before drafting outbound
+- `x-api`：Xグラフの検査と最近のアクティビティ
+- `lead-intelligence`：ターゲット発見とウォームパスランキング
+- `social-graph-ranker`：ユーザーがより広いリードワークフローとは独立してブリッジ価値を採点したい場合
+- Exa / ディープリサーチ：人物と企業のエンリッチメント
+- `brand-voice`：アウトバウンドのドラフト前
 
-### Fallbacks
+### フォールバック
 
-- browser control for LinkedIn analysis and drafting
-- browser control for X if API coverage is constrained
-- Apple Mail or Mail.app drafting via desktop automation when email is the right channel
+- LinkedInの分析とドラフト作成のためのブラウザコントロール
+- APIカバレッジが制限されている場合のXのブラウザコントロール
+- メールが適切なチャネルの場合、デスクトップ自動化によるApple MailまたはMail.appのドラフト作成
 
-## Safety Defaults
+## 安全デフォルト
 
-- default is review-first, never blind auto-pruning
-- X: prune only accounts the user follows, never followers
-- LinkedIn: treat 1st-degree connection removal as manual-review-first
-- do not auto-send DMs, invites, or emails
-- emit a ranked action plan and drafts before any apply step
+- デフォルトはレビュー優先で、盲目的な自動整理は行わない
+- X：ユーザーがフォローしているアカウントのみを整理し、フォロワーには手を付けない
+- LinkedIn：1度目のコネクション解除は手動レビュー優先として扱う
+- DM、招待、またはメールを自動送信しない
+- 適用ステップの前にランク付けされたアクションプランとドラフトを出力する
 
-## Platform Rules
+## プラットフォームルール
 
 ### X
 
-- mutuals are stickier than one-way follows
-- non-follow-backs can be pruned more aggressively
-- heavily inactive or disappeared accounts should surface quickly
-- engagement, signal quality, and bridge value matter more than raw follower count
+- 相互フォローは一方向フォローよりも粘着性が高い
+- フォローバックなしのアカウントはより積極的に整理できる
+- 非アクティブまたは消えたアカウントは迅速に表面化すべき
+- エンゲージメント、シグナル品質、ブリッジ価値は生のフォロワー数より重要
 
 ### LinkedIn
 
-- API-first if the user actually has LinkedIn API access
-- browser workflow must work when API access is missing
-- distinguish outbound follows from accepted 1st-degree connections
-- outbound follows can be pruned more freely
-- accepted 1st-degree connections should default to review, not auto-remove
+- APIファースト（ユーザーが実際にLinkedIn APIアクセスを持っている場合）
+- APIアクセスがない場合はブラウザワークフローが機能しなければならない
+- アウトバウンドフォローと承認済み1度目のコネクションを区別する
+- アウトバウンドフォローはより自由に整理できる
+- 承認済み1度目のコネクションはデフォルトでレビューとし、自動削除はしない
 
-## Modes
+## モード
 
 ### `light-pass`
 
-- prune only high-confidence low-value one-way follows
-- surface the rest for review
-- generate a small add/follow list
+- 高い信頼度で低価値な一方向フォローのみを整理
+- 残りをレビューのために表示
+- 小規模な追加/フォローリストを生成
 
 ### `default`
 
-- balanced prune queue
-- balanced keep list
-- ranked add/follow queue
-- draft warm intros or direct outreach where useful
+- バランスの取れた整理キュー
+- バランスの取れたキープリスト
+- ランク付けされた追加/フォローキュー
+- 役立つ場所でのウォームイントロまたはダイレクトアウトリーチのドラフト
 
 ### `aggressive`
 
-- larger prune queue
-- lower tolerance for stale non-follow-backs
-- still review-gated before apply
+- 大きな整理キュー
+- 古い非フォローバックへの低い許容度
+- 適用前も引き続きレビューゲートあり
 
-## Scoring Model
+## スコアリングモデル
 
-Use these positive signals:
+以下の正のシグナルを使用：
 
-- reciprocity
-- recent activity
-- alignment to current priorities
-- network bridge value
-- role relevance
-- real engagement history
-- recent presence and responsiveness
+- 相互性
+- 最近のアクティビティ
+- 現在の優先事項との整合性
+- ネットワークブリッジ価値
+- 役割の関連性
+- 実際のエンゲージメント履歴
+- 最近の存在感と応答性
 
-Use these negative signals:
+以下の負のシグナルを使用：
 
-- disappeared or abandoned account
-- stale one-way follow
-- off-priority topic cluster
-- low-value noise
-- repeated non-response
-- no follow-back when many better replacements exist
+- 消えたまたは放棄されたアカウント
+- 古い一方向フォロー
+- 優先度外のトピッククラスター
+- 低価値なノイズ
+- 繰り返しの無応答
+- より良い代替が多数ある場合のフォローバックなし
 
-Mutuals and real warm-path bridges should be penalized less aggressively than one-way follows.
+相互フォローと実際のウォームパスブリッジは一方向フォローよりも積極的なペナルティを受けるべきではありません。
 
-## Workflow
+## ワークフロー
 
-1. Capture priorities, do-not-touch constraints, and selected platforms.
-2. Pull the current following / connection inventory.
-3. Score prune candidates with explicit reasons.
-4. Score keep candidates with explicit reasons.
-5. Use `lead-intelligence` plus research surfaces to rank expansion candidates.
-6. Match the right channel:
-   - X DM for warm, fast social touch points
-   - LinkedIn message for professional graph adjacency
-   - Apple Mail draft for higher-context intros or outreach
-7. Run `brand-voice` before drafting messages.
-8. Return a review pack before any apply step.
+1. 優先事項、操作しない制約、選択したプラットフォームを収集します。
+2. 現在のフォロー/コネクションのインベントリを取得します。
+3. 明示的な理由とともに整理候補をスコアリングします。
+4. 明示的な理由とともにキープ候補をスコアリングします。
+5. `lead-intelligence`と調査サーフェスを使用して拡張候補をランキングします。
+6. 適切なチャネルをマッチングします：
+   - ウォームで迅速なソーシャルタッチポイントにはX DM
+   - プロフェッショナルグラフの隣接性にはLinkedInメッセージ
+   - より高いコンテキストのイントロやアウトリーチにはApple Mailドラフト
+7. メッセージのドラフト前に`brand-voice`を実行します。
+8. 適用ステップの前にレビューパックを返します。
 
-## Review Pack Format
+## レビューパック形式
 
 ```text
 CONNECTIONS OPTIMIZER REPORT
@@ -172,18 +172,18 @@ Drafts
 - Apple Mail:
 ```
 
-## Outbound Rules
+## アウトバウンドルール
 
-- Default email path is Apple Mail / Mail.app draft creation.
-- Do not send automatically.
-- Choose the channel based on warmth, relevance, and context depth.
-- Do not force a DM when an email or no outreach is the right move.
-- Drafts should sound like the user, not like automated sales copy.
+- デフォルトのメールパスはApple Mail / Mail.appのドラフト作成です。
+- 自動的に送信しません。
+- 温かさ、関連性、コンテキストの深さに基づいてチャネルを選択します。
+- メールやアウトリーチなしの方が正しい場合にDMを強制しません。
+- ドラフトはユーザーのように聞こえるべきで、自動化されたセールスコピーのようにしません。
 
-## Related Skills
+## 関連スキル
 
-- `brand-voice` for the reusable voice profile
-- `social-graph-ranker` for the standalone bridge-scoring and warm-path math
-- `lead-intelligence` for weighted target and warm-path discovery
-- `x-api` for X graph access, drafting, and optional apply flows
-- `content-engine` when the user also wants public launch content around network moves
+- `brand-voice`：再利用可能な音声プロファイル
+- `social-graph-ranker`：スタンドアロンのブリッジスコアリングとウォームパスの計算
+- `lead-intelligence`：重み付けされたターゲットとウォームパスの発見
+- `x-api`：Xグラフのアクセス、ドラフト、オプションの適用フロー
+- `content-engine`：ユーザーがネットワーク移動に関する公開ローンチコンテンツも必要な場合

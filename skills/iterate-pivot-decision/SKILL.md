@@ -1,19 +1,19 @@
-<!-- PM-Skills | https://github.com/product-on-purpose/pm-skills | Apache 2.0 -->
 ---
 name: iterate-pivot-decision
 description: Documents a strategic pivot or persevere decision with the evidence, analysis, and rationale. Use when evaluating whether to change direction on a product, feature, or strategy based on market feedback.
-phase: iterate
-version: "2.0.0"
-updated: 2026-01-26
 license: Apache-2.0
 metadata:
+  phase: iterate
+  version: "2.0.0"
+  updated: 2026-01-26
   category: reflection
   frameworks: [triple-diamond, lean-startup, design-thinking]
   author: product-on-purpose
 ---
+<!-- PM-Skills | https://github.com/product-on-purpose/pm-skills | Apache 2.0 -->
 # Pivot Decision
 
-A pivot decision document captures the analysis and rationale behind a strategic direction change—or the decision to stay the course. Based on the Lean Startup concept of "pivot or persevere," this artifact ensures major strategic decisions are made with evidence, communicated clearly, and preserved for organizational learning.
+A pivot decision document captures the analysis and rationale behind a strategic direction change.or the decision to stay the course. Based on the Lean Startup concept of "pivot or persevere," this artifact ensures major strategic decisions are made with evidence, communicated clearly, and preserved for organizational learning.
 
 ## When to Use
 
@@ -31,13 +31,13 @@ When asked to document a pivot decision, follow these steps:
    Document what you're currently doing, how long you've been doing it, what you've invested, and what results you've achieved. This grounds the decision in reality.
 
 2. **Present the Evidence**
-   Compile all relevant data: metrics, user feedback, experiment results, market signals. Be comprehensive—include evidence that supports both staying and changing course.
+   Compile all relevant data: metrics, user feedback, experiment results, market signals. Be comprehensive.include evidence that supports both staying and changing course.
 
 3. **Review Hypotheses**
    Revisit the original hypotheses that justified the current direction. Which have been validated? Which have been invalidated? Which remain untested?
 
 4. **Define Options**
-   Articulate at least three options: persevere (continue current direction), and two or more distinct pivot options. Describe each option concretely—what would change?
+   Articulate at least three options: persevere (continue current direction), and two or more distinct pivot options. Describe each option concretely.what would change?
 
 5. **Analyze Each Option**
    Evaluate options against key criteria: market opportunity, competitive advantage, team capability, resource requirements, and risk. Use evidence, not opinions.

@@ -1,19 +1,19 @@
-<!-- PM-Skills | https://github.com/product-on-purpose/pm-skills | Apache 2.0 -->
 ---
 name: iterate-lessons-log
 description: Creates a structured lessons learned entry for organizational memory. Use after projects, incidents, or significant learnings to capture knowledge for future teams and initiatives.
-phase: iterate
-version: "2.0.0"
-updated: 2026-01-26
 license: Apache-2.0
 metadata:
+  phase: iterate
+  version: "2.0.0"
+  updated: 2026-01-26
   category: reflection
   frameworks: [triple-diamond, lean-startup, design-thinking]
   author: product-on-purpose
 ---
+<!-- PM-Skills | https://github.com/product-on-purpose/pm-skills | Apache 2.0 -->
 # Lessons Log
 
-A lessons log entry captures significant learning from projects, incidents, or experiences in a format that's useful to future teams who weren't there. Unlike retrospectives (which focus on team improvement), lessons logs focus on organizational knowledge that transcends individual teams—patterns, anti-patterns, and hard-won wisdom.
+A lessons log entry captures significant learning from projects, incidents, or experiences in a format that's useful to future teams who weren't there. Unlike retrospectives (which focus on team improvement), lessons logs focus on organizational knowledge that transcends individual teams.patterns, anti-patterns, and hard-won wisdom.
 
 ## When to Use
 
@@ -35,10 +35,10 @@ When asked to create a lessons log entry, follow these steps:
    Explain the situation fully enough that someone who wasn't there can understand it. Include the project, timeline, team, and any relevant constraints. Future readers need this context to assess applicability.
 
 3. **Describe What Happened**
-   Write a factual account of what occurred. Be specific about actions taken, decisions made, and outcomes observed. Avoid blame—focus on events and systems.
+   Write a factual account of what occurred. Be specific about actions taken, decisions made, and outcomes observed. Avoid blame.focus on events and systems.
 
 4. **Extract the Lesson**
-   Articulate what you learned clearly. The lesson should be actionable—something others can apply. Distinguish between what you observed and your interpretation of why it matters.
+   Articulate what you learned clearly. The lesson should be actionable.something others can apply. Distinguish between what you observed and your interpretation of why it matters.
 
 5. **Formulate Recommendations**
    Provide specific guidance for future teams facing similar situations. What should they do? What should they avoid? What questions should they ask?

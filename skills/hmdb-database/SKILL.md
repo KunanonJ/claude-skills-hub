@@ -1,9 +1,6 @@
 ---
 name: hmdb-database
-description: Access Human Metabolome Database (220K+ metabolites). Search by name/ID/structure, retrieve chemical properties, biomarker data, NMR/MS spectra, pathways, for metabolomics and identification.
-license: HMDB is offered to the public as a freely available resource. Use and re-distribution of the data, in whole or in part, for commercial purposes requires explicit permission of the authors and explicit acknowledgment of the source material (HMDB) and the original publication (see the HMDB citing page). We ask that users who download significant portions of the database cite the HMDB paper in any resulting publications.
-metadata:
-    skill-author: K-Dense Inc.
+description: "Access Human Metabolome Database (220K+ metabolites). Search by name/ID/structure, retrieve chemical properties, biomarker data, NMR/MS spectra, pathways, for metabolomics and identification."
 ---
 
 # HMDB Database
@@ -191,4 +188,3 @@ These databases share similar structure and identifiers, enabling integrated que
 ## Reference Documentation
 
 See `references/hmdb_data_fields.md` for detailed information about available data fields and their meanings.
-

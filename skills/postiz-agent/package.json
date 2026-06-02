@@ -1,0 +1,63 @@
+{
+  "name": "postiz",
+  "version": "2.0.14",
+  "description": "Postiz CLI - Command line interface for the Postiz social media scheduling API",
+  "main": "dist/index.js",
+  "bin": {
+    "postiz": "./dist/index.js"
+  },
+  "scripts": {
+    "dev": "tsup --watch",
+    "build": "tsup",
+    "start": "node ./dist/index.js",
+    "prepublishOnly": "pnpm run build",
+    "publish": "tsup && pnpm publish --access public --no-git-checks"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "SKILL.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "postiz",
+    "cli",
+    "social-media",
+    "scheduling",
+    "automation",
+    "ai-agent",
+    "command-line",
+    "twitter",
+    "linkedin",
+    "facebook",
+    "instagram",
+    "tiktok",
+    "youtube",
+    "reddit"
+  ],
+  "author": "Nevo David",
+  "license": "AGPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gitroomhq/postiz-agent.git"
+  },
+  "homepage": "https://github.com/gitroomhq/postiz-agent#readme",
+  "bugs": {
+    "url": "https://github.com/gitroomhq/postiz-agent/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@types/pg": "^8.20.0",
+    "node-fetch": "^3.3.2",
+    "yargs": "^17.7.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.19",
+    "@types/yargs": "^17.0.32",
+    "tsup": "^8.5.1",
+    "typescript": "^5.3.3"
+  }
+}

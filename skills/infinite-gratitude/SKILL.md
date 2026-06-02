@@ -15,7 +15,6 @@ date_added: "2026-02-27"
 A multi-agent research skill designed for parallel research execution. It orchestrates 10 agents to conduct deep research, battle-tested with real case studies.
 
 ## When to Use
-
 Use this skill when you need to perform extensive, parallelized research on a topic, leveraging multiple agents to gather and synthesize information more efficiently than a single linear process.
 
 ## How to Use
@@ -25,3 +24,8 @@ This is an external skill. Please refer to the [official repository](https://git
 ```bash
 git clone https://github.com/sstklen/infinite-gratitude
 ```
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.

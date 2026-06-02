@@ -1,206 +1,210 @@
 ---
 name: production-audit
-description: Local-evidence production readiness audit for shipped apps, pre-launch reviews, post-merge checks, and "what breaks in prod?" questions without sending repo data to an external audit service.
-origin: community
+description: "Audit a shipped repo for production-readiness gaps across RLS, webhooks, secrets, grants, Stripe idempotency, mobile UX, and deployment health."
+category: security
+risk: critical
+source: community
+source_repo: commitshow/production-audit
+source_type: community
+date_added: "2026-05-04"
+author: commitshow
+tags: [security, audit, production, vibe-coding, rls, webhook, stripe, supabase, mobile]
+tools: [claude, cursor, gemini, codex, antigravity]
+license: "MIT"
+license_source: "https://github.com/commitshow/production-audit/blob/main/LICENSE"
 ---
 
 # Production Audit
 
-Use this skill when the user asks whether an application is ready to ship, what
-could break in production, or what must be fixed before a launch. This is a
-maintainer-safe rewrite of the stale community production-audit idea: it keeps
-the useful production-readiness lens and removes unpinned external execution and
-third-party data sharing.
+## Overview
 
-## When to Use
+A skill that runs an external audit on a shipped repo's deployed state — live URL, GitHub signals, secrets exposure, RLS gaps, webhook idempotency, indexes, observability, prompt injection, and ten other failure modes that AI-assisted projects routinely miss.
 
-- The user asks "is this production-ready", "what would break in prod", "what
-  did we miss", "audit this repo", or "ready to ship?"
-- A feature was merged and needs a pre-deploy or post-merge risk pass.
-- A public launch, demo, customer rollout, or investor walkthrough is close.
-- CI is green but the user wants production risk, not only test status.
-- A deployed URL, release branch, PR, or current checkout is available for
-  evidence gathering.
+This is **complementary** to in-session security skills (`security-review`, OWASP-style, VibeSec, Trail of Bits). Those scan the editor buffer at write-time. This scans the deployed product after you commit. Different timing, different inputs, different findings. Run both for serious launches.
 
-## When Not to Use
+The skill wraps the [commit.show](https://commit.show) audit engine via the public CLI (`npx commitshow@0.3.23 audit . --json`). Stable JSON envelope (`schema_version: "1"`, additive-only). Writes a `.commitshow/audit.{md,json}` sidecar so future agent sessions can read prior state without re-running the engine.
 
-- During active implementation when the right lens is line-level secure coding;
-  use `security-review` first.
-- For pure libraries, templates, docs-only repos, or scaffolds unless the user
-  wants packaging/release readiness rather than application readiness.
-- When the user asks for a formal compliance audit. This skill is engineering
-  triage, not legal, financial, medical, or regulatory certification.
-- When the only available evidence is a product idea with no repo, deployment,
-  CI, or runtime surface.
+## When to Use This Skill
+
+- Use when the user asks "is this production-ready", "what would break in prod", "score my project", "what did I miss", "audit my repo", "ready to ship".
+- Use right after merging a feature branch to `main` (helpful as a pre-deploy gate).
+- Use before a public launch / Show HN post / investor demo.
+- Use when `git log` shows >20 commits since the last `.commitshow/audit.md` was written.
+
+### Skip when
+
+- During active in-session coding — use `security-review` / OWASP-style for line-level patterns. This skill is for post-merge / pre-ship review.
+- For library / scaffold-form repos — the engine handles **app form** best; libraries get a partial-substitute score.
+- If `.commitshow/audit.json` already exists and is < 1 hour old, read that instead of re-running. Audit is rate-limited (anonymous: 20/IP/day · 5/repo/day · 2000/day global).
+- Inside a private / non-GitHub repo — the audit pulls public GitHub signals, so private repos return a `not_found` error.
 
 ## How It Works
 
-Build the audit from local and user-authorized evidence. Do not run unpinned
-remote code, upload repository contents to third-party services, or call
-external scanners unless the user explicitly approves that specific tool and
-data flow.
+### Step 1: Run the audit
 
-Use this order:
+From the repo root. The CLI is pinned to an exact reviewed version so future npm releases are not selected silently. Because `npx` downloads and runs npm package code locally with the current user's permissions, run it only after the user explicitly approves this external execution and only in a repository where local files and environment variables are safe for that process to access. The sidecar directory is created up-front, and stderr is split off so install/deprecation warnings can't corrupt the JSON envelope:
 
-1. Establish the release surface.
-2. Read recent changes and current branch state.
-3. Inspect runtime, auth, data, payment, background-job, AI, and deployment
-   boundaries that actually exist in the repo.
-4. Check CI, tests, migrations, environment documentation, and rollback path.
-5. Produce a short ship/block recommendation with specific fixes.
-
-## Evidence Checklist
-
-Start with cheap, local signals:
-
-```text
-git status --short --branch
-git log --oneline --decorate -20
-git diff --stat origin/main...HEAD
+```bash
+mkdir -p .commitshow
+npx commitshow@0.3.23 audit . --json \
+  > .commitshow/audit.json \
+  2> .commitshow/audit.stderr.log
 ```
 
-Then inspect the project-specific surface:
+This also writes a human-readable `.commitshow/audit.md` next to it. Subsequent invocations should diff against the prior `audit.json` if it exists, so you can lead with "+5 since yesterday's audit" instead of just an absolute number.
 
-- Package scripts, CI workflows, release scripts, Docker files, and deployment
-  manifests.
-- API routes, webhooks, auth middleware, background workers, cron jobs, and
-  database migrations.
-- Environment variable documentation and startup checks.
-- Observability hooks, error reporting, logs, health checks, and dashboards.
-- Rollback, seed, migration, and backfill instructions.
-- E2E coverage for the user paths that matter most.
+If the user pointed at a remote URL instead of `.`, swap `.` for the URL — keep the same `mkdir -p` + version pin + stderr split:
 
-If a deployed URL is in scope, use browser or HTTP checks only against that URL
-and avoid credentialed actions unless the user supplies a safe test account.
-
-## Risk Lenses
-
-### Security And Auth
-
-- Are public routes, API routes, and admin routes clearly separated?
-- Are auth and authorization enforced server-side?
-- Are secrets kept out of client bundles, logs, example output, and checked-in
-  files?
-- Are rate limits, CSRF protections, CORS policy, and upload validation present
-  where the app needs them?
-- Does the AI or agent surface defend against prompt injection, tool abuse, and
-  untrusted content crossing into privileged actions?
-
-### Data Integrity
-
-- Do migrations run forward cleanly and have a rollback or recovery plan?
-- Are destructive migrations, backfills, and data imports staged safely?
-- Do database policies, grants, and service-role boundaries match the app's
-  tenancy model?
-- Are retries idempotent for writes, jobs, and webhook handlers?
-
-### Payments And Webhooks
-
-- Are webhook signatures verified before parsing trusted payload fields?
-- Is each payment, subscription, or fulfillment webhook idempotent?
-- Are replay, duplicate delivery, and out-of-order delivery handled?
-- Are test-mode and live-mode credentials separated?
-
-### Operations
-
-- Can the app start from a clean checkout using documented commands?
-- Are required environment variables named, validated, and fail-fast?
-- Is there a health check that proves dependencies are reachable?
-- Are deploy, rollback, and incident-owner paths documented?
-- Are logs useful without leaking secrets or personal data?
-
-### User Experience
-
-- Are the launch-critical paths covered on desktop and mobile?
-- Are forms usable on mobile without input zoom, layout overlap, or blocked
-  submission states?
-- Do loading, empty, error, and permission-denied states tell the user what
-  happened?
-- Is there a support or recovery path when a critical operation fails?
-
-## Scoring
-
-Use scores to force prioritization, not to imply mathematical certainty.
-
-| Band | Score | Meaning |
-| --- | --- | --- |
-| Blocked | 0-49 | Do not ship until the top risks are fixed |
-| Risky | 50-69 | Ship only behind a small rollout or internal beta |
-| Launchable With Caveats | 70-84 | Ship if owners accept the listed risks |
-| Strong | 85-100 | No obvious launch blockers from available evidence |
-
-Cap the score at `69` if any of these are true:
-
-- Authentication or authorization is missing on sensitive data.
-- Payment or fulfillment webhooks are not idempotent.
-- Required migrations cannot be run safely.
-- Secrets are exposed in client bundles, logs, or committed files.
-- There is no rollback path for a high-impact release.
-
-Cap the score at `84` if CI is not green or the launch-critical path was not
-tested end to end.
-
-## Output Format
-
-Lead with one sentence:
-
-```text
-Production audit: 76/100, launchable with caveats, with webhook idempotency and rollback docs as the two risks to fix before public launch.
+```bash
+mkdir -p .commitshow
+npx commitshow@0.3.23 audit github.com/owner/repo --json \
+  > .commitshow/audit.json \
+  2> .commitshow/audit.stderr.log
 ```
 
-Then list:
+### Step 2: Parse the envelope
 
-- `Blockers`: must-fix items before deploy.
-- `High-value fixes`: next fixes if the user wants to improve the score.
-- `Evidence checked`: files, commands, CI, deployed URL, or PRs inspected.
-- `Evidence missing`: what would change confidence if provided.
-- `Next action`: one concrete fix or verification step.
+The JSON envelope is stable (`schema_version: "1"`, additive-only). Read these fields:
 
-Keep strengths short. The user asked for readiness, so the useful answer is the
-remaining risk and the next action.
+| Field | Meaning |
+|---|---|
+| `score.total` | 0-100 production-readiness score |
+| `score.delta_since_last` | change vs. parent snapshot · positive = improving |
+| `score.band` | `strong` (80+) · `mid` (60-79) · `early` (<60) |
+| `concerns[]` | top issues, ordered by impact · each has `axis` + `bullet` |
+| `strengths[]` | top 3 things that work · for context only |
+| `standing` | optional · only when the project is auditioning on commit.show |
+| `snapshot.created_at` / `trigger_type` | when the audit ran |
 
-## Example
+Concerns are sorted by decision-impact, not severity. Position 1 is the bullet to lead with.
 
-User:
+### Step 3: Surface to the user
 
-```text
-is this ready to ship?
+Lead with score + trajectory in **one sentence**, then the top concerns. Do not dump the full JSON. Format:
+
+```
+Score: 82/100 (+5 since yesterday) · band: strong
+
+Top concerns:
+  ↓ [Security] No API rate limiting on /auth — IP cap missing
+  ↓ [Infrastructure] webhook handler at api/stripe.ts — signature verified, but no
+    idempotency-key check (replay attack window open)
+
+Want me to fix the webhook idempotency gap first?
 ```
 
-Response:
+Rules:
+- Use the exact bullet from `concerns[].bullet` — the audit engine already wrote action-oriented copy.
+- Don't list strengths unless the user explicitly asks. They're not actionable in this context.
+- Always end with a follow-up question that names a specific concern. Don't ask "what do you want to do?" — ask "fix X first?".
+- If `score.delta_since_last` is negative or null, lead with the absolute score only.
 
-```text
-Production audit: 68/100, risky, because Stripe webhooks are verified but not idempotent and there is no rollback note for the pending migration.
+### Step 4: If the user picks a concern, scope a fix
 
-Blockers:
-- Add idempotency for `checkout.session.completed` before fulfilling orders.
-- Write and test the rollback path for `20260511_add_billing_state.sql`.
+For the chosen concern:
+1. Read the file(s) cited in the bullet.
+2. Confirm the gap matches the description (the engine occasionally over-flags when the issue is mitigated elsewhere).
+3. Propose a minimal patch — single-file when possible.
+4. **Don't apply without explicit approval.** Show the diff first. The user is deciding what to ship; you're a lens.
 
-High-value fixes:
-- Add a health check that verifies database and payment-provider reachability.
-- Add one E2E path for upgrade, webhook fulfillment, and billing-page refresh.
+After applying a fix, suggest re-running with `--refresh` (same canonical form as Step 1, so `audit.json` stays the source of truth for delta calculations):
 
-Evidence checked:
-- `api/stripe/webhook.ts`
-- `db/migrations/20260511_add_billing_state.sql`
-- GitHub Actions run for the release branch
-
-Next action: Want me to patch webhook idempotency first?
+```bash
+mkdir -p .commitshow
+npx commitshow@0.3.23 audit . --json --refresh \
+  > .commitshow/audit.json \
+  2> .commitshow/audit.stderr.log
 ```
 
-## Anti-Patterns
+## Examples
 
-- Running `npx <package>@latest` or a remote scanner as the default audit path.
-- Uploading source, secrets, customer data, or private topology to an external
-  audit service without explicit approval.
-- Producing a score without naming the evidence checked.
-- Treating green CI as production readiness.
-- Ending with a generic "let me know what you want to do."
+### Example 1: User asks "is this production-ready?"
 
-## See Also
+```bash
+mkdir -p .commitshow
+npx commitshow@0.3.23 audit . --json \
+  > .commitshow/audit.json \
+  2> .commitshow/audit.stderr.log
+```
 
-- Skill: `security-review`
-- Skill: `deployment-patterns`
-- Skill: `e2e-testing`
-- Skill: `tdd-workflow`
-- Skill: `verification-loop`
+Then surface:
+
+```
+Score: 67/100 · band: mid
+
+Top concerns:
+  ↓ [Security] members table uses column-level GRANT but paid_audits_credit
+    column lacks SELECT grant — silent 42501 on every read
+  ↓ [Infrastructure] stripe.checkout.sessions.create called without
+    idempotencyKey — duplicate-charge surface
+
+Want me to fix the column GRANT first? Single SQL line.
+```
+
+### Example 2: Cross-check a specific concern
+
+User: "show me where the webhook idempotency gap is"
+
+```bash
+cat .commitshow/audit.json | jq '.concerns[] | select(.axis=="Infrastructure")'
+```
+
+Find the file path in the bullet, read it, confirm the gap matches.
+
+## Best Practices
+
+- ✅ Always cite the exact bullet from `concerns[].bullet` — they're already action-oriented
+- ✅ Lead with score + delta in a single sentence, then concerns
+- ✅ End with a specific follow-up question naming a concern
+- ✅ Read prior `.commitshow/audit.json` before re-running (within 1h)
+- ✅ Use `--refresh` after the user merges a fix so the next audit reflects it
+- ❌ Don't dump full JSON to the user
+- ❌ Don't list strengths unless the user explicitly asks
+- ❌ Don't apply fixes without approval — show diff first
+- ❌ Don't fault private repos for not auditing — explain why and suggest making public
+
+## Limitations
+
+- This skill does not replace environment-specific validation, testing, or expert review.
+- The audit engine is calibrated for **deployed apps** with a live URL. CLI / library / scaffold form gets a partial-substitute score (max ~45/50 on the audit pillar) — fair but not flattering.
+- Behind a corporate firewall blocking `*.supabase.co`, the API call fails. There is no offline mode — the audit relies on the public engine.
+- Cold audit takes 60-90s. Cached audits (within 7 days) return instantly. `--refresh` force-bypasses cache (counts against rate limits).
+
+## Security & Safety Notes
+
+- The skill executes `npx commitshow@0.3.23 audit ...`, which downloads and runs that exact npm package version locally, then calls the public API at `https://api.commit.show` (proxied to Supabase Edge Functions). Do not replace the exact version with `latest` or a semver range during normal use.
+- Treat the CLI as external code with local process privileges. It must not be run in repositories containing secrets or sensitive uncommitted files unless the user has explicitly accepted that risk. No credentials are intentionally sent to the API, but the local process can access files and environment variables available to the current user.
+- The CLI writes `.commitshow/audit.{md,json}` in the current working directory. These files are safe to commit (no secrets) but conventionally gitignored as transient artifacts.
+- The audit engine **only reads** public GitHub signals. It does not modify the user's repo or push commits.
+- All per-finding fix proposals must be shown as diffs and approved by the user before any edit. Never apply without explicit confirmation.
+
+## Common Pitfalls
+
+- **Problem:** Audit returns `not_found` for a private repo
+  **Solution:** The engine pulls public GitHub signals only. Either make the repo public or use `--no-network` for local-only deterministic checks.
+
+- **Problem:** Rate limit hit (`429`)
+  **Solution:** Wait until next day (limits reset 00:00 UTC) or sign in at commit.show for higher per-repo caps.
+
+- **Problem:** Score seems too low for a polished library / CLI
+  **Solution:** The engine biases toward app form. CLI / library / scaffold gets a partial substitute score capped around 45/50 on the audit pillar. Calibration acknowledged trade-off.
+
+- **Problem:** `concerns[]` is empty after re-running
+  **Solution:** Re-audit may have hit cache. Use `--refresh` to force-bypass.
+
+## Related Skills
+
+- `@security-review` — In-session line-level security patterns. Run alongside this skill, not in place of.
+- `@vibesec` — Editor-buffer security review for vibe-coded projects. Different lens.
+- `@owasp-security` — OWASP Top 10 coverage during coding. Companion.
+- `@trail-of-bits-skills` — CodeQL / Semgrep static analysis. Different layer.
+
+## Additional Resources
+
+- Canonical repo: <https://github.com/commitshow/production-audit>
+- Audit engine source: <https://github.com/commitshow/commitshow/blob/main/supabase/functions/analyze-project/index.ts>
+- 14-frame failure framework documented in the engine source above.
+- JSON schema: stable at `schema_version: "1"` · additive-only changes.
+- CLI: <https://github.com/commitshow/cli>
+- Public REST API: `https://api.commit.show/audit?repo=...&format=json`
+- skills.sh listing: <https://skills.sh/commitshow/production-audit>

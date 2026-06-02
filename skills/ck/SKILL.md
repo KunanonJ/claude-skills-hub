@@ -1,41 +1,42 @@
 ---
 name: ck
-description: Persistent per-project memory for Claude Code. Auto-loads project context on session start, tracks sessions with git activity, and writes to native memory. Commands run deterministic Node.js scripts — behavior is consistent across model versions.
+description: Claude Codeの永続的なプロジェクト単位のメモリ。セッション開始時にプロジェクトコンテキストを自動読み込み、gitアクティビティでセッションを追跡し、ネイティブメモリに書き込みます。コマンドは決定的なNode.jsスクリプトを実行します — 動作はモデルバージョン間で一貫しています。
 origin: community
 version: 2.0.0
 author: sreedhargs89
 repo: https://github.com/sreedhargs89/context-keeper
 ---
 
-# ck — Context Keeper
+# ck — コンテキスト キーパー
 
-You are the **Context Keeper** assistant. When the user invokes any `/ck:*` command,
-run the corresponding Node.js script and present its stdout to the user verbatim.
-Scripts live at: `~/.claude/skills/ck/commands/` (expand `~` with `$HOME`).
+あなたは**コンテキストキーパー** アシスタントです。ユーザーが`/ck:*`コマンドを呼び出すと、対応するNode.jsスクリプトを実行し、その標準出力をユーザーに逐語的に提示します。スクリプトは以下にあります：`~/.claude/skills/ck/commands/`（`~`を`$HOME`で展開）。
 
 ---
 
-## Data Layout
+## データレイアウト
 
 ```
 ~/.claude/ck/
 ├── projects.json              ← path → {name, contextDir, lastUpdated}
 └── contexts/<name>/
-    ├── context.json           ← SOURCE OF TRUTH (structured JSON, v2)
-    └── CONTEXT.md             ← generated view — do not hand-edit
+    ├── context.json           ← 真実のソース（構造化JSON、v2）
+    └── CONTEXT.md             ← 生成されたビュー — 手動編集しない
 ```
 
 ---
 
-## Commands
+## コマンド
 
-### `/ck:init` — Register a Project
+### `/ck:init` — プロジェクトを登録
+
 ```bash
 node "$HOME/.claude/skills/ck/commands/init.mjs"
 ```
-The script outputs JSON with auto-detected info. Present it as a confirmation draft:
+
+スクリプトは自動検出情報でJSONを出力します。それを確認ドラフトとして提示：
+
 ```
-Here's what I found — confirm or edit anything:
+ここで見つけたものです — 何か確認または編集してください：
 Project:     <name>
 Description: <description>
 Stack:       <stack>
@@ -43,105 +44,56 @@ Goal:        <goal>
 Do-nots:     <constraints or "None">
 Repo:        <repo or "none">
 ```
-Wait for user approval. Apply any edits. Then pipe confirmed JSON to save.mjs --init:
+
+ユーザーの承認を待つ。編集を適用。次に確認されたJSONをsave.mjsにパイプ：
+
 ```bash
 echo '<confirmed-json>' | node "$HOME/.claude/skills/ck/commands/save.mjs" --init
 ```
-Confirmed JSON schema: `{"name":"...","path":"...","description":"...","stack":["..."],"goal":"...","constraints":["..."],"repo":"..." }`
+
+確認されたJSONスキーマ：`{"name":"...","path":"...","description":"...","stack":["..."],"goal":"...","constraints":["..."],"repo":"..." }`
 
 ---
 
-### `/ck:save` — Save Session State
-**This is the only command requiring LLM analysis.** Analyze the current conversation:
-- `summary`: one sentence, max 10 words, what was accomplished
-- `leftOff`: what was actively being worked on (specific file/feature/bug)
-- `nextSteps`: ordered array of concrete next steps
-- `decisions`: array of `{what, why}` for decisions made this session
-- `blockers`: array of current blockers (empty array if none)
-- `goal`: updated goal string **only if it changed this session**, else omit
+### `/ck:save` — セッション状態を保存
 
-Show a draft summary to the user: `"Session: '<summary>' — save this? (yes / edit)"`
-Wait for confirmation. Then pipe to save.mjs:
+**これはLLM分析を必要とする唯一のコマンドです。** 現在の会話を分析：
+- `summary`：1文、最大10単語、何が達成されたか
+- `leftOff`：アクティブに作業していたもの（特定のファイル/機能/バグ）
+- `nextSteps`：具体的な次のステップの順序配列
+- `decisions`：このセッション中に行われた決定の配列（`{what, why}`）
+- `blockers`：現在のブロッカーの配列（なければ空配列）
+- `goal`：**このセッションで変更された場合のみ更新目標文字列**、それ以外は省略
+
+ユーザーに草稿概要を表示：`"Session: '<summary>' — これを保存しますか？（yes / edit）"`
+
+確認を待つ。次にsave.mjsにパイプ：
+
 ```bash
 echo '<json>' | node "$HOME/.claude/skills/ck/commands/save.mjs"
 ```
-JSON schema (exact): `{"summary":"...","leftOff":"...","nextSteps":["..."],"decisions":[{"what":"...","why":"..."}],"blockers":["..."]}`
-Display the script's stdout confirmation verbatim.
+
+JSONスキーマ（正確）：`{"summary":"...","leftOff":"...","nextSteps":["..."],"decisions":[{"what":"...","why":"..."}],"blockers":["..."]}`
+
+スクリプトの標準出力確認を逐語的に表示。
 
 ---
 
-### `/ck:resume [name|number]` — Full Briefing
+### `/ck:resume [name|number]` — 完全なブリーフィング
+
 ```bash
 node "$HOME/.claude/skills/ck/commands/resume.mjs" [arg]
 ```
-Display output verbatim. Then ask: "Continue from here? Or has anything changed?"
-If user reports changes → run `/ck:save` immediately.
+
+出力を逐語的に表示。その後、「ここから続けますか？または何か変わったことがありますか？」と尋ねます。
+
+ユーザーが変更を報告 → すぐに`/ck:save`を実行。
 
 ---
 
-### `/ck:info [name|number]` — Quick Snapshot
-```bash
-node "$HOME/.claude/skills/ck/commands/info.mjs" [arg]
-```
-Display output verbatim. No follow-up question.
+## 使用時期
 
----
-
-### `/ck:list` — Portfolio View
-```bash
-node "$HOME/.claude/skills/ck/commands/list.mjs"
-```
-Display output verbatim. If user replies with a number or name → run `/ck:resume`.
-
----
-
-### `/ck:forget [name|number]` — Remove a Project
-First resolve the project name (run `/ck:list` if needed).
-Ask: `"This will permanently delete context for '<name>'. Are you sure? (yes/no)"`
-If yes:
-```bash
-node "$HOME/.claude/skills/ck/commands/forget.mjs" [name]
-```
-Display confirmation verbatim.
-
----
-
-### `/ck:migrate` — Convert v1 Data to v2
-```bash
-node "$HOME/.claude/skills/ck/commands/migrate.mjs"
-```
-For a dry run first:
-```bash
-node "$HOME/.claude/skills/ck/commands/migrate.mjs" --dry-run
-```
-Display output verbatim. Migrates all v1 CONTEXT.md + meta.json files to v2 context.json.
-Originals are backed up as `meta.json.v1-backup` — nothing is deleted.
-
----
-
-## SessionStart Hook
-
-The hook at `~/.claude/skills/ck/hooks/session-start.mjs` must be registered in
-`~/.claude/settings.json` to auto-load project context on session start:
-
-```json
-{
-  "hooks": {
-    "SessionStart": [
-      { "hooks": [{ "type": "command", "command": "node \"~/.claude/skills/ck/hooks/session-start.mjs\"" }] }
-    ]
-  }
-}
-```
-
-The hook injects ~100 tokens per session (compact 5-line summary). It also detects
-unsaved sessions, git activity since last save, and goal mismatches vs CLAUDE.md.
-
----
-
-## Rules
-- Always expand `~` as `$HOME` in Bash calls.
-- Commands are case-insensitive: `/CK:SAVE`, `/ck:save`, `/Ck:Save` all work.
-- If a script exits with code 1, display its stdout as an error message.
-- Never edit `context.json` or `CONTEXT.md` directly — always use the scripts.
-- If `projects.json` is malformed, tell the user and offer to reset it to `{}`.
+- 新しいプロジェクトを始める（`/ck:init`）
+- セッション終了時にコンテキストを保存（`/ck:save`）
+- 以前のセッションを再開（`/ck:resume`）
+- プロジェクト履歴を表示（`/ck:log`）

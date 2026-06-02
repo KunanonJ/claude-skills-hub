@@ -1,7 +1,14 @@
 ---
-name: session-wrap
+name: wrap
 description: This skill should be used when the user asks to "wrap up session", "end session", "session wrap", "/wrap", "document learnings", "what should I commit", or wants to analyze completed work before ending a coding session.
-version: 2.0.0
+version: 2.1.0
+subagents:
+  - doc-updater
+  - automation-scout
+  - learning-extractor
+  - followup-suggester
+  - promote-suggester
+  - duplicate-checker
 ---
 
 # Session Wrap Skill
@@ -14,14 +21,17 @@ Comprehensive session wrap-up workflow with multi-agent analysis.
 ┌─────────────────────────────────────────────────────┐
 │  1. Check Git Status                                │
 ├─────────────────────────────────────────────────────┤
-│  2. Phase 1: 4 Analysis Agents (Parallel)           │
+│  2. Phase 1: 5 Analysis Agents (Parallel)           │
 │     ┌─────────────────┬─────────────────┐           │
 │     │  doc-updater    │  automation-    │           │
 │     │  (docs update)  │  scout          │           │
 │     ├─────────────────┼─────────────────┤           │
 │     │  learning-      │  followup-      │           │
 │     │  extractor      │  suggester      │           │
-│     └─────────────────┴─────────────────┘           │
+│     ├─────────────────┴─────────────────┤           │
+│     │        promote-suggester          │           │
+│     │   (local→global promotion)        │           │
+│     └───────────────────────────────────┘           │
 ├─────────────────────────────────────────────────────┤
 │  3. Phase 2: Validation Agent (Sequential)          │
 │     ┌───────────────────────────────────┐           │
@@ -44,7 +54,7 @@ git diff --stat HEAD~3 2>/dev/null || git diff --stat
 
 ## Step 2: Phase 1 - Analysis Agents (Parallel)
 
-Execute 4 agents in parallel (single message with 4 Task calls).
+Execute 5 agents in parallel (single message with 5 Task calls).
 
 ### Session Summary (Provide to all agents)
 
@@ -81,6 +91,12 @@ Task(
     description="Follow-up task suggestions",
     prompt="[Session Summary]\n\nSuggest incomplete tasks and next session priorities."
 )
+
+Task(
+    subagent_type="promote-suggester",
+    description="Promote candidates analysis",
+    prompt="[Session Summary]\n\nAnalyze local .claude/ items for promotion to global scope."
+)
 ```
 
 ### Agent Roles
@@ -91,6 +107,7 @@ Task(
 | **automation-scout** | Detect automation patterns | skill/command/agent suggestions |
 | **learning-extractor** | Extract learning points | TIL format summary |
 | **followup-suggester** | Suggest follow-up tasks | Prioritized task list |
+| **promote-suggester** | Find promotion candidates | Local items to promote globally |
 
 ## Step 3: Phase 2 - Validation Agent (Sequential)
 
@@ -108,6 +125,9 @@ Validate Phase 1 analysis results.
 
 ## automation-scout proposals:
 [automation-scout results]
+
+## promote-suggester proposals:
+[promote-suggester results]
 
 Check if proposals duplicate existing docs/automation:
 1. Complete duplicate: Recommend skip
@@ -130,6 +150,10 @@ Check if proposals duplicate existing docs/automation:
 [automation-scout summary]
 - Duplicate check: [duplicate-checker feedback]
 
+### Promotion Candidates
+[promote-suggester summary]
+- Duplicate check: [duplicate-checker feedback]
+
 ### Learning Points
 [learning-extractor summary]
 
@@ -149,6 +173,7 @@ AskUserQuestion(
             {"label": "Create commit (Recommended)", "description": "Commit changes"},
             {"label": "Update CLAUDE.md", "description": "Document new knowledge/workflows"},
             {"label": "Create automation", "description": "Generate skill/command/agent"},
+            {"label": "Promote to global", "description": "Run /promote for recommended items"},
             {"label": "Skip", "description": "End without action"}
         ]
     }]
@@ -158,6 +183,17 @@ AskUserQuestion(
 ## Step 6: Execute Selected Actions
 
 Execute only the actions selected by user.
+
+### Promote Action
+
+If "Promote to global" selected:
+
+```
+For each high-priority item from promote-suggester:
+1. Show item name and recommendation
+2. Run /promote [item-name]
+3. Follow promote workflow (target selection, generalization, etc.)
+```
 
 ---
 

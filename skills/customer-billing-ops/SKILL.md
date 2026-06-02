@@ -1,113 +1,113 @@
 ---
 name: customer-billing-ops
-description: Operate customer billing workflows such as subscriptions, refunds, churn triage, billing-portal recovery, and plan analysis using connected billing tools like Stripe. Use when the user needs to help a customer, inspect subscription state, or manage revenue-impacting billing operations.
+description: Stripeなどの接続された請求ツールを使用して、サブスクリプション、返金、チャーントリアージ、請求ポータルの回復、プラン分析などの顧客請求ワークフローを操作します。顧客を助けたい、サブスクリプション状態を検査したい、または収益に影響する請求操作を管理したい場合に使用します。
 origin: ECC
 ---
 
-# Customer Billing Ops
+# 顧客請求業務
 
-Use this skill for real customer operations, not generic payment API design.
+このスキルは、汎用的な支払いAPI設計ではなく、実際の顧客業務のために使用します。
 
-The goal is to help the operator answer: who is this customer, what happened, what is the safest fix, and what follow-up should we send?
+目標は、オペレーターが以下に答えるのを助けることです：この顧客は誰か、何が起きたか、最も安全な修正は何か、どのようなフォローアップを送るべきか？
 
-## When to Use
+## 使用時期
 
-- Customer says billing is broken, they want a refund, or they cannot cancel
-- Investigating duplicate subscriptions, accidental charges, failed renewals, or churn risk
-- Reviewing plan mix, active subscriptions, yearly vs monthly conversion, or team-seat confusion
-- Creating or validating a billing portal flow
-- Auditing support complaints that touch subscriptions, invoices, refunds, or payment methods
+- 顧客が請求が壊れている、返金が必要、またはキャンセルできないと言っている場合
+- 重複サブスクリプション、偶発的な請求、失敗した更新、またはチャーンリスクを調査する場合
+- プランミックス、アクティブなサブスクリプション、年間対月間の変換、またはチームシートの混乱をレビューする場合
+- 請求ポータルフローの作成または検証
+- サブスクリプション、請求書、返金、または支払い方法に関するサポートの苦情を監査する場合
 
-## Preferred Tool Surface
+## 推奨ツールサーフェス
 
-- Use connected billing tools such as Stripe first
-- Use email, GitHub, or issue trackers only as supporting evidence
-- Prefer hosted billing/customer portals over custom account-management code when the platform already provides the needed controls
+- Stripeなどの接続された請求ツールを最初に使用する
+- メール、GitHub、または課題トラッカーは補足証拠としてのみ使用する
+- プラットフォームが必要なコントロールをすでに提供している場合、カスタムアカウント管理コードよりもホストされた請求/顧客ポータルを優先する
 
-## Guardrails
+## ガードレール
 
-- Never expose secret keys, full card details, or unnecessary customer PII in the response
-- Do not refund blindly; first classify the issue
-- Distinguish among:
-  - accidental duplicate purchase
-  - deliberate multi-seat or team purchase
-  - broken product / unmet value
-  - failed or incomplete checkout
-  - cancellation due to missing self-serve controls
-- For annual plans, team plans, and prorated states, verify the contract shape before taking action
+- レスポンスに秘密鍵、完全なカード詳細、または不必要な顧客PIIを公開しない
+- 盲目的に返金しない。まず問題を分類する
+- 以下を区別する：
+  - 偶発的な重複購入
+  - 意図的なマルチシートまたはチーム購入
+  - 壊れた製品/未達成の価値
+  - 失敗または不完全なチェックアウト
+  - セルフサーブコントロールの欠如によるキャンセル
+- 年間プラン、チームプラン、按分状態については、アクションを取る前に契約の形状を確認する
 
-## Workflow
+## ワークフロー
 
-### 1. Identify the customer cleanly
+### 1. 顧客を明確に特定する
 
-Start from the strongest identifier available:
+利用可能な最強の識別子から始めます：
 
-- customer email
-- Stripe customer ID
-- subscription ID
-- invoice ID
-- GitHub username or support email if it is known to map back to billing
+- 顧客メール
+- StripeカスタマーID
+- サブスクリプションID
+- 請求書ID
+- GitHubユーザー名または請求に紐づくことがわかっているサポートメール
 
-Return a concise identity summary:
+簡潔なアイデンティティサマリーを返します：
 
-- customer
-- active subscriptions
-- canceled subscriptions
-- invoices
-- obvious anomalies such as duplicate active subscriptions
+- 顧客
+- アクティブなサブスクリプション
+- キャンセルされたサブスクリプション
+- 請求書
+- 重複するアクティブなサブスクリプションなどの明らかな異常
 
-### 2. Classify the issue
+### 2. 問題を分類する
 
-Put the case into one bucket before acting:
+アクションを取る前に、ケースを1つのバケットに入れます：
 
-| Case | Typical action |
+| ケース | 典型的なアクション |
 |------|----------------|
-| Duplicate personal subscription | cancel extras, consider refund |
-| Real multi-seat/team intent | preserve seats, clarify billing model |
-| Failed payment / incomplete checkout | recover via portal or update payment method |
-| Missing self-serve controls | provide portal, cancellation path, or invoice access |
-| Product failure or trust break | refund, apologize, log product issue |
+| 重複する個人サブスクリプション | 余分をキャンセル、返金を検討 |
+| 実際のマルチシート/チームの意図 | シートを保持、請求モデルを明確にする |
+| 支払い失敗/不完全なチェックアウト | ポータルまたは支払い方法の更新で回復 |
+| セルフサーブコントロールの欠如 | ポータル、キャンセルパス、または請求書アクセスを提供 |
+| 製品の失敗または信頼の喪失 | 返金、謝罪、製品の問題を記録 |
 
-### 3. Take the safest reversible action first
+### 3. 最初に最も安全で可逆的なアクションを取る
 
-Preferred order:
+優先順位：
 
-1. restore self-serve management
-2. fix duplicate or broken billing state
-3. refund only the affected charge or duplicate
-4. document the reason
-5. send a short customer follow-up
+1. セルフサーブ管理を復元する
+2. 重複または壊れた請求状態を修正する
+3. 影響を受けた請求または重複分のみ返金する
+4. 理由を文書化する
+5. 短い顧客フォローアップを送る
 
-If the fix requires product work, separate:
+修正が製品作業を必要とする場合、以下を分離します：
 
-- customer remediation now
-- product bug / workflow gap for backlog
+- 今すぐの顧客救済
+- バックログ向けの製品バグ/ワークフローギャップ
 
-### 4. Check operator-side product gaps
+### 4. オペレーター側の製品ギャップを確認する
 
-If the customer pain comes from a missing operator surface, call it out explicitly. Common examples:
+顧客の痛みが欠けているオペレーターサーフェスから来ている場合、明示的にそれを指摘します。一般的な例：
 
-- no billing portal
-- no usage/rate-limit visibility
-- no plan/seat explanation
-- no cancellation flow
-- no duplicate-subscription guard
+- 請求ポータルなし
+- 使用量/レート制限の可視性なし
+- プラン/シートの説明なし
+- キャンセルフローなし
+- 重複サブスクリプションガードなし
 
-Treat those as ECC or website follow-up items, not just support incidents.
+これらをサポートインシデントではなく、ECCまたはウェブサイトのフォローアップアイテムとして扱います。
 
-### 5. Produce the operator handoff
+### 5. オペレーターへの引き渡しを生成する
 
-End with:
+以下で終わります：
 
-- customer state summary
-- action taken
-- revenue impact
-- follow-up text to send
-- product or backlog issue to create
+- 顧客状態サマリー
+- 取ったアクション
+- 収益への影響
+- 送るフォローアップテキスト
+- 作成する製品またはバックログの課題
 
-## Output Format
+## 出力形式
 
-Use this structure:
+この構造を使用します：
 
 ```text
 CUSTOMER
@@ -133,8 +133,8 @@ PRODUCT GAP
 - what should be fixed in the product or website
 ```
 
-## Examples of Good Recommendations
+## 良い推奨事項の例
 
-- "The right fix is a billing portal, not a custom dashboard yet"
-- "This looks like duplicate personal checkout, not a real team-seat purchase"
-- "Refund one duplicate charge, keep the remaining active subscription, then convert the customer to org billing later if needed"
+- 「正しい修正は、カスタムダッシュボードではなく請求ポータルです」
+- 「これは実際のチームシート購入ではなく、重複する個人チェックアウトのように見えます」
+- 「重複請求の1件を返金し、残りのアクティブなサブスクリプションを保持し、その後必要に応じて顧客を組織請求に変換します」

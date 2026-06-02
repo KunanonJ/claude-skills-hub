@@ -1,16 +1,16 @@
-<!-- PM-Skills | https://github.com/product-on-purpose/pm-skills | Apache 2.0 -->
 ---
 name: deliver-release-notes
 description: Creates user-facing release notes that communicate new features, improvements, and fixes in clear, benefit-focused language. Use when shipping updates to communicate changes to users, customers, or stakeholders.
-phase: deliver
-version: "2.0.0"
-updated: 2026-01-26
 license: Apache-2.0
 metadata:
+  phase: deliver
+  version: "2.0.0"
+  updated: 2026-01-26
   category: coordination
   frameworks: [triple-diamond, lean-startup, design-thinking]
   author: product-on-purpose
 ---
+<!-- PM-Skills | https://github.com/product-on-purpose/pm-skills | Apache 2.0 -->
 # Release Notes
 
 Release notes communicate product changes to users in a way that highlights value and builds excitement. Unlike changelogs (which document what changed technically), release notes translate changes into user benefits. Good release notes help users discover new capabilities, understand improvements, and trust that issues are being addressed.
@@ -40,7 +40,7 @@ When asked to create release notes, follow these steps:
    Group remaining changes into clear categories: New Features, Improvements, and Bug Fixes. Within each category, order by impact (most valuable first).
 
 5. **Write Scannable Descriptions**
-   Each item should be 1-2 sentences. Lead with the benefit, optionally followed by the "how." Users scan release notes — make each line valuable.
+   Each item should be 1-2 sentences. Lead with the benefit, optionally followed by the "how." Users scan release notes . make each line valuable.
 
 6. **Acknowledge Known Issues**
    If there are known limitations or issues, be transparent. Users appreciate honesty, and it reduces support burden.
