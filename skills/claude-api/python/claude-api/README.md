@@ -11,10 +11,12 @@ pip install anthropic
 ```python
 import anthropic
 
-# Default (uses ANTHROPIC_API_KEY env var)
+# Default — resolves credentials from the environment:
+# ANTHROPIC_API_KEY, or ANTHROPIC_AUTH_TOKEN, or an `ant auth login` profile.
+# Prefer this for local dev; don't hardcode a key.
 client = anthropic.Anthropic()
 
-# Explicit API key
+# Explicit API key (only when you must inject a specific key)
 client = anthropic.Anthropic(api_key="your-api-key")
 
 # Async client
@@ -23,17 +25,82 @@ async_client = anthropic.AsyncAnthropic()
 
 ---
 
+## Client Configuration
+
+### Per-request overrides
+
+Use `with_options()` to override client settings for a single call without mutating the client:
+
+```python
+client.with_options(timeout=5.0, max_retries=5).messages.create(
+    model="claude-opus-4-8",
+    max_tokens=1024,
+    messages=[{"role": "user", "content": "Hello"}],
+)
+```
+
+### Timeouts
+
+Default request timeout is 10 minutes. Pass a float (seconds) or an `httpx.Timeout` for granular control. On timeout the SDK raises `anthropic.APITimeoutError` (and retries per `max_retries`).
+
+```python
+import httpx
+
+client = anthropic.Anthropic(timeout=20.0)
+client = anthropic.Anthropic(
+    timeout=httpx.Timeout(60.0, read=5.0, write=10.0, connect=2.0),
+)
+```
+
+### Retries
+
+The SDK auto-retries connection errors, 408, 409, 429, and ≥500 with exponential backoff (default 2 retries). Set `max_retries` on the client or via `with_options()`; `max_retries=0` disables.
+
+### Async performance (aiohttp backend)
+
+For high-concurrency async workloads, install `anthropic[aiohttp]` and pass `DefaultAioHttpClient` instead of the default httpx backend:
+
+```python
+from anthropic import AsyncAnthropic, DefaultAioHttpClient
+
+async with AsyncAnthropic(http_client=DefaultAioHttpClient()) as client:
+    ...
+```
+
+### Custom HTTP client (proxy, base URL)
+
+Use `DefaultHttpxClient` / `DefaultAsyncHttpxClient` — not raw `httpx.Client` — so the SDK's default timeouts and connection limits are preserved:
+
+```python
+from anthropic import Anthropic, DefaultHttpxClient
+
+client = Anthropic(
+    base_url="http://my.test.server.example.com:8083",  # or ANTHROPIC_BASE_URL env var
+    http_client=DefaultHttpxClient(proxy="http://my.test.proxy.example.com"),
+)
+```
+
+### Logging
+
+Set `ANTHROPIC_LOG=debug` (or `info`) to enable SDK logging via the standard `logging` module.
+
+---
+
 ## Basic Message Request
 
 ```python
 response = client.messages.create(
-    model="claude-opus-4-6",
-    max_tokens=1024,
+    model="claude-opus-4-8",
+    max_tokens=16000,
     messages=[
         {"role": "user", "content": "What is the capital of France?"}
     ]
 )
-print(response.content[0].text)
+# response.content is a list of content block objects (TextBlock, ThinkingBlock,
+# ToolUseBlock, ...). Check .type before accessing .text.
+for block in response.content:
+    if block.type == "text":
+        print(block.text)
 ```
 
 ---
@@ -42,10 +109,27 @@ print(response.content[0].text)
 
 ```python
 response = client.messages.create(
-    model="claude-opus-4-6",
-    max_tokens=1024,
+    model="claude-opus-4-8",
+    max_tokens=16000,
     system="You are a helpful coding assistant. Always provide examples in Python.",
     messages=[{"role": "user", "content": "How do I read a JSON file?"}]
+)
+```
+
+### Mid-conversation system messages (beta, model-gated)
+
+For operator instructions that arrive mid-conversation (mode switches, injected state), append `{"role": "system", ...}` to `messages` instead of editing top-level `system` — this preserves the cached prefix and carries operator authority. Must follow a user message; cannot be `messages[0]`. Unsupported models return a 400 (`role 'system' is not supported on this model`). See `shared/prompt-caching.md` for when to use this vs. top-level `system`.
+
+```python
+response = client.messages.create(
+    model=MODEL_ID,  # must support mid-conversation system messages
+    max_tokens=16000,
+    system=[{"type": "text", "text": STABLE_SYSTEM, "cache_control": {"type": "ephemeral"}}],
+    messages=history + [
+        {"role": "user", "content": user_message},
+        {"role": "system", "content": "Terse mode enabled — keep responses under 40 words."},
+    ],
+    extra_headers={"anthropic-beta": "mid-conversation-system-2026-04-07"},
 )
 ```
 
@@ -62,8 +146,8 @@ with open("image.png", "rb") as f:
     image_data = base64.standard_b64encode(f.read()).decode("utf-8")
 
 response = client.messages.create(
-    model="claude-opus-4-6",
-    max_tokens=1024,
+    model="claude-opus-4-8",
+    max_tokens=16000,
     messages=[{
         "role": "user",
         "content": [
@@ -85,8 +169,8 @@ response = client.messages.create(
 
 ```python
 response = client.messages.create(
-    model="claude-opus-4-6",
-    max_tokens=1024,
+    model="claude-opus-4-8",
+    max_tokens=16000,
     messages=[{
         "role": "user",
         "content": [
@@ -107,7 +191,7 @@ response = client.messages.create(
 
 ## Prompt Caching
 
-Cache large context to reduce costs (up to 90% savings).
+Cache large context to reduce costs (up to 90% savings). **Caching is a prefix match** — any byte change anywhere in the prefix invalidates everything after it. For placement patterns, architectural guidance (frozen system prompt, deterministic tool order, where to put volatile content), and the silent-invalidator audit checklist, read `shared/prompt-caching.md`.
 
 ### Automatic Caching (Recommended)
 
@@ -115,8 +199,8 @@ Use top-level `cache_control` to automatically cache the last cacheable block in
 
 ```python
 response = client.messages.create(
-    model="claude-opus-4-6",
-    max_tokens=1024,
+    model="claude-opus-4-8",
+    max_tokens=16000,
     cache_control={"type": "ephemeral"},  # auto-caches the last cacheable block
     system="You are an expert on this large document...",
     messages=[{"role": "user", "content": "Summarize the key points"}]
@@ -129,8 +213,8 @@ For fine-grained control, add `cache_control` to specific content blocks:
 
 ```python
 response = client.messages.create(
-    model="claude-opus-4-6",
-    max_tokens=1024,
+    model="claude-opus-4-8",
+    max_tokens=16000,
     system=[{
         "type": "text",
         "text": "You are an expert on this large document...",
@@ -141,8 +225,8 @@ response = client.messages.create(
 
 # With explicit TTL (time-to-live)
 response = client.messages.create(
-    model="claude-opus-4-6",
-    max_tokens=1024,
+    model="claude-opus-4-8",
+    max_tokens=16000,
     system=[{
         "type": "text",
         "text": "You are an expert on this large document...",
@@ -152,17 +236,27 @@ response = client.messages.create(
 )
 ```
 
+### Verifying Cache Hits
+
+```python
+print(response.usage.cache_creation_input_tokens)  # tokens written to cache (~1.25x cost)
+print(response.usage.cache_read_input_tokens)      # tokens served from cache (~0.1x cost)
+print(response.usage.input_tokens)                 # uncached tokens (full cost)
+```
+
+If `cache_read_input_tokens` is zero across repeated identical-prefix requests, a silent invalidator is at work — `datetime.now()` or a UUID in the system prompt, unsorted `json.dumps()`, or a varying tool set. See `shared/prompt-caching.md` for the full audit table.
+
 ---
 
 ## Extended Thinking
 
-> **Opus 4.6 and Sonnet 4.6:** Use adaptive thinking. `budget_tokens` is deprecated on both Opus 4.6 and Sonnet 4.6.
+> **Opus 4.8, Opus 4.7, Opus 4.6, and Sonnet 4.6:** Use adaptive thinking. `budget_tokens` is removed on Opus 4.8 and 4.7 (400 if sent); deprecated on Opus 4.6 and Sonnet 4.6.
 > **Older models:** Use `thinking: {type: "enabled", budget_tokens: N}` (must be < `max_tokens`, min 1024).
 
 ```python
-# Opus 4.6: adaptive thinking (recommended)
+# Opus 4.8 / 4.7 / 4.6: adaptive thinking (recommended)
 response = client.messages.create(
-    model="claude-opus-4-6",
+    model="claude-opus-4-8",
     max_tokens=16000,
     thinking={"type": "adaptive"},
     output_config={"effort": "high"},  # low | medium | high | max
@@ -208,6 +302,31 @@ except anthropic.APIConnectionError:
 
 ---
 
+## Response Helpers
+
+Every response object exposes `_request_id` (populated from the `request-id` header) — log it when reporting failures to Anthropic. Despite the underscore prefix, this property is public.
+
+```python
+message = client.messages.create(...)
+print(message._request_id)       # req_018EeWyXxfu5pfWkrYcMdjWG
+print(message.to_json())          # serialize the Pydantic model
+print(message.to_dict())          # plain dict
+```
+
+To access raw headers or other response metadata, use `.with_raw_response`:
+
+```python
+raw = client.messages.with_raw_response.create(
+    model="claude-opus-4-8",
+    max_tokens=1024,
+    messages=[{"role": "user", "content": "Hello"}],
+)
+print(raw.headers.get("request-id"))
+message = raw.parse()  # the Message object messages.create() would have returned
+```
+
+---
+
 ## Multi-Turn Conversations
 
 The API is stateless — send the full conversation history each time.
@@ -228,13 +347,15 @@ class ConversationManager:
 
         response = self.client.messages.create(
             model=self.model,
-            max_tokens=kwargs.get("max_tokens", 1024),
+            max_tokens=kwargs.get("max_tokens", 16000),
             system=self.system,
             messages=self.messages,
             **kwargs
         )
 
-        assistant_message = response.content[0].text
+        assistant_message = next(
+            (b.text for b in response.content if b.type == "text"), ""
+        )
         self.messages.append({"role": "assistant", "content": assistant_message})
 
         return assistant_message
@@ -242,7 +363,7 @@ class ConversationManager:
 # Usage
 conversation = ConversationManager(
     client=anthropic.Anthropic(),
-    model="claude-opus-4-6",
+    model="claude-opus-4-8",
     system="You are a helpful assistant."
 )
 
@@ -252,14 +373,15 @@ response2 = conversation.send("What's my name?")  # Claude remembers "Alice"
 
 **Rules:**
 
-- Messages must alternate between `user` and `assistant`
+- Consecutive same-role messages are allowed — the API combines them into a single turn
 - First message must be `user`
+- `role: "system"` messages are allowed mid-conversation under the `mid-conversation-system-2026-04-07` beta on supporting models — see § Mid-conversation system messages above
 
 ---
 
 ### Compaction (long conversations)
 
-> **Beta, Opus 4.6 only.** When conversations approach the 200K context window, compaction automatically summarizes earlier context server-side. The API returns a `compaction` block; you must pass it back on subsequent requests — append `response.content`, not just the text.
+> **Beta, Opus 4.8, Opus 4.7, Opus 4.6, and Sonnet 4.6.** When conversations approach the 200K context window, compaction automatically summarizes earlier context server-side. The API returns a `compaction` block; you must pass it back on subsequent requests — append `response.content`, not just the text.
 
 ```python
 import anthropic
@@ -272,8 +394,8 @@ def chat(user_message: str) -> str:
 
     response = client.beta.messages.create(
         betas=["compact-2026-01-12"],
-        model="claude-opus-4-6",
-        max_tokens=4096,
+        model="claude-opus-4-8",
+        max_tokens=16000,
         messages=messages,
         context_management={
             "edits": [{"type": "compact_20260112"}]
@@ -304,7 +426,17 @@ The `stop_reason` field in the response indicates why the model stopped generati
 | `stop_sequence` | Hit a custom stop sequence |
 | `tool_use` | Claude wants to call a tool — execute it and continue |
 | `pause_turn` | Model paused and can be resumed (agentic flows) |
-| `refusal` | Claude refused for safety reasons — output may not match your schema |
+| `refusal` | Claude refused for safety reasons — check `stop_details` |
+
+### Structured Stop Details
+
+When `stop_reason` is `"refusal"`, the response includes a `stop_details` object with structured information about the refusal:
+
+```python
+if response.stop_reason == "refusal" and response.stop_details:
+    print(f"Category: {response.stop_details.category}")   # "cyber" | "bio" | None
+    print(f"Explanation: {response.stop_details.explanation}")
+```
 
 ---
 
@@ -315,8 +447,8 @@ The `stop_reason` field in the response indicates why the model stopped generati
 ```python
 # Automatic caching (simplest — caches the last cacheable block)
 response = client.messages.create(
-    model="claude-opus-4-6",
-    max_tokens=1024,
+    model="claude-opus-4-8",
+    max_tokens=16000,
     cache_control={"type": "ephemeral"},
     system=large_document_text,  # e.g., 50KB of context
     messages=[{"role": "user", "content": "Summarize the key points"}]
@@ -331,15 +463,15 @@ response = client.messages.create(
 ```python
 # Default to Opus for most tasks
 response = client.messages.create(
-    model="claude-opus-4-6",  # $5.00/$25.00 per 1M tokens
-    max_tokens=1024,
+    model="claude-opus-4-8",  # $5.00/$25.00 per 1M tokens
+    max_tokens=16000,
     messages=[{"role": "user", "content": "Explain quantum computing"}]
 )
 
 # Use Sonnet for high-volume production workloads
 standard_response = client.messages.create(
     model="claude-sonnet-4-6",  # $3.00/$15.00 per 1M tokens
-    max_tokens=1024,
+    max_tokens=16000,
     messages=[{"role": "user", "content": "Summarize this document"}]
 )
 
@@ -355,7 +487,7 @@ simple_response = client.messages.create(
 
 ```python
 count_response = client.messages.count_tokens(
-    model="claude-opus-4-6",
+    model="claude-opus-4-8",
     messages=messages,
     system=system
 )
