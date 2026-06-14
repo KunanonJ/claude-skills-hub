@@ -1,0 +1,123 @@
+# ChainAware Behavioral Prediction MCP
+
+> An AI-native Web3 intelligence layer that gives AI agents predictive capabilities over blockchain wallets and smart contracts. Covers 14M+ wallets across 8 blockchains, built from 1.3B+ data points. Unlike forensic tools that describe the past, this MCP is predictive — it tells agents what is about to happen.
+
+## Overview
+
+- **MCP Endpoint:** https://prediction.mcp.chainaware.ai/sse
+- **Auth:** `CHAINAWARE_API_KEY` header (request at https://chainaware.ai/pricing)
+- **GitHub:** https://github.com/ChainAware/behavioral-prediction-mcp
+- **Website:** https://chainaware.ai
+
+## MCP Tools (6)
+
+- `predictive_fraud` — Fraud probability (0–1) + AML forensic flags for a wallet. Networks: ETH, BNB, POLYGON, TON, BASE, TRON, HAQQ.
+- `predictive_behaviour` — Wallet segmentation, intent, experience level, protocol history, personalized recommendations. Networks: ETH, BNB, BASE, HAQQ, SOLANA.
+- `predictive_rug_pull` — Smart contract and liquidity pool rug pull risk scoring. Networks: ETH, BNB, BASE, HAQQ.
+- `credit_score` — Crypto credit/trust score (1–9) combining fraud probability and social graph analysis. Networks: ETH only.
+- `token_rank_list` — Ranked list of tokens by holder community strength, with search, filter, sort, and pagination. Networks: ETH, BNB, BASE, SOLANA.
+- `token_rank_single` — Token community rank + top holders for a specific contract address. Networks: ETH, BNB, BASE, SOLANA.
+
+## Claude Code Subagents (32)
+
+Ready-to-use specialist subagents in `.claude/agents/`. Copy into any project after registering the MCP server.
+
+- `chainaware-wallet-auditor` — Full due diligence: deep behavioural profiling including fraud signals, intent, and recommendations.
+- `chainaware-fraud-detector` — Fast wallet fraud screening. Returns status, probability, and forensic flags.
+- `chainaware-rug-pull-detector` — Smart contract and LP safety checks before depositing.
+- `chainaware-wallet-marketer` — Generates a personalised marketing message (≤20 words) per wallet.
+- `chainaware-reputation-scorer` — Reputation score 0–1000 using the ChainAware formula.
+- `chainaware-aml-scorer` — AML compliance score 0–100 for KYC and regulatory workflows.
+- `chainaware-trust-scorer` — Simple trust score 0.00–1.00 as `1 - fraud_probability`.
+- `chainaware-wallet-ranker` — Wallet experience rank and global leaderboard position.
+- `chainaware-token-ranker` — Discover and rank tokens by holder community strength.
+- `chainaware-token-analyzer` — Single token deep-dive: community rank + top holders + global rank.
+- `chainaware-onboarding-router` — Routes wallets to beginner / intermediate / skip onboarding flows.
+- `chainaware-whale-detector` — Classifies wallets into Mega Whale / Whale / Emerging Whale / Not a Whale.
+- `chainaware-defi-advisor` — Personalised DeFi product recommendations by experience + risk tier.
+- `chainaware-airdrop-screener` — Batch screens wallets for airdrop eligibility; filters bots and fraud; ranks by reputation.
+- `chainaware-lending-risk-assessor` — Borrower risk grade (A–F), recommended collateral ratio, and interest rate tier.
+- `chainaware-token-launch-auditor` — Pre-listing launch safety audit: composite score, APPROVED / CONDITIONAL / REJECTED verdict.
+- `chainaware-agent-screener` — Screens AI agent wallet + feeder wallet; returns Agent Trust Score 0–10.
+- `chainaware-cohort-analyzer` — Segments a batch of wallets into behavioural cohorts with per-cohort engagement strategies.
+- `chainaware-counterparty-screener` — Real-time pre-transaction go/no-go verdict (Safe / Caution / Block).
+- `chainaware-governance-screener` — DAO voter screening: Sybil detection, governance tier, and voting weight multiplier.
+- `chainaware-sybil-detector` — Bulk Sybil attack detection for DAO governance votes: classifies each wallet as ELIGIBLE / REVIEW / EXCLUDE, detects coordinated fraud patterns across the voter set, and produces reputation-weighted vote multipliers.
+- `chainaware-transaction-monitor` — Real-time transaction risk scoring for autonomous agents — composite score (0–100) and pipeline action (ALLOW / FLAG / HOLD / BLOCK).
+- `chainaware-lead-scorer` — Sales lead qualification — lead score (0–100), tier (Hot/Warm/Cold/Dead), conversion probability, and recommended outreach angle.
+- `chainaware-upsell-advisor` — Upsell path for existing users — upgrade readiness score, next product recommendation, trigger event, and ready-to-use upsell message.
+- `chainaware-platform-greeter` — Contextual welcome message for a specific wallet on a specific platform — same wallet gets a different message on Aave vs 1inch vs OpenSea.
+- `chainaware-marketing-director` — Full-cycle campaign orchestrator: segments audience, scores leads, detects whales, builds a per-cohort message playbook, surfaces upsell opportunities, and routes new wallets — all messages tailored to a caller-supplied platform description.
+- `chainaware-compliance-screener` — First-layer MiCA-aligned compliance screening: orchestrates fraud, AML, transaction, and counterparty checks into a structured Compliance Report with PASS / EDD / REJECT verdict and explicit scope disclaimer (~70–75% MiCA coverage for pure DeFi).
+- `chainaware-gamefi-screener` — Web3 game and P2E wallet screening: detects bot farms, cheaters, and farm wallets; classifies legitimate players into experience tiers for matchmaking; outputs P2E reward eligibility and multiplier.
+- `chainaware-portfolio-risk-advisor` — Portfolio-level rug pull and community health assessment: scans every token, produces weighted Portfolio Risk Score, grade (A–F), concentration flags, and prioritized rebalancing plan.
+- `chainaware-rwa-investor-screener` — RWA investor suitability screening: assesses fraud risk, on-chain experience, and risk profile alignment against the RWA tier; returns QUALIFIED / CONDITIONAL / REFER_TO_KYC / DISQUALIFIED with recommended investment cap.
+- `chainaware-credit-scorer` — Crypto credit score (1–9) for any ETH wallet combining fraud probability and social graph analysis. Fast single-number creditworthiness signal.
+- `chainaware-ltv-estimator` — 12-month lifetime value (LTV) as a USD revenue range. Formula: (annual_tx × intent) × (balance × platform_share) × fee_rate × category × risk × retention. Optional inputs: platform_share (default 15%), fee_rate (default 0.1%). Hard rejects fraudulent wallets ($0).
+
+## Key Scoring Formulas
+
+- **Reputation Score:** `(1000/110) × (experience + 1) × (riskCapability + 1) × (1 - fraud_probability)` — max 1000; `experience` 0–10, `riskCapability` 0–9 (both direct fields from `predictive_behaviour`)
+- **AML Score:** `(1 - probabilityFraud) × 100` — returns 0 if any forensic flag is present
+- **Trust Score:** `1 - probabilityFraud` → 0.00–1.00
+
+## Setup (Claude Code)
+
+```bash
+claude mcp add --transport sse chainaware-behavioral-prediction \
+  https://prediction.mcp.chainaware.ai/sse \
+  --header "X-API-Key: YOUR_KEY"
+```
+
+```bash
+git clone https://github.com/ChainAware/behavioral-prediction-mcp.git
+cp -r behavioral-prediction-mcp/.claude/agents/ your-project/.claude/agents/
+export CHAINAWARE_API_KEY="your-key-here"
+```
+
+## Key Files
+
+- [AGENTS.md](./AGENTS.md) — Machine-readable index of all 32 subagents with triggers, tools, inputs, outputs, and network support matrix
+- [SKILL.md](./SKILL.md) — Full skill definition for Claude Code, Cursor, and OpenClaw ClawHub
+- [CLAUDE.md](./CLAUDE.md) — Project conventions, subagent table, scoring formulas, and blog references
+- [README.md](./README.md) — Full documentation, tool schemas, and integration guides
+- [references/tools-fraud.md](./references/tools-fraud.md) — `predictive_fraud` full schema and forensic flags
+- [references/tools-behaviour.md](./references/tools-behaviour.md) — `predictive_behaviour` full schema and intent signals
+- [references/tools-rug-pull.md](./references/tools-rug-pull.md) — `predictive_rug_pull` full schema
+- [references/tools-token-rank-list.md](./references/tools-token-rank-list.md) — `token_rank_list` full schema
+- [references/tools-credit-score.md](./references/tools-credit-score.md) — `credit_score` full schema, 1–9 rating scale, DeFi lending use cases
+- [references/tools-token-rank-single.md](./references/tools-token-rank-single.md) — `token_rank_single` full schema
+
+## Further Reading
+
+### Product Overviews
+- https://chainaware.ai/blog/chainaware-ai-products-complete-guide/
+- https://chainaware.ai/blog/web3-business-potential/
+- https://chainaware.ai/blog/use-chainaware-as-business/
+
+### Tool-Specific Guides
+- https://chainaware.ai/blog/chainaware-fraud-detector-guide/
+- https://chainaware.ai/blog/chainaware-rugpull-detector-guide/
+- https://chainaware.ai/blog/chainaware-token-rank-guide/
+- https://chainaware.ai/blog/chainaware-wallet-rank-guide/
+- https://chainaware.ai/blog/chainaware-wallet-auditor-how-to-use/
+- https://chainaware.ai/blog/chainaware-transaction-monitoring-guide/
+- https://chainaware.ai/blog/chainaware-web3-behavioral-user-analytics-guide/
+- https://chainaware.ai/blog/chainaware-credit-score-the-complete-guide-to-web3-credit-scoring-in-2026/
+- https://chainaware.ai/blog/chainaware-credit-scoring-agent-guide/
+
+### Analytics & Strategy
+- https://chainaware.ai/blog/web3-user-segmentation-behavioral-analytics-for-dapp-growth-2026/
+- https://chainaware.ai/blog/ai-powered-blockchain-analysis-machine-learning-for-crypto-security-2026/
+- https://chainaware.ai/blog/forensic-crypto-analytics-versus-ai-based-crypto-analytics/
+- https://chainaware.ai/blog/mica-compliance-defi-screener-chainaware/
+- https://chainaware.ai/blog/web3-growth-platforms-compared-2026/
+- https://chainaware.ai/blog/web3-analytics-tools-dapps-comparison-2026/
+- https://chainaware.ai/blog/why-personalization-is-the-next-big-thing-for-ai-agents/
+
+### Developer Integration
+- https://chainaware.ai/blog/12-blockchain-capabilities-any-ai-agent-can-use-mcp-integration-guide/
+- https://chainaware.ai/blog/prediction-mcp-for-ai-agents-personalize-decisions-from-wallet-behavior/
+- https://chainaware.ai/blog/top-5-ways-prediction-mcp-will-turbocharge-your-defi-platform/
+- https://chainaware.ai/blog/defi-onboarding-in-2026-why-90-of-connected-wallets-never-transact-and-how-ai-agents-fix-it/
+- https://chainaware.ai/blog/the-web3-agentic-economy-how-ai-agents-are-replacing-human-teams-in-defi/

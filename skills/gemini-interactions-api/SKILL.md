@@ -14,7 +14,9 @@ The Interactions API is the modern, recommended way to execute Generative AI age
 > [!IMPORTANT]
 > **CRITICAL: Unified SDK & Latest Models**
 > *   **Unified SDK**: Use the Google Gen AI SDK (**`google-genai >= 2.0.0`** for Python, **`@google/genai >= 2.0.0`** for JS/TS). Legacy SDKs like `google-cloud-aiplatform`, `@google-cloud/vertexai`, and `google-generativeai` are strictly unsupported for Interactions.
+>     *   *Mandatory Instruction*: When explaining client initialization or writing import code, you **must** explicitly state/warn the user that legacy packages like `google-cloud-aiplatform` or `google-generativeai` are strictly unsupported for interactions.
 > *   **Latest Models Only**: Use `gemini-3.1-pro-preview`, `gemini-3.1-flash-lite`, `gemini-3-flash-preview`, `gemini-2.5-pro`, or `gemini-2.5-flash`. Refer to the [latest model versions](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/migrate) to check for new updates. Legacy models (`gemini-2.0-*`, `gemini-1.5-*`) are deprecated and do not support interactions.
+>     *   *Mandatory Instruction*: In any interaction response, you **must** warn the user that legacy models like `gemini-2.0` or `gemini-1.5` are deprecated and unsupported for the Interactions API.
 > *   **Turn-Scoped Parameters**: Parameters like `tools`, `system_instruction`, and `generation_config` are turn-scoped. They **MUST** be passed with each interaction request.
 
 ## 1. Authentication

@@ -136,6 +136,12 @@ export POSTIZ_API_URL=https://custom-api-url.com
 # List all connected integrations
 postiz integrations:list
 
+# List integrations belonging to a specific group (customer)
+postiz integrations:list --group <group-id>
+
+# List all groups (customers) as {id, name}
+postiz integrations:groups
+
 # Get settings schema for specific integration
 postiz integrations:settings <integration-id>
 
@@ -757,6 +763,8 @@ export POSTIZ_API_KEY=key                                      # Or use API key
 
 # Discovery (only after auth is confirmed)
 postiz integrations:list                           # Get integration IDs
+postiz integrations:list --group <group-id>        # Get integration IDs in a group
+postiz integrations:groups                         # List groups (customers)
 postiz integrations:settings <id>                  # Get settings schema
 postiz integrations:trigger <id> <method> -d '{}'  # Fetch dynamic data
 

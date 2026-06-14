@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.0.6] - 2026-06-10
+
+### Changed
+
+- Re-released skill package with updated marketplace grouping and signed release trust artifacts for Vercel-compatible skill installation.
+
+## [0.0.5] - 2026-06-07
+
+### Security
+- Treat explicit malicious ClawHub and VirusTotal verdicts as blocking signals regardless of the numeric reputation score.
+
 ## [0.0.4] - 2026-05-13
 
 ### Security

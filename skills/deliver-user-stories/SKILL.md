@@ -1,11 +1,11 @@
 ---
 name: deliver-user-stories
-description: Generates user stories with clear acceptance criteria from product requirements or feature descriptions. Use when breaking down features for sprint planning, writing tickets, or communicating requirements to engineering.
+description: Generates user stories in the standard persona, action, benefit story format from product requirements or feature descriptions. Use when breaking a feature into stories for sprint planning, writing tickets, or communicating scope to engineering. For testable Given/When/Then acceptance criteria on a story, use deliver-acceptance-criteria; for boundary and failure scenarios, use deliver-edge-cases.
 license: Apache-2.0
 metadata:
   phase: deliver
-  version: "2.0.0"
-  updated: 2026-01-26
+  version: "2.1.0"
+  updated: 2026-06-10
   category: specification
   frameworks: [triple-diamond, lean-startup, design-thinking]
   author: product-on-purpose
@@ -13,7 +13,7 @@ metadata:
 <!-- PM-Skills | https://github.com/product-on-purpose/pm-skills | Apache 2.0 -->
 # User Stories
 
-User stories are concise descriptions of functionality from the user's perspective. They capture who needs something, what they need, and why . without prescribing how to build it. Good user stories enable teams to break large features into estimable, deliverable increments while maintaining focus on user value.
+User stories are concise descriptions of functionality from the user's perspective. They capture who needs something, what they need, and why - without prescribing how to build it. Good user stories enable teams to break large features into estimable, deliverable increments while maintaining focus on user value.
 
 ## When to Use
 
@@ -22,6 +22,13 @@ User stories are concise descriptions of functionality from the user's perspecti
 - When writing tickets for engineering teams
 - When communicating requirements to stakeholders in accessible terms
 - When prioritizing a backlog based on user value
+
+## When NOT to Use
+
+- You need deeper, QA-ready Given/When/Then coverage for a single story or slice -> use `deliver-acceptance-criteria`
+- You need the feature-wide catalog of boundary conditions and failure scenarios -> use `deliver-edge-cases`
+- The feature itself is not yet specified -> use `deliver-prd` first; stories should trace back to documented requirements
+- You want refinement-session outcomes (estimates, scope decisions, open questions) -> use `iterate-refinement-notes`
 
 ## Instructions
 
@@ -34,13 +41,13 @@ When asked to create user stories, follow these steps:
    Determine which users interact with this feature. Each story should be written for a specific persona, not generic "users." Different personas may need different stories for the same feature.
 
 3. **Break Down by User Goal**
-   Decompose the feature into distinct user goals. Each story should deliver a complete, valuable capability . something the user can actually do when the story is done.
+   Decompose the feature into distinct user goals. Each story should deliver a complete, valuable capability - something the user can actually do when the story is done.
 
 4. **Write Story Statements**
-   Use the format: "As a [persona], I want [action] so that [benefit]." The benefit clause is critical . it explains why this matters and helps prioritize.
+   Use the format: "As a [persona], I want [action] so that [benefit]." The benefit clause is critical - it explains why this matters and helps prioritize.
 
 5. **Define Acceptance Criteria**
-   Write specific, testable criteria using Given/When/Then format. Acceptance criteria define "done" . if all criteria pass, the story is complete.
+   Write specific, testable criteria using Given/When/Then format. Acceptance criteria define "done" - if all criteria pass, the story is complete.
 
 6. **Apply INVEST Criteria**
    Validate each story against INVEST: Independent, Negotiable, Valuable, Estimable, Small, Testable. Revise stories that don't meet these criteria.
@@ -50,7 +57,7 @@ When asked to create user stories, follow these steps:
 
 ## Output Format
 
-Use the template in `references/TEMPLATE.md` to structure the output.
+Use the template in `references/TEMPLATE.md` to structure the output. A complete output carries, per story: Story Header; User Story Statement; Context & Background; Acceptance Criteria; Design Notes; Technical Notes; Dependencies; Out of Scope; and Open Questions where any remain. Multi-story documents nest these sections under one heading per story, as the example shows.
 
 ## Quality Checklist
 

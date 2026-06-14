@@ -97,6 +97,18 @@ Plans are stored in `~/.vmware-aiops/plans/`, deleted on success, auto-cleaned a
 | Remove Host | `cluster remove-host <cluster> --host <host>` | Double | ✅ | ❌ |
 | Configure HA/DRS | `cluster configure <name> [--ha/--no-ha] [--drs/--no-drs]` | Double | ✅ | ❌ |
 
+> `remove-host` requires the host to be in **maintenance mode** first; the host is moved out of the cluster into the datacenter's host folder as a standalone host (`Folder.MoveIntoFolder_Task`).
+
+## Alarm Management
+
+| Operation | Command | Confirmation | vCenter | ESXi |
+|-----------|---------|:------------:|:-------:|:----:|
+| List Triggered Alarms | `alarm list [--target <t>]` | — | ✅ | ❌ |
+| Acknowledge Alarm | `alarm acknowledge <entity> <alarm>` | — | ✅ | ❌ |
+| Clear (Reset) Alarms | `alarm reset <entity> <alarm>` | Double | ✅ | ❌ |
+
+> **Blast radius**: vSphere has no per-alarm clear API. `alarm reset` / `reset_vcenter_alarm` uses `AlarmManager.ClearTriggeredAlarms`, which clears **all** triggered alarms matching the named alarm's entity type (host/VM/all) and current status (red/yellow) — not just the named one. The named alarm is looked up first (typos fail fast), and the result's `scope` field reports exactly what was cleared. Cleared alarms re-trigger automatically if their underlying condition persists.
+
 ## Scheduled Scanning & Notifications
 
 | Feature | Details |
@@ -112,7 +124,7 @@ Plans are stored in `~/.vmware-aiops/plans/`, deleted on success, auto-cleaned a
 | Feature | Details |
 |---------|---------|
 | Plan → Confirm → Execute → Log | Structured workflow: show current state, confirm changes, execute, audit log |
-| Double Confirmation | All destructive ops (power-off, delete, reconfigure, snapshot-revert/delete, clone, migrate) require 2 sequential confirmations — no bypass flags |
+| Double Confirmation | All destructive ops (power-off, delete, reconfigure, snapshot-revert/delete, clone, migrate, alarm clear) require 2 sequential confirmations — no bypass flags |
 | Rejection Logging | Declined confirmations are recorded in the audit trail for security review |
 | Audit Trail | All operations logged to `~/.vmware/audit.db` (SQLite WAL, via vmware-policy) with before/after state |
 | Input Validation | VM name length/format, CPU (1-128), memory (128-1048576 MB), disk (1-65536 GB) validated before execution |

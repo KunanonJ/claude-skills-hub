@@ -1,11 +1,11 @@
 ---
 name: define-hypothesis
-description: Defines a testable hypothesis with clear success metrics and validation approach. Use when forming assumptions to test, designing experiments, or aligning team on what success looks like.
+description: Defines a testable hypothesis with clear success metrics and a validation approach. Use when forming assumptions to test or aligning a team on what success looks like, before any experiment is designed. To design the A/B test or experiment that will validate the hypothesis, use measure-experiment-design.
 license: Apache-2.0
 metadata:
   phase: define
-  version: "2.0.0"
-  updated: 2026-01-26
+  version: "2.1.0"
+  updated: 2026-06-10
   category: ideation
   frameworks: [triple-diamond, lean-startup, design-thinking]
   author: product-on-purpose
@@ -23,12 +23,19 @@ A hypothesis is a testable prediction about how a change will affect user behavi
 - Before investing significant engineering resources in a feature
 - When pivoting direction and need to validate the new approach
 
+## When NOT to Use
+
+- You are ready to design the actual A/B test (variants, sample size, duration) -> use `measure-experiment-design`; this skill frames what to test, not how
+- The problem itself is still unframed -> use `define-problem-statement` first
+- You want to organize many assumptions and ideas into a discovery structure -> use `define-opportunity-tree`
+- The team needs the full business-model picture, not one testable claim -> use `foundation-lean-canvas`
+
 ## Instructions
 
 When asked to create a hypothesis, follow these steps:
 
 1. **State the Belief**
-   Articulate what you believe will happen. Use the structured format: "We believe that [action/change] for [target user] will [expected outcome]." Be specific about the intervention . vague hypotheses can't be tested.
+   Articulate what you believe will happen. Use the structured format: "We believe that [action/change] for [target user] will [expected outcome]." Be specific about the intervention - vague hypotheses can't be tested.
 
 2. **Identify the Target User**
    Define who this hypothesis applies to. A hypothesis about "users" is too broad. Specify the segment: new users in their first week, power users with 10+ sessions, churned users returning, etc.
@@ -47,7 +54,7 @@ When asked to create a hypothesis, follow these steps:
 
 ## Output Format
 
-Use the template in `references/TEMPLATE.md` to structure the output.
+Use the template in `references/TEMPLATE.md` to structure the output. A complete hypothesis document fills every template section: Hypothesis Statement; Background & Rationale; Target User Segment; Success Metrics; Validation Approach; Risks & Assumptions; and Timeline.
 
 ## Quality Checklist
 

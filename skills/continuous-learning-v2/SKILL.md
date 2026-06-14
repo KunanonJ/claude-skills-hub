@@ -1,27 +1,51 @@
 ---
 name: continuous-learning-v2
-description: フックを介してセッションを観察し、信頼度スコアリング付きのアトミックなインスティンクトを作成し、スキル/コマンド/エージェントに進化させるインスティンクトベースの学習システム。
-version: 2.0.0
+description: Sistema de aprendizaje basado en instintos que observa sesiones mediante hooks, crea instintos atómicos con puntuación de confianza y los evoluciona en skills/comandos/agentes. v2.1 agrega instintos con alcance de proyecto para prevenir contaminación entre proyectos.
+origin: ECC
+version: 2.1.0
 ---
 
-# Continuous Learning v2 - インスティンクトベースアーキテクチャ
+# Aprendizaje Continuo v2.1 - Arquitectura Basada en Instintos
 
-Claude Codeセッションを信頼度スコアリング付きの小さな学習済み行動である「インスティンクト」を通じて再利用可能な知識に変える高度な学習システム。
+Un sistema de aprendizaje avanzado que convierte tus sesiones de Claude Code en conocimiento reutilizable a través de "instintos" atómicos — pequeños comportamientos aprendidos con puntuación de confianza.
 
-## v2の新機能
+**v2.1** agrega **instintos con alcance de proyecto** — los patrones de React se quedan en tu proyecto React, las convenciones de Python se quedan en tu proyecto Python, y los patrones universales (como "siempre validar la entrada") se comparten globalmente.
 
-| 機能 | v1 | v2 |
-|---------|----|----|
-| 観察 | Stopフック（セッション終了） | PreToolUse/PostToolUse（100%信頼性） |
-| 分析 | メインコンテキスト | バックグラウンドエージェント（Haiku） |
-| 粒度 | 完全なスキル | アトミック「インスティンクト」 |
-| 信頼度 | なし | 0.3-0.9重み付け |
-| 進化 | 直接スキルへ | インスティンクト → クラスター → スキル/コマンド/エージェント |
-| 共有 | なし | インスティンクトのエクスポート/インポート |
+## Cuándo Activar
 
-## インスティンクトモデル
+- Configurar aprendizaje automático desde sesiones de Claude Code
+- Configurar extracción de comportamientos basada en instintos mediante hooks
+- Ajustar umbrales de confianza para comportamientos aprendidos
+- Revisar, exportar o importar librerías de instintos
+- Evolucionar instintos en skills, comandos o agentes completos
+- Gestionar instintos con alcance de proyecto vs globales
+- Promover instintos de alcance de proyecto a global
 
-インスティンクトは小さな学習済み行動です：
+## Qué hay de Nuevo en v2.1
+
+| Característica | v2.0 | v2.1 |
+|----------------|------|------|
+| Almacenamiento | Global (`~/.claude/homunculus/`) | Con alcance de proyecto (`${XDG_DATA_HOME:-~/.local/share}/ecc-homunculus/projects/<hash>/`) |
+| Alcance | Todos los instintos aplican en todas partes | Con alcance de proyecto + global |
+| Detección | Ninguna | URL remota de git / ruta del repositorio |
+| Promoción | N/A | Proyecto → global cuando se ve en 2+ proyectos |
+| Comandos | 4 (status/evolve/export/import) | 6 (+promote/projects) |
+| Entre proyectos | Riesgo de contaminación | Aislado por defecto |
+
+## Qué hay de Nuevo en v2 (vs v1)
+
+| Característica | v1 | v2 |
+|----------------|----|----|
+| Observación | Hook Stop (fin de sesión) | PreToolUse/PostToolUse (100% confiable) |
+| Análisis | Contexto principal | Agente en segundo plano (Haiku) |
+| Granularidad | Skills completos | "Instintos" atómicos |
+| Confianza | Ninguna | Ponderada 0.3-0.9 |
+| Evolución | Directamente a skill | Instintos → cluster → skill/comando/agente |
+| Compartir | Ninguno | Exportar/importar instintos |
+
+## El Modelo de Instinto
+
+Un instinto es un pequeño comportamiento aprendido:
 
 ```yaml
 ---
@@ -30,78 +54,108 @@ trigger: "when writing new functions"
 confidence: 0.7
 domain: "code-style"
 source: "session-observation"
+scope: project
+project_id: "a1b2c3d4e5f6"
+project_name: "my-react-app"
 ---
 
-# 関数型スタイルを優先
+# Prefer Functional Style
 
 ## Action
-適切な場合はクラスよりも関数型パターンを使用します。
+Use functional patterns over classes when appropriate.
 
 ## Evidence
-- 関数型パターンの優先が5回観察されました
-- ユーザーが2025-01-15にクラスベースのアプローチを関数型に修正しました
+- Observed 5 instances of functional pattern preference
+- User corrected class-based approach to functional on 2025-01-15
 ```
 
-**プロパティ：**
-- **アトミック** — 1つのトリガー、1つのアクション
-- **信頼度重み付け** — 0.3 = 暫定的、0.9 = ほぼ確実
-- **ドメインタグ付き** — code-style、testing、git、debugging、workflowなど
-- **証拠に基づく** — それを作成した観察を追跡
+**Propiedades:**
+- **Atómico** — un disparador, una acción
+- **Ponderado por confianza** — 0.3 = tentativo, 0.9 = casi seguro
+- **Etiquetado por dominio** — code-style, testing, git, debugging, workflow, etc.
+- **Respaldado por evidencia** — rastrea qué observaciones lo crearon
+- **Consciente del alcance** — `project` (por defecto) o `global`
 
-## 仕組み
+## Cómo Funciona
 
 ```
-セッションアクティビティ
-      │
-      │ フックがプロンプト + ツール使用をキャプチャ（100%信頼性）
-      ▼
-┌─────────────────────────────────────────┐
-│         observations.jsonl              │
-│   （プロンプト、ツール呼び出し、結果）       │
-└─────────────────────────────────────────┘
-      │
-      │ Observerエージェントが読み取り（バックグラウンド、Haiku）
-      ▼
-┌─────────────────────────────────────────┐
-│          パターン検出                    │
-│   • ユーザー修正 → インスティンクト      │
-│   • エラー解決 → インスティンクト        │
-│   • 繰り返しワークフロー → インスティンクト │
-└─────────────────────────────────────────┘
-      │
-      │ 作成/更新
-      ▼
-┌─────────────────────────────────────────┐
-│         instincts/personal/             │
-│   • prefer-functional.md (0.7)          │
-│   • always-test-first.md (0.9)          │
-│   • use-zod-validation.md (0.6)         │
-└─────────────────────────────────────────┘
-      │
-      │ /evolveクラスター
-      ▼
-┌─────────────────────────────────────────┐
-│              evolved/                   │
-│   • commands/new-feature.md             │
-│   • skills/testing-workflow.md          │
-│   • agents/refactor-specialist.md       │
-└─────────────────────────────────────────┘
+Actividad de Sesión (en un repositorio git)
+      |
+      | Los hooks capturan prompts + uso de herramientas (100% confiable)
+      | + detectan contexto del proyecto (git remote / ruta del repo)
+      v
++---------------------------------------------+
+|  projects/<project-hash>/observations.jsonl  |
+|   (prompts, llamadas de herramientas, resultados, proyecto)   |
++---------------------------------------------+
+      |
+      | El agente observador lee (segundo plano, Haiku)
+      v
++---------------------------------------------+
+|          DETECCIÓN DE PATRONES               |
+|   * Correcciones de usuario -> instinto      |
+|   * Resoluciones de errores -> instinto      |
+|   * Flujos de trabajo repetidos -> instinto  |
+|   * Decisión de alcance: ¿proyecto o global? |
++---------------------------------------------+
+      |
+      | Crea/actualiza
+      v
++---------------------------------------------+
+|  projects/<project-hash>/instincts/personal/ |
+|   * prefer-functional.yaml (0.7) [project]   |
+|   * use-react-hooks.yaml (0.9) [project]     |
++---------------------------------------------+
+|  instincts/personal/  (GLOBAL)               |
+|   * always-validate-input.yaml (0.85) [global]|
+|   * grep-before-edit.yaml (0.6) [global]     |
++---------------------------------------------+
+      |
+      | /evolve clusters + /promote
+      v
++---------------------------------------------+
+|  projects/<hash>/evolved/ (project-scoped)   |
+|  evolved/ (global)                           |
+|   * commands/new-feature.md                  |
+|   * skills/testing-workflow.md               |
+|   * agents/refactor-specialist.md            |
++---------------------------------------------+
 ```
 
-## クイックスタート
+## Detección de Proyecto
 
-### 1. 観察フックを有効化
+El sistema detecta automáticamente tu proyecto actual:
 
-`~/.claude/settings.json`に追加します。
+1. **Variable de entorno `CLAUDE_PROJECT_DIR`** (máxima prioridad)
+2. **`git remote get-url origin`** — hasheado para crear un ID de proyecto portable (el mismo repo en diferentes máquinas obtiene el mismo ID)
+3. **`git rev-parse --show-toplevel`** — respaldo usando la ruta del repo (específica de la máquina)
+4. **Respaldo global** — si no se detecta ningún proyecto, los instintos van al alcance global
 
-**プラグインとしてインストールした場合**（推奨）：
+Cada proyecto obtiene un ID hash de 12 caracteres (ej. `a1b2c3d4e5f6`). Un archivo de registro en `${XDG_DATA_HOME:-~/.local/share}/ecc-homunculus/projects.json` mapea IDs a nombres legibles.
 
-```json
-プラグインの `hooks/hooks.json` が Claude Code v2.1+ で自動読み込みされるため、`~/.claude/settings.json` に追加の hook 設定は不要です。`observe.sh` はそこで既に登録されています。
+### Directorio de Datos
 
-以前に `observe.sh` を `~/.claude/settings.json` にコピーした場合は、重複した `PreToolUse` / `PostToolUse` ブロックを削除してください。重複登録は二重実行と `${CLAUDE_PLUGIN_ROOT}` 解決エラーを引き起こします。この変数はプラグイン管理の `hooks/hooks.json` でのみ展開されます。
+Continuous-learning-v2 almacena los datos del observador fuera de `~/.claude` para que el guard de rutas sensibles de Claude Code no bloquee las escrituras de instintos en segundo plano:
 
-**`~/.claude/skills`に手動でインストールした場合**：
+1. `CLV2_HOMUNCULUS_DIR` cuando se establece a una ruta absoluta
+2. `$XDG_DATA_HOME/ecc-homunculus`
+3. `$HOME/.local/share/ecc-homunculus`
+
+Los usuarios existentes con datos en `~/.claude/homunculus` pueden migrar una vez:
+
+```bash
+bash skills/continuous-learning-v2/scripts/migrate-homunculus.sh
+```
+
+## Inicio Rápido
+
+### 1. Habilitar Hooks de Observación
+
+**Si está instalado como plugin** (recomendado):
+
+No se requiere bloque extra de hooks en `settings.json`. Claude Code v2.1+ carga automáticamente el `hooks/hooks.json` del plugin, y `observe.sh` ya está registrado allí.
+
+**Si está instalado manualmente** en `~/.claude/skills`, agregar esto a tu `~/.claude/settings.json`:
 
 ```json
 {
@@ -124,145 +178,55 @@ source: "session-observation"
 }
 ```
 
-### 2. ディレクトリ構造を初期化
-
-Python CLIが自動的に作成しますが、手動で作成することもできます：
+### 2. Usar los Comandos de Instinto
 
 ```bash
-mkdir -p ~/.claude/homunculus/{instincts/{personal,inherited},evolved/{agents,skills,commands}}
-touch ~/.claude/homunculus/observations.jsonl
+/instinct-status     # Mostrar instintos aprendidos (proyecto + global)
+/evolve              # Agrupar instintos relacionados en skills/comandos
+/instinct-export     # Exportar instintos a archivo
+/instinct-import     # Importar instintos de otros
+/promote             # Promover instintos de proyecto a alcance global
+/projects            # Listar todos los proyectos conocidos y sus conteos de instintos
 ```
 
-### 3. インスティンクトコマンドを使用
+## Guía de Decisión de Alcance
 
-```bash
-/instinct-status     # 信頼度スコア付きの学習済みインスティンクトを表示
-/evolve              # 関連するインスティンクトをスキル/コマンドにクラスター化
-/instinct-export     # 共有のためにインスティンクトをエクスポート
-/instinct-import     # 他の人からインスティンクトをインポート
-```
+| Tipo de Patrón | Alcance | Ejemplos |
+|----------------|---------|---------|
+| Convenciones de lenguaje/framework | **project** | "Usar React hooks", "Seguir patrones Django REST" |
+| Preferencias de estructura de archivos | **project** | "Pruebas en `__tests__`/", "Componentes en src/components/" |
+| Estilo de código | **project** | "Usar estilo funcional", "Preferir dataclasses" |
+| Estrategias de manejo de errores | **project** | "Usar tipo Result para errores" |
+| Prácticas de seguridad | **global** | "Validar entrada de usuario", "Sanitizar SQL" |
+| Buenas prácticas generales | **global** | "Escribir pruebas primero", "Siempre manejar errores" |
+| Preferencias de flujo de trabajo de herramientas | **global** | "Grep antes de Edit", "Read antes de Write" |
+| Prácticas de Git | **global** | "Conventional commits", "Commits pequeños y enfocados" |
 
-## コマンド
+## Puntuación de Confianza
 
-| コマンド | 説明 |
-|---------|-------------|
-| `/instinct-status` | すべての学習済みインスティンクトを信頼度と共に表示 |
-| `/evolve` | 関連するインスティンクトをスキル/コマンドにクラスター化 |
-| `/instinct-export` | 共有のためにインスティンクトをエクスポート |
-| `/instinct-import <file>` | 他の人からインスティンクトをインポート |
+La confianza evoluciona con el tiempo:
 
-## 設定
+| Puntuación | Significado | Comportamiento |
+|------------|-------------|----------------|
+| 0.3 | Tentativo | Sugerido pero no aplicado |
+| 0.5 | Moderado | Aplicado cuando es relevante |
+| 0.7 | Fuerte | Auto-aprobado para aplicación |
+| 0.9 | Casi seguro | Comportamiento central |
 
-`config.json`を編集：
+**La confianza aumenta** cuando:
+- El patrón se observa repetidamente
+- El usuario no corrige el comportamiento sugerido
+- Instintos similares de otras fuentes coinciden
 
-```json
-{
-  "version": "2.0",
-  "observation": {
-    "enabled": true,
-    "store_path": "~/.claude/homunculus/observations.jsonl",
-    "max_file_size_mb": 10,
-    "archive_after_days": 7
-  },
-  "instincts": {
-    "personal_path": "~/.claude/homunculus/instincts/personal/",
-    "inherited_path": "~/.claude/homunculus/instincts/inherited/",
-    "min_confidence": 0.3,
-    "auto_approve_threshold": 0.7,
-    "confidence_decay_rate": 0.05
-  },
-  "observer": {
-    "enabled": true,
-    "model": "haiku",
-    "run_interval_minutes": 5,
-    "patterns_to_detect": [
-      "user_corrections",
-      "error_resolutions",
-      "repeated_workflows",
-      "tool_preferences"
-    ]
-  },
-  "evolution": {
-    "cluster_threshold": 3,
-    "evolved_path": "~/.claude/homunculus/evolved/"
-  }
-}
-```
+**La confianza disminuye** cuando:
+- El usuario corrige explícitamente el comportamiento
+- El patrón no se observa por períodos extendidos
+- Aparece evidencia contradictoria
 
-## ファイル構造
+## Privacidad
 
-```
-~/.claude/homunculus/
-├── identity.json           # プロフィール、技術レベル
-├── observations.jsonl      # 現在のセッション観察
-├── observations.archive/   # 処理済み観察
-├── instincts/
-│   ├── personal/           # 自動学習されたインスティンクト
-│   └── inherited/          # 他の人からインポート
-└── evolved/
-    ├── agents/             # 生成された専門エージェント
-    ├── skills/             # 生成されたスキル
-    └── commands/           # 生成されたコマンド
-```
-
-## Skill Creatorとの統合
-
-[Skill Creator GitHub App](https://skill-creator.app)を使用すると、**両方**が生成されます：
-- 従来のSKILL.mdファイル（後方互換性のため）
-- インスティンクトコレクション（v2学習システム用）
-
-リポジトリ分析からのインスティンクトには`source: "repo-analysis"`があり、ソースリポジトリURLが含まれます。
-
-## 信頼度スコアリング
-
-信頼度は時間とともに進化します：
-
-| スコア | 意味 | 動作 |
-|-------|---------|----------|
-| 0.3 | 暫定的 | 提案されるが強制されない |
-| 0.5 | 中程度 | 関連する場合に適用 |
-| 0.7 | 強い | 適用が自動承認される |
-| 0.9 | ほぼ確実 | コア動作 |
-
-**信頼度が上がる**場合：
-- パターンが繰り返し観察される
-- ユーザーが提案された動作を修正しない
-- 他のソースからの類似インスティンクトが一致する
-
-**信頼度が下がる**場合：
-- ユーザーが明示的に動作を修正する
-- パターンが長期間観察されない
-- 矛盾する証拠が現れる
-
-## 観察にスキルではなくフックを使用する理由は？
-
-> 「v1はスキルに依存して観察していました。スキルは確率的で、Claudeの判断に基づいて約50-80%の確率で発火します。」
-
-フックは**100%の確率で**決定論的に発火します。これは次のことを意味します：
-- すべてのツール呼び出しが観察される
-- パターンが見逃されない
-- 学習が包括的
-
-## 後方互換性
-
-v2はv1と完全に互換性があります：
-- 既存の`~/.claude/skills/learned/`スキルは引き続き機能
-- Stopフックは引き続き実行される（ただしv2にもフィードされる）
-- 段階的な移行パス：両方を並行して実行
-
-## プライバシー
-
-- 観察はマシン上で**ローカル**に保持されます
-- **インスティンクト**（パターン）のみをエクスポート可能
-- 実際のコードや会話内容は共有されません
-- エクスポートする内容を制御できます
-
-## 関連
-
-- [Skill Creator](https://skill-creator.app) - リポジトリ履歴からインスティンクトを生成
-- Homunculus - v2アーキテクチャのインスピレーション（アトミック観察、信頼度スコアリング、インスティンクト進化パイプライン）
-- [The Longform Guide](https://x.com/affaanmustafa/status/2014040193557471352) - 継続的学習セクション
-
----
-
-*インスティンクトベースの学習：一度に1つの観察で、Claudeにあなたのパターンを教える。*
+- Las observaciones permanecen **locales** en tu máquina
+- Los instintos con alcance de proyecto están aislados por proyecto
+- Solo los **instintos** (patrones) pueden exportarse — no las observaciones brutas
+- No se comparte código real ni contenido de conversaciones
+- Tú controlas qué se exporta y promueve

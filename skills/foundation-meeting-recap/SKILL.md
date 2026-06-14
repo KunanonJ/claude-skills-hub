@@ -1,11 +1,11 @@
 ---
 name: foundation-meeting-recap
-description: Produces a topic-segmented post-meeting summary for attendees with decisions highlighted and actions captured inline per topic (plus a consolidated action view at the end). Auto-populates topic skeleton from a sibling meeting-agenda when available and reconciles planned vs. actual topics. Accepts transcripts from Zoom, Meet, Otter, Fireflies, Krisp MCP, or manual notes; runs on variable-quality input without blocking.
+description: Produces a topic-segmented post-meeting summary for attendees with decisions highlighted and actions captured inline per topic (plus a consolidated action view at the end). Auto-populates topic skeleton from a sibling meeting-agenda when available and reconciles planned vs. actual topics. Accepts transcripts from Zoom, Meet, Otter, Fireflies, Krisp MCP, or manual notes; runs on variable-quality input without blocking. For synthesizing user research interviews across participants, use discover-interview-synthesis.
 license: Apache-2.0
 metadata:
   classification: foundation
-  version: "1.0.0"
-  updated: 2026-04-17
+  version: "1.0.2"
+  updated: 2026-06-14
   category: meeting
   frameworks: [meeting-skills-family]
   author: product-on-purpose
@@ -30,6 +30,7 @@ This skill belongs to the Meeting Skills Family. It conforms to the [Meeting Ski
 
 - Communicating outcomes to non-attendees. Use `foundation-stakeholder-update`. recap assumes reader context; stakeholder-update translates to readers without it.
 - Cross-meeting synthesis (patterns across multiple meetings). Use `foundation-meeting-synthesize`.
+- Synthesizing user research interviews across participants, not one meeting's attendees. Use `discover-interview-synthesis`. recap organizes a single meeting by topic; interview-synthesis finds patterns across many research conversations.
 - Live meeting note-taking. This skill consumes finished inputs; it does not transcribe live.
 
 ## Zero-friction execution

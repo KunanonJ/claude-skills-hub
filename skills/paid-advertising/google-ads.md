@@ -1,5 +1,20 @@
 # Google Ads — Campaign Reference Guide
 
+## API version notes (June 2026)
+
+If you're writing code or constructing API requests against the Google Ads API, target **v24** (released 22 April 2026). Key v23→v24 breaking changes for ad construction:
+
+| Object | Change | Effect |
+|---|---|---|
+| `DemandGenVideoResponsiveAdInfo` | `videos` and `logo_images` now REQUIRED | Requests without both fields fail |
+| `VideoResponsiveAdInfo` | `videos` and `logo_images` now REQUIRED | Requests without both fields fail |
+| `Campaign.video_brand_safety_suitability` | REMOVED — moved to Customer level | Set the control once on the Customer object, not per-campaign |
+| `CallAd` / `CallAdInfo` | REMOVED (deprecation completed) | Use Call Assets instead |
+
+v23.1 (25 February 2026) added `text_guidelines.term_exclusions` and `text_guidelines.messaging_restrictions` to AI-generated assets in **Performance Max** and **Search** — use these to pipe a brand's banned-word list and approved messaging directly into PMax's asset-gen guardrails.
+
+Source: [Google Ads API release notes](https://developers.google.com/google-ads/api/docs/release-notes).
+
 ## Campaign Types Overview
 
 | Campaign Type | Best For | Targeting | Creative Format | Typical ROAS Range |

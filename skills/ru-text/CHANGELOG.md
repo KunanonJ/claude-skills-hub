@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- **Google Antigravity** install instructions in both READMEs. Antigravity reads the SKILL.md format natively, so ru-text works with no repackaging — copy the skill into `~/.gemini/antigravity/skills/` (global) or `<project>/.agent/skills/` (workspace); paths vary by version, so the section links the official Antigravity Skills codelab. Brings the documented platform count to 12.
+
+### Changed
+- **README is now Russian-primary.** `README.md` holds the Russian text (the GitHub default, fitting for a Russian-text-quality tool) and the English version moved to `README.en.md`. A prominent, welcoming English switcher sits atop `README.md` so English readers are greeted and one click from the full English docs. File history preserved via `git mv`.
+
+## [1.8.0] - 2026-06-08
+
+### Added
+- **AD-6. Manufactured antithesis (ложная антитеза).** New experience-based rule in `addenda.md` flagging the symmetric contrastive-negation pair («не X, а Y», «это не…, это…», «не там, где…, а там, где…») where the negated pole has no antecedent in the text -- one of the strongest machine-generation tells in Russian prose, measured at high density in AI drafts and near-zero in live human writing. A three-condition test (no antecedent + symmetry + zero-increment deletion test) keeps it from ever flagging the author's asymmetric self-correction («вернее…», «то есть…», «не то чтобы X, но Y»), numeric corrections, fixed idioms, or antecedent-backed antitheses. Severity **Medium** — the strongest tell in this set; a primary signal in the С — Structure dimension (supporting Ч — Clarity), reflected in the С rubric anchors and wired into `scoring.md`. Dimension weights and non-compensatory caps are unchanged; density (not a single pair) is what moves the score. Quota: 0 in headings, 0–2 legitimate pairs in body.
+- **AD-7. Preemptive virtue qualifier (непрошенная оговорка «без воды»).** New rule in `addenda.md` flagging the trailing self-praise flourish that denies a fault the reader never raised — «без воды», «без виляния», «честно говоря», «и без всякой магии» — an announced-not-demonstrated virtue and a frequent machine tell, cousin to AD-4. Allow-list keeps informative «без» (без сахара, без интернета, ноль моков — без заглушек), genuine epistemic qualifiers (строго говоря), and conversational/literary discourse markers (честно говоря — register carve-out, cf. AD-2.3); single-counts with AD-2 to avoid double-charging the same fragment across Ч and С. Severity Low; secondary signal in Ч — Clarity (supporting С — Structure), wired into `scoring.md`.
+
+### Changed
+- **Editorial-reference precedence generalised.** The "register and precedence" note in `typography.md` (section C.4) previously scoped the editorial-over-metrological rule to the percent sign. It now states the general principle: human-oriented references (Ководство, Справочник издателя, Розенталь) take precedence for general and web text, and ГОСТ 8.417 applies only where those references are silent or as a context variant for scientific-technical documents. No paragraph numbers are attached to «Ководство»; the percent-sign provenance remains Шульмейстер/Гиленсон plus the de-facto Runet norm.
+
 ## [1.7.3] - 2026-05-29
 
 ### Added

@@ -1,11 +1,11 @@
 ---
 name: iterate-retrospective
-description: Facilitates and documents a team retrospective capturing what went well, what to improve, and action items. Use at the end of sprints, projects, or milestones to reflect and improve team practices.
+description: Facilitates and documents a team retrospective capturing what went well, what to improve, and action items. Use at the end of a sprint, project, or milestone to reflect and improve team practices. To bank individual learnings into organizational memory afterward, use iterate-lessons-log.
 license: Apache-2.0
 metadata:
   phase: iterate
-  version: "2.0.0"
-  updated: 2026-01-26
+  version: "2.1.0"
+  updated: 2026-06-10
   category: reflection
   frameworks: [triple-diamond, lean-startup, design-thinking]
   author: product-on-purpose
@@ -23,6 +23,13 @@ A retrospective is a structured reflection that helps teams learn from their exp
 - When team dynamics feel off and need addressing
 - At regular intervals (monthly, quarterly) even without specific triggers
 - When onboarding new team members to establish improvement culture
+
+## When NOT to Use
+
+- You want one durable learning banked for the organization -> use `iterate-lessons-log`; the retro is the ceremony, the log entry outlives it
+- You are scoring an OKR cycle at close -> use `measure-okr-grader`
+- The reflection must end in a pivot-or-persevere call -> use `iterate-pivot-decision`
+- You need a recap of a general (non-retro) meeting -> use `foundation-meeting-recap`
 
 ## Instructions
 
@@ -55,7 +62,7 @@ When asked to facilitate or document a retrospective, follow these steps:
 
 ## Output Format
 
-Use the template in `references/TEMPLATE.md` to structure the output.
+Use the template in `references/TEMPLATE.md` to structure the output. A complete retrospective fills every template section: Overview; Previous Retrospective Review; What Went Well; What to Improve; Discussion Notes; Action Items; Parking Lot; Metrics and Trends; Facilitator Notes; and Next Retrospective.
 
 ## Quality Checklist
 
@@ -65,7 +72,7 @@ Before finalizing, verify:
 - [ ] Both positives and improvements are captured
 - [ ] Action items have owners and due dates
 - [ ] Previous retrospective actions are reviewed
-- [ ] Document is useful to someone who wasn't in the room
+- [ ] A reader who missed the retro can tell what was decided and who owns each action from this document alone
 
 ## Examples
 

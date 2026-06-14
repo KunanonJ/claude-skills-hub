@@ -1,0 +1,132 @@
+{
+  "skill": "alterlab-paper-reviewer",
+  "evals": [
+    {
+      "id": "full-review-manuscript",
+      "prompt": "Here is my manuscript on declining birth rates and management strategies of private universities in Turkey. Can you do a full peer review of it before I submit?",
+      "expected_output": "Invokes alterlab-paper-reviewer in full mode: runs Phase 0 field analysis, presents a 5-reviewer configuration card (EIC + 3 peer reviewers + Devil's Advocate) for confirmation, then produces 5 independent review reports plus an Editorial Decision Letter and prioritized Revision Roadmap.",
+      "assertions": [
+        {
+          "type": "should_trigger",
+          "value": true
+        },
+        {
+          "type": "behavior",
+          "value": "Configures a 5-reviewer panel (Editor-in-Chief + 3 peer reviewers + Devil's Advocate) and produces multiple independent reviews culminating in a single Editorial Decision and a prioritized Revision Roadmap."
+        },
+        {
+          "type": "output_contains",
+          "value": "Revision Roadmap"
+        }
+      ]
+    },
+    {
+      "id": "methodology-focus",
+      "prompt": "I don't need a whole review, just help me check the methodology and statistical validity of this study's sampling and analysis.",
+      "expected_output": "Invokes alterlab-paper-reviewer in methodology-focus mode: activates field_analyst plus methodology_reviewer only, producing an in-depth methodology review covering research design, sampling strategy, statistical validity, effect sizes, and reproducibility.",
+      "assertions": [
+        {
+          "type": "should_trigger",
+          "value": true
+        },
+        {
+          "type": "behavior",
+          "value": "Runs only the field_analyst and methodology_reviewer agents (not the full panel) and assesses sampling, statistical validity, effect sizes, and reproducibility."
+        }
+      ]
+    },
+    {
+      "id": "re-review-verification",
+      "prompt": "I revised my paper based on the previous round's comments and attached my response-to-reviewers. Can you do a verification review to confirm the revisions actually addressed each comment?",
+      "expected_output": "Invokes alterlab-paper-reviewer in re-review mode: builds a checklist from the original Revision Roadmap, EIC checks each item with FULLY_ADDRESSED / PARTIALLY_ADDRESSED / NOT_ADDRESSED / MADE_WORSE status, scans for new issues introduced during revision, and issues a new Decision.",
+      "assertions": [
+        {
+          "type": "should_trigger",
+          "value": true
+        },
+        {
+          "type": "behavior",
+          "value": "Builds a revision-response checklist and marks each prior comment FULLY_ADDRESSED / PARTIALLY_ADDRESSED / NOT_ADDRESSED / MADE_WORSE, then issues a new Decision."
+        },
+        {
+          "type": "output_contains",
+          "value": "FULLY_ADDRESSED"
+        }
+      ]
+    },
+    {
+      "id": "devils-advocate-critique",
+      "prompt": "Critique this paper hard - I want someone to attack the core argument, find the logical fallacies, and tell me the strongest counter-argument against my thesis.",
+      "expected_output": "Invokes alterlab-paper-reviewer (full review including the Devil's Advocate reviewer): surfaces the strongest counter-argument, detects cherry-picking, confirmation bias, overgeneralization, and logic-chain gaps, and flags any CRITICAL findings that block an Accept decision.",
+      "assertions": [
+        {
+          "type": "should_trigger",
+          "value": true
+        },
+        {
+          "type": "behavior",
+          "value": "Engages the Devil's Advocate reviewer to produce the strongest counter-argument and detect logical fallacies; any CRITICAL finding blocks an Accept decision."
+        }
+      ]
+    },
+    {
+      "id": "guided-socratic-review",
+      "prompt": "Walk me through the problems in my paper using a guided approach so I understand them myself rather than just getting a list of fixes.",
+      "expected_output": "Invokes alterlab-paper-reviewer in guided mode: runs the reviews internally then enters Socratic dialogue, opening with strengths, progressively revealing methodology, domain, perspective, and Devil's Advocate issues through questions, and ending with a structured Revision Roadmap.",
+      "assertions": [
+        {
+          "type": "should_trigger",
+          "value": true
+        },
+        {
+          "type": "behavior",
+          "value": "Enters a Socratic dialogue that opens with strengths and reveals issues through questions rather than dumping a fix list, ending with a structured Revision Roadmap."
+        }
+      ]
+    },
+    {
+      "id": "no-trigger-write-paper",
+      "prompt": "Help me draft the introduction and literature review sections for a new paper on AI in higher education quality assurance.",
+      "expected_output": "defers to alterlab-paper-writer / does not invoke alterlab-paper-reviewer (this is paper writing, not reviewing an existing manuscript)",
+      "assertions": [
+        {
+          "type": "should_not_trigger",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "no-trigger-deep-research",
+      "prompt": "Before I write anything, do a deep literature investigation on how machine learning has been used to predict university closure risk.",
+      "expected_output": "defers to alterlab-deep-research / does not invoke alterlab-paper-reviewer (this is upstream topic investigation, not peer review of a manuscript)",
+      "assertions": [
+        {
+          "type": "should_not_trigger",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "no-trigger-revise-from-comments",
+      "prompt": "I already have the reviewer comments and the revision roadmap - now just make the actual edits to my manuscript for me.",
+      "expected_output": "defers to alterlab-paper-writer (revision mode) / does not invoke alterlab-paper-reviewer (the user wants the revisions executed, not the paper reviewed again)",
+      "assertions": [
+        {
+          "type": "should_not_trigger",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "no-trigger-single-referee-report",
+      "prompt": "A journal asked me to be a reviewer. Write me one structured, checklist-based referee report on this manuscript with a recommendation.",
+      "expected_output": "defers to alterlab-peer-review / does not invoke alterlab-paper-reviewer (the user wants a single reviewer's structured report, not a simulated multi-reviewer panel with an editorial decision)",
+      "assertions": [
+        {
+          "type": "should_not_trigger",
+          "value": true
+        }
+      ]
+    }
+  ]
+}

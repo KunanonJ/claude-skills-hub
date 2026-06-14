@@ -1,23 +1,44 @@
 ---
 name: continuous-learning
-description: Claude Codeセッションから再利用可能なパターンを自動的に抽出し、将来の使用のために学習済みスキルとして保存します。
+description: "[OBSOLETO - usar continuous-learning-v2] Extractor de skill por hook Stop v1 heredado. v2 es un superconjunto estricto con aprendizaje basado en instintos, con alcance de proyecto y hooks confiables. No invocar v1; dirigir solicitudes de aprendizaje continuo, aprendizaje de sesión y extracción de patrones a continuous-learning-v2."
+origin: ECC
 ---
 
-# 継続学習スキル
+# Skill de Aprendizaje Continuo - OBSOLETO
 
-Claude Codeセッションを終了時に自動的に評価し、学習済みスキルとして保存できる再利用可能なパターンを抽出します。
+> **OBSOLETO el 2026-04-28.** Usar `continuous-learning-v2` en su lugar. v2 es un superconjunto estricto: la observación por hook Stop se convierte en observación PreToolUse/PostToolUse, los skills completos se convierten en instintos atómicos con puntuación de confianza, y el almacenamiento solo global se convierte en almacenamiento con alcance de proyecto más promoción global.
+>
+> Este archivo se mantiene como referencia de archivo y compatibilidad retroactiva con instalaciones existentes.
 
-## 動作原理
+---
 
-このスキルは各セッション終了時に**Stopフック**として実行されます:
+## Documentación Original v1 (archivo)
 
-1. **セッション評価**: セッションに十分なメッセージがあるか確認(デフォルト: 10以上)
-2. **パターン検出**: セッションから抽出可能なパターンを識別
-3. **スキル抽出**: 有用なパターンを`~/.claude/skills/learned/`に保存
+Evalúa automáticamente las sesiones de Claude Code al terminar para extraer patrones reutilizables que pueden guardarse como skills aprendidos.
 
-## 設定
+## Cuándo Activar
 
-`config.json`を編集してカスタマイズ:
+- Configurar extracción automática de patrones desde sesiones de Claude Code
+- Configurar el hook Stop para evaluación de sesiones
+- Revisar o curar skills aprendidos en `~/.claude/skills/learned/`
+- Ajustar umbrales de extracción o categorías de patrones
+- Comparar enfoques v1 (este) vs v2 (basado en instintos)
+
+## Estado
+
+Este skill v1 sigue siendo compatible, pero `continuous-learning-v2` es la ruta preferida para nuevas instalaciones. Mantener v1 cuando explícitamente quieras el flujo de extracción por hook Stop más simple o necesites compatibilidad con flujos de trabajo de skills aprendidos más antiguos.
+
+## Cómo Funciona
+
+Este skill se ejecuta como un **hook Stop** al final de cada sesión:
+
+1. **Evaluación de Sesión**: Verifica si la sesión tiene suficientes mensajes (por defecto: 10+)
+2. **Detección de Patrones**: Identifica patrones extraíbles de la sesión
+3. **Extracción de Skills**: Guarda patrones útiles en `~/.claude/skills/learned/`
+
+## Configuración
+
+Editar `config.json` para personalizar:
 
 ```json
 {
@@ -40,19 +61,19 @@ Claude Codeセッションを終了時に自動的に評価し、学習済みス
 }
 ```
 
-## パターンの種類
+## Tipos de Patrones
 
-| パターン | 説明 |
-|---------|-------------|
-| `error_resolution` | 特定のエラーの解決方法 |
-| `user_corrections` | ユーザー修正からのパターン |
-| `workarounds` | フレームワーク/ライブラリの癖への解決策 |
-| `debugging_techniques` | 効果的なデバッグアプローチ |
-| `project_specific` | プロジェクト固有の規約 |
+| Patrón | Descripción |
+|--------|-------------|
+| `error_resolution` | Cómo se resolvieron errores específicos |
+| `user_corrections` | Patrones de correcciones del usuario |
+| `workarounds` | Soluciones a peculiaridades de frameworks/librerías |
+| `debugging_techniques` | Enfoques efectivos de depuración |
+| `project_specific` | Convenciones específicas del proyecto |
 
-## フック設定
+## Configuración del Hook
 
-`~/.claude/settings.json`に追加:
+Agregar a tu `~/.claude/settings.json`:
 
 ```json
 {
@@ -68,43 +89,42 @@ Claude Codeセッションを終了時に自動的に評価し、学習済みス
 }
 ```
 
-## Stopフックを使用する理由
+## Por Qué Hook Stop?
 
-- **軽量**: セッション終了時に1回だけ実行
-- **ノンブロッキング**: すべてのメッセージにレイテンシを追加しない
-- **完全なコンテキスト**: セッション全体のトランスクリプトにアクセス可能
+- **Ligero**: Se ejecuta una vez al final de la sesión
+- **No bloqueante**: No agrega latencia a cada mensaje
+- **Contexto completo**: Tiene acceso a la transcripción completa de la sesión
 
-## 関連項目
+## Relacionado
 
-- [The Longform Guide](https://x.com/affaanmustafa/status/2014040193557471352) - 継続学習に関するセクション
-- `/learn`コマンド - セッション中の手動パターン抽出
+- `/learn` — Extracción manual de patrones a mitad de sesión
 
 ---
 
-## 比較ノート (調査: 2025年1月)
+## Notas de Comparación (Investigación: Ene 2025)
 
 ### vs Homunculus
 
-Homunculus v2はより洗練されたアプローチを採用:
+Homunculus v2 adopta un enfoque más sofisticado:
 
-| 機能 | このアプローチ | Homunculus v2 |
-|---------|--------------|---------------|
-| 観察 | Stopフック(セッション終了時) | PreToolUse/PostToolUseフック(100%信頼性) |
-| 分析 | メインコンテキスト | バックグラウンドエージェント(Haiku) |
-| 粒度 | 完全なスキル | 原子的な「本能」 |
-| 信頼度 | なし | 0.3-0.9の重み付け |
-| 進化 | 直接スキルへ | 本能 → クラスタ → スキル/コマンド/エージェント |
-| 共有 | なし | 本能のエクスポート/インポート |
+| Característica | Nuestro Enfoque | Homunculus v2 |
+|----------------|-----------------|---------------|
+| Observación | Hook Stop (fin de sesión) | Hooks PreToolUse/PostToolUse (100% confiable) |
+| Análisis | Contexto principal | Agente en segundo plano (Haiku) |
+| Granularidad | Skills completos | "Instintos" atómicos |
+| Confianza | Ninguna | Ponderada 0.3-0.9 |
+| Evolución | Directamente a skill | Instintos → cluster → skill/comando/agente |
+| Compartir | Ninguno | Exportar/importar instintos |
 
-**homunculusからの重要な洞察:**
-> "v1はスキルに観察を依存していました。スキルは確率的で、発火率は約50-80%です。v2は観察にフック(100%信頼性)を使用し、学習された振る舞いの原子単位として本能を使用します。"
+**Insight clave de homunculus:**
+> "v1 dependía de skills para observar. Los skills son probabilísticos — se activan ~50-80% del tiempo. v2 usa hooks para la observación (100% confiable) e instintos como unidad atómica de comportamiento aprendido."
 
-### v2の潜在的な改善
+### Mejoras Potenciales v2
 
-1. **本能ベースの学習** - 信頼度スコアリングを持つ、より小さく原子的な振る舞い
-2. **バックグラウンド観察者** - 並行して分析するHaikuエージェント
-3. **信頼度の減衰** - 矛盾した場合に本能の信頼度が低下
-4. **ドメインタグ付け** - コードスタイル、テスト、git、デバッグなど
-5. **進化パス** - 関連する本能をスキル/コマンドにクラスタ化
+1. **Aprendizaje basado en instintos** — Comportamientos más pequeños y atómicos con puntuación de confianza
+2. **Observador en segundo plano** — Agente Haiku analizando en paralelo
+3. **Decaimiento de confianza** — Los instintos pierden confianza si son contradichos
+4. **Etiquetado de dominio** — code-style, testing, git, debugging, etc.
+5. **Ruta de evolución** — Agrupar instintos relacionados en skills/comandos
 
-詳細: `docs/continuous-learning-v2-spec.md`を参照。
+Ver: `docs/continuous-learning-v2-spec.md` para la especificación completa.

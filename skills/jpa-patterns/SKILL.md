@@ -1,13 +1,23 @@
 ---
 name: jpa-patterns
 description: JPA/Hibernate patterns for entity design, relationships, query optimization, transactions, auditing, indexing, pagination, and pooling in Spring Boot.
+origin: ECC
 ---
 
-# JPA/Hibernate パターン
+# JPA/Hibernate Patterns
 
-Spring Bootでのデータモデリング、リポジトリ、パフォーマンスチューニングに使用します。
+Use for data modeling, repositories, and performance tuning in Spring Boot.
 
-## エンティティ設計
+## When to Activate
+
+- Designing JPA entities and table mappings
+- Defining relationships (@OneToMany, @ManyToOne, @ManyToMany)
+- Optimizing queries (N+1 prevention, fetch strategies, projections)
+- Configuring transactions, auditing, or soft deletes
+- Setting up pagination, sorting, or custom repository methods
+- Tuning connection pooling (HikariCP) or second-level caching
+
+## Entity Design
 
 ```java
 @Entity
@@ -33,29 +43,31 @@ public class MarketEntity {
 }
 ```
 
-監査を有効化:
+Enable auditing:
 ```java
 @Configuration
 @EnableJpaAuditing
 class JpaConfig {}
 ```
 
-## リレーションシップとN+1防止
+## Relationships and N+1 Prevention
 
 ```java
 @OneToMany(mappedBy = "market", cascade = CascadeType.ALL, orphanRemoval = true)
 private List<PositionEntity> positions = new ArrayList<>();
 ```
 
-- デフォルトで遅延ロード。必要に応じてクエリで `JOIN FETCH` を使用
-- コレクションでは `EAGER` を避け、読み取りパスにはDTOプロジェクションを使用
+- Default to lazy loading; use `JOIN FETCH` in queries when needed
+- Avoid `EAGER` on collections; use DTO projections for read paths
 
 ```java
-@Query("select m from MarketEntity m left join fetch m.positions where m.id = :id")
+@Query("select distinct m from MarketEntity m left join fetch m.positions where m.id = :id")
 Optional<MarketEntity> findWithPositions(@Param("id") Long id);
 ```
 
-## リポジトリパターン
+> **Note:** `DISTINCT` is required when fetch-joining a one-to-many collection — without it, the root entity is duplicated once per child row in the result set. For single-result queries (`findById`) the duplication is harmless, but for list queries it produces duplicate root objects. Hibernate 6+ applies de-duplication automatically in some cases, but explicit `DISTINCT` keeps behavior portable and clear.
+
+## Repository Patterns
 
 ```java
 public interface MarketRepository extends JpaRepository<MarketEntity, Long> {
@@ -66,7 +78,7 @@ public interface MarketRepository extends JpaRepository<MarketEntity, Long> {
 }
 ```
 
-- 軽量クエリにはプロジェクションを使用:
+- Use projections for lightweight queries:
 ```java
 public interface MarketSummary {
   Long getId();
@@ -76,11 +88,11 @@ public interface MarketSummary {
 Page<MarketSummary> findAllBy(Pageable pageable);
 ```
 
-## トランザクション
+## Transactions
 
-- サービスメソッドに `@Transactional` を付ける
-- 読み取りパスを最適化するために `@Transactional(readOnly = true)` を使用
-- 伝播を慎重に選択。長時間実行されるトランザクションを避ける
+- Annotate service methods with `@Transactional`
+- Use `@Transactional(readOnly = true)` for read paths to optimize
+- Choose propagation carefully; avoid long-running transactions
 
 ```java
 @Transactional
@@ -92,25 +104,25 @@ public Market updateStatus(Long id, MarketStatus status) {
 }
 ```
 
-## ページネーション
+## Pagination
 
 ```java
 PageRequest page = PageRequest.of(pageNumber, pageSize, Sort.by("createdAt").descending());
 Page<MarketEntity> markets = repo.findByStatus(MarketStatus.ACTIVE, page);
 ```
 
-カーソルライクなページネーションには、順序付けでJPQLに `id > :lastId` を含める。
+For cursor-like pagination, include `id > :lastId` in JPQL with ordering.
 
-## インデックス作成とパフォーマンス
+## Indexing and Performance
 
-- 一般的なフィルタ（`status`、`slug`、外部キー）にインデックスを追加
-- クエリパターンに一致する複合インデックスを使用（`status, created_at`）
-- `select *` を避け、必要な列のみを投影
-- `saveAll` と `hibernate.jdbc.batch_size` でバッチ書き込み
+- Add indexes for common filters (`status`, `slug`, foreign keys)
+- Use composite indexes matching query patterns (`status, created_at`)
+- Avoid `select *`; project only needed columns
+- Batch writes with `saveAll` and `hibernate.jdbc.batch_size`
 
-## コネクションプーリング（HikariCP）
+## Connection Pooling (HikariCP)
 
-推奨プロパティ:
+Recommended properties:
 ```
 spring.datasource.hikari.maximum-pool-size=20
 spring.datasource.hikari.minimum-idle=5
@@ -118,24 +130,24 @@ spring.datasource.hikari.connection-timeout=30000
 spring.datasource.hikari.validation-timeout=5000
 ```
 
-PostgreSQL LOB処理には、次を追加:
+For PostgreSQL LOB handling, add:
 ```
 spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation=true
 ```
 
-## キャッシング
+## Caching
 
-- 1次キャッシュはEntityManagerごと。トランザクション間でエンティティを保持しない
-- 読み取り集約型エンティティには、2次キャッシュを慎重に検討。退避戦略を検証
+- 1st-level cache is per EntityManager; avoid keeping entities across transactions
+- For read-heavy entities, consider second-level cache cautiously; validate eviction strategy
 
-## マイグレーション
+## Migrations
 
-- FlywayまたはLiquibaseを使用。本番環境でHibernate自動DDLに依存しない
-- マイグレーションを冪等かつ追加的に保つ。計画なしに列を削除しない
+- Use Flyway or Liquibase; never rely on Hibernate auto DDL in production
+- Keep migrations idempotent and additive; avoid dropping columns without plan
 
-## データアクセステスト
+## Testing Data Access
 
-- 本番環境を反映するために、Testcontainersを使用した `@DataJpaTest` を優先
-- ログを使用してSQL効率をアサート: パラメータ値には `logging.level.org.hibernate.SQL=DEBUG` と `logging.level.org.hibernate.orm.jdbc.bind=TRACE` を設定
+- Prefer `@DataJpaTest` with Testcontainers to mirror production
+- Assert SQL efficiency using logs: set `logging.level.org.hibernate.SQL=DEBUG` and `logging.level.org.hibernate.orm.jdbc.bind=TRACE` for parameter values
 
-**注意**: エンティティを軽量に保ち、クエリを意図的にし、トランザクションを短く保ちます。フェッチ戦略とプロジェクションでN+1を防ぎ、読み取り/書き込みパスにインデックスを作成します。
+**Remember**: Keep entities lean, queries intentional, and transactions short. Prevent N+1 with fetch strategies and projections, and index for your read/write paths.

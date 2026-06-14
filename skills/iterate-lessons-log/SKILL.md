@@ -1,11 +1,11 @@
 ---
 name: iterate-lessons-log
-description: Creates a structured lessons learned entry for organizational memory. Use after projects, incidents, or significant learnings to capture knowledge for future teams and initiatives.
+description: Creates a structured lessons learned entry for organizational memory. Use after an incident, a completed project, or a significant learning to record knowledge for future teams and initiatives. Distinct from iterate-retrospective, which facilitates the team ceremony; this skill writes the durable lessons entry that outlives it.
 license: Apache-2.0
 metadata:
   phase: iterate
-  version: "2.0.0"
-  updated: 2026-01-26
+  version: "2.1.0"
+  updated: 2026-06-10
   category: reflection
   frameworks: [triple-diamond, lean-startup, design-thinking]
   author: product-on-purpose
@@ -23,6 +23,13 @@ A lessons log entry captures significant learning from projects, incidents, or e
 - After discovering a pattern that keeps recurring
 - When experienced team members leave (capture their knowledge)
 - During post-mortems to preserve learnings
+
+## When NOT to Use
+
+- You are facilitating the team ceremony itself -> use `iterate-retrospective`; this skill banks the durable entry that outlives it
+- You are deciding whether to change direction based on results -> use `iterate-pivot-decision`
+- The learning is an experiment readout -> use `measure-experiment-results` first, then bank the transferable lesson here
+- You are updating stakeholders on what was learned -> use `foundation-stakeholder-update`
 
 ## Instructions
 
@@ -51,7 +58,7 @@ When asked to create a lessons log entry, follow these steps:
 
 ## Output Format
 
-Use the template in `references/TEMPLATE.md` to structure the output.
+Use the template in `references/TEMPLATE.md` to structure the output. A complete entry fills every template section: Metadata; Summary; Context; What Happened; The Lesson; Recommendations; Applicability; Supporting Evidence; Tags and Categories; and Review and Updates.
 
 ## Quality Checklist
 

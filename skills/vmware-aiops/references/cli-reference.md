@@ -47,8 +47,16 @@ vmware-aiops cluster info <name>
 vmware-aiops cluster create <name> [--ha] [--drs] [--drs-behavior fullyAutomated|partiallyAutomated|manual] [--datacenter <dc>]
 vmware-aiops cluster delete <name>
 vmware-aiops cluster add-host <cluster> --host <hostname>
-vmware-aiops cluster remove-host <cluster> --host <hostname>
+vmware-aiops cluster remove-host <cluster> --host <hostname>   # host must be in maintenance mode; moved to datacenter host folder as standalone
 vmware-aiops cluster configure <name> [--ha/--no-ha] [--drs/--no-drs] [--drs-behavior <behavior>]
+
+# Alarm Management
+vmware-aiops alarm list [--target <name>]
+vmware-aiops alarm acknowledge <entity_name> <alarm_name> [--target <name>]
+vmware-aiops alarm reset <entity_name> <alarm_name> [--target <name>]
+# NOTE: 'alarm reset' clears ALL triggered alarms matching the named alarm's
+# entity type (host/VM/all) and current status (red/yellow) — vSphere has no
+# per-alarm clear API. Double confirmation required; output reports the scope.
 
 # Datastore
 vmware-aiops datastore browse <ds-name> [--path <subdir>]

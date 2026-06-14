@@ -1,34 +1,34 @@
 ---
 name: content-hash-cache-pattern
-description: SHA-256コンテンツハッシュを使用して、高コストなファイル処理結果をキャッシュします — パス非依存、自動無効化、サービスレイヤーの分離。
+description: Cache expensive file processing results using SHA-256 content hashes — path-independent, auto-invalidating, with service layer separation.
 origin: ECC
 ---
 
-# コンテンツハッシュファイルキャッシュパターン
+# Content-Hash File Cache Pattern
 
-SHA-256コンテンツハッシュをキャッシュキーとして使用して、高コストなファイル処理結果（PDF解析、テキスト抽出、画像分析）をキャッシュします。パスベースのキャッシュとは異なり、このアプローチはファイルの移動/名前変更に対して生き残り、コンテンツが変更されたときに自動的に無効化されます。
+Cache expensive file processing results (PDF parsing, text extraction, image analysis) using SHA-256 content hashes as cache keys. Unlike path-based caching, this approach survives file moves/renames and auto-invalidates when content changes.
 
-## 起動条件
+## When to Activate
 
-- ファイル処理パイプラインの構築（PDF、画像、テキスト抽出）
-- 処理コストが高く、同じファイルが繰り返し処理される場合
-- `--cache/--no-cache`CLIオプションが必要な場合
-- 既存の純粋な関数を変更せずにキャッシュを追加したい場合
+- Building file processing pipelines (PDF, images, text extraction)
+- Processing cost is high and same files are processed repeatedly
+- Need a `--cache/--no-cache` CLI option
+- Want to add caching to existing pure functions without modifying them
 
-## コアパターン
+## Core Pattern
 
-### 1. コンテンツハッシュベースのキャッシュキー
+### 1. Content-Hash-Based Cache Key
 
-パスではなくファイルコンテンツをキャッシュキーとして使用します：
+Use file content (not path) as the cache key:
 
 ```python
 import hashlib
 from pathlib import Path
 
-_HASH_CHUNK_SIZE = 65536  # 大きなファイルには64KBチャンク
+_HASH_CHUNK_SIZE = 65536  # 64KB chunks for large files
 
 def compute_file_hash(path: Path) -> str:
-    """ファイルコンテンツのSHA-256（大きなファイルにはチャンク処理）。"""
+    """SHA-256 of file contents (chunked for large files)."""
     if not path.is_file():
         raise FileNotFoundError(f"File not found: {path}")
     sha256 = hashlib.sha256()
@@ -41,9 +41,9 @@ def compute_file_hash(path: Path) -> str:
     return sha256.hexdigest()
 ```
 
-**なぜコンテンツハッシュ？** ファイルの名前変更/移動 = キャッシュヒット。コンテンツ変更 = 自動無効化。インデックスファイル不要。
+**Why content hash?** File rename/move = cache hit. Content change = automatic invalidation. No index file needed.
 
-### 2. キャッシュエントリの凍結データクラス
+### 2. Frozen Dataclass for Cache Entry
 
 ```python
 from dataclasses import dataclass
@@ -52,12 +52,12 @@ from dataclasses import dataclass
 class CacheEntry:
     file_hash: str
     source_path: str
-    document: ExtractedDocument  # キャッシュされた結果
+    document: ExtractedDocument  # The cached result
 ```
 
-### 3. ファイルベースのキャッシュストレージ
+### 3. File-Based Cache Storage
 
-各キャッシュエントリは`{hash}.json`として保存されます — ハッシュによるO(1)検索、インデックスファイル不要。
+Each cache entry is stored as `{hash}.json` — O(1) lookup by hash, no index file required.
 
 ```python
 import json
@@ -78,12 +78,12 @@ def read_cache(cache_dir: Path, file_hash: str) -> CacheEntry | None:
         data = json.loads(raw)
         return deserialize_entry(data)
     except (json.JSONDecodeError, ValueError, KeyError):
-        return None  # 破損をキャッシュミスとして扱う
+        return None  # Treat corruption as cache miss
 ```
 
-### 4. サービスレイヤーラッパー（SRP）
+### 4. Service Layer Wrapper (SRP)
 
-処理関数を純粋に保ちます。キャッシュを別のサービスレイヤーとして追加します。
+Keep the processing function pure. Add caching as a separate service layer.
 
 ```python
 def extract_with_cache(
@@ -92,19 +92,19 @@ def extract_with_cache(
     cache_enabled: bool = True,
     cache_dir: Path = Path(".cache"),
 ) -> ExtractedDocument:
-    """サービスレイヤー: キャッシュチェック -> 抽出 -> キャッシュ書き込み。"""
+    """Service layer: cache check -> extraction -> cache write."""
     if not cache_enabled:
-        return extract_text(file_path)  # 純粋な関数、キャッシュの知識なし
+        return extract_text(file_path)  # Pure function, no cache knowledge
 
     file_hash = compute_file_hash(file_path)
 
-    # キャッシュを確認
+    # Check cache
     cached = read_cache(cache_dir, file_hash)
     if cached is not None:
         logger.info("Cache hit: %s (hash=%s)", file_path.name, file_hash[:12])
         return cached.document
 
-    # キャッシュミス -> 抽出 -> 保存
+    # Cache miss -> extract -> store
     logger.info("Cache miss: %s (hash=%s)", file_path.name, file_hash[:12])
     doc = extract_text(file_path)
     entry = CacheEntry(file_hash=file_hash, source_path=str(file_path), document=doc)
@@ -112,50 +112,50 @@ def extract_with_cache(
     return doc
 ```
 
-## 主要な設計上の決定
+## Key Design Decisions
 
-| 決定 | 根拠 |
+| Decision | Rationale |
 |----------|-----------|
-| SHA-256コンテンツハッシュ | パス非依存、コンテンツ変更で自動無効化 |
-| `{hash}.json`ファイル命名 | O(1)検索、インデックスファイル不要 |
-| サービスレイヤーラッパー | SRP: 抽出は純粋に保ち、キャッシュは別の関心事 |
-| 手動JSONシリアル化 | 凍結データクラスのシリアル化を完全制御 |
-| 破損は`None`を返す | グレースフルデグラデーション、次回の実行で再処理 |
-| `cache_dir.mkdir(parents=True)` | 最初の書き込み時に遅延ディレクトリ作成 |
+| SHA-256 content hash | Path-independent, auto-invalidates on content change |
+| `{hash}.json` file naming | O(1) lookup, no index file needed |
+| Service layer wrapper | SRP: extraction stays pure, cache is a separate concern |
+| Manual JSON serialization | Full control over frozen dataclass serialization |
+| Corruption returns `None` | Graceful degradation, re-processes on next run |
+| `cache_dir.mkdir(parents=True)` | Lazy directory creation on first write |
 
-## ベストプラクティス
+## Best Practices
 
-- **パスではなくコンテンツをハッシュ** — パスは変わるが、コンテンツのアイデンティティは変わらない
-- **大きなファイルはチャンク処理でハッシュ** — ファイル全体をメモリに読み込まないようにする
-- **処理関数を純粋に保つ** — キャッシュについて何も知らないようにする
-- **切り捨てたハッシュでキャッシュヒット/ミスをログ記録** — デバッグのため
-- **破損をグレースフルに処理** — 無効なキャッシュエントリはミスとして扱い、クラッシュしない
+- **Hash content, not paths** — paths change, content identity doesn't
+- **Chunk large files** when hashing — avoid loading entire files into memory
+- **Keep processing functions pure** — they should know nothing about caching
+- **Log cache hit/miss** with truncated hashes for debugging
+- **Handle corruption gracefully** — treat invalid cache entries as misses, never crash
 
-## 避けるべきアンチパターン
+## Anti-Patterns to Avoid
 
 ```python
-# 悪い例: パスベースのキャッシュ（ファイルの移動/名前変更で壊れる）
+# BAD: Path-based caching (breaks on file move/rename)
 cache = {"/path/to/file.pdf": result}
 
-# 悪い例: 処理関数内にキャッシュロジックを追加（SRP違反）
+# BAD: Adding cache logic inside the processing function (SRP violation)
 def extract_text(path, *, cache_enabled=False, cache_dir=None):
-    if cache_enabled:  # この関数は今や2つの責任を持っている
+    if cache_enabled:  # Now this function has two responsibilities
         ...
 
-# 悪い例: ネストされた凍結データクラスでdataclasses.asdict()を使用
-# （複雑なネストされた型で問題を引き起こす可能性がある）
-data = dataclasses.asdict(entry)  # 代わりに手動シリアル化を使用
+# BAD: Using dataclasses.asdict() with nested frozen dataclasses
+# (can cause issues with complex nested types)
+data = dataclasses.asdict(entry)  # Use manual serialization instead
 ```
 
-## 使用すべき場合
+## When to Use
 
-- ファイル処理パイプライン（PDF解析、OCR、テキスト抽出、画像分析）
-- `--cache/--no-cache`オプションが有益なCLIツール
-- 同じファイルが複数回にわたって現れるバッチ処理
-- 既存の純粋な関数を変更せずにキャッシュを追加する場合
+- File processing pipelines (PDF parsing, OCR, text extraction, image analysis)
+- CLI tools that benefit from `--cache/--no-cache` options
+- Batch processing where the same files appear across runs
+- Adding caching to existing pure functions without modifying them
 
-## 使用すべきでない場合
+## When NOT to Use
 
-- 常に最新でなければならないデータ（リアルタイムフィード）
-- 非常に大きなキャッシュエントリ（代わりにストリーミングを検討）
-- ファイルコンテンツ以外のパラメータに依存する結果（例：異なる抽出設定）
+- Data that must always be fresh (real-time feeds)
+- Cache entries that would be extremely large (consider streaming instead)
+- Results that depend on parameters beyond file content (e.g., different extraction configs)

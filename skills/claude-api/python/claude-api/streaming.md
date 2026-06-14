@@ -4,8 +4,8 @@
 
 ```python
 with client.messages.stream(
-    model="claude-opus-4-8",
-    max_tokens=64000,
+    model="claude-opus-4-6",
+    max_tokens=1024,
     messages=[{"role": "user", "content": "Write a story"}]
 ) as stream:
     for text in stream.text_stream:
@@ -16,29 +16,13 @@ with client.messages.stream(
 
 ```python
 async with async_client.messages.stream(
-    model="claude-opus-4-8",
-    max_tokens=64000,
+    model="claude-opus-4-6",
+    max_tokens=1024,
     messages=[{"role": "user", "content": "Write a story"}]
 ) as stream:
     async for text in stream.text_stream:
         print(text, end="", flush=True)
 ```
-
-### Low-level: `stream=True`
-
-`messages.stream()` (above) is the recommended helper — it accumulates state and exposes `text_stream` / `get_final_message()`. If you only need the raw event iterator and want lower memory use, pass `stream=True` to `messages.create()` instead:
-
-```python
-for event in client.messages.create(
-    model="claude-opus-4-8",
-    max_tokens=64000,
-    messages=[{"role": "user", "content": "Write a story"}],
-    stream=True,
-):
-    print(event.type)
-```
-
-No final-message accumulation is done for you in this form.
 
 ---
 
@@ -46,12 +30,12 @@ No final-message accumulation is done for you in this form.
 
 Claude may return text, thinking blocks, or tool use. Handle each appropriately:
 
-> **Fable 5 / Opus 4.8 / Opus 4.7 / Opus 4.6:** Use `thinking: {type: "adaptive"}`. On older models, use `thinking: {type: "enabled", budget_tokens: N}` instead.
+> **Opus 4.6:** Use `thinking: {type: "adaptive"}`. On older models, use `thinking: {type: "enabled", budget_tokens: N}` instead.
 
 ```python
 with client.messages.stream(
-    model="claude-opus-4-8",
-    max_tokens=64000,
+    model="claude-opus-4-6",
+    max_tokens=16000,
     thinking={"type": "adaptive"},
     messages=[{"role": "user", "content": "Analyze this problem"}]
 ) as stream:
@@ -77,8 +61,8 @@ The Python tool runner currently returns complete messages. Use streaming for in
 
 ```python
 with client.messages.stream(
-    model="claude-opus-4-8",
-    max_tokens=64000,
+    model="claude-opus-4-6",
+    max_tokens=4096,
     tools=tools,
     messages=messages
 ) as stream:
@@ -95,8 +79,8 @@ with client.messages.stream(
 
 ```python
 with client.messages.stream(
-    model="claude-opus-4-8",
-    max_tokens=64000,
+    model="claude-opus-4-6",
+    max_tokens=1024,
     messages=[{"role": "user", "content": "Hello"}]
 ) as stream:
     for text in stream.text_stream:
@@ -142,8 +126,8 @@ def stream_with_progress(client, **kwargs):
 ```python
 try:
     with client.messages.stream(
-        model="claude-opus-4-8",
-        max_tokens=64000,
+        model="claude-opus-4-6",
+        max_tokens=1024,
         messages=[{"role": "user", "content": "Write a story"}]
     ) as stream:
         for text in stream.text_stream:
@@ -176,4 +160,3 @@ except anthropic.APIStatusError as e:
 3. **Track token usage** — The `message_delta` event contains usage information
 4. **Use timeouts** — Set appropriate timeouts for your application
 5. **Default to streaming** — Use `.get_final_message()` to get the complete response even when streaming, giving you timeout protection without needing to handle individual events
-6. **Large `max_tokens` without streaming raises `ValueError`** — The SDK refuses non-streaming requests it estimates will exceed ~10 minutes (idle connections drop). Pass `stream=True` / use `messages.stream()`, or explicitly override `timeout`, to suppress the guard.

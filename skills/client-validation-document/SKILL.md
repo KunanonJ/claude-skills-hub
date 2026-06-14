@@ -245,7 +245,7 @@ User: We've completed Parts 2, 3, 4 for Acme. Time to prepare the Client Validat
 
 Skill response:
 1. Verify pre-conditions ✓
-2. Read all 8 source documents (4 from Part 3 + 4 from Part 4)
+2. Pull findings from the 8 source documents (4 from Part 3 + 4 from Part 4) using grep first to locate each category's section, then targeted Read with offset+limit — avoid bulk-Read on all 8 files up front or you'll blow the per-skill 5K-token budget
 3. Extract 18 material findings across categories A–F:
    - 4 in Business & SBU
    - 3 in Audience & Segmentation

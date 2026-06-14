@@ -1,0 +1,23 @@
+{
+  "$schema": "https://glama.ai/mcp/schemas/server.json",
+  "maintainers": ["ChainAware","Astrit11"],
+  "name": "behavioral-prediction-mcp",
+  "description": "The Behavioural Prediction MCP Server provides AI-powered tools to analyze wallet behaviour prediction,fraud detection and rug pull prediction.",
+  "type": "mcp_server",
+  "framework": "FastMCP 2.12.0",
+  "transport": ["sse"],
+  "keywords": [
+    "mcp",
+    "blockchain",
+    "web3",
+    "defi",
+    "mcp-server",
+    "awesome-mcp-servers",
+    "claude-mcp",
+    "aml",
+    "behavioral-prediction",
+    "trust",
+    "credit-score",
+    "web3-persona"
+  ]
+}

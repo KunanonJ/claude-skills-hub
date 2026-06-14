@@ -1,56 +1,56 @@
 ---
 name: laravel-tdd
-description: Laravel での TDD：PHPUnit と Pest、ファクトリー、データベーステスト、フェイク、カバレッジターゲット
+description: Desarrollo guiado por pruebas para Laravel con PHPUnit y Pest, factories, pruebas de base de datos, fakes y objetivos de cobertura.
 origin: ECC
 ---
 
-# Laravel TDD ワークフロー
+# Flujo de Trabajo TDD en Laravel
 
-PHPUnit と Pest を使用した Laravel アプリケーション用のテスト駆動開発。80%+ カバレッジ（ユニット + フィーチャー）。
+Desarrollo guiado por pruebas para aplicaciones Laravel usando PHPUnit y Pest con 80%+ de cobertura (unit + feature).
 
-## 使用時機
+## Cuándo Usar
 
-- Laravel の新機能またはエンドポイント
-- バグ修正またはリファクタリング
-- Eloquent モデル、ポリシー、ジョブ、通知のテスト
-- プロジェクトが PHPUnit を標準化していない限り、新しいテストには Pest を優先
+- Nuevas funcionalidades o endpoints en Laravel
+- Correcciones de bugs o refactorizaciones
+- Probar modelos Eloquent, policies, jobs y notifications
+- Preferir Pest para pruebas nuevas a menos que el proyecto ya esté estandarizado en PHPUnit
 
-## 仕組み
+## Cómo Funciona
 
-### RED-GREEN-REFACTOR サイクル
+### Ciclo Rojo-Verde-Refactorizar
 
-1) テスト失敗を書く
-2) 最小限の変更を実装して合格させる
-3) テストを緑に保ちながらリファクタリング
+1) Escribir una prueba fallida
+2) Implementar el cambio mínimo para que pase
+3) Refactorizar manteniendo las pruebas en verde
 
-### テスト層
+### Capas de Prueba
 
-- **ユニット**：純粋な PHP クラス、値オブジェクト、サービス
-- **フィーチャー**：HTTP エンドポイント、認証、バリデーション、ポリシー
-- **統合**：データベース + キュー + 外部バウンダリー
+- **Unit**: clases PHP puras, objetos de valor, servicios
+- **Feature**: endpoints HTTP, autenticación, validación, policies
+- **Integration**: base de datos + colas + límites externos
 
-スコープに基づいて層を選択：
+Elegir capas según el alcance:
 
-- **ユニット**テストを純粋なビジネスロジックとサービスに使用。
-- **フィーチャー**テストを HTTP、認証、バリデーション、レスポンス形状に使用。
-- **統合**テストを DB/キュー/外部サービスを一緒に検証するときに使用。
+- Usar pruebas **Unit** para lógica de negocio pura y servicios.
+- Usar pruebas **Feature** para HTTP, autenticación, validación y forma de respuesta.
+- Usar pruebas **Integration** cuando se validen BD/colas/servicios externos juntos.
 
-### データベース戦略
+### Estrategia de Base de Datos
 
-- `RefreshDatabase` ほとんどのフィーチャー/統合テスト用（テスト実行ごとにマイグレーションを 1 回実行し、次に各テストをトランザクション内でラップ；メモリ内データベースは各テストごとに再マイグレーションする可能性がある）
-- `DatabaseTransactions` スキーマがすでにマイグレーションされており、テストごとのロールバックのみが必要なとき
-- `DatabaseMigrations` すべてのテストで完全な migrate/fresh が必要なとき、またはコストを負担できるとき
+- `RefreshDatabase` para la mayoría de pruebas feature/integration (ejecuta migraciones una vez por ejecución de prueba, luego envuelve cada prueba en una transacción cuando está soportado; las bases de datos en memoria pueden re-migrar por prueba)
+- `DatabaseTransactions` cuando el esquema ya está migrado y solo se necesita rollback por prueba
+- `DatabaseMigrations` cuando se necesita un migrate/fresh completo para cada prueba y se puede asumir el costo
 
-`RefreshDatabase` をデータベースに触れるテストのデフォルトとして使用：トランザクション サポート付きデータベースの場合、マイグレーション ステップ フラグを使用して テスト実行ごとに 1 回実行し、次に各テストをトランザクション内でラップします；`:memory:` SQLite または非トランザクションの接続では、各テストの前にマイグレーションします。スキーマがすでにマイグレーションされており、テストごとのロールバックのみが必要なときは `DatabaseTransactions` を使用します。
+Usar `RefreshDatabase` como predeterminado para pruebas que tocan la base de datos: para bases de datos con soporte de transacciones, ejecuta las migraciones una vez por ejecución de prueba (mediante un flag estático) y envuelve cada prueba en una transacción; para SQLite `:memory:` o conexiones sin transacciones, migra antes de cada prueba. Usar `DatabaseTransactions` cuando el esquema ya está migrado y solo se necesitan rollbacks por prueba.
 
-### テストフレームワーク選択
+### Elección del Framework de Pruebas
 
-- **新しいテストの場合は Pest をデフォルト**で使用。
-- **PHPUnit** はプロジェクトがすでにそれを標準化している、またはPHPUnit 固有のツールが必要なときのみ使用。
+- Usar **Pest** por defecto para pruebas nuevas cuando esté disponible.
+- Usar **PHPUnit** solo si el proyecto ya lo estandariza o requiere herramientas específicas de PHPUnit.
 
-## 例
+## Ejemplos
 
-### PHPUnit 例
+### Ejemplo con PHPUnit
 
 ```php
 use App\Models\User;
@@ -75,7 +75,7 @@ final class ProjectControllerTest extends TestCase
 }
 ```
 
-### フィーチャーテスト例（HTTP レイヤー）
+### Ejemplo de Prueba Feature (Capa HTTP)
 
 ```php
 use App\Models\Project;
@@ -100,7 +100,7 @@ final class ProjectIndexTest extends TestCase
 }
 ```
 
-### Pest 例
+### Ejemplo con Pest
 
 ```php
 use App\Models\User;
@@ -123,7 +123,7 @@ test('owner can create project', function () {
 });
 ```
 
-### フィーチャーテスト Pest 例（HTTP レイヤー）
+### Ejemplo de Prueba Feature con Pest (Capa HTTP)
 
 ```php
 use App\Models\Project;
@@ -145,22 +145,22 @@ test('projects index returns paginated results', function () {
 });
 ```
 
-### ファクトリーと状態
+### Factories y Estados
 
-- テストデータにはファクトリーを使用
-- エッジケース（アーカイブ済み、管理者、トライアル）の状態を定義
+- Usar factories para datos de prueba
+- Definir estados para casos límite (archivado, admin, trial)
 
 ```php
 $user = User::factory()->state(['role' => 'admin'])->create();
 ```
 
-### データベーステスト
+### Pruebas de Base de Datos
 
-- クリーンな状態には `RefreshDatabase` を使用
-- テストを隔離して決定論的に保つ
-- 手動クエリより `assertDatabaseHas` を優先
+- Usar `RefreshDatabase` para estado limpio
+- Mantener las pruebas aisladas y deterministas
+- Preferir `assertDatabaseHas` sobre consultas manuales
 
-### 永続性テスト例
+### Ejemplo de Prueba de Persistencia
 
 ```php
 use App\Models\Project;
@@ -182,12 +182,12 @@ final class ProjectRepositoryTest extends TestCase
 }
 ```
 
-### 副作用のためのフェイク
+### Fakes para Efectos Secundarios
 
-- `Bus::fake()` ジョブ用
-- `Queue::fake()` キュー作業用
-- `Mail::fake()` と `Notification::fake()` 通知用
-- `Event::fake()` ドメインイベント用
+- `Bus::fake()` para jobs
+- `Queue::fake()` para trabajo en cola
+- `Mail::fake()` y `Notification::fake()` para notificaciones
+- `Event::fake()` para eventos de dominio
 
 ```php
 use Illuminate\Support\Facades\Queue;
@@ -209,7 +209,7 @@ $user->notify(new InvoiceReady($invoice));
 Notification::assertSentTo($user, InvoiceReady::class);
 ```
 
-### 認証テスト（Sanctum）
+### Pruebas de Autenticación (Sanctum)
 
 ```php
 use Laravel\Sanctum\Sanctum;
@@ -220,28 +220,28 @@ $response = $this->getJson('/api/projects');
 $response->assertOk();
 ```
 
-### HTTP と外部サービス
+### HTTP y Servicios Externos
 
-- `Http::fake()` を使用して外部 API を隔離
-- `Http::assertSent()` で送信ペイロードをアサート
+- Usar `Http::fake()` para aislar APIs externas
+- Verificar payloads salientes con `Http::assertSent()`
 
-### カバレッジターゲット
+### Objetivos de Cobertura
 
-- ユニット + フィーチャーテストで 80%+ カバレッジを実施
-- CI では `pcov` または `XDEBUG_MODE=coverage` を使用
+- Aplicar 80%+ de cobertura para pruebas unit + feature
+- Usar `pcov` o `XDEBUG_MODE=coverage` en CI
 
-### テストコマンド
+### Comandos de Prueba
 
 - `php artisan test`
 - `vendor/bin/phpunit`
 - `vendor/bin/pest`
 
-### テスト設定
+### Configuración de Pruebas
 
-- `phpunit.xml` を使用して `DB_CONNECTION=sqlite` と `DB_DATABASE=:memory:` を設定して高速テスト
-- テストは dev/prod データに触れないように別の env を保つ
+- Usar `phpunit.xml` para establecer `DB_CONNECTION=sqlite` y `DB_DATABASE=:memory:` para pruebas rápidas
+- Mantener un entorno separado para pruebas para evitar tocar datos de desarrollo/producción
 
-### 認可テスト
+### Pruebas de Autorización
 
 ```php
 use Illuminate\Support\Facades\Gate;
@@ -250,9 +250,9 @@ $this->assertTrue(Gate::forUser($user)->allows('update', $project));
 $this->assertFalse(Gate::forUser($otherUser)->allows('update', $project));
 ```
 
-### Inertia フィーチャーテスト
+### Pruebas Feature con Inertia
 
-Inertia.js 使用時、Inertia テスティングヘルパーでコンポーネント名とプロップをアサート。
+Al usar Inertia.js, verificar el nombre del componente y las props con los helpers de testing de Inertia.
 
 ```php
 use App\Models\User;
@@ -280,4 +280,4 @@ final class DashboardInertiaTest extends TestCase
 }
 ```
 
-生の JSON アサーションより `assertInertia` を優先して、テストを Inertia レスポンスに合わせておく。
+Preferir `assertInertia` sobre aserciones JSON crudas para mantener las pruebas alineadas con las respuestas de Inertia.

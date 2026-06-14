@@ -1,27 +1,20 @@
 ---
 name: plannotator-last
 description: Open Plannotator on the latest rendered assistant message and use the returned annotations to revise that message or continue.
+allowed-tools: Bash(plannotator:*)
+disable-model-invocation: true
 ---
 
 # Plannotator Last
 
-Use this skill when the user wants to annotate the latest assistant response in Plannotator.
+## Message annotations
 
-Do not send a commentary/status message before running the command. The command
-targets the latest rendered assistant response, so a preamble can mistakenly become the
-thing being annotated.
+!`plannotator annotate-last $ARGUMENTS`
 
-Run:
+## Your task
 
-```bash
-plannotator last
-```
+The output above will be one of:
 
-Behavior:
-
-1. Launch the command with Bash.
-2. Wait for the annotation session to finish.
-3. If feedback is returned, incorporate it into the follow-up response.
-4. If the session closes without feedback, mention that briefly and continue.
-
-Run the command yourself rather than telling the user to invoke shell syntax manually.
+1. The exact text `The user approved.`, OR a JSON object with `"decision": "approved"`. The user approved your last message. Acknowledge with a single sentence ("Approved.") and stop. Do not begin any work.
+2. Empty, OR a JSON object with `"decision": "dismissed"`. The user closed the session without requesting changes. Acknowledge with a single sentence ("Annotation session closed.") and stop. Do not begin any work.
+3. Plaintext annotation feedback, OR a JSON object with `"decision": "annotated"` and a `"feedback"` field. Address the feedback. The user has reviewed your last message and provided specific annotations and comments.

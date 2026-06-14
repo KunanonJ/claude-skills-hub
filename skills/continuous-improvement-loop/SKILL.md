@@ -239,10 +239,10 @@ All signals append to `signals.jsonl`:
 User: Q2 ended last week. Produce the quarterly improvement brief.
 
 Skill response:
-1. Read all monthly reports for Q2 (April, May, June)
-2. Read signals.jsonl entries for Q2 (87 signals captured)
-3. Read competitor monitor outputs (3 significant changes)
-4. Read customer feedback aggregation (47 reviews + 12 sales-rep notes)
+1. Grep first across the Q2 monthly reports (April, May, June) for the metrics you need; targeted Read with offset+limit on the matching lines — do not bulk-Read all three reports
+2. Stream signals.jsonl line-by-line for Q2 (87 signals) — use head/tail/grep, not full Read
+3. Grep the competitor monitor outputs (3 significant changes); targeted Read on the matching findings
+4. Grep customer feedback aggregation (47 reviews + 12 sales-rep notes) for the themes you need; targeted Read on the matches
 5. Aggregate into 4 signal categories
 6. Identify implications:
    - Strategy: v2 positioning held up — confirmed by 12 customer testimonials echoing the positioning language

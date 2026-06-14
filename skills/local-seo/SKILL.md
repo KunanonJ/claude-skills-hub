@@ -234,6 +234,15 @@ When a business serves a wide geographic area, avoid creating thin doorway pages
 ### New Business with Zero Local Presence
 Starting from scratch requires a phased approach: (1) Claim and fully optimize GBP on day one — this is the single highest-impact action. (2) Submit to the four major data aggregators within the first week. (3) Build 20-30 high-authority citations in month one (general + industry-specific). (4) Launch a review generation program immediately — the first 10-20 reviews are the hardest but most impactful. (5) Publish a fully optimized location page with local schema. (6) Begin local content and link building in month two once the foundation is set. Set expectations: meaningful local pack visibility typically takes 3-6 months for a new business in a moderately competitive market.
 
+## Tips & caveats
+
+- **Google Business Profile is the single highest-leverage asset** in local SEO — typically 60-80% of impact. Get it 100% before optimising anything else.
+- **NAP (Name/Address/Phone) consistency matters across HUNDREDS of citation sources** — not just the top 10. Use a citation-management tool quarterly to catch drift.
+- **Don't fake reviews.** Google's review-spam systems are increasingly aggressive (Apr 2026 update tightened the bar further). One detected fake-review pattern can suppress GBP visibility for months.
+- **Service-area businesses** (no storefront) need different proximity strategy than brick-and-mortar — location pages per service area, not per store.
+- **For multi-location brands,** treat each location as its own GBP entity — don't try to consolidate. Cross-link between location pages for internal-link signal.
+- **AI Overviews are increasingly local** — for "near me" queries, AI Mode + AI Overviews now both surface local results. Run `/digital-marketing-pro:aeo-audit` against location-specific queries quarterly.
+
 ## Related Skills
 
 - **Content Engine** — For creating locally-optimized blog content, location page copy, and local content calendars

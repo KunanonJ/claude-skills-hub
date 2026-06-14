@@ -1,6 +1,6 @@
 ---
 name: schema-markup-generator
-description: "Generate and implement JSON-LD structured data for web apps, tool pages, blogs, FAQs, and SaaS sites. Supports WebSite, SoftwareApplication, BlogPosting, FAQPage, HowTo, BreadcrumbList, and Organization schemas."
+description: "Generate and implement JSON-LD structured data for web apps, blogs, FAQs, and SaaS sites. Supports WebSite, SoftwareApplication, BlogPosting, FAQPage, HowTo, and more."
 category: seo
 risk: safe
 source: self
@@ -33,10 +33,11 @@ The cleanest approach is a reusable `JsonLd` component:
 ```jsx
 // components/JsonLd.jsx
 export function JsonLd({ data }) {
+  const json = JSON.stringify(data).replace(/</g, '\\u003c');
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{ __html: json }}
     />
   );
 }

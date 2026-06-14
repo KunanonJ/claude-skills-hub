@@ -1,0 +1,624 @@
+# Crowdcast Data Schemas
+
+All simulation data lives in `.crowdcast/simulations/{sim_id}/`. These schemas define every JSON file used throughout a simulation's lifecycle.
+
+---
+
+## 1. meta.json
+
+Tracks simulation progress. Created at start, updated after each phase completes or fails.
+
+**Location:** `{sim_dir}/meta.json`
+
+```json
+{
+  "id": "sim_a3f8b2c91d04",
+  "mode": "forecast",
+  "status": "simulating",
+  "prompt": "How will society react to the court reversal?",
+  "seed_files": ["news_report.pdf", "data.txt"],
+  "created_at": "2026-03-28T10:00:00",
+  "phases": {
+    "analyze": { "status": "completed", "entities": 12, "edges": 34 },
+    "profile": { "status": "completed", "key_agents": 8, "crowd_groups": 5 },
+    "simulate": { "status": "in_progress", "current_round": 45, "total_rounds": 80 },
+    "report": { "status": "pending" }
+  }
+}
+```
+
+**Field reference:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | string | Simulation ID: `sim_` + 12-char hex from timestamp + random bytes |
+| `mode` | string | `"forecast"` or `"creative"` |
+| `status` | string | Overall status: `"analyzing"`, `"profiling"`, `"simulating"`, `"reporting"`, `"completed"`, `"failed"` |
+| `prompt` | string | The user's original simulation prompt |
+| `seed_files` | string[] | Basenames of the source documents copied into `seeds/` |
+| `created_at` | string | ISO 8601 timestamp |
+| `phases` | object | Per-phase tracking (see below) |
+
+**Phase status values:** `"pending"`, `"in_progress"`, `"completed"`, `"failed"`.
+
+**Phase-specific metrics** (added when a phase completes):
+
+| Phase | Extra fields |
+|-------|-------------|
+| `analyze` | `"entities": <int>`, `"edges": <int>` |
+| `profile` | `"key_agents": <int>`, `"crowd_groups": <int>` |
+| `simulate` | `"current_round": <int>`, `"total_rounds": <int>` |
+| `report` | `"sections": <int>` |
+
+---
+
+## 2. knowledge_graph.json
+
+Output of Phase 1 (analyzer). Contains entities, relationships, and context extracted from seed documents.
+
+**Location:** `{sim_dir}/knowledge_graph.json`
+
+```json
+{
+  "entities": [
+    {
+      "id": "ent_001",
+      "name": "Mayor Ivanov",
+      "type": "person",
+      "attributes": { "role": "city mayor", "affiliation": "city government" },
+      "summary": "Key decision-maker in the municipal dispute",
+      "importance": 0.9
+    },
+    {
+      "id": "ent_002",
+      "name": "Journalist Chen",
+      "type": "person",
+      "attributes": { "role": "investigative journalist", "affiliation": "City Herald" },
+      "summary": "Broke the story about leaked zoning documents",
+      "importance": 0.85
+    },
+    {
+      "id": "ent_003",
+      "name": "City Council",
+      "type": "organization",
+      "attributes": { "role": "legislative body", "members": 15 },
+      "summary": "Divided on the zoning reversal decision",
+      "importance": 0.7
+    }
+  ],
+  "relationships": [
+    {
+      "id": "rel_001",
+      "source": "ent_001",
+      "target": "ent_003",
+      "type": "opposes",
+      "description": "Mayor publicly opposed the journalist's investigation",
+      "weight": 0.8
+    },
+    {
+      "id": "rel_002",
+      "source": "ent_002",
+      "target": "ent_001",
+      "type": "investigates",
+      "description": "Journalist has been covering the mayor's involvement in the zoning deal",
+      "weight": 0.9
+    }
+  ],
+  "context": {
+    "topic": "Municipal court reversal on zoning decision",
+    "time_setting": "March 2026",
+    "key_conflicts": ["transparency vs authority", "public trust"]
+  }
+}
+```
+
+**Field reference:**
+
+### Entity fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | string | Unique entity ID: `ent_NNN` |
+| `name` | string | Display name |
+| `type` | string | One of: `"person"`, `"organization"`, `"event"`, `"concept"`, `"location"`, `"group"` |
+| `attributes` | object | Free-form key-value pairs relevant to the entity |
+| `summary` | string | One-line description of the entity's role in the scenario |
+| `importance` | number | 0.0 - 1.0, used to classify key vs crowd agents |
+
+### Relationship fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | string | Unique relationship ID: `rel_NNN` |
+| `source` | string | Entity ID of the source |
+| `target` | string | Entity ID of the target |
+| `type` | string | Relationship type (e.g., `"opposes"`, `"supports"`, `"investigates"`, `"employs"`) |
+| `description` | string | Human-readable explanation of the relationship |
+| `weight` | number | 0.0 - 1.0, strength of the relationship |
+
+### Context fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `topic` | string | Central topic or conflict being simulated |
+| `time_setting` | string | When the scenario takes place |
+| `key_conflicts` | string[] | Major tensions or fault lines identified in the source material |
+
+---
+
+## 3. config.json
+
+Simulation parameters. Generated by the Phase 1 analyzer based on document analysis and prompt. Editable by the user before Phase 2 begins.
+
+**Location:** `{sim_dir}/config.json`
+
+```json
+{
+  "mode": "forecast",
+  "total_rounds": 80,
+  "agents_per_round_active_pct": 0.6,
+  "key_agent_ids": ["ent_001", "ent_002", "ent_005"],
+  "crowd_groups": [
+    { "group_id": "students", "entity_ids": ["ent_010", "ent_011"], "size": 15 },
+    { "group_id": "workers", "entity_ids": ["ent_020", "ent_021"], "size": 12 }
+  ],
+  "simulation_hours": 72,
+  "minutes_per_round": 60,
+  "memory_compression_interval": 20
+}
+```
+
+**Field reference:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `mode` | string | `"forecast"` or `"creative"` |
+| `total_rounds` | int | Total simulation rounds to execute |
+| `agents_per_round_active_pct` | float | Fraction of agents active per round (0.0 - 1.0). Time-of-day and individual activity levels also factor in |
+| `key_agent_ids` | string[] | Entity IDs from `knowledge_graph.json` designated as key agents (individual prompting) |
+| `crowd_groups` | array | Crowd group definitions (see below) |
+| `simulation_hours` | int | Total simulated time span in hours |
+| `minutes_per_round` | int | Simulated minutes per round. `simulation_hours * 60 / minutes_per_round` should roughly equal `total_rounds` |
+| `memory_compression_interval` | int | Compress agent memories every N rounds to prevent context overflow |
+
+### Crowd group entry
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `group_id` | string | Unique group identifier (e.g., `"students"`, `"workers"`) |
+| `entity_ids` | string[] | Entity IDs from the knowledge graph assigned to this group |
+| `size` | int | Target number of agents in the group (profiler may generate additional agents beyond the extracted entities) |
+
+---
+
+## 4. Key Agent Persona (personas/key/{agent_id}.json)
+
+One file per key agent. Created by Phase 2 (profiler) with rich individual profiles. Updated by Phase 3 (simulator) with memory entries and stats after each round.
+
+**Location:** `{sim_dir}/personas/key/{agent_id}.json`
+
+```json
+{
+  "id": "mayor_ivanov",
+  "name": "Mayor Ivanov",
+  "role": "key",
+  "profile": {
+    "bio": "Veteran politician serving his second term as city mayor. Known for his urban development projects and tight control over public messaging.",
+    "personality": "Authoritative, calculated, risk-averse",
+    "stance": "Defensive -- wants to suppress investigation and maintain public image",
+    "mbti": "ESTJ",
+    "interests": ["urban development", "public image", "political alliances"],
+    "influence": 0.9
+  },
+  "memory": [
+    {"round": 1, "type": "observation", "content": "Saw journalist's post about leaked documents", "emotion": "anxiety"},
+    {"round": 3, "type": "action", "content": "Published official denial statement", "reactions": 28},
+    {"round": 20, "type": "summary", "content": "Rounds 1-20: Attempted damage control with official statements but public trust eroded. Journalist's posts gained traction. Student protests began."}
+  ],
+  "stats": {
+    "posts": 5,
+    "likes_received": 142,
+    "comments_received": 67,
+    "influence_score": 0.87
+  }
+}
+```
+
+**Field reference:**
+
+### Top-level fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | string | Agent identifier, used as the filename and referenced in round logs |
+| `name` | string | Display name |
+| `role` | string | Always `"key"` for key agents |
+| `profile` | object | Rich personality profile (see below) |
+| `memory` | array | Chronological memory entries (see below) |
+| `stats` | object | Running statistics updated each round |
+
+### Profile fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `bio` | string | Background paragraph: who this person is, their history, motivations |
+| `personality` | string | Personality traits summary |
+| `stance` | string | Initial position on the central conflict |
+| `mbti` | string | MBTI personality type (e.g., `"ESTJ"`, `"INFP"`) |
+| `interests` | string[] | Topics and areas this agent cares about |
+| `influence` | number | 0.0 - 1.0, initial influence level from the knowledge graph |
+
+### Memory entry types
+
+| Type | Fields | Description |
+|------|--------|-------------|
+| `observation` | `round`, `type`, `content`, `emotion` | Something the agent witnessed or read |
+| `action` | `round`, `type`, `content`, `reactions` | Something the agent did, with reaction count |
+| `summary` | `round`, `type`, `content` | Compressed summary of N prior rounds (created during memory compression) |
+
+### Stats fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `posts` | int | Total posts authored |
+| `likes_received` | int | Total likes on this agent's content |
+| `comments_received` | int | Total comments on this agent's content |
+| `influence_score` | float | Computed influence (0.0 - 1.0), updated as simulation progresses |
+
+---
+
+## 5. Crowd Group (personas/crowd/{group_id}.json)
+
+One file per crowd group. Created by Phase 2 (profiler) with individual agent stubs. Updated by Phase 3 (simulator) with collective memory and stats.
+
+**Location:** `{sim_dir}/personas/crowd/{group_id}.json`
+
+```json
+{
+  "group_id": "students",
+  "agents": [
+    {
+      "id": "student_01",
+      "name": "Lisa",
+      "stance": "critical",
+      "activity": 0.7,
+      "personality_brief": "Outspoken activist, organizes campus protests"
+    },
+    {
+      "id": "student_02",
+      "name": "Artem",
+      "stance": "neutral",
+      "activity": 0.4,
+      "personality_brief": "Quiet observer, follows news but rarely posts"
+    },
+    {
+      "id": "student_03",
+      "name": "Daria",
+      "stance": "supportive",
+      "activity": 0.6,
+      "personality_brief": "Pragmatic moderate, trusts institutions"
+    }
+  ],
+  "collective_memory": [
+    {"round": 1, "summary": "Group split: 60% critical, 30% neutral, 10% supportive"},
+    {"round": 20, "summary": "Compressed rounds 1-20: Sentiment shifted critical after leaked documents. Lisa emerged as vocal leader. Two neutrals moved to critical."}
+  ],
+  "stats": {
+    "total_posts": 34,
+    "total_comments": 89,
+    "total_likes": 215,
+    "avg_sentiment": -0.3
+  }
+}
+```
+
+**Field reference:**
+
+### Top-level fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `group_id` | string | Unique group identifier, matches the `group_id` in `config.json` |
+| `agents` | array | Individual agent definitions within the group |
+| `collective_memory` | array | Shared group memory entries |
+| `stats` | object | Aggregate group statistics |
+
+### Agent fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | string | Unique agent ID (e.g., `"student_01"`) |
+| `name` | string | Display name |
+| `stance` | string | Position on the central conflict (e.g., `"critical"`, `"neutral"`, `"supportive"`) |
+| `activity` | float | 0.0 - 1.0, how frequently this agent takes actions |
+| `personality_brief` | string | One-line personality description |
+
+### Collective memory entry
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `round` | int | Round number when this entry was created |
+| `summary` | string | Group-level summary of sentiment, actions, and shifts |
+
+### Stats fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `total_posts` | int | Total posts by all agents in the group |
+| `total_comments` | int | Total comments by all agents in the group |
+| `total_likes` | int | Total likes by all agents in the group |
+| `avg_sentiment` | float | Average sentiment across the group (-1.0 to 1.0) |
+
+---
+
+## 6. round_NNN.jsonl
+
+One JSONL file per round (one JSON object per line). Records every agent action in that round.
+
+**Location:** `{sim_dir}/rounds/round_NNN.jsonl` (e.g., `round_001.jsonl`, `round_045.jsonl`)
+
+### Forecast mode example
+
+```json
+{"agent_id": "mayor_ivanov", "role": "key", "action": "post", "content": "Official statement regarding the zoning decision...", "target": null, "sentiment": 0.2, "round_time": "Day 1, 14:00"}
+{"agent_id": "journalist_chen", "role": "key", "action": "post", "content": "Breaking: documents reveal undisclosed meetings between mayor and developers", "target": null, "sentiment": -0.6, "round_time": "Day 1, 14:00"}
+{"agent_id": "student_01", "role": "crowd", "group": "students", "action": "comment", "content": "This is outrageous!", "target": "post_003", "sentiment": -0.8, "round_time": "Day 1, 14:00"}
+{"agent_id": "student_02", "role": "crowd", "group": "students", "action": "like", "content": null, "target": "post_003", "sentiment": -0.5, "round_time": "Day 1, 14:00"}
+{"agent_id": "worker_05", "role": "crowd", "group": "workers", "action": "nothing", "content": null, "target": null, "sentiment": 0.0, "round_time": "Day 1, 14:00"}
+```
+
+### Creative mode example
+
+```json
+{"agent_id": "lord_xu", "role": "key", "action": "dialogue", "content": "Lady Mei, I have seen the letters. Do not deny it.", "target": "lady_mei", "sentiment": -0.7, "round_time": "Evening, Day 3"}
+{"agent_id": "lady_mei", "role": "key", "action": "action", "content": "Steps back, gripping the railing of the garden bridge", "target": null, "sentiment": -0.5, "round_time": "Evening, Day 3"}
+{"agent_id": "servant_lin", "role": "crowd", "group": "household_staff", "action": "thought", "content": "This confrontation will change everything in the household", "target": null, "sentiment": -0.3, "round_time": "Evening, Day 3"}
+{"agent_id": "lady_mei", "role": "key", "action": "move", "content": "Retreats from garden to private chambers", "target": "private_chambers", "sentiment": -0.6, "round_time": "Evening, Day 3"}
+```
+
+**Field reference:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `agent_id` | string | ID of the acting agent |
+| `role` | string | `"key"` or `"crowd"` |
+| `group` | string | (Crowd agents only) The group this agent belongs to |
+| `action` | string | Action type (see below) |
+| `content` | string or null | Text content of the action (null for likes and `"nothing"`) |
+| `target` | string or null | Target of the action (post ID, agent ID, location, or null) |
+| `sentiment` | float | Sentiment of this action (-1.0 to 1.0) |
+| `round_time` | string | In-simulation time for this round |
+
+### Action types by mode
+
+| Mode | Action types |
+|------|-------------|
+| **Forecast** | `"post"`, `"comment"`, `"like"`, `"repost"`, `"nothing"` |
+| **Creative** | `"dialogue"`, `"action"`, `"thought"`, `"move"`, `"nothing"` |
+
+---
+
+## 7. platform_state.json (forecast mode)
+
+Current state of the simulated social platform. Updated each round by the simulator. Posts are capped at the 20-30 most recent/impactful entries to keep file size manageable. Older posts are reflected in aggregate stats only.
+
+**Location:** `{sim_dir}/platform_state.json`
+
+```json
+{
+  "posts": [
+    {
+      "id": "post_001",
+      "author": "mayor_ivanov",
+      "content": "Official statement: The zoning process followed all legal procedures...",
+      "round": 3,
+      "likes": 28,
+      "comments": 12,
+      "reposts": 5,
+      "sentiment_avg": -0.2
+    },
+    {
+      "id": "post_002",
+      "author": "journalist_chen",
+      "content": "Breaking: documents reveal undisclosed meetings between mayor and developers",
+      "round": 5,
+      "likes": 89,
+      "comments": 34,
+      "reposts": 22,
+      "sentiment_avg": -0.6
+    },
+    {
+      "id": "post_003",
+      "author": "student_01",
+      "content": "Rally tomorrow at city hall. Everyone who cares about transparency, show up.",
+      "round": 12,
+      "likes": 156,
+      "comments": 45,
+      "reposts": 38,
+      "sentiment_avg": -0.4
+    }
+  ],
+  "trending_topics": ["transparency", "court_reversal", "public_trust"],
+  "aggregate_sentiment": {
+    "positive": 0.25,
+    "negative": 0.55,
+    "neutral": 0.20
+  },
+  "total_actions": 342,
+  "current_round": 45
+}
+```
+
+**Field reference:**
+
+### Post fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | string | Unique post ID: `post_NNN` |
+| `author` | string | Agent ID of the author |
+| `content` | string | Post text content |
+| `round` | int | Round when the post was created |
+| `likes` | int | Total likes accumulated |
+| `comments` | int | Total comments accumulated |
+| `reposts` | int | Total reposts accumulated |
+| `sentiment_avg` | float | Average sentiment of reactions to this post (-1.0 to 1.0) |
+
+### Top-level fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `posts` | array | Most recent/impactful 20-30 posts |
+| `trending_topics` | string[] | Currently trending topics based on recent activity |
+| `aggregate_sentiment` | object | Overall sentiment distribution (`positive`, `negative`, `neutral` -- values sum to 1.0) |
+| `total_actions` | int | Cumulative action count across all rounds |
+| `current_round` | int | The most recently completed round number |
+
+---
+
+## 8. world_state.json (creative mode)
+
+Current state of the story world. Used instead of `platform_state.json` in creative mode. Updated each round by the simulator.
+
+**Location:** `{sim_dir}/world_state.json`
+
+```json
+{
+  "current_scene": "The grand hall after the announcement",
+  "time": "Evening, Day 3",
+  "active_locations": ["grand_hall", "garden", "private_chambers"],
+  "recent_events": [
+    {
+      "round": 3,
+      "event": "The old lord announced the inheritance change",
+      "impact": "high"
+    },
+    {
+      "round": 5,
+      "event": "Lord Xu publicly accused Lady Mei of deception",
+      "impact": "high"
+    },
+    {
+      "round": 8,
+      "event": "A mysterious letter was found in the library",
+      "impact": "medium"
+    }
+  ],
+  "character_positions": {
+    "lord_xu": "grand_hall",
+    "lady_mei": "garden",
+    "servant_lin": "kitchen",
+    "scholar_wei": "library"
+  },
+  "tension_level": 0.8
+}
+```
+
+**Field reference:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `current_scene` | string | Description of the current primary scene |
+| `time` | string | In-story time (e.g., `"Evening, Day 3"`, `"Dawn, Chapter 2"`) |
+| `active_locations` | string[] | Locations where activity is currently happening |
+| `recent_events` | array | Recent significant events with round number and impact level |
+| `character_positions` | object | Map of character agent IDs to their current location |
+| `tension_level` | float | Overall narrative tension (0.0 = calm, 1.0 = climax) |
+
+### Recent event fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `round` | int | Round when the event occurred |
+| `event` | string | Description of what happened |
+| `impact` | string | Impact level: `"low"`, `"medium"`, `"high"` |
+
+---
+
+## 9. report_data.json
+
+Structured data computed during Phase 4 (report generation). Content differs by mode.
+
+**Location:** `{sim_dir}/report_data.json`
+
+### Forecast mode
+
+```json
+{
+  "sentiment_by_round": [
+    {"round": 1, "positive": 0.3, "negative": 0.5, "neutral": 0.2},
+    {"round": 10, "positive": 0.2, "negative": 0.6, "neutral": 0.2},
+    {"round": 23, "positive": 0.15, "negative": 0.7, "neutral": 0.15},
+    {"round": 45, "positive": 0.25, "negative": 0.55, "neutral": 0.20}
+  ],
+  "tipping_points": [
+    {
+      "round": 23,
+      "event": "Mayor's official denial backfired after journalist published counter-evidence",
+      "sentiment_shift": -0.4
+    },
+    {
+      "round": 38,
+      "event": "Student rally drew unexpected media coverage",
+      "sentiment_shift": -0.15
+    }
+  ],
+  "most_influential_agents": [
+    {"id": "journalist_chen", "influence_score": 0.92, "total_reactions": 145},
+    {"id": "mayor_ivanov", "influence_score": 0.87, "total_reactions": 112},
+    {"id": "student_01", "influence_score": 0.65, "total_reactions": 89}
+  ],
+  "topic_trends": [
+    {"topic": "transparency", "peak_round": 15, "mentions": 87},
+    {"topic": "court_reversal", "peak_round": 5, "mentions": 62},
+    {"topic": "public_trust", "peak_round": 30, "mentions": 54}
+  ],
+  "final_sentiment": {
+    "positive": 0.25,
+    "negative": 0.55,
+    "neutral": 0.20
+  }
+}
+```
+
+### Creative mode
+
+```json
+{
+  "tension_by_round": [
+    {"round": 1, "tension": 0.3},
+    {"round": 5, "tension": 0.6},
+    {"round": 12, "tension": 0.8},
+    {"round": 20, "tension": 0.95}
+  ],
+  "character_interactions": [
+    {"source": "lord_xu", "target": "lady_mei", "count": 14, "dominant_type": "confrontation"},
+    {"source": "scholar_wei", "target": "servant_lin", "count": 8, "dominant_type": "alliance"},
+    {"source": "lady_mei", "target": "scholar_wei", "count": 6, "dominant_type": "negotiation"}
+  ],
+  "pivotal_rounds": [
+    {"round": 5, "event": "Lord Xu's public accusation shattered the peace", "tension_shift": 0.3},
+    {"round": 12, "event": "The mysterious letter revealed the old lord's true intentions", "tension_shift": 0.2}
+  ],
+  "themes": ["betrayal", "loyalty", "hidden truths", "power and inheritance"]
+}
+```
+
+**Field reference (forecast mode):**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `sentiment_by_round` | array | Sentiment distribution snapshots at key rounds |
+| `tipping_points` | array | Rounds where significant sentiment shifts occurred |
+| `most_influential_agents` | array | Agents ranked by influence score and total reactions received |
+| `topic_trends` | array | Topics tracked over time with peak round and total mentions |
+| `final_sentiment` | object | Final sentiment distribution at simulation end |
+
+**Field reference (creative mode):**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `tension_by_round` | array | Narrative tension level at key rounds (0.0 - 1.0) |
+| `character_interactions` | array | Interaction counts and dominant types between character pairs |
+| `pivotal_rounds` | array | Rounds where major plot developments occurred |
+| `themes` | string[] | Central narrative themes identified across the simulation |

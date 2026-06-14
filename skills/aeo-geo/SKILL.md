@@ -21,6 +21,26 @@ Activate this module when the user's request involves any of the following:
 
 **Google AI Mode (May 2026 — treat as a distinct surface)**: At Google I/O on 19 May 2026 AI Mode became the default search experience for opted-in users, crossed ~1B MAUs, and switched to Gemini 3.5 Flash as the base model. AI Mode is **not** the same as AI Overviews — it is a separate conversational tab with deeper reasoning, multi-turn follow-ups, and a citation pattern that frequently diverges from AI Overviews for the same query. Brands must audit AI Mode independently. Practical implication: an AEO program that only tests AI Overviews + ChatGPT + Perplexity now has a measurable blind spot.
 
+**Additional I/O 2026 announcements that change AEO scope** ([source: blog.google/products-and-platforms/products/search/search-io-2026](https://blog.google/products-and-platforms/products/search/search-io-2026/)):
+
+- **AI Overview → AI Mode follow-up flow** is live worldwide (desktop + mobile) — users can ask a follow-up directly from an AI Overview and flow into a conversational AI Mode session. AEO implication: the *first* impression in an AI Overview is now also a gateway to multi-turn citation. Optimize for being the foundational citation, not just the brief snippet.
+- **Personal Intelligence in AI Mode** is expanding to ~200 countries and 98 languages, no subscription required, with Gmail / Photos / Calendar connections. AEO implication: AI answers are increasingly personalized — generic brand-search results will be reweighted against the user's own context. Brand schema completeness and entity consistency (NAP, services, hours) matter even more.
+- **AI Information Agents** (user-created, monitoring blogs/news/social 24/7) launch for AI Pro & Ultra subscribers in summer 2026. AEO implication: brands that publish structured, dated updates on owned channels will be more legible to user-configured agents than those relying on third-party PR pickup.
+
+**Official Google guidance on AI search optimization** (updated 15 May 2026 — [Google AI Optimization Guide](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide)):
+
+- **No `llms.txt` file is needed.** Google's official position: "You don't need to create new machine readable files, AI text files, markup, or Markdown to appear in generative AI search." Do not waste time generating `llms.txt` for Google AI Features. (Other AI search engines may or may not consume it; current Anthropic / OpenAI / Perplexity public positions are also that they do not require it. Document any client pressure to ship `llms.txt` as a low-priority deliverable with no measurable upside.)
+- **No special AI-specific schema is needed.** "Structured data isn't required for generative AI search, and there's no special schema.org markup you need to add." Schema continues to matter for classic SEO and rich results.
+- **Eligibility is standard Search.** "To be eligible to be shown in generative AI features on Google Search, a page must be indexed and eligible to be shown in Google Search with a snippet, fulfilling the Search technical requirements."
+
+**Opt-out and AI training controls** ([Google AI Features doc](https://developers.google.com/search/docs/appearance/ai-features)):
+
+- For AI Overviews and AI Mode (inside Google Search): use existing snippet directives — `nosnippet`, `data-nosnippet`, `max-snippet`, `noindex`. Robots.txt for Googlebot is the canonical control. **There is no AI-specific robots/meta directive.**
+- For Google's *other* AI systems (Gemini app training, Vertex AI grounding outside Search): use the **Google-Extended** user agent in robots.txt. This is a distinct control from Googlebot.
+- **NEW (3 June 2026):** Search Console now ships an **opt-out toggle** at the property level — flip it to exclude the site from grounding AI Overviews / AI Mode responses without editing robots.txt. See `/digital-marketing-pro:gsc-ai-performance` for the decision framework on when to use it.
+
+**EU AI Act Article 50 (applicable 2 August 2026)** — for AI-generated marketing content surfaced in EU markets, see `skills/context-engine/eu-code-of-practice.md` for the voluntary Code of Practice (WG1 providers / WG2 deployers) and the C2PA `c2pa.ai-disclosure` assertion path. Compliance is plugin-level and applies to `c2pa-metadata` outputs.
+
 ## Brand Context (Auto-Applied)
 
 Before producing any marketing output from this module:
@@ -174,6 +194,16 @@ If the user cannot provide all context, proceed with what is available and flag 
 ### Rapidly Evolving AI Landscape
 - **Situation**: AI platforms frequently update their models, retrieval methods, and citation behavior
 - **Approach**: Treat all AEO/GEO strategies as living processes, not one-time optimizations. Build monitoring into every engagement. When a major platform update occurs (new model release, retrieval system change, AI Overview format change), re-run the visibility audit for priority queries. Document observed behavior changes and update the workflow accordingly. Maintain a changelog of platform updates and their observed impact on brand visibility.
+
+## Tips & caveats
+
+- **Google's official position (15 May 2026):** no `llms.txt`, no AI-specific schema, no separate AI eligibility gate. Don't manufacture work around fictional ranking factors — schema + entity consistency + citation-worthy formatting are what works.
+- **AI Mode citation patterns differ from AI Overviews 40-60% of the time** on the same query. Audit and optimise for both, treating them as distinct surfaces.
+- **Entity consistency across Knowledge Graph, Wikidata, Wikipedia, LinkedIn, Crunchbase is the single highest-leverage AEO investment** — more impactful than schema tweaks.
+- **AI citations are stickier than blue-link rankings** but slower to win. Expect 3-6 months of consistent work before measurable shift.
+- **Don't try to "trick" AI into citing you** with stuffed content or fake authority signals. AI platforms detect and demote this faster than traditional search.
+- **`Google-Extended` (robots.txt) opts out of Google's *other* AI systems** (Gemini training, Vertex grounding) — distinct from the in-Search-Console toggle for AI Overviews/AI Mode (rolled out 3 Jun 2026 via `/digital-marketing-pro:gsc-ai-performance`).
+- **EU markets** require Article 50 disclosure on AI-generated content (applicable 2 Aug 2026) — see `skills/context-engine/eu-code-of-practice.md`.
 
 ## Related Skills
 

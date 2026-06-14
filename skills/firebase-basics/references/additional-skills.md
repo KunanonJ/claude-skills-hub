@@ -3,39 +3,6 @@
 The following skills and reference files are published in the
 [Firebase Agent Skills repository](https://github.com/firebase/agent-skills/tree/main/skills):
 
-### `developing-genkit-dart`
-
--   [`SKILL.md`](https://github.com/firebase/agent-skills/blob/main/skills/developing-genkit-dart/SKILL.md)
--   [`references/genkit.md`](https://github.com/firebase/agent-skills/blob/main/skills/developing-genkit-dart/references/genkit.md)
--   [`references/genkit_anthropic.md`](https://github.com/firebase/agent-skills/blob/main/skills/developing-genkit-dart/references/genkit_anthropic.md)
--   [`references/genkit_chrome.md`](https://github.com/firebase/agent-skills/blob/main/skills/developing-genkit-dart/references/genkit_chrome.md)
--   [`references/genkit_firebase_ai.md`](https://github.com/firebase/agent-skills/blob/main/skills/developing-genkit-dart/references/genkit_firebase_ai.md)
--   [`references/genkit_google_genai.md`](https://github.com/firebase/agent-skills/blob/main/skills/developing-genkit-dart/references/genkit_google_genai.md)
--   [`references/genkit_mcp.md`](https://github.com/firebase/agent-skills/blob/main/skills/developing-genkit-dart/references/genkit_mcp.md)
--   [`references/genkit_middleware.md`](https://github.com/firebase/agent-skills/blob/main/skills/developing-genkit-dart/references/genkit_middleware.md)
--   [`references/genkit_openai.md`](https://github.com/firebase/agent-skills/blob/main/skills/developing-genkit-dart/references/genkit_openai.md)
--   [`references/genkit_shelf.md`](https://github.com/firebase/agent-skills/blob/main/skills/developing-genkit-dart/references/genkit_shelf.md)
--   [`references/schemantic.md`](https://github.com/firebase/agent-skills/blob/main/skills/developing-genkit-dart/references/schemantic.md)
-
-### `developing-genkit-go`
-
--   [`SKILL.md`](https://github.com/firebase/agent-skills/blob/main/skills/developing-genkit-go/SKILL.md)
--   [`references/flows-and-http.md`](https://github.com/firebase/agent-skills/blob/main/skills/developing-genkit-go/references/flows-and-http.md)
--   [`references/generation.md`](https://github.com/firebase/agent-skills/blob/main/skills/developing-genkit-go/references/generation.md)
--   [`references/getting-started.md`](https://github.com/firebase/agent-skills/blob/main/skills/developing-genkit-go/references/getting-started.md)
--   [`references/prompts.md`](https://github.com/firebase/agent-skills/blob/main/skills/developing-genkit-go/references/prompts.md)
--   [`references/providers.md`](https://github.com/firebase/agent-skills/blob/main/skills/developing-genkit-go/references/providers.md)
--   [`references/tools.md`](https://github.com/firebase/agent-skills/blob/main/skills/developing-genkit-go/references/tools.md)
-
-### `developing-genkit-js`
-
--   [`SKILL.md`](https://github.com/firebase/agent-skills/blob/main/skills/developing-genkit-js/SKILL.md)
--   [`references/best-practices.md`](https://github.com/firebase/agent-skills/blob/main/skills/developing-genkit-js/references/best-practices.md)
--   [`references/common-errors.md`](https://github.com/firebase/agent-skills/blob/main/skills/developing-genkit-js/references/common-errors.md)
--   [`references/docs-and-cli.md`](https://github.com/firebase/agent-skills/blob/main/skills/developing-genkit-js/references/docs-and-cli.md)
--   [`references/examples.md`](https://github.com/firebase/agent-skills/blob/main/skills/developing-genkit-js/references/examples.md)
--   [`references/setup.md`](https://github.com/firebase/agent-skills/blob/main/skills/developing-genkit-js/references/setup.md)
-
 ### `firebase-ai-logic-basics`
 
 -   [`SKILL.md`](https://github.com/firebase/agent-skills/blob/main/skills/firebase-ai-logic-basics/SKILL.md)
@@ -82,7 +49,7 @@ The following skills and reference files are published in the
 -   [`reference/native_sql.md`](https://github.com/firebase/agent-skills/blob/main/skills/firebase-data-connect-basics/reference/native_sql.md)
 -   [`reference/operations.md`](https://github.com/firebase/agent-skills/blob/main/skills/firebase-data-connect-basics/reference/operations.md)
 -   [`reference/schema.md`](https://github.com/firebase/agent-skills/blob/main/skills/firebase-data-connect-basics/reference/schema.md)
--   [`reference/sdks.md`](https://github.com/firebase/agent-skills/blob/main/skills/firebase-data-connect-basics/reference/sdks.md)
+-   [`reference/sdk_web.md`](https://github.com/firebase/agent-skills/blob/main/skills/firebase-data-connect-basics/reference/sdk_web.md)
 -   [`reference/security.md`](https://github.com/firebase/agent-skills/blob/main/skills/firebase-data-connect-basics/reference/security.md)
 
 ### `firebase-firestore`

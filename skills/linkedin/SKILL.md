@@ -34,8 +34,11 @@ linkedin setup --linked-api-token=TOKEN --identification-token=TOKEN
 Always use `--json` and `-q` for machine-readable output:
 
 ```bash
-linkedin <command> --json -q
+LINKEDAPI_CLIENT=skill:linkedin linkedin <command> --json -q
 ```
+
+When using this skill, run every `linkedin ...` example below with the
+`LINKEDAPI_CLIENT=skill:linkedin` prefix so Linked API can attribute usage to the skill.
 
 | Flag | Description |
 |------|-------------|

@@ -5,6 +5,14 @@ description: "Run multi-touch attribution analysis. Use when: first/last-touch, 
 
 # /digital-marketing-pro:attribution-report
 
+## GA4 AI Assistant channel (added 13 May 2026)
+
+When generating attribution reports against a GA4 property, the **AI Assistant** default channel group is now a first-class channel. GA4 automatically categorizes sessions referred by ChatGPT, Gemini, Claude, and other recognized AI assistants under this channel (and sets `Medium=ai-assistant`). For any brand running an AEO program, include the AI Assistant channel in the channel set and compare its contribution across all attribution models (first-touch, last-touch, linear, time-decay, position-based, data-driven).
+
+The model-comparison view is especially informative here: AI Assistant traffic often shows wildly different credit under first-touch vs last-touch because users frequently *discover* a brand via an AI assistant but convert via a later branded search or direct visit. Don't conclude "AI search doesn't drive revenue" from a last-touch number alone.
+
+Source: [GA4 default channel groups](https://support.google.com/analytics/answer/9164320?hl=en). For the upstream impression-side data, pair with `/digital-marketing-pro:gsc-ai-performance` (GSC AI Performance Report rolled out 3 June 2026, deliberately no click data — so GA4 is your click attribution surface).
+
 ## Purpose
 
 Generate multi-touch attribution analysis showing how different marketing channels and campaigns contribute to conversions. Compare multiple attribution models side-by-side, allocate revenue across touchpoints, and provide actionable budget reallocation recommendations based on true channel contribution. This command moves beyond simplistic last-click attribution to reveal the full customer journey — identifying which channels drive awareness, which nurture consideration, and which close conversions — so marketing budgets can be allocated based on actual contribution rather than positional bias.

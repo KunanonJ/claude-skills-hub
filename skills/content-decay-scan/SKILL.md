@@ -50,6 +50,15 @@ A content decay assessment containing:
 - **Traffic recovery estimates**: Per content piece and in aggregate — projected monthly traffic recoverable through refresh, projected monthly revenue recoverable, expected time to recovery (typically 2-4 months), and confidence level based on competitive landscape and refresh scope
 - **Content health summary**: Portfolio-level view showing percentage of content that is healthy (no decay signals), decaying (active decline), and critical (severe decay requiring immediate attention) — with month-over-month trend if historical scan data is available, plus total revenue at risk from the decaying and critical segments
 
+## Tips & caveats
+
+- **Decay isn't always content quality** — seasonal swings, Core Updates, and SERP-feature changes all look like decay in raw GSC data. Always cross-reference with `/digital-marketing-pro:seo-drift` to separate causes.
+- **Don't refresh everything that's decaying.** Some content is supposed to decay (one-time event coverage, dated news). Refresh only what has lasting search intent.
+- **Refresh > delete in most cases.** A decayed page with backlinks is more valuable than a 404 + redirect. Refresh, restructure, and re-link rather than removing.
+- **Refresh recovery takes 2-4 months** typically. Don't measure success at 30 days. Set the next measurement window in `08-build-order.md`.
+- **AI Mode citations decay differently.** A piece that's lost AI Mode citations (per `/digital-marketing-pro:gsc-ai-performance`) needs *entity consistency* refresh (re-align schema, author bios) — different fix than traditional decay.
+- **Don't refresh during a Core Update window.** Wait until rollout-complete + 7-14 days settling so you can attribute the lift to the refresh, not to the algorithm reshuffle.
+
 ## Agents Used
 
 - **content-creator** — Content refresh strategy including update prioritization, new section recommendations, example and statistic replacement sourcing, format improvement suggestions, and actionable refresh briefs that can be handed directly to writers with clear scope and direction for each content piece

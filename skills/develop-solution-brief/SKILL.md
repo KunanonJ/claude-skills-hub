@@ -4,8 +4,8 @@ description: Creates a concise one-page solution overview that communicates the 
 license: Apache-2.0
 metadata:
   phase: develop
-  version: "2.0.0"
-  updated: 2026-01-26
+  version: "2.1.0"
+  updated: 2026-06-10
   category: ideation
   frameworks: [triple-diamond, lean-startup, design-thinking]
   author: product-on-purpose
@@ -23,18 +23,25 @@ A solution brief is a concise, one-page document that communicates the proposed 
 - Comparing multiple solution options at a high level
 - Communicating product direction to leadership
 
+## When NOT to Use
+
+- Stakeholders are aligned and engineering needs the full specification -> use `deliver-prd`; the brief pitches, the PRD specifies
+- The problem is not yet framed or agreed -> use `define-problem-statement` first
+- You are recording a decision already made -> use `develop-adr` (technical) or `develop-design-rationale` (design)
+- You need to compare strategic options across the whole business model -> use `foundation-lean-canvas`
+
 ## Instructions
 
 When asked to create a solution brief, follow these steps:
 
 1. **Recap the Problem**
-   Summarize the problem in 2-3 sentences maximum. Don't re-explain the full problem statement . reference it if needed. The reader should immediately understand what pain point this solution addresses.
+   Summarize the problem in 2-3 sentences maximum. Don't re-explain the full problem statement - reference it if needed. The reader should immediately understand what pain point this solution addresses.
 
 2. **Describe the Proposed Solution**
-   Explain what you're building in clear, non-technical language. Focus on the user experience and core value proposition. Avoid implementation details . this is about *what*, not *how*.
+   Explain what you're building in clear, non-technical language. Focus on the user experience and core value proposition. Avoid implementation details - this is about *what*, not *how*.
 
 3. **List Key Features**
-   Identify 3-5 essential features that comprise the solution. These should be the minimum set needed to solve the problem. Resist the urge to include nice-to-haves . the one-page constraint demands focus.
+   Identify 3-5 essential features that comprise the solution. These should be the minimum set needed to solve the problem. Resist the urge to include nice-to-haves - the one-page constraint demands focus.
 
 4. **Define Success Metrics**
    Connect the solution to measurable outcomes. How will you know if this works? Reference metrics from the problem statement and set targets.
@@ -50,7 +57,7 @@ When asked to create a solution brief, follow these steps:
 
 ## Output Format
 
-Use the template in `references/TEMPLATE.md` to structure the output.
+Use the template in `references/TEMPLATE.md` to structure the output. A complete brief fills every template section: Problem Recap; Proposed Solution; Key Features; Success Metrics; Trade-offs Considered; Risks & Mitigations; and Next Steps.
 
 ## Quality Checklist
 

@@ -61,6 +61,15 @@ A structured technical SEO audit report containing:
 - **Quick wins list**: Top 5 highest-impact, lowest-effort fixes
 - **Implementation roadmap**: Suggested timeline for addressing all findings
 
+## Tips & caveats
+
+- **Core Web Vitals from synthetic tests (Lighthouse, PageSpeed Insights) often disagree with field data (CrUX, GSC).** Field data is what Google ranks against. If lab says PASS but field says FAIL, trust field.
+- **JavaScript rendering is the #1 silent killer** of indexation on modern sites. Always check whether the rendered HTML (post-JS) matches the source HTML at critical content. Use `view-source:` vs DevTools.
+- **Don't fix what isn't broken.** A site at 95th-percentile CWV doesn't need re-engineering — that effort is better spent on content. Tech-SEO is necessary, not sufficient.
+- **Robots.txt + meta robots conflicts** are common. If both fire, Google obeys the most restrictive. Always cross-check.
+- **For a Core Update window,** run this audit anyway — Core Updates often surface pre-existing tech debt, but the fixes are background work, not Core Update remedies.
+- **Hand off `05-link-profile` work** to `/digital-marketing-pro:backlink-gap` for competitor-comparison; this audit only covers own-domain link health.
+
 ## Agents Used
 
 - **seo-specialist** — Runs the technical audit across all dimensions, generates structured data recommendations, provides CMS-specific fix guidance, prioritizes findings by impact/effort

@@ -1,49 +1,49 @@
 ---
 name: laravel-security
-description: Laravel セキュリティベストプラクティス：認証・認可、バリデーション、CSRF、一括割当、ファイルアップロード、シークレット管理、レート制限、安全なデプロイメント
+description: Buenas prácticas de seguridad en Laravel para autenticación/autorización, validación, CSRF, asignación masiva, subida de archivos, secretos, limitación de velocidad y despliegue seguro.
 origin: ECC
 ---
 
-# Laravel セキュリティベストプラクティス
+# Buenas Prácticas de Seguridad en Laravel
 
-Laravel アプリケーションを一般的な脆弱性から守るための包括的なセキュリティガイダンス。
+Guía completa de seguridad para aplicaciones Laravel que protege contra vulnerabilidades comunes.
 
-## アクティベートする時機
+## Cuándo Activar
 
-- 認証または認可を追加する場合
-- ユーザー入力とファイルアップロードを処理する場合
-- 新しい API エンドポイントを構築する場合
-- シークレットと環境設定を管理する場合
-- 本番環境デプロイメントを強化する場合
+- Agregar autenticación o autorización
+- Manejar entrada de usuarios y subida de archivos
+- Construir nuevos endpoints de API
+- Gestionar secretos y configuración de entornos
+- Reforzar despliegues en producción
 
-## 仕組み
+## Cómo Funciona
 
-- ミドルウェアは基本的な保護を提供（CSRF は `VerifyCsrfToken` 経由、セキュリティヘッダーは `SecurityHeaders` 経由）
-- ガードとポリシーがアクセス制御を実施（`auth:sanctum`、`$this->authorize`、ポリシーミドルウェア）
-- フォームリクエストが入力を検証し形成（`UploadInvoiceRequest`）サービスに到達する前に
-- レート制限が不正使用保護を追加（`RateLimiter::for('login')`）認証制御と並行して
-- データの安全性は暗号化されたキャスト、一括割当ガード、署名付きルート（`URL::temporarySignedRoute` + `signed` ミドルウェア）から来ます
+- El middleware proporciona protecciones de base (CSRF mediante `VerifyCsrfToken`, cabeceras de seguridad mediante `SecurityHeaders`).
+- Los guards y policies aplican el control de acceso (`auth:sanctum`, `$this->authorize`, middleware de policy).
+- Los Form Requests validan y dan forma a la entrada (`UploadInvoiceRequest`) antes de que llegue a los servicios.
+- La limitación de velocidad agrega protección contra abusos (`RateLimiter::for('login')`) junto con controles de autenticación.
+- La seguridad de datos proviene de casts encriptados, guards de asignación masiva y rutas firmadas (`URL::temporarySignedRoute` + middleware `signed`).
 
-## コアセキュリティ設定
+## Configuración Principal de Seguridad
 
-- `APP_DEBUG=false` を本番環境で設定
-- `APP_KEY` をセットして、漏洩時にはローテーション必須
-- `SESSION_SECURE_COOKIE=true` と `SESSION_SAME_SITE=lax`（または機密アプリケーションは `strict`）を設定
-- 正しい HTTPS 検出のため、信頼できるプロキシを設定
+- `APP_DEBUG=false` en producción
+- `APP_KEY` debe estar establecido y rotarse al comprometerse
+- Establecer `SESSION_SECURE_COOKIE=true` y `SESSION_SAME_SITE=lax` (o `strict` para apps sensibles)
+- Configurar proxies de confianza para la detección correcta de HTTPS
 
-## セッションとクッキーの強化
+## Reforzamiento de Sesión y Cookies
 
-- `SESSION_HTTP_ONLY=true` を設定して JavaScript アクセスを防止
-- 高リスクフローに対して `SESSION_SAME_SITE=strict` を使用
-- ログイン時と権限変更時にセッションを再生成
+- Establecer `SESSION_HTTP_ONLY=true` para prevenir acceso desde JavaScript
+- Usar `SESSION_SAME_SITE=strict` para flujos de alto riesgo
+- Regenerar sesiones al iniciar sesión y al cambiar privilegios
 
-## 認証とトークン
+## Autenticación y Tokens
 
-- Laravel Sanctum または Passport を API 認証に使用
-- 機密データの場合、有効期限の短いトークンとリフレッシュフローを優先
-- ログアウトと侵害されたアカウントでトークンを無効化
+- Usar Laravel Sanctum o Passport para autenticación de API
+- Preferir tokens de corta vida con flujos de actualización para datos sensibles
+- Revocar tokens al cerrar sesión y en cuentas comprometidas
 
-ルート保護例：
+Ejemplo de protección de rutas:
 
 ```php
 use Illuminate\Http\Request;
@@ -54,10 +54,10 @@ Route::middleware('auth:sanctum')->get('/me', function (Request $request) {
 });
 ```
 
-## パスワードセキュリティ
+## Seguridad de Contraseñas
 
-- `Hash::make()` でパスワードをハッシュし、平文で保存しない
-- パスワードリセットフロー用に Laravel のパスワードブローカーを使用
+- Hashear contraseñas con `Hash::make()` y nunca almacenar texto plano
+- Usar el password broker de Laravel para los flujos de restablecimiento
 
 ```php
 use Illuminate\Support\Facades\Hash;
@@ -70,16 +70,16 @@ $validated = $request->validate([
 $user->update(['password' => Hash::make($validated['password'])]);
 ```
 
-## 認可：ポリシーとゲート
+## Autorización: Policies y Gates
 
-- モデルレベルの認可にはポリシーを使用
-- コントローラーとサービスで認可を実施
+- Usar policies para autorización a nivel de modelo
+- Aplicar autorización en controladores y servicios
 
 ```php
 $this->authorize('update', $project);
 ```
 
-ルートレベルの実施にはポリシーミドルウェアを使用：
+Usar middleware de policy para aplicación a nivel de ruta:
 
 ```php
 use Illuminate\Support\Facades\Route;
@@ -88,49 +88,49 @@ Route::put('/projects/{project}', [ProjectController::class, 'update'])
     ->middleware(['auth:sanctum', 'can:update,project']);
 ```
 
-## バリデーションとデータサニタイゼーション
+## Validación y Sanitización de Datos
 
-- フォームリクエストで常にユーザー入力をバリデーション
-- 厳密なバリデーションルールと型チェックを使用
-- リクエストペイロードを派生フィールドに信頼しない
+- Siempre validar entradas con Form Requests
+- Usar reglas de validación estrictas y verificaciones de tipo
+- Nunca confiar en los payloads de la request para campos derivados
 
-## 一括割当保護
+## Protección contra Asignación Masiva
 
-- `$fillable` または `$guarded` を使用して、`Model::unguard()` は回避
-- DTO またはかば詰明示的な属性マッピングを優先
+- Usar `$fillable` o `$guarded` y evitar `Model::unguard()`
+- Preferir DTOs o mapeo explícito de atributos
 
-## SQL インジェクション防止
+## Prevención de Inyección SQL
 
-- Eloquent またはクエリビルダーのパラメータバインディングを使用
-- 厳密に必要でない限り生 SQL を回避
+- Usar Eloquent o el query builder con binding de parámetros
+- Evitar SQL crudo a menos que sea estrictamente necesario
 
 ```php
 DB::select('select * from users where email = ?', [$email]);
 ```
 
-## XSS 防止
+## Prevención de XSS
 
-- Blade は標準で出力をエスケープ（`{{ }}`）
-- `{!! !!}` は信頼できる、サニタイズされた HTML にのみ使用
-- リッチテキストを専用ライブラリでサニタイズ
+- Blade escapa la salida por defecto (`{{ }}`)
+- Usar `{!! !!}` solo para HTML de confianza y sanitizado
+- Sanitizar texto enriquecido con una librería dedicada
 
-## CSRF 保護
+## Protección CSRF
 
-- `VerifyCsrfToken` ミドルウェアを有効に保つ
-- フォームに `@csrf` を含めて、SPA リクエストで XSRF トークンを送信
+- Mantener el middleware `VerifyCsrfToken` habilitado
+- Incluir `@csrf` en formularios y enviar tokens XSRF en requests de SPA
 
-SPA 認証（Sanctum）の場合、ステートフルなリクエストが設定されていることを確認：
+Para autenticación SPA con Sanctum, asegurarse de que las requests stateful estén configuradas:
 
 ```php
 // config/sanctum.php
 'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', 'localhost')),
 ```
 
-## ファイルアップロード安全性
+## Seguridad en Subida de Archivos
 
-- ファイルサイズ、MIME タイプ、拡張子をバリデーション
-- 可能な場合、公開パスの外にアップロードを保存
-- 必要に応じてファイルをマルウェアスキャン
+- Validar tamaño de archivo, tipo MIME y extensión
+- Almacenar subidas fuera del directorio público cuando sea posible
+- Escanear archivos en busca de malware si es necesario
 
 ```php
 final class UploadInvoiceRequest extends FormRequest
@@ -152,14 +152,14 @@ final class UploadInvoiceRequest extends FormRequest
 ```php
 $path = $request->file('invoice')->store(
     'invoices',
-    config('filesystems.private_disk', 'local') // set this to a non-public disk
+    config('filesystems.private_disk', 'local') // establecer a un disco no público
 );
 ```
 
-## レート制限
+## Limitación de Velocidad
 
-- 認証とライトエンドポイントに `throttle` ミドルウェアを適用
-- ログイン、パスワードリセット、OTP にはより厳しい制限を使用
+- Aplicar middleware `throttle` en endpoints de autenticación y escritura
+- Usar límites más estrictos para login, restablecimiento de contraseña y OTP
 
 ```php
 use Illuminate\Cache\RateLimiting\Limit;
@@ -174,15 +174,15 @@ RateLimiter::for('login', function (Request $request) {
 });
 ```
 
-## シークレットと認証情報
+## Secretos y Credenciales
 
-- シークレットをソースコントロールにコミットしない
-- 環境変数とシークレットマネージャーを使用
-- 公開後はキーをローテーション、セッションを無効化
+- Nunca hacer commit de secretos al control de versiones
+- Usar variables de entorno y gestores de secretos
+- Rotar claves después de una exposición e invalidar sesiones
 
-## 暗号化された属性
+## Atributos Encriptados
 
-保存中のシックレット列には暗号化されたキャストを使用。
+Usar casts encriptados para columnas sensibles en reposo.
 
 ```php
 protected $casts = [
@@ -190,12 +190,12 @@ protected $casts = [
 ];
 ```
 
-## セキュリティヘッダー
+## Cabeceras de Seguridad
 
-- 必要に応じて CSP、HSTS、フレーム保護を追加
-- HTTPS リダイレクトを実施するために信頼できるプロキシ設定を使用
+- Agregar CSP, HSTS y protección de frames donde sea apropiado
+- Usar configuración de proxies de confianza para forzar redirecciones HTTPS
 
-ヘッダーを設定するためのミドルウェア例：
+Ejemplo de middleware para establecer cabeceras:
 
 ```php
 use Illuminate\Http\Request;
@@ -209,7 +209,7 @@ final class SecurityHeaders
 
         $response->headers->add([
             'Content-Security-Policy' => "default-src 'self'",
-            'Strict-Transport-Security' => 'max-age=31536000', // add includeSubDomains/preload only when all subdomains are HTTPS
+            'Strict-Transport-Security' => 'max-age=31536000', // agregar includeSubDomains/preload solo cuando todos los subdominios sean HTTPS
             'X-Frame-Options' => 'DENY',
             'X-Content-Type-Options' => 'nosniff',
             'Referrer-Policy' => 'no-referrer',
@@ -220,10 +220,10 @@ final class SecurityHeaders
 }
 ```
 
-## CORS と API 公開
+## CORS y Exposición de API
 
-- `config/cors.php` でオリジンを制限
-- 認証済みルートではワイルドカードオリジンを回避
+- Restringir orígenes en `config/cors.php`
+- Evitar orígenes wildcard para rutas autenticadas
 
 ```php
 // config/cors.php
@@ -242,10 +242,10 @@ return [
 ];
 ```
 
-## ログと個人情報
+## Logging y PII
 
-- パスワード、トークン、フルカードデータをログに記録しない
-- 構造化ログで機密フィールドをマスク
+- Nunca registrar contraseñas, tokens o datos completos de tarjetas
+- Redactar campos sensibles en logs estructurados
 
 ```php
 use Illuminate\Support\Facades\Log;
@@ -257,14 +257,14 @@ Log::info('User updated profile', [
 ]);
 ```
 
-## 依存関係セキュリティ
+## Seguridad de Dependencias
 
-- `composer audit` を定期的に実行
-- 依存関係をケアをもって固定し、CVE で迅速にアップデート
+- Ejecutar `composer audit` regularmente
+- Fijar dependencias con cuidado y actualizar rápidamente ante CVEs
 
-## 署名付き URL
+## URLs Firmadas
 
-一時的な改ざん防止リンクに署名付きルートを使用。
+Usar rutas firmadas para enlaces temporales a prueba de manipulaciones.
 
 ```php
 use Illuminate\Support\Facades\URL;

@@ -1,139 +1,202 @@
 ---
 name: google-cloud-recipe-onboarding
-description: Guidance for a developer's first steps on Google Cloud, covering account creation, billing setup, project management, and deploying a first resource.
+description: >-
+  Guides a developer's first steps on Google Cloud, covering account creation,
+  billing setup, project management, and deploying a first resource.
+  Use when a new developer wants to initialize their first Google Cloud project,
+  configure billing, and verify deployment.
+  Don't use for enterprise organization setup (use Google Cloud Setup guided flow for that instead).
+  Don't use for complex multi-project architectures.
 ---
 
 # Onboarding to Google Cloud
 
-This skill provides a streamlined "happy path" for a singleton developer to get
-started with [Google Cloud](https://cloud.google.com/). It covers everything
-from initial account setup to deploying your first cloud resource.
+This skill provides a streamlined, non-interactive "happy path" for a singleton developer to get started with [Google Cloud](https://cloud.google.com/). It covers everything from environment verification and authentication to project selection, billing account linkage, and downstream safety chaining.
+
+> [!IMPORTANT]
+> For autonomous agents executing this skill:
+> 1. **Check-Before-Mutate Audits**: Always perform silent pre-execution state audits prior to proposing or executing any project or billing changes.
+> 2. **Single-Question Policy**: Ask the user for exactly **one** operational parameter or confirmation at a time during interactive execution.
+> 3. **Non-Interactive Output**: Append non-interactive overrides (`--quiet`, `--format="json"`) to all mutation commands to guarantee deterministic, machine-parseable outputs and prevent terminal hangs.
+> 4. **First Turn Interaction Rules (Trigger Turn)**: When the developer first triggers this skill with a general onboarding request (e.g. says "I want to get started with Google Cloud"):
+>    - **Preamble Guidance**: Proactively include a short orienting preamble guiding the developer to create a Google Cloud account (pointing to the console at `https://console.cloud.google.com/`) and run `gcloud auth login` to authorize their workstation, even if they appear to be already logged in.
+>    - **First Turn Single-Question**: Perform pre-flight audits silently, but do not present a complete parameters summary table or ask for final consent in the first turn. Instead, ask the developer exactly **one** initial operational question (e.g., *"Would you like to reuse an existing active project, or create a brand new one?"*).
+>    *Note: If the developer's initial prompt explicitly states "I approve the onboarding configuration", "Let's proceed with onboarding", or requests a dry-run plan (e.g., "Show me the exact plan or dry-run commands"), bypass the general preamble and initial question, and proceed directly to the requested step.*
+
+---
 
 ## Overview
 
-For an individual developer, onboarding to Google Cloud involves establishing a
-personal identity, setting up a billing method, and creating a workspace
-([Project](https://docs.cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy#projects))
-where resources can be managed. Google Cloud offers a Free Tier and Free Trial
-for multiple products. [Learn more
-here](https://docs.cloud.google.com/free/docs/free-cloud-features).
+For an individual developer, onboarding to Google Cloud involves verifying local terminal tools, establishing an authenticated session, selecting or instantiating a workspace ([Project](https://docs.cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy#projects)), and linking it to an active billing account. Google Cloud offers a Free Tier and a Free Trial with $300 in credits for first-time users. [Learn more here](https://docs.cloud.google.com/free/docs/free-cloud-features).
 
-## Clarifying Questions
-
-Before proceeding, the agent should clarify the user's current status:
-
-1.  Do you already have a [Google Account](https://accounts.google.com/) (Gmail
-    or [Google Workspace](https://workspace.google.com/))?
-2.  Are you looking to set up a personal account for learning/experimentation,
-    or are you part of an organization with existing infrastructure?
-3.  Are you an IT admin within a larger enterprise, setting up Google Cloud for
-    your organization?
-4.  What is the first type of resource or application you are interested in
-    building (e.g., a website, a data pipeline, a virtual machine)?
-5.  Do you prefer to use the command line (CLI), an IDE (e.g. VSCode,
-    Antigravity), or do you prefer using the web-based [Google Cloud
-    console](https://console.cloud.google.com/)?
+---
 
 ## Prerequisites
 
--   A [Google Account](https://accounts.google.com/) (e.g., @gmail.com).
--   A valid payment method (credit card or bank account) for billing
-    verification (even for the free trial).
+- A personal Google Account (e.g., `@gmail.com`) or Google Workspace / Cloud Identity account.
+- A valid payment method (credit card or bank account) required for identity verification and to activate the $300 Free Trial credit introduced in the Overview.
+
+---
 
 ## Steps
 
-### 1. Sign Up and Activate Free Credit
+### Section 1: Verify Host Tooling Setup
 
-1.  Go to the [Google Cloud Console](https://console.cloud.google.com/).
-2.  Sign in with your Google Account. This will "Activate" [your $300 free
-    credit](https://docs.cloud.google.com/free/docs/free-cloud-features#free-trial).
+Before soliciting input or proposing mutations, silently audit the host system's active tooling and environment status.
 
-### 2. Create Your First Google Cloud Project
+1. Check if the `gcloud` CLI binary is installed and accessible:
+   ```bash
+   which gcloud
+   ```
+2. Check if there is an active authenticated identity session:
+   ```bash
+   gcloud auth list --format="json"
+   ```
+3. If the pre-execution audit for `which gcloud` returns a valid path, proceed directly to Section 2: Authenticate and Route Session.
+4. If the binary is missing, halt execution and direct the agent/developer to the [gcloud skill](https://github.com/google/skills/tree/main/skills/cloud/gcloud) or official [Google Cloud CLI Installation Guide](https://docs.cloud.google.com/sdk/docs/install) for setup and authentication instructions before retrying.
 
-Google Cloud resources are organized into
-**[Projects](https://docs.cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy#projects)**.
+---
 
-1.  In the Google Cloud console, click the project picker dropdown at the top of
-    the page.
-2.  Click **New Project**.
-3.  Enter a **Project Name** (e.g., `my-first-gcp-project`).
-4.  Note the generated **Project ID**; you will use this for CLI and API
-    interactions.
-5.  Click **Create**.
+### Section 2: Authenticate and Route Session
 
-### 3. Set Up Billing
+Authorize the gcloud CLI to access Google Cloud using the developer's Google Account, and verify that the account is appropriate for standalone developer onboarding.
 
-Ensure your project is linked to your Free Trial [Cloud
-Billing](https://docs.cloud.google.com/billing/docs/how-to/manage-billing-account)
-account.
+1. **Execute Credentials Authentication:**
+   ```bash
+   gcloud auth login
+   ```
+   > [!IMPORTANT]
+   > **New User / Unauthenticated Guidance**:
+   > If the pre-execution state audits or command failures confirm that the developer is unauthenticated (e.g., `gcloud auth list` is empty or active credentials are missing):
+   > 1. Guide them to create a Google Cloud account by navigating to the [Google Cloud Console](https://console.cloud.google.com/).
+   > 2. Instruct them to execute the `gcloud auth login` command to authorize their local workstation terminal session.
+   > 3. Do not attempt project creation or resource configuration until authentication is completed successfully.
 
-1.  Go to the **Billing** section in the console.
-2.  Confirm that your new project is listed under "Projects linked to this
-    billing account."
+2. **Verify Active Identity:**
+   ```bash
+   gcloud config get-value account --format="json"
+   ```
 
-### 4. Install and Initialize the Google Cloud CLI
+3. **Programmatic Enterprise Routing Guardrail:**
+   Before proceeding, verify if the account is bound to a corporate organization, as enterprise setups must follow a different architecture:
+   ```bash
+   gcloud organizations list --format="json"
+   ```
+   - Note that new Free Trial accounts automatically receive a Self-Owned Organization (SOO). To distinguish between a personal Free Trial account and an enterprise organization, inspect the JSON output:
+     - **Enterprise Organization (Halt Execution)**: If the output list contains an organization node where `owner.directoryCustomerId` is present (confirming a domain-verified Google Workspace or Cloud Identity organization), or if the user's prompt explicitly mentions corporate landing zones or multi-tenant project structures:
+       - **Halt execution** of this skill immediately.
+       - Route the developer to the official [Google Cloud Setup guided flow](https://docs.cloud.google.com/docs/enterprise/cloud-setup).
+     - **Personal Account / Free Trial SOO (Proceed)**: If the output list is empty `[]`, or if it contains a Self-Owned Organization (where `owner.directoryCustomerId` is absent and `displayName` is not a verified domain name), proceed to Section 3: Select or Instantiate Your Google Cloud Project.
 
-The **[Google Cloud CLI](https://docs.cloud.google.com/sdk/docs/install-sdk)**
-(`gcloud` CLI) is the primary tool for interacting with Google Cloud from your
-local machine.
+---
 
-1.  [Download and install the Google Cloud
-    CLI](https://cloud.google.com/sdk/docs/install).
-2.  Open your terminal and run: `gcloud init`
-3.  Follow the prompts to log in and select your project.
+### Section 3: Select or Instantiate Your Google Cloud Project
 
-### 5. Enable Necessary APIs
+Google Cloud resources are organized into **Projects**. When developers sign up for a Free Trial via the console, Google Cloud automatically creates a default project (e.g., "My First Project"). Always audit the active environment first to reuse existing projects and prevent token-burning collision errors.
 
-Most services require their specific
-[API](https://docs.cloud.google.com/apis/docs/overview) to be enabled before
-use. For example, to use [Cloud
-Run](https://docs.cloud.google.com/run/docs/overview/what-is-cloud-run), run:
-`gcloud services enable run.googleapis.com`
+1. **Silent Project Discovery:**
+   List active, accessible projects (limited to prevent context window overflow):
+   ```bash
+   gcloud projects list --filter="lifecycleState=ACTIVE" --limit=20 --format="json"
+   ```
+2. **Reuse Existing Project (Recommended):**
+   If the list returns an active project, present it to the developer and propose setting it as the default working project:
+   ```bash
+   gcloud config set project {PROJECT_ID} --quiet
+   ```
+3. **Create Custom Project:**
+   If no projects exist, or if the developer explicitly requests a brand new workspace:
+   - Solicit a custom `PROJECT_ID` and `PROJECT_NAME` from the developer (Single-Question Policy).
+   - **Structured Confirmation & Consent Gate (Mandatory)**:
+     Before running any project creation or billing linkage commands, the agent **must** present a structured markdown table summarizing the target parameters:
+     | Parameter | Value |
+     | :--- | :--- |
+     | Target Project ID | `{PROJECT_ID}` |
+     | Target Project Name | `{PROJECT_NAME}` |
+     | Active Identity Account | `{ACCOUNT}` |
+     | Target Billing Account ID | `{BILLING_ACCOUNT_ID}` |
 
-Note that [some Google Cloud APIs, including Cloud Logging, are enabled by
-default](https://docs.cloud.google.com/service-usage/docs/enabled-service#default).
+     Ask the user the exact consent query:
+     `"I am ready to initialize your Google Cloud project and link billing. Do you want me to proceed?"`
 
-### 6. Deploy Your First Resource
+     **CRITICAL**: The agent **MUST NOT** execute any `gcloud projects create` or billing link commands during this turn. You must display this table, ask the exact consent query, and **strictly stop** to wait for the user's positive affirmation.
+   - **Project ID Collision Suffix Recovery**: If the project creation command fails because the `PROJECT_ID` is already taken globally (returning a `PROJECT_ID_COLLISION` or `ALREADY_EXISTS` error):
+     - Automatically append a random 4-digit suffix (e.g., changing `my-project` to `my-project-8472`).
+     - Propose this new available project ID to the developer and re-solicit consent before retrying.
+   - **Execute Project Creation**: Once explicit user consent is confirmed:
+     ```bash
+     gcloud projects create {PROJECT_ID} --name="{PROJECT_NAME}" --quiet --format="json"
+     ```
+   - Set the active working project:
+     ```bash
+     gcloud config set project {PROJECT_ID} --quiet
+     ```
 
-Choose a simple entry point based on your needs:
-- **[Cloud Run](https://docs.cloud.google.com/run/docs) (Recommended for Apps):**
-Deploy a containerized "Hello World" app.
-- **[Compute Engine](https://docs.cloud.google.com/compute/docs):** Create a
-small Linux VM (e.g., `e2-micro` which is part of the Always Free tier in
-certain regions).
-- **[Cloud Storage](https://docs.cloud.google.com/storage/docs):** Create a
-bucket to store files.
+---
 
-Example (Cloud Run):
+### Section 4: Verify and Link Billing
 
-```bash
-    gcloud run deploy hello-world \
-    --image=gcr.io/cloudrun/hello \ --platform=managed \ --region=us-central1 \
-    --allow-unauthenticated --quiet
-```
+To deploy resources on Google Cloud, your project must be linked to an active Cloud Billing account.
 
-This command will output a public URL, that you can reach in a web browser.
-Congrats - you just deployed your first Google Cloud resource!
+1. **Audit Billing Status:**
+   Check if the active project is already linked to a billing account:
+   ```bash
+   gcloud billing projects describe {PROJECT_ID} --format="json"
+   ```
+2. If the output contains `"billingEnabled": true`, skip linkage and proceed immediately to Section 5: Skill Chaining (Spend Controls & Workloads).
+3. **Discover Available Billing Accounts:**
+   If the project is unlinked, query the available billing account handles linked to the authenticated user identity:
+   ```bash
+   gcloud billing accounts list --format="json"
+   ```
+4. **Link Billing Account:**
+   Propose linking the project to the discovered Billing Account ID, and execute:
+   ```bash
+   gcloud billing projects link {PROJECT_ID} --billing-account={BILLING_ACCOUNT_ID} --format="json"
+   ```
 
-### 7. Next Steps
+---
 
--   Explore the [Google Cloud Free Program](https://cloud.google.com/free) to
-    see what else you can do with your free credit.
--   Read the [Google Cloud Overview](https://cloud.google.com/docs/overview)
--   See the [full list of 150+ Google Cloud products](https://cloud.google.com/products)
--   Explore the [Enterprise Setup Guide](https://docs.cloud.google.com/docs/enterprise/cloud-setup)
-    for information on setting up Google Cloud for a team or organization.
--   Compare [AWS and Azure products to Google Cloud](https://docs.cloud.google.com/docs/get-started/aws-azure-gcp-service-comparison)
+### Section 5: Skill Chaining (Spend Controls & Workloads)
+
+Onboarding setup is now complete. To safeguard your environment and deploy workloads, you can chain to downstream specialized skills:
+
+1. **Billing Spend Controls:**
+   To avoid accidental cost overruns, consider setting up a programmatic control to automatically disable billing. When billing is disabled, all Google Cloud services and usage in the project are terminated to stop further costs:
+   - Direct the developer to the official [Disable Billing Usage with Notifications Guide](https://docs.cloud.google.com/billing/docs/how-to/disable-billing-with-notifications), which provides detailed instructions on how to automatically shut down billing when costs exceed the project budget.
+2. **Deploy Workloads:**
+   To deploy your first resource, trigger the downstream specialized skill matching your target application (e.g., [cloud-run-basics](https://github.com/google/skills/blob/main/skills/cloud/cloud-run-basics) or `bigquery-basics`). If the specialized skill is not locally available, direct the developer to the corresponding official quickstart, such as the [Cloud Run Container Deployment Quickstart](https://docs.cloud.google.com/run/docs/quickstarts/deploy-container).
+   *Note: Those downstream specialized skills are individually responsible for dynamically enabling their own required service APIs (e.g., run.googleapis.com) inline during execution.*
+
+---
 
 ## Validation Logic
 
-Use this logic to determine if the user has successfully completed the Google
-Cloud onboarding process:
+After completing the onboarding steps, programmatically verify the completed environment state using these diagnostic commands:
 
--   **Project Created:** Does the user have a Project ID?
--   **Billing Linked:** Is the project associated with a billing account (check
-    via `gcloud beta billing projects describe PROJECT_ID`)?
--   **CLI Authenticated:** Does `gcloud config list` show the correct account
-    and project?
--   **Resource Verified:** Can the user access the URL or IP of the deployed
-    resource?
+1. **Verify CLI Installation:**
+   ```bash
+   which gcloud
+   ```
+2. **Verify Authenticated Identity:**
+   ```bash
+   gcloud config get-value account
+   ```
+3. **Verify Project Workspace Existence:**
+   ```bash
+   gcloud projects describe {PROJECT_ID} --format="json"
+   ```
+4. **Verify Billing Linkage** (Ensure the JSON output contains `"billingEnabled": true`):
+   ```bash
+   gcloud billing projects describe {PROJECT_ID} --format="json"
+   ```
+
+---
+
+## Additional Resources
+
+- [Google Cloud Getting Started landing page](https://docs.cloud.google.com/docs/get-started)
+- [Google Cloud overview](https://docs.cloud.google.com/docs/overview)
+- [Google Cloud Free Program](https://docs.cloud.google.com/free/docs/free-cloud-features)
+- [Google Cloud Cloud Setup guided flow](https://docs.cloud.google.com/docs/enterprise/cloud-setup)
+

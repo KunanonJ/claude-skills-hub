@@ -1,119 +1,88 @@
 ---
-name: railway-deploy
-description: Deploy code to Railway using "railway up". Use when user wants to push code, says "railway up", "deploy", "ship", or "push". For initial setup or creating services, use railway-new skill. For Docker images, use railway-environment skill.
-version: 1.0.0
-author: Railway
-license: MIT
-tags: [Railway, Deploy, CI/CD, Push, Ship, Infrastructure, Deployment]
-dependencies: [railway-cli]
-allowed-tools: Bash(railway:*)
+name: harness:deploy
+description: "Use when the user is done evolving and wants to finalize, clean up, tag the result, or push the optimized agent."
+allowed-tools: [Read, Write, Bash, Glob, AskUserQuestion]
 ---
 
-# Railway Deploy
+# /harness:deploy
 
-Deploy code from the current directory to Railway using `railway up`.
+Finalize the evolution results. In v3, the best code is already in the main branch (auto-merged during evolve). Deploy is about cleanup, tagging, and pushing.
 
-## When to Use
-
-- User asks to "deploy", "ship", "push code"
-- User says "railway up" or "deploy to Railway"
-- User wants to deploy local code changes
-- User says "deploy and fix any issues" (use --ci mode)
-
-## Modes
-
-### Detach Mode (default)
-Starts deploy and returns immediately. Use for most deploys.
+## What To Do
 
 ```bash
-railway up --detach
+TOOLS="${EVOLVER_TOOLS:-$([ -d ".evolver/tools" ] && echo ".evolver/tools" || echo "$HOME/.evolver/tools")}"
+EVOLVER_PY="${EVOLVER_PY:-$([ -f "$HOME/.evolver/venv/bin/python" ] && echo "$HOME/.evolver/venv/bin/python" || echo "python3")}"
 ```
 
-### CI Mode
-Streams build logs until complete. Use when user wants to watch the build or needs to debug issues.
+### 1. Show Results
 
 ```bash
-railway up --ci
+python3 -c "
+import json
+c = json.load(open('.evolver.json'))
+baseline = c['history'][0]['score'] if c['history'] else 0
+best = c['best_score']
+improvement = best - baseline
+print(f'Baseline: {baseline:.3f}')
+print(f'Best: {best:.3f} (+{improvement:.3f}, {improvement/max(baseline,0.001)*100:.0f}% improvement)')
+print(f'Iterations: {c[\"iterations\"]}')
+print(f'Experiment: {c[\"best_experiment\"]}')
+"
 ```
 
-**When to use CI mode:**
-- User says "deploy and watch", "deploy and fix issues"
-- User is debugging build failures
-- User wants to see build output
-
-## Deploy Specific Service
-
-Default is linked service. To deploy to a different service:
-
+Show git diff from before evolution started:
 ```bash
-railway up --detach --service backend
+git log --oneline --since="$(python3 -c "import json; print(json.load(open('.evolver.json'))['created_at'][:10])")" | head -20
 ```
 
-## Deploy to Unlinked Project
+### 2. Ask What To Do (interactive)
 
-Deploy to a project without linking first:
+```json
+{
+  "questions": [{
+    "question": "Evolution complete. What would you like to do?",
+    "header": "Deploy",
+    "multiSelect": false,
+    "options": [
+      {"label": "Tag and push", "description": "Create a git tag with the score and push to remote"},
+      {"label": "Just review", "description": "Show the full diff of all changes made during evolution"},
+      {"label": "Clean up only", "description": "Remove temporary files (trace_insights.json, etc.) but don't push"},
+      {"label": "Promote learnings", "description": "Add proven evolution insights to CLAUDE.md (permanent knowledge)"}
+    ]
+  }]
+}
+```
 
+### 3. Execute
+
+**If "Tag and push"**:
 ```bash
-railway up --project <project-id> --environment production --detach
+VERSION=$(python3 -c "import json; c=json.load(open('.evolver.json')); print(f'evolver-v{c[\"iterations\"]}')")
+SCORE=$(python3 -c "import json; print(f'{json.load(open(\".evolver.json\"))[\"best_score\"]:.3f}')")
+git tag -a "$VERSION" -m "Evolver: score $SCORE"
+git push origin main --tags
 ```
 
-Requires both `--project` and `--environment` flags.
-
-## CLI Options
-
-| Flag | Description |
-|------|-------------|
-| `-d, --detach` | Don't attach to logs (default) |
-| `-c, --ci` | Stream build logs, exit when done |
-| `-s, --service <NAME>` | Target service (defaults to linked) |
-| `-e, --environment <NAME>` | Target environment (defaults to linked) |
-| `-p, --project <ID>` | Target project (requires --environment) |
-| `[PATH]` | Path to deploy (defaults to current directory) |
-
-## Directory Linking
-
-Railway CLI walks UP the directory tree to find a linked project. If you're in a subdirectory of a linked project, you don't need to relink.
-
-For subdirectory deployments, prefer setting `rootDirectory` via the railway-environment skill, then deploy normally with `railway up`.
-
-## After Deploy
-
-### Detach mode
-```
-Deploying to <service>...
-```
-Use railway-deployment skill to check build status (with `--lines` flag).
-
-### CI mode
-Build logs stream inline. If build fails, the error will be in the output.
-
-**Do NOT run `railway logs --build` after CI mode** - the logs already streamed. If you need
-more context, use railway-deployment skill with `--lines` flag (never stream).
-
-## Composability
-
-- **Check status after deploy**: Use railway-service skill
-- **View logs**: Use railway-deployment skill
-- **Fix config issues**: Use railway-environment skill
-- **Redeploy after config fix**: Use railway-environment skill
-
-## Error Handling
-
-### No Project Linked
-```
-No Railway project linked. Run `railway link` first.
+**If "Just review"**:
+```bash
+git diff HEAD~{iterations} HEAD
 ```
 
-### No Service Linked
-```
-No service linked. Use --service flag or run `railway service` to select one.
+**If "Clean up only"**:
+```bash
+rm -f trace_insights.json best_results.json comparison.json production_seed.md production_seed.json
 ```
 
-### Build Failure (CI mode)
-The build logs already streamed - analyze them directly from the `railway up --ci` output.
-Do NOT run `railway logs` after CI mode (it streams forever without `--lines`).
+**If "Promote learnings"**:
+```bash
+$EVOLVER_PY $TOOLS/promote_learnings.py --memory evolution_memory.md --target CLAUDE.md --threshold 5 --dry-run
+```
 
-Common issues:
-- Missing dependencies → check package.json/requirements.txt
-- Build command wrong → use railway-environment skill to fix
-- Dockerfile issues → check dockerfile path
+Show the dry-run output. If the user approves, run without `--dry-run`.
+
+### 4. Report
+
+- What was done
+- LangSmith experiment URL for the best result
+- Suggest reviewing the changes before deploying to production

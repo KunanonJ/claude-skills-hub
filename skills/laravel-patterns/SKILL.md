@@ -1,53 +1,53 @@
 ---
 name: laravel-patterns
-description: Laravel言語固有のパターン、Eloquent ORM、ミドルウェア、およびサービスコンテナ。
+description: Patrones de arquitectura Laravel, routing/controladores, Eloquent ORM, capas de servicio, colas, eventos, caché y API resources para aplicaciones en producción.
 origin: ECC
 ---
 
-# Laravel Development Patterns
+# Patrones de Desarrollo Laravel
 
-Production-grade Laravel architecture patterns for scalable, maintainable applications.
+Patrones de arquitectura Laravel de nivel producción para aplicaciones escalables y mantenibles.
 
-## When to Use
+## Cuándo Usar
 
-- Building Laravel web applications or APIs
-- Structuring controllers, services, and domain logic
-- Working with Eloquent models and relationships
-- Designing APIs with resources and pagination
-- Adding queues, events, caching, and background jobs
+- Construir aplicaciones web o APIs con Laravel
+- Estructurar controladores, servicios y lógica de dominio
+- Trabajar con modelos Eloquent y relaciones
+- Diseñar APIs con resources y paginación
+- Agregar colas, eventos, caché y jobs en segundo plano
 
-## How It Works
+## Cómo Funciona
 
-- Structure the app around clear boundaries (controllers -> services/actions -> models).
-- Use explicit bindings and scoped bindings to keep routing predictable; still enforce authorization for access control.
-- Favor typed models, casts, and scopes to keep domain logic consistent.
-- Keep IO-heavy work in queues and cache expensive reads.
-- Centralize config in `config/*` and keep environments explicit.
+- Estructurar la app con límites claros (controladores -> servicios/actions -> modelos).
+- Usar bindings explícitos y bindings con scope para mantener el routing predecible; aplicar autorización para el control de acceso.
+- Favorecer modelos tipados, casts y scopes para mantener la lógica de dominio consistente.
+- Mantener el trabajo intensivo de IO en colas y cachear lecturas costosas.
+- Centralizar la configuración en `config/*` y mantener los entornos explícitos.
 
-## Examples
+## Ejemplos
 
-### Project Structure
+### Estructura del Proyecto
 
-Use a conventional Laravel layout with clear layer boundaries (HTTP, services/actions, models).
+Usar un layout convencional de Laravel con límites de capa claros (HTTP, servicios/actions, modelos).
 
-### Recommended Layout
+### Layout Recomendado
 
 ```
 app/
-├── Actions/            # Single-purpose use cases
+├── Actions/            # Casos de uso de un solo propósito
 ├── Console/
 ├── Events/
 ├── Exceptions/
 ├── Http/
 │   ├── Controllers/
 │   ├── Middleware/
-│   ├── Requests/       # Form request validation
+│   ├── Requests/       # Validación con Form Requests
 │   └── Resources/      # API resources
 ├── Jobs/
 ├── Models/
 ├── Policies/
 ├── Providers/
-├── Services/           # Coordinating domain services
+├── Services/           # Servicios de dominio coordinadores
 └── Support/
 config/
 database/
@@ -63,9 +63,9 @@ routes/
 └── console.php
 ```
 
-### Controllers -> Services -> Actions
+### Controladores -> Servicios -> Actions
 
-Keep controllers thin. Put orchestration in services and single-purpose logic in actions.
+Mantener los controladores delgados. Poner la orquestación en servicios y la lógica de un solo propósito en actions.
 
 ```php
 final class CreateOrderAction
@@ -96,9 +96,9 @@ final class OrdersController extends Controller
 }
 ```
 
-### Routing and Controllers
+### Routing y Controladores
 
-Prefer route-model binding and resource controllers for clarity.
+Preferir route-model binding y controladores de recursos para mayor claridad.
 
 ```php
 use Illuminate\Support\Facades\Route;
@@ -108,9 +108,9 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 ```
 
-### Route Model Binding (Scoped)
+### Route Model Binding con Scope
 
-Use scoped bindings to prevent cross-tenant access.
+Usar bindings con scope para prevenir acceso entre tenants.
 
 ```php
 Route::scopeBindings()->group(function () {
@@ -118,11 +118,11 @@ Route::scopeBindings()->group(function () {
 });
 ```
 
-### Nested Routes and Binding Names
+### Rutas Anidadas y Nombres de Binding
 
-- Keep prefixes and paths consistent to avoid double nesting (e.g., `conversation` vs `conversations`).
-- Use a single parameter name that matches the bound model (e.g., `{conversation}` for `Conversation`).
-- Prefer scoped bindings when nesting to enforce parent-child relationships.
+- Mantener prefijos y rutas consistentes para evitar doble anidamiento (ej. `conversation` vs `conversations`).
+- Usar un único nombre de parámetro que coincida con el modelo vinculado (ej. `{conversation}` para `Conversation`).
+- Preferir bindings con scope al anidar para aplicar relaciones padre-hijo.
 
 ```php
 use App\Http\Controllers\Api\ConversationController;
@@ -145,7 +145,7 @@ Route::middleware('auth:sanctum')->prefix('conversations')->group(function () {
 });
 ```
 
-If you want a parameter to resolve to a different model class, define explicit binding. For custom binding logic, use `Route::bind()` or implement `resolveRouteBinding()` on the model.
+Si deseas que un parámetro resuelva a una clase de modelo diferente, definir un binding explícito. Para lógica de binding personalizada, usar `Route::bind()` o implementar `resolveRouteBinding()` en el modelo.
 
 ```php
 use App\Models\AiConversation;
@@ -154,9 +154,9 @@ use Illuminate\Support\Facades\Route;
 Route::model('conversation', AiConversation::class);
 ```
 
-### Service Container Bindings
+### Bindings del Contenedor de Servicios
 
-Bind interfaces to implementations in a service provider for clear dependency wiring.
+Vincular interfaces a implementaciones en un service provider para una inyección de dependencias clara.
 
 ```php
 use App\Repositories\EloquentOrderRepository;
@@ -172,9 +172,9 @@ final class AppServiceProvider extends ServiceProvider
 }
 ```
 
-### Eloquent Model Patterns
+### Patrones de Modelos Eloquent
 
-### Model Configuration
+### Configuración del Modelo
 
 ```php
 final class Project extends Model
@@ -200,9 +200,9 @@ final class Project extends Model
 }
 ```
 
-### Custom Casts and Value Objects
+### Casts Personalizados y Objetos de Valor
 
-Use enums or value objects for strict typing.
+Usar enums u objetos de valor para tipado estricto.
 
 ```php
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -222,7 +222,7 @@ protected function budgetCents(): Attribute
 }
 ```
 
-### Eager Loading to Avoid N+1
+### Eager Loading para Evitar N+1
 
 ```php
 $orders = Order::query()
@@ -231,7 +231,7 @@ $orders = Order::query()
     ->paginate(25);
 ```
 
-### Query Objects for Complex Filters
+### Query Objects para Filtros Complejos
 
 ```php
 final class ProjectQuery
@@ -259,10 +259,10 @@ final class ProjectQuery
 }
 ```
 
-### Global Scopes and Soft Deletes
+### Global Scopes y Soft Deletes
 
-Use global scopes for default filtering and `SoftDeletes` for recoverable records.
-Use either a global scope or a named scope for the same filter, not both, unless you intend layered behavior.
+Usar global scopes para filtrado por defecto y `SoftDeletes` para registros recuperables.
+Usar ya sea un global scope o un named scope para el mismo filtro, no ambos, a menos que se desee comportamiento en capas.
 
 ```php
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -281,7 +281,7 @@ final class Project extends Model
 }
 ```
 
-### Query Scopes for Reusable Filters
+### Query Scopes para Filtros Reutilizables
 
 ```php
 use Illuminate\Database\Eloquent\Builder;
@@ -294,11 +294,11 @@ final class Project extends Model
     }
 }
 
-// In service, repository etc.
+// En servicio, repositorio, etc.
 $projects = Project::ownedBy($user->id)->get();
 ```
 
-### Transactions for Multi-Step Updates
+### Transacciones para Actualizaciones Multi-Paso
 
 ```php
 use Illuminate\Support\Facades\DB;
@@ -309,15 +309,15 @@ DB::transaction(function (): void {
 });
 ```
 
-### Migrations
+### Migraciones
 
-### Naming Convention
+### Convención de Nomenclatura
 
-- File names use timestamps: `YYYY_MM_DD_HHMMSS_create_users_table.php`
-- Migrations use anonymous classes (no named class); the filename communicates intent
-- Table names are `snake_case` and plural by default
+- Los nombres de archivo usan timestamps: `YYYY_MM_DD_HHMMSS_create_users_table.php`
+- Las migraciones usan clases anónimas (sin clase con nombre); el nombre del archivo comunica la intención
+- Los nombres de tablas son `snake_case` y plurales por defecto
 
-### Example Migration
+### Ejemplo de Migración
 
 ```php
 use Illuminate\Database\Migrations\Migration;
@@ -344,9 +344,9 @@ return new class extends Migration
 };
 ```
 
-### Form Requests and Validation
+### Form Requests y Validación
 
-Keep validation in form requests and transform inputs to DTOs.
+Mantener la validación en Form Requests y transformar las entradas a DTOs.
 
 ```php
 use App\Models\Order;
@@ -380,7 +380,7 @@ final class StoreOrderRequest extends FormRequest
 
 ### API Resources
 
-Keep API responses consistent with resources and pagination.
+Mantener respuestas de API consistentes con resources y paginación.
 
 ```php
 $projects = Project::query()->active()->paginate(25);
@@ -397,19 +397,19 @@ return response()->json([
 ]);
 ```
 
-### Events, Jobs, and Queues
+### Eventos, Jobs y Colas
 
-- Emit domain events for side effects (emails, analytics)
-- Use queued jobs for slow work (reports, exports, webhooks)
-- Prefer idempotent handlers with retries and backoff
+- Emitir eventos de dominio para efectos secundarios (emails, analíticas)
+- Usar jobs en cola para trabajo lento (reportes, exportaciones, webhooks)
+- Preferir handlers idempotentes con reintentos y backoff
 
-### Caching
+### Caché
 
-- Cache read-heavy endpoints and expensive queries
-- Invalidate caches on model events (created/updated/deleted)
-- Use tags when caching related data for easy invalidation
+- Cachear endpoints y consultas costosas con muchas lecturas
+- Invalidar cachés en eventos del modelo (created/updated/deleted)
+- Usar tags al cachear datos relacionados para facilitar la invalidación
 
-### Configuration and Environments
+### Configuración y Entornos
 
-- Keep secrets in `.env` and config in `config/*.php`
-- Use per-environment config overrides and `config:cache` in production
+- Mantener secretos en `.env` y configuración en `config/*.php`
+- Usar sobreescrituras de configuración por entorno y `config:cache` en producción

@@ -2,7 +2,7 @@
 name: idea-creator
 description: Generate and rank research ideas given a broad direction. Use when user says "找idea", "brainstorm ideas", "generate research ideas", "what can we work on", or wants to explore a research area for publishable directions.
 argument-hint: [research-direction]
-allowed-tools: Bash(*), Read, Write, Grep, Glob, WebSearch, WebFetch, Agent, mcp__codex__codex, mcp__codex__codex-reply, mcp__manual_review__review, mcp__manual_review__review_reply
+allowed-tools: Bash(*), Read, Write, Grep, Glob, WebSearch, WebFetch, Agent, Skill, mcp__codex__codex, mcp__codex__codex-reply, mcp__manual_review__review, mcp__manual_review__review_reply
 ---
 
 # Research Idea Creator
@@ -11,7 +11,7 @@ Generate publishable research ideas for: $ARGUMENTS
 
 ## Overview
 
-Given a broad research direction from the user, systematically generate, validate, and rank concrete research ideas. This skill composes with `/research-lit`, `/novelty-check`, and `/research-review` to form a complete idea discovery pipeline.
+Given a broad research direction from the user, systematically generate, validate, and rank concrete research ideas. Standalone, Phase 1's landscape survey is **inline** (WebSearch — it does not invoke `/research-lit`); Phases 4-5 invoke `/novelty-check`, `/run-experiment`, and `/monitor-experiment` for validation and pilots. For the full sub-skill pipeline (`/research-lit` → idea generation → `/novelty-check` → `/research-review`), run `/idea-discovery` (Workflow 1), which orchestrates this skill.
 
 ## Constants
 
@@ -43,8 +43,11 @@ When calling the reviewer for idea evaluation, branch on REVIEWER_BACKEND:
     prompt: [follow-up prompt]
     config: {"model_reasoning_effort": "xhigh"}
 
-Prompt fidelity: the manual prompt must be exactly the same text that Codex would receive.
-Review tracing applies equally to both backends.
+Content fidelity: the manual reviewer should see the same substantive bundle
+content Codex would read. If the manual UI supports file upload / attachment,
+reuse the same bundle file; otherwise paste the bundle contents inline because
+remote web UIs cannot read your local filesystem paths. Review tracing applies
+equally to both backends.
 
 ## Workflow
 
@@ -164,19 +167,25 @@ the candidate set that enters Phase 3.
 
 Use the selected reviewer backend (see Reviewer Calling Convention) for divergent thinking.
 
-*For `codex` backend:*
+For the `codex` backend, **do not inline the full landscape + gaps prompt**
+once it stops being tiny. Write the full brainstorming request to
+`idea-stage/codex_brainstorm_bundle.md`, then keep the MCP prompt short:
 
 ```
 mcp__codex__codex:
   model: REVIEWER_MODEL
   config: {"model_reasoning_effort": "xhigh"}
   prompt: |
-    You are a senior ML researcher brainstorming research ideas.
+    Read the idea-generation bundle at <absolute path to
+    idea-stage/codex_brainstorm_bundle.md> and follow all instructions in it.
 ```
 
-*For `manual` backend:* use `mcp__manual_review__review` with the exact same prompt text and `config: {"model_reasoning_effort": "xhigh"}`. Save the returned `threadId` for Phase 4 follow-up.
+*For `manual` backend:* use `mcp__manual_review__review` with the same bundle
+contents. If the manual-review UI supports attachments, attach
+`idea-stage/codex_brainstorm_bundle.md`; otherwise paste the bundle contents
+inline. Save the returned `threadId` for Phase 4 follow-up.
 
-The brainstorming prompt:
+Bundle contents:
 
 ```
     You are a senior ML researcher brainstorming research ideas.
@@ -184,10 +193,10 @@ The brainstorming prompt:
     Research direction: [user's direction]
 
     Here is the current landscape:
-    [paste landscape map from Phase 1]
+    [write the Phase-1 landscape map into this bundle file]
 
     Key gaps identified:
-    [paste gaps from Phase 1]
+    [write the Phase-1 gap summary into this bundle file]
 
     Generate 8-12 concrete research ideas. For each idea:
     1. One-sentence summary
@@ -256,11 +265,18 @@ per-idea novelty search:
 1. **Cross-model triage (devil's advocate) — ranks ALL candidates first.**
    Use the selected reviewer backend (see Reviewer Calling Convention). For
    `codex`, use `mcp__codex__codex-reply` (same thread). For `manual`, use
-   `mcp__manual_review__review_reply` with the saved threadId. Pass every
-   candidate with its `prior_work` / `so_what` / `effort_note` annotations:
+   `mcp__manual_review__review_reply` with the saved threadId. For the
+   `codex` backend, write the full annotated candidate set to
+   `idea-stage/codex_triage_bundle.md` and send only a path-based follow-up:
+   ```
+   Read the idea-triage bundle at <absolute path to
+   idea-stage/codex_triage_bundle.md> and follow all instructions in it.
+   ```
+   For the `manual` backend, attach that same bundle if possible; otherwise
+   paste its contents inline. Bundle contents:
    ```
    Here is the full annotated candidate set (deduped, budget-feasible):
-   [paste all candidates with their prior_work / so_what / effort_note notes]
+   [write all candidates with their prior_work / so_what / effort_note notes]
 
    For each, play devil's advocate:
    - What's the strongest objection a reviewer would raise?
@@ -313,6 +329,8 @@ Note: Skip this phase if the ideas are purely theoretical or if no GPU is availa
 
 Write a structured report to `idea-stage/IDEA_REPORT.md`:
 
+**Lead every recommended idea with its method, in plain language.** Before any hypothesis, novelty score, or claim, state in 2–4 concrete steps what we actually build / train / run — no jargon, no claim-IDs. The reader must understand *what we do* before *what we claim*; claims (hypothesis, validation, expected outcome) come after and read as the method's acceptance criteria.
+
 ```markdown
 # Research Idea Report
 
@@ -326,6 +344,7 @@ Write a structured report to `idea-stage/IDEA_REPORT.md`:
 ## Recommended Ideas (ranked)
 
 ### Idea 1: [title]
+- **Method (what we actually do)**: [2–4 concrete steps in plain language — what we build / train / run. No jargon, no claim-IDs, no hypothesis yet. Lead with this so the reader grasps the approach first.]
 - **Hypothesis**: [one sentence]
 - **Minimum experiment**: [concrete description]
 - **Expected outcome**: [what success/failure looks like]

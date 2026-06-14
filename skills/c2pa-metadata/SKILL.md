@@ -18,6 +18,14 @@ This is the technical mechanism brands use to comply with:
 
 The resulting asset can be inspected by any C2PA-aware viewer (Adobe Photoshop, Lightroom, Truepic, [contentcredentials.org/verify](https://contentcredentials.org/verify)).
 
+### C2PA spec versions to be aware of (June 2026)
+
+- **Content Credentials 2.3** (released 9 February 2026 — [launch post](https://c2pa.org/the-c2pa-launches-content-credentials-2-3-and-celebrates-5-years-of-impact-across-the-digital-ecosystem/)) added format support for: **live video** (broadcast/streaming), **plain text documents**, **OGG Vorbis audio**, **large AVI video files**, and **EXIF Original Preservation Images**. If a brand is signing live-stream video or text-based assets for the first time, 2.3 is the floor version to target.
+- **C2PA Spec 2.4** (April 2026 — [spec.c2pa.org/specifications/specifications/2.4](https://spec.c2pa.org/specifications/specifications/2.4/specs/C2PA_Specification.html)) introduces the **AI Disclosure Assertion (`c2pa.ai-disclosure`)** for machine-readable AI transparency info — this is the assertion the EU AI Act Article 50 deployer pathway will rely on. The Code of Practice WG1 (providers) and WG2 (deployers) draft guidance both reference C2PA-style assertions as the canonical machine-readable marking mechanism. See `skills/context-engine/eu-code-of-practice.md` for the full Article 50 context.
+- The **C2PA Trust List** is now handled via the public C2PA Conformance Program (any CA meeting the Certificate Policy can join). Production signing certificates should come from a Conformance-Program-listed CA, not an ad-hoc cert.
+
+**For DMP outputs**: when the underlying `embed-c2pa.py` script supports `--ai-disclosure` (or you're piping through a C2PA SDK ≥ 0.36 that handles 2.4), include the `c2pa.ai-disclosure` assertion alongside the existing IPTC digital-source-type claim. The combination gives you both human-readable (IPTC) and machine-readable (c2pa.ai-disclosure) Article 50 signaling.
+
 ## When to invoke
 
 - Right after any AI image / video / audio generation step in the engagement workflow (Part 11 — AI Creative Instructions output)

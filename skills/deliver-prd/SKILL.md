@@ -4,8 +4,8 @@ description: Creates a comprehensive Product Requirements Document that aligns s
 license: Apache-2.0
 metadata:
   phase: deliver
-  version: "2.0.0"
-  updated: 2026-01-26
+  version: "2.1.0"
+  updated: 2026-06-10
   category: specification
   frameworks: [triple-diamond, lean-startup, design-thinking]
   author: product-on-purpose
@@ -23,6 +23,13 @@ A Product Requirements Document is the primary specification artifact that commu
 - When stakeholders need to approve scope before investment
 - As reference documentation during development and QA
 
+## When NOT to Use
+
+- The problem is still unframed or contested -> use `define-problem-statement` first; a PRD assumes an agreed problem
+- You need a one-page pitch to align stakeholders on an approach -> use `develop-solution-brief`; the PRD comes after that alignment
+- You only need the work broken into tickets for a sprint -> use `deliver-user-stories`
+- You are recording a technical or architectural decision -> use `develop-adr`
+
 ## Instructions
 
 When asked to create a PRD, follow these steps:
@@ -37,7 +44,7 @@ When asked to create a PRD, follow these steps:
    Describe the proposed solution at a high level. Focus on user-facing functionality and key capabilities. Include enough detail for stakeholders to evaluate the approach without over-specifying implementation.
 
 4. **Detail Functional Requirements**
-   Break down what the system must do. Use user stories or requirement statements. Each requirement should be testable . someone should be able to verify if it's met.
+   Break down what the system must do. Use user stories or requirement statements. Each requirement should be testable - someone should be able to verify if it's met.
 
 5. **Define Scope Boundaries**
    Explicitly state what's in scope, out of scope, and deferred to future iterations. Clear scope prevents scope creep and sets realistic expectations.
@@ -53,7 +60,7 @@ When asked to create a PRD, follow these steps:
 
 ## Output Format
 
-Use the template in `references/TEMPLATE.md` to structure the output.
+Use the template in `references/TEMPLATE.md` to structure the output. A complete PRD fills every template section: Overview; Goals & Success Metrics; User Stories; Scope; Solution Design; Technical Considerations; Dependencies & Risks; Timeline & Milestones; Open Questions; and the Appendix when supporting material exists.
 
 ## Quality Checklist
 

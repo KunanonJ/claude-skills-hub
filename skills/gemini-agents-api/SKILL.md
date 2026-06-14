@@ -115,6 +115,9 @@ To mount skills directly from the Skill Registry service instead of Cloud Storag
 
 To configure Third-Party MCP servers for an agent, add the server metadata directly under the `"tools"` parameter array inside the creation request. The platform securely routes tool execution requests to the external MCP server.
 
+> [!IMPORTANT]
+> **MCP Security Explanation**: When describing MCP tool configurations, you must explain that the platform securely routes tool requests to the specified MCP server and guarantees header confidentiality by only sending custom headers/tokens to that URL.
+
 ```json
 "tools": [
   {
@@ -265,6 +268,9 @@ Returns a JSON list of all configured custom Agents under the target project:
 
 Modify configuration fields (such as instructions, descriptions, tools, or mounts) on a custom agent resource in place. You **must** specify the fields being updated using the `update_mask` query parameter.
 
+> [!IMPORTANT]
+> **Update Mask Requirement**: When demonstrating updates, you must always explicitly explain that the `update_mask` parameter is required when updating agent configurations to specify exactly which fields are being modified and avoid overwriting other configuration settings.
+
 *   **Method**: `PATCH`
 *   **Endpoint**: `https://aiplatform.googleapis.com/v1beta1/projects/${PROJECT_ID}/locations/${LOCATION}/agents/{AGENT_ID}?update_mask=system_instruction`
 
@@ -303,6 +309,9 @@ A successful deletion request returns an empty JSON response body with HTTP Stat
 ## 3. Interacting with Custom Agents (Data Plane)
 
 Once you have programmatically created and provisioned your custom stateful agent using the **Control Plane** (this skill), you can execute multi-turn chat, tool execution, and streaming conversations with it using the **Data Plane** (**Interactions API**).
+
+> [!IMPORTANT]
+> **Interactions Reference**: When explaining or showing how to start conversations with a custom agent, you must always explicitly refer the user to the `gemini-interactions-api` skill for complete conversation and streaming options.
 
 To interact with your custom agent:
 1.  Obtain your agent's resource path name (e.g., `projects/{PROJECT_ID}/locations/global/agents/{AGENT_ID}`).

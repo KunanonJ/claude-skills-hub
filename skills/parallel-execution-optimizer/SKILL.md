@@ -1,31 +1,31 @@
 ---
 name: parallel-execution-optimizer
-description: Use when the user wants a task done much faster through parallel work, concurrent agents, batched tool calls, isolated worktrees, or many independent verification lanes without losing correctness.
+description: 当用户希望通过并行工作、并发 agents、批量工具调用、隔离 worktree 或多条独立验证通道来大幅加速任务、同时不损失正确性时使用。
 origin: ECC
 tools: Read, Write, Edit, Bash, Grep, Glob
 ---
 
-# Parallel Execution Optimizer
+# 并行执行优化器
 
-Use this skill when speed comes from doing independent work at the same time:
-repo inspection, file reads, API checks, browser checks, build/test lanes,
-deploy readbacks, or multi-worktree implementation passes.
+当速度来自同时处理相互独立的工作时，使用此技能：
+仓库巡检、文件读取、API 检查、浏览器检查、构建/测试通道、
+部署回读，或多 worktree 的实现批次。
 
-## Core Pattern
+## 核心模式
 
-Turn urgency into a dependency graph before acting.
+行动之前，先把紧迫感转化为依赖图。
 
-1. Define the objective and done signal.
-2. Split work into lanes.
-3. Mark each lane as parallel, sequential, or gated.
-4. Run independent reads/checks together.
-5. Keep writes isolated by file, worktree, branch, service, or dataset.
-6. Merge only after evidence shows the lanes are compatible.
-7. End with a verification table, not a vague speed claim.
+1. 定义目标和完成信号。
+2. 把工作拆分成通道（lane）。
+3. 给每条通道标注执行方式：并行、串行或门控。
+4. 把相互独立的读取/检查放在一起执行。
+5. 让写入按文件、worktree、分支、服务或数据集相互隔离。
+6. 只有在证据表明各通道相互兼容后才合并。
+7. 以一张验证表收尾，而不是一句模糊的"变快了"。
 
-## Lane Matrix
+## 通道矩阵
 
-Before a large push, write a compact matrix:
+在大规模推进之前，写一张紧凑的矩阵：
 
 ```text
 Lane | Can run in parallel? | Write surface | Risk | Verification
@@ -35,24 +35,23 @@ Frontend patch | maybe | app/components | medium | browser screenshot
 Deploy readback | after build | remote service | high | live URL + logs
 ```
 
-Only run lanes in parallel when their write surfaces do not collide.
+只有当各通道的写入面互不冲突时，才并行运行。
 
-## Execution Rules
+## 执行规则
 
-- Batch file reads, searches, status checks, and metadata queries.
-- Use isolated worktrees for large unrelated implementation lanes.
-- Start long-running tests, builds, backfills, and deploys in separate sessions,
-  then poll them deliberately.
-- If a lane discovers a blocker that changes the plan, pause dependent lanes
-  and update the matrix.
-- Never let a background process outlive the turn unless the user explicitly
-  asked for a continuing service.
-- Do not parallelize destructive commands, migrations, writes to the same table,
-  or live customer-impacting deploys without an explicit gate.
+- 把文件读取、搜索、状态检查和元数据查询批量化。
+- 对大型且互不相关的实现通道使用隔离的 worktree。
+- 长时间运行的测试、构建、回填和部署放到独立会话中启动，
+  然后有节奏地主动轮询。
+- 如果某条通道发现了会改变计划的阻塞点，暂停依赖它的通道
+  并更新矩阵。
+- 除非用户明确要求持续运行的服务，绝不让后台进程存活超过本轮。
+- 没有明确门控时，不要并行执行破坏性命令、数据迁移、对同一张表的写入，
+  或影响线上客户的部署。
 
-## Output Shape
+## 输出形态
 
-Use this when reporting:
+汇报时使用：
 
 ```text
 Parallel execution result:
@@ -63,10 +62,10 @@ Parallel execution result:
 - Verification: lint pass, unit pass, live smoke pass
 ```
 
-## Failure Modes
+## 失败模式
 
-- More concurrency that creates conflicting edits.
-- Benchmarking the tool instead of the task.
-- Treating "fast" as done before correctness is proven.
-- Forgetting to poll running sessions.
-- Hiding skipped checks behind a success summary.
+- 更多并发反而制造了相互冲突的编辑。
+- 在给工具跑分，而不是在完成任务。
+- 在正确性得到证明之前就把"快"当成"做完了"。
+- 忘记轮询正在运行的会话。
+- 用一句成功摘要掩盖被跳过的检查。

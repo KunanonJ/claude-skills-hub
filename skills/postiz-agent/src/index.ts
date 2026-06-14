@@ -1,7 +1,7 @@
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { createPost, listPosts, deletePost, getMissingContent, connectPost, changePostStatus } from './commands/posts';
-import { listIntegrations, getIntegrationSettings, triggerIntegrationTool } from './commands/integrations';
+import { listIntegrations, listGroups, getIntegrationSettings, triggerIntegrationTool } from './commands/integrations';
 import { getAnalytics, getPostAnalytics } from './commands/analytics';
 import { uploadFile } from './commands/upload';
 import { authLogin, authLogout, authStatus } from './commands/auth';
@@ -226,8 +226,25 @@ yargs(hideBin(process.argv))
   .command(
     'integrations:list',
     'List all connected integrations',
-    {},
+    (yargs: Argv) => {
+      return yargs
+        .option('group', {
+          describe: 'Filter integrations by group (customer) ID',
+          type: 'string',
+        })
+        .example('$0 integrations:list', 'List all connected integrations')
+        .example(
+          '$0 integrations:list --group "customer-id"',
+          'List integrations for a specific group'
+        );
+    },
     listIntegrations as any
+  )
+  .command(
+    'integrations:groups',
+    'List all groups (customers)',
+    {},
+    listGroups as any
   )
   .command(
     'integrations:settings <id>',

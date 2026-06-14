@@ -27,8 +27,8 @@ def get_weather(location: str, unit: str = "celsius") -> str:
 
 # The tool runner handles the agentic loop automatically
 runner = client.beta.messages.tool_runner(
-    model="claude-opus-4-8",
-    max_tokens=16000,
+    model="claude-opus-4-6",
+    max_tokens=4096,
     tools=[get_weather],
     messages=[{"role": "user", "content": "What's the weather in Paris?"}],
 )
@@ -70,10 +70,9 @@ async with stdio_client(StdioServerParameters(command="mcp-server")) as (read, w
         await mcp_client.initialize()
 
         tools_result = await mcp_client.list_tools()
-        # tool_runner is sync — returns the runner, not a coroutine
-        runner = client.beta.messages.tool_runner(
-            model="claude-opus-4-8",
-            max_tokens=16000,
+        runner = await client.beta.messages.tool_runner(
+            model="claude-opus-4-6",
+            max_tokens=1024,
             messages=[{"role": "user", "content": "Use the available tools"}],
             tools=[async_mcp_tool(t, mcp_client) for t in tools_result.tools],
         )
@@ -90,8 +89,8 @@ from anthropic.lib.tools.mcp import mcp_message
 
 prompt = await mcp_client.get_prompt(name="my-prompt")
 response = await client.beta.messages.create(
-    model="claude-opus-4-8",
-    max_tokens=16000,
+    model="claude-opus-4-6",
+    max_tokens=1024,
     messages=[mcp_message(m) for m in prompt.messages],
 )
 ```
@@ -103,8 +102,8 @@ from anthropic.lib.tools.mcp import mcp_resource_to_content
 
 resource = await mcp_client.read_resource(uri="file:///path/to/doc.txt")
 response = await client.beta.messages.create(
-    model="claude-opus-4-8",
-    max_tokens=16000,
+    model="claude-opus-4-6",
+    max_tokens=1024,
     messages=[{
         "role": "user",
         "content": [
@@ -142,8 +141,8 @@ messages = [{"role": "user", "content": user_input}]
 # Agentic loop: keep going until Claude stops calling tools
 while True:
     response = client.messages.create(
-        model="claude-opus-4-8",
-        max_tokens=16000,
+        model="claude-opus-4-6",
+        max_tokens=4096,
         tools=tools,
         messages=messages
     )
@@ -189,8 +188,8 @@ final_text = next(b.text for b in response.content if b.type == "text")
 
 ```python
 response = client.messages.create(
-    model="claude-opus-4-8",
-    max_tokens=16000,
+    model="claude-opus-4-6",
+    max_tokens=1024,
     tools=tools,
     messages=[{"role": "user", "content": "What's the weather in Paris?"}]
 )
@@ -204,8 +203,8 @@ for block in response.content:
         result = execute_tool(tool_name, tool_input)
 
         followup = client.messages.create(
-            model="claude-opus-4-8",
-            max_tokens=16000,
+            model="claude-opus-4-6",
+            max_tokens=1024,
             tools=tools,
             messages=[
                 {"role": "user", "content": "What's the weather in Paris?"},
@@ -241,8 +240,8 @@ for block in response.content:
 # Send all results back at once
 if tool_results:
     followup = client.messages.create(
-        model="claude-opus-4-8",
-        max_tokens=16000,
+        model="claude-opus-4-6",
+        max_tokens=1024,
         tools=tools,
         messages=[
             *previous_messages,
@@ -271,8 +270,8 @@ tool_result = {
 
 ```python
 response = client.messages.create(
-    model="claude-opus-4-8",
-    max_tokens=16000,
+    model="claude-opus-4-6",
+    max_tokens=1024,
     tools=tools,
     tool_choice={"type": "tool", "name": "get_weather"},  # Force specific tool
     messages=[{"role": "user", "content": "What's the weather in Paris?"}]
@@ -291,8 +290,8 @@ import anthropic
 client = anthropic.Anthropic()
 
 response = client.messages.create(
-    model="claude-opus-4-8",
-    max_tokens=16000,
+    model="claude-opus-4-6",
+    max_tokens=4096,
     messages=[{
         "role": "user",
         "content": "Calculate the mean and standard deviation of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
@@ -319,8 +318,8 @@ uploaded = client.beta.files.upload(file=open("sales_data.csv", "rb"))
 # 2. Pass to code execution via container_upload block
 # Code execution is GA; Files API is still beta (pass via extra_headers)
 response = client.messages.create(
-    model="claude-opus-4-8",
-    max_tokens=16000,
+    model="claude-opus-4-6",
+    max_tokens=4096,
     extra_headers={"anthropic-beta": "files-api-2025-04-14"},
     messages=[{
         "role": "user",
@@ -364,8 +363,8 @@ for block in response.content:
 ```python
 # First request: set up environment
 response1 = client.messages.create(
-    model="claude-opus-4-8",
-    max_tokens=16000,
+    model="claude-opus-4-6",
+    max_tokens=4096,
     messages=[{"role": "user", "content": "Install tabulate and create data.json with sample data"}],
     tools=[{"type": "code_execution_20260120", "name": "code_execution"}]
 )
@@ -376,8 +375,8 @@ container_id = response1.container.id
 # Second request: reuse the same container
 response2 = client.messages.create(
     container=container_id,
-    model="claude-opus-4-8",
-    max_tokens=16000,
+    model="claude-opus-4-6",
+    max_tokens=4096,
     messages=[{"role": "user", "content": "Read data.json and display as a formatted table"}],
     tools=[{"type": "code_execution_20260120", "name": "code_execution"}]
 )
@@ -416,8 +415,8 @@ import anthropic
 client = anthropic.Anthropic()
 
 response = client.messages.create(
-    model="claude-opus-4-8",
-    max_tokens=16000,
+    model="claude-opus-4-6",
+    max_tokens=2048,
     messages=[{"role": "user", "content": "Remember that my preferred language is Python."}],
     tools=[{"type": "memory_20250818", "name": "memory"}],
 )
@@ -442,8 +441,8 @@ memory = MyMemoryTool()
 
 # Use with tool runner
 runner = client.beta.messages.tool_runner(
-    model="claude-opus-4-8",
-    max_tokens=16000,
+    model="claude-opus-4-6",
+    max_tokens=2048,
     tools=[memory],
     messages=[{"role": "user", "content": "Remember my preferences"}],
 )
@@ -477,8 +476,8 @@ class ContactInfo(BaseModel):
 client = anthropic.Anthropic()
 
 response = client.messages.parse(
-    model="claude-opus-4-8",
-    max_tokens=16000,
+    model="claude-opus-4-6",
+    max_tokens=1024,
     messages=[{
         "role": "user",
         "content": "Extract: Jane Doe (jane@co.com) wants Enterprise, interested in API and SDKs, wants a demo."
@@ -496,8 +495,8 @@ print(contact.interests)      # ["API", "SDKs"]
 
 ```python
 response = client.messages.create(
-    model="claude-opus-4-8",
-    max_tokens=16000,
+    model="claude-opus-4-6",
+    max_tokens=1024,
     messages=[{
         "role": "user",
         "content": "Extract info: John Smith (john@example.com) wants the Enterprise plan."
@@ -521,17 +520,15 @@ response = client.messages.create(
 )
 
 import json
-# output_config.format guarantees the first block is text with valid JSON
-text = next(b.text for b in response.content if b.type == "text")
-data = json.loads(text)
+data = json.loads(response.content[0].text)
 ```
 
 ### Strict Tool Use
 
 ```python
 response = client.messages.create(
-    model="claude-opus-4-8",
-    max_tokens=16000,
+    model="claude-opus-4-6",
+    max_tokens=1024,
     messages=[{"role": "user", "content": "Book a flight to Tokyo for 2 passengers on March 15"}],
     tools=[{
         "name": "book_flight",
@@ -555,8 +552,8 @@ response = client.messages.create(
 
 ```python
 response = client.messages.create(
-    model="claude-opus-4-8",
-    max_tokens=16000,
+    model="claude-opus-4-6",
+    max_tokens=1024,
     messages=[{"role": "user", "content": "Plan a trip to Paris next month"}],
     output_config={
         "format": {

@@ -5,6 +5,27 @@ description: "Analyze marketing performance. Use when: KPI frameworks, attributi
 
 # Analytics & Insights
 
+## GA4 "AI Assistant" channel group (added 13 May 2026)
+
+Google Analytics 4 added a new **default channel group called "AI Assistant"** on 13 May 2026 ([GA4 channel groups doc](https://support.google.com/analytics/answer/9164320?hl=en)). When a referrer matches a recognized AI Assistant (ChatGPT, Gemini, Claude, etc.), GA4 automatically:
+
+- Categorizes the session under the **AI Assistant channel group**
+- Sets the **Medium dimension to `ai-assistant`**
+
+This is the **attribution-side counterpart** to the new GSC AI Performance Report (rolled out 3 June 2026 — see `/digital-marketing-pro:gsc-ai-performance`). Because the GSC AI report intentionally excludes click data, the GA4 AI Assistant channel is currently the cleanest path to attribute *actual traffic* coming from generative AI surfaces.
+
+**Recommended GA4 setup checks** when onboarding a brand:
+
+1. **Confirm the channel group is live in the property.** Newer GA4 properties get it automatically; older ones may need it to appear after Google's backfill completes. If the brand reports their channel reports look unchanged after 13 May, check explore reports filtered by `sessionDefaultChannelGroup = "AI Assistant"`.
+2. **Add the AI Assistant channel to custom reports + dashboards** — for any brand running an AEO program (`/digital-marketing-pro:aeo-geo`, `/digital-marketing-pro:aeo-audit`), the AI Assistant channel trend is now a primary KPI alongside organic search clicks.
+3. **Don't merge AI Assistant into "Organic Search" or "Direct".** Some legacy reporting templates roll AI traffic into Direct (because referrers weren't always present) or Organic Search (because answer engines feel "search-like"). Both are misattributions now — the AI Assistant channel is the authoritative bucket.
+4. **Reconcile with `aeo-audit` outputs and the GSC AI report.** Three data sources, three different views:
+   - `aeo-audit` (synthetic probing) — what AI engines *could* say about the brand
+   - GSC AI Performance Report — actual impressions in Google AI Overviews / AI Mode (no clicks)
+   - GA4 AI Assistant channel — actual *traffic* from AI assistants (clicks materialized)
+
+   A healthy AEO program shows growth across all three; divergence between them is a diagnostic signal.
+
 ## When to Use This Skill
 
 Activate this module when the user's request involves any of the following:
@@ -214,3 +235,12 @@ For anomaly investigation, prioritize speed. Ask for the specific metric, timefr
 - **AEO/GEO Intelligence** — For tracking AI visibility metrics and incorporating AI citation data into the measurement framework
 - **Audience Intelligence** — For validating persona hypotheses with behavioral data and building data-driven segments
 - **Digital PR & Authority** — For measuring earned media impact, backlink acquisition, and share of voice
+
+## Context efficiency
+
+This skill's reference docs (`skills/<this-skill>/*.md`) sum to ~30-50KB. Don't load them eagerly — pick targeted sections:
+
+- **Grep before Read.** Find the keyword or section heading first, then Read with `offset` + `limit` to pull just that range.
+- **Walk `${CLAUDE_SKILL_DIR}` once.** Use a single directory listing to see what's there, then Read only the files that match your current step.
+- **One source at a time.** If the workflow says "consult three reference files," read them sequentially after deciding what you need from each. Bulk-loading all three blows the per-skill 5K-token budget that auto-compaction reserves.
+- **Strip noise from CSV inputs.** If the input is a large CSV, grep the header line first to pick columns, then process row-by-row — do not Read the whole file into context.

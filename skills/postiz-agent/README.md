@@ -74,9 +74,17 @@ export POSTIZ_API_URL=https://your-custom-api.com
 **List all connected integrations**
 ```bash
 postiz integrations:list
+postiz integrations:list --group "customer-id"
 ```
 
-Returns integration IDs, provider names, and metadata.
+Returns integration IDs, provider names, and metadata. Use `--group` to return only the channels assigned to a specific group (customer).
+
+**List all groups (customers)**
+```bash
+postiz integrations:groups
+```
+
+Returns all groups (customers) for your organization as `{id, name}`. Use a group's `id` with `integrations:list --group` to filter channels.
 
 **Get integration settings schema**
 ```bash
@@ -554,7 +562,8 @@ The CLI interacts with these Postiz API endpoints:
 | `/public/v1/posts/:id` | DELETE | Delete a post |
 | `/public/v1/posts/:id/missing` | GET | Get missing content from provider |
 | `/public/v1/posts/:id/release-id` | PUT | Update release ID for a post |
-| `/public/v1/integrations` | GET | List integrations |
+| `/public/v1/integrations` | GET | List integrations (optional `?group=` filter) |
+| `/public/v1/groups` | GET | List groups (customers) |
 | `/public/v1/integration-settings/:id` | GET | Get integration settings |
 | `/public/v1/integration-trigger/:id` | POST | Trigger integration tool |
 | `/public/v1/analytics/:integration` | GET | Get platform analytics |
@@ -652,6 +661,8 @@ export POSTIZ_API_KEY=your_key                                 # Or use API key
 
 # Discovery
 postiz integrations:list                           # List integrations
+postiz integrations:list --group "<group-id>"      # List integrations in a group
+postiz integrations:groups                         # List groups (customers)
 postiz integrations:settings <id>                  # Get settings
 postiz integrations:trigger <id> <method> -d '{}'  # Fetch data
 

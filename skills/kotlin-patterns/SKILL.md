@@ -1,28 +1,28 @@
 ---
 name: kotlin-patterns
-description: コルーチン、null 安全性、DSL ビルダーを使用して堅牢・効率的・保守性の高い Kotlin アプリケーションを構築するための慣用的な Kotlin パターン、ベストプラクティス、規約。
+description: Idiomatic Kotlin patterns, best practices, and conventions for building robust, efficient, and maintainable Kotlin applications with coroutines, null safety, and DSL builders.
 origin: ECC
 ---
 
-# Kotlin 開発パターン
+# Kotlin Development Patterns
 
-堅牢・効率的・保守性の高いアプリケーションを構築するための慣用的な Kotlin パターンとベストプラクティス。
+Idiomatic Kotlin patterns and best practices for building robust, efficient, and maintainable applications.
 
-## 使用するタイミング
+## When to Use
 
-- 新しい Kotlin コードを書く
-- Kotlin コードをレビューする
-- 既存の Kotlin コードをリファクタリングする
-- Kotlin モジュールまたはライブラリを設計する
-- Gradle Kotlin DSL ビルドを設定する
+- Writing new Kotlin code
+- Reviewing Kotlin code
+- Refactoring existing Kotlin code
+- Designing Kotlin modules or libraries
+- Configuring Gradle Kotlin DSL builds
 
-## 動作の仕組み
+## How It Works
 
-このスキルは 7 つの主要領域にわたって慣用的な Kotlin の規約を適用します: 型システムとセーフコール演算子を使用した null 安全性、`val` とデータクラスの `copy()` によるイミュータビリティ、網羅的な型階層のためのシールドクラスとインターフェース、コルーチンと `Flow` による構造化並行性、継承なしで振る舞いを追加する拡張関数、`@DslMarker` とラムダレシーバーを使用した型安全 DSL ビルダー、そしてビルド設定のための Gradle Kotlin DSL。
+This skill enforces idiomatic Kotlin conventions across seven key areas: null safety using the type system and safe-call operators, immutability via `val` and `copy()` on data classes, sealed classes and interfaces for exhaustive type hierarchies, structured concurrency with coroutines and `Flow`, extension functions for adding behaviour without inheritance, type-safe DSL builders using `@DslMarker` and lambda receivers, and Gradle Kotlin DSL for build configuration.
 
-## 使用例
+## Examples
 
-**Elvis 演算子を使用した null 安全性:**
+**Null safety with Elvis operator:**
 ```kotlin
 fun getUserEmail(userId: String): String {
     val user = userRepository.findById(userId)
@@ -30,7 +30,7 @@ fun getUserEmail(userId: String): String {
 }
 ```
 
-**網羅的な結果のためのシールドクラス:**
+**Sealed class for exhaustive results:**
 ```kotlin
 sealed class Result<out T> {
     data class Success<T>(val data: T) : Result<T>()
@@ -39,7 +39,7 @@ sealed class Result<out T> {
 }
 ```
 
-**async/await を使用した構造化並行性:**
+**Structured concurrency with async/await:**
 ```kotlin
 suspend fun fetchUserWithPosts(userId: String): UserProfile =
     coroutineScope {
@@ -49,63 +49,63 @@ suspend fun fetchUserWithPosts(userId: String): UserProfile =
     }
 ```
 
-## コア原則
+## Core Principles
 
-### 1. Null 安全性
+### 1. Null Safety
 
-Kotlin の型システムは null 可能型と非 null 型を区別します。これを最大限に活用してください。
+Kotlin's type system distinguishes nullable and non-nullable types. Leverage it fully.
 
 ```kotlin
-// 良い例: デフォルトで非 null 型を使用
+// Good: Use non-nullable types by default
 fun getUser(id: String): User {
     return userRepository.findById(id)
         ?: throw UserNotFoundException("User $id not found")
 }
 
-// 良い例: セーフコールと Elvis 演算子
+// Good: Safe calls and Elvis operator
 fun getUserEmail(userId: String): String {
     val user = userRepository.findById(userId)
     return user?.email ?: "unknown@example.com"
 }
 
-// 悪い例: null 可能型を強制アンラップ
+// Bad: Force-unwrapping nullable types
 fun getUserEmail(userId: String): String {
     val user = userRepository.findById(userId)
-    return user!!.email // null の場合 NPE をスロー
+    return user!!.email // Throws NPE if null
 }
 ```
 
-### 2. デフォルトでイミュータブル
+### 2. Immutability by Default
 
-`var` より `val` を優先し、ミュータブルコレクションよりイミュータブルコレクションを優先してください。
+Prefer `val` over `var`, immutable collections over mutable ones.
 
 ```kotlin
-// 良い例: イミュータブルデータ
+// Good: Immutable data
 data class User(
     val id: String,
     val name: String,
     val email: String,
 )
 
-// 良い例: copy() で変換
+// Good: Transform with copy()
 fun updateEmail(user: User, newEmail: String): User =
     user.copy(email = newEmail)
 
-// 良い例: イミュータブルコレクション
+// Good: Immutable collections
 val users: List<User> = listOf(user1, user2)
 val filtered = users.filter { it.email.isNotBlank() }
 
-// 悪い例: ミュータブルな状態
-var currentUser: User? = null // ミュータブルなグローバル状態を避ける
-val mutableUsers = mutableListOf<User>() // 本当に必要な場合のみ使用
+// Bad: Mutable state
+var currentUser: User? = null // Avoid mutable global state
+val mutableUsers = mutableListOf<User>() // Avoid unless truly needed
 ```
 
-### 3. 式ボディと単一式関数
+### 3. Expression Bodies and Single-Expression Functions
 
-簡潔で読みやすい関数には式ボディを使用してください。
+Use expression bodies for concise, readable functions.
 
 ```kotlin
-// 良い例: 式ボディ
+// Good: Expression body
 fun isAdult(age: Int): Boolean = age >= 18
 
 fun formatFullName(first: String, last: String): String =
@@ -114,7 +114,7 @@ fun formatFullName(first: String, last: String): String =
 fun User.displayName(): String =
     name.ifBlank { email.substringBefore('@') }
 
-// 良い例: 式としての when
+// Good: When as expression
 fun statusMessage(code: Int): String = when (code) {
     200 -> "OK"
     404 -> "Not Found"
@@ -122,25 +122,25 @@ fun statusMessage(code: Int): String = when (code) {
     else -> "Unknown status: $code"
 }
 
-// 悪い例: 不要なブロックボディ
+// Bad: Unnecessary block body
 fun isAdult(age: Int): Boolean {
     return age >= 18
 }
 ```
 
-### 4. 値オブジェクトのためのデータクラス
+### 4. Data Classes for Value Objects
 
-主にデータを保持する型にはデータクラスを使用してください。
+Use data classes for types that primarily hold data.
 
 ```kotlin
-// 良い例: copy、equals、hashCode、toString を持つデータクラス
+// Good: Data class with copy, equals, hashCode, toString
 data class CreateUserRequest(
     val name: String,
     val email: String,
     val role: Role = Role.USER,
 )
 
-// 良い例: 型安全性のための値クラス（ランタイムでゼロオーバーヘッド）
+// Good: Value class for type safety (zero overhead at runtime)
 @JvmInline
 value class UserId(val value: String) {
     init {
@@ -158,12 +158,12 @@ value class Email(val value: String) {
 fun getUser(id: UserId): User = userRepository.findById(id)
 ```
 
-## シールドクラスとインターフェース
+## Sealed Classes and Interfaces
 
-### 制限された階層のモデリング
+### Modeling Restricted Hierarchies
 
 ```kotlin
-// 良い例: 網羅的な when のためのシールドクラス
+// Good: Sealed class for exhaustive when
 sealed class Result<out T> {
     data class Success<T>(val data: T) : Result<T>()
     data class Failure(val error: AppError) : Result<Nothing>()
@@ -183,7 +183,7 @@ fun <T> Result<T>.getOrThrow(): T = when (this) {
 }
 ```
 
-### API レスポンス用シールドインターフェース
+### Sealed Interfaces for API Responses
 
 ```kotlin
 sealed interface ApiError {
@@ -209,30 +209,30 @@ fun ApiError.toStatusCode(): Int = when (this) {
 }
 ```
 
-## スコープ関数
+## Scope Functions
 
-### それぞれの使用タイミング
+### When to Use Each
 
 ```kotlin
-// let: null 可能またはスコープ付き結果を変換
+// let: Transform nullable or scoped result
 val length: Int? = name?.let { it.trim().length }
 
-// apply: オブジェクトを設定する（オブジェクトを返す）
+// apply: Configure an object (returns the object)
 val user = User().apply {
     name = "Alice"
     email = "alice@example.com"
 }
 
-// also: 副作用（オブジェクトを返す）
+// also: Side effects (returns the object)
 val user = createUser(request).also { logger.info("Created user: ${it.id}") }
 
-// run: レシーバーでブロックを実行（結果を返す）
+// run: Execute a block with receiver (returns result)
 val result = connection.run {
     prepareStatement(sql)
     executeQuery()
 }
 
-// with: run の非拡張形式
+// with: Non-extension form of run
 val csv = with(StringBuilder()) {
     appendLine("name,email")
     users.forEach { appendLine("${it.name},${it.email}") }
@@ -240,29 +240,29 @@ val csv = with(StringBuilder()) {
 }
 ```
 
-### アンチパターン
+### Anti-Patterns
 
 ```kotlin
-// 悪い例: スコープ関数のネスト
+// Bad: Nesting scope functions
 user?.let { u ->
     u.address?.let { addr ->
         addr.city?.let { city ->
-            println(city) // 読みにくい
+            println(city) // Hard to read
         }
     }
 }
 
-// 良い例: セーフコールチェーンを使用
+// Good: Chain safe calls instead
 val city = user?.address?.city
 city?.let { println(it) }
 ```
 
-## 拡張関数
+## Extension Functions
 
-### 継承なしで機能を追加
+### Adding Functionality Without Inheritance
 
 ```kotlin
-// 良い例: ドメイン固有の拡張
+// Good: Domain-specific extensions
 fun String.toSlug(): String =
     lowercase()
         .replace(Regex("[^a-z0-9\\s-]"), "")
@@ -272,12 +272,12 @@ fun String.toSlug(): String =
 fun Instant.toLocalDate(zone: ZoneId = ZoneId.systemDefault()): LocalDate =
     atZone(zone).toLocalDate()
 
-// 良い例: コレクション拡張
+// Good: Collection extensions
 fun <T> List<T>.second(): T = this[1]
 
 fun <T> List<T>.secondOrNull(): T? = getOrNull(1)
 
-// 良い例: スコープ付き拡張（グローバル名前空間を汚染しない）
+// Good: Scoped extensions (not polluting global namespace)
 class UserService {
     private fun User.isActive(): Boolean =
         status == Status.ACTIVE && lastLogin.isAfter(Instant.now().minus(30, ChronoUnit.DAYS))
@@ -286,12 +286,12 @@ class UserService {
 }
 ```
 
-## コルーチン
+## Coroutines
 
-### 構造化並行性
+### Structured Concurrency
 
 ```kotlin
-// 良い例: coroutineScope による構造化並行性
+// Good: Structured concurrency with coroutineScope
 suspend fun fetchUserWithPosts(userId: String): UserProfile =
     coroutineScope {
         val userDeferred = async { userService.getUser(userId) }
@@ -303,7 +303,7 @@ suspend fun fetchUserWithPosts(userId: String): UserProfile =
         )
     }
 
-// 良い例: 子が独立して失敗できる場合は supervisorScope
+// Good: supervisorScope when children can fail independently
 suspend fun fetchDashboard(userId: String): Dashboard =
     supervisorScope {
         val user = async { userService.getUser(userId) }
@@ -330,10 +330,10 @@ suspend fun fetchDashboard(userId: String): Dashboard =
     }
 ```
 
-### リアクティブストリームのための Flow
+### Flow for Reactive Streams
 
 ```kotlin
-// 良い例: 適切なエラーハンドリングを持つコールドフロー
+// Good: Cold flow with proper error handling
 fun observeUsers(): Flow<List<User>> = flow {
     while (currentCoroutineContext().isActive) {
         val users = userRepository.findAll()
@@ -345,7 +345,7 @@ fun observeUsers(): Flow<List<User>> = flow {
     emit(emptyList())
 }
 
-// 良い例: Flow オペレーター
+// Good: Flow operators
 fun searchUsers(query: Flow<String>): Flow<List<User>> =
     query
         .debounce(300.milliseconds)
@@ -355,46 +355,46 @@ fun searchUsers(query: Flow<String>): Flow<List<User>> =
         .catch { emit(emptyList()) }
 ```
 
-### キャンセルとクリーンアップ
+### Cancellation and Cleanup
 
 ```kotlin
-// 良い例: キャンセルを尊重
+// Good: Respect cancellation
 suspend fun processItems(items: List<Item>) {
     items.forEach { item ->
-        ensureActive() // 高コストな処理の前にキャンセルを確認
+        ensureActive() // Check cancellation before expensive work
         processItem(item)
     }
 }
 
-// 良い例: try/finally でクリーンアップ
+// Good: Cleanup with try/finally
 suspend fun acquireAndProcess() {
     val resource = acquireResource()
     try {
         resource.process()
     } finally {
         withContext(NonCancellable) {
-            resource.release() // キャンセル時でも常に解放
+            resource.release() // Always release, even on cancellation
         }
     }
 }
 ```
 
-## 委譲
+## Delegation
 
-### プロパティ委譲
+### Property Delegation
 
 ```kotlin
-// 遅延初期化
+// Lazy initialization
 val expensiveData: List<User> by lazy {
     userRepository.findAll()
 }
 
-// 監視可能なプロパティ
+// Observable property
 var name: String by Delegates.observable("initial") { _, old, new ->
     logger.info("Name changed from '$old' to '$new'")
 }
 
-// マップバックのプロパティ
+// Map-backed properties
 class Config(private val map: Map<String, Any?>) {
     val host: String by map
     val port: Int by map
@@ -404,15 +404,15 @@ class Config(private val map: Map<String, Any?>) {
 val config = Config(mapOf("host" to "localhost", "port" to 8080, "debug" to true))
 ```
 
-### インターフェース委譲
+### Interface Delegation
 
 ```kotlin
-// 良い例: インターフェース実装を委譲
+// Good: Delegate interface implementation
 class LoggingUserRepository(
     private val delegate: UserRepository,
     private val logger: Logger,
 ) : UserRepository by delegate {
-    // ログを追加する必要があるものだけをオーバーライド
+    // Only override what you need to add logging to
     override suspend fun findById(id: String): User? {
         logger.info("Finding user by id: $id")
         return delegate.findById(id).also {
@@ -422,12 +422,12 @@ class LoggingUserRepository(
 }
 ```
 
-## DSL ビルダー
+## DSL Builders
 
-### 型安全なビルダー
+### Type-Safe Builders
 
 ```kotlin
-// 良い例: @DslMarker を使用した DSL
+// Good: DSL with @DslMarker
 @DslMarker
 annotation class HtmlDsl
 
@@ -448,7 +448,7 @@ class HTML {
 
 fun html(init: HTML.() -> Unit): HTML = HTML().apply(init)
 
-// 使用例
+// Usage
 val page = html {
     head { title("My Page") }
     body {
@@ -458,7 +458,7 @@ val page = html {
 }
 ```
 
-### 設定 DSL
+### Configuration DSL
 
 ```kotlin
 data class ServerConfig(
@@ -491,7 +491,7 @@ class ServerConfigBuilder {
 fun serverConfig(init: ServerConfigBuilder.() -> Unit): ServerConfig =
     ServerConfigBuilder().apply(init).build()
 
-// 使用例
+// Usage
 val config = serverConfig {
     host = "0.0.0.0"
     port = 443
@@ -500,10 +500,10 @@ val config = serverConfig {
 }
 ```
 
-## 遅延評価のためのシーケンス
+## Sequences for Lazy Evaluation
 
 ```kotlin
-// 良い例: 複数の操作を持つ大きなコレクションにはシーケンスを使用
+// Good: Use sequences for large collections with multiple operations
 val result = users.asSequence()
     .filter { it.isActive }
     .map { it.email }
@@ -511,7 +511,7 @@ val result = users.asSequence()
     .take(10)
     .toList()
 
-// 良い例: 無限シーケンスを生成
+// Good: Generate infinite sequences
 val fibonacci: Sequence<Long> = sequence {
     var a = 0L
     var b = 1L
@@ -528,10 +528,10 @@ val first20 = fibonacci.take(20).toList()
 
 ## Gradle Kotlin DSL
 
-### build.gradle.kts 設定
+### build.gradle.kts Configuration
 
 ```kotlin
-// 最新バージョンの確認: https://kotlinlang.org/docs/releases.html
+// Check for latest versions: https://kotlinlang.org/docs/releases.html
 plugins {
     kotlin("jvm") version "2.3.10"
     kotlin("plugin.serialization") version "2.3.10"
@@ -563,10 +563,10 @@ dependencies {
     // Koin
     implementation("io.insert-koin:koin-ktor:4.2.0")
 
-    // コルーチン
+    // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
 
-    // テスト
+    // Testing
     testImplementation("io.kotest:kotest-runner-junit5:6.1.4")
     testImplementation("io.kotest:kotest-assertions-core:6.1.4")
     testImplementation("io.kotest:kotest-property:6.1.4")
@@ -585,12 +585,12 @@ detekt {
 }
 ```
 
-## エラーハンドリングパターン
+## Error Handling Patterns
 
-### ドメイン操作のための Result 型
+### Result Type for Domain Operations
 
 ```kotlin
-// 良い例: Kotlin の Result またはカスタムシールドクラスを使用
+// Good: Use Kotlin's Result or a custom sealed class
 suspend fun createUser(request: CreateUserRequest): Result<User> = runCatching {
     require(request.name.isNotBlank()) { "Name cannot be blank" }
     require('@' in request.email) { "Invalid email format" }
@@ -604,16 +604,16 @@ suspend fun createUser(request: CreateUserRequest): Result<User> = runCatching {
     user
 }
 
-// 良い例: Result をチェーン
+// Good: Chain results
 val displayName = createUser(request)
     .map { it.name }
     .getOrElse { "Unknown" }
 ```
 
-### require、check、error
+### require, check, error
 
 ```kotlin
-// 良い例: 明確なメッセージを持つ事前条件
+// Good: Preconditions with clear messages
 fun withdraw(account: Account, amount: Money): Account {
     require(amount.value > 0) { "Amount must be positive: $amount" }
     check(account.balance >= amount) { "Insufficient balance: ${account.balance} < $amount" }
@@ -622,90 +622,90 @@ fun withdraw(account: Account, amount: Money): Account {
 }
 ```
 
-## コレクション操作
+## Collection Operations
 
-### 慣用的なコレクション処理
+### Idiomatic Collection Processing
 
 ```kotlin
-// 良い例: チェーン操作
+// Good: Chained operations
 val activeAdminEmails: List<String> = users
     .filter { it.role == Role.ADMIN && it.isActive }
     .sortedBy { it.name }
     .map { it.email }
 
-// 良い例: グループ化と集計
+// Good: Grouping and aggregation
 val usersByRole: Map<Role, List<User>> = users.groupBy { it.role }
 
 val oldestByRole: Map<Role, User?> = users.groupBy { it.role }
     .mapValues { (_, users) -> users.minByOrNull { it.createdAt } }
 
-// 良い例: マップ作成のための associate
+// Good: Associate for map creation
 val usersById: Map<UserId, User> = users.associateBy { it.id }
 
-// 良い例: 分割のための partition
+// Good: Partition for splitting
 val (active, inactive) = users.partition { it.isActive }
 ```
 
-## クイックリファレンス: Kotlin イディオム
+## Quick Reference: Kotlin Idioms
 
-| イディオム | 説明 |
-|-----------|------|
-| `val` over `var` | イミュータブル変数を優先 |
-| `data class` | equals/hashCode/copy を持つ値オブジェクト用 |
-| `sealed class/interface` | 制限された型階層用 |
-| `value class` | ゼロオーバーヘッドの型安全ラッパー |
-| 式 `when` | 網羅的なパターンマッチング |
-| セーフコール `?.` | null 安全なメンバーアクセス |
-| Elvis `?:` | null 可能型のデフォルト値 |
-| `let`/`apply`/`also`/`run`/`with` | クリーンなコードのためのスコープ関数 |
-| 拡張関数 | 継承なしで振る舞いを追加 |
-| `copy()` | データクラスのイミュータブルな更新 |
-| `require`/`check` | 事前条件アサーション |
-| コルーチン `async`/`await` | 構造化された並行実行 |
-| `Flow` | コールドリアクティブストリーム |
-| `sequence` | 遅延評価 |
-| 委譲 `by` | 継承なしで実装を再利用 |
+| Idiom | Description |
+|-------|-------------|
+| `val` over `var` | Prefer immutable variables |
+| `data class` | For value objects with equals/hashCode/copy |
+| `sealed class/interface` | For restricted type hierarchies |
+| `value class` | For type-safe wrappers with zero overhead |
+| Expression `when` | Exhaustive pattern matching |
+| Safe call `?.` | Null-safe member access |
+| Elvis `?:` | Default value for nullables |
+| `let`/`apply`/`also`/`run`/`with` | Scope functions for clean code |
+| Extension functions | Add behavior without inheritance |
+| `copy()` | Immutable updates on data classes |
+| `require`/`check` | Precondition assertions |
+| Coroutine `async`/`await` | Structured concurrent execution |
+| `Flow` | Cold reactive streams |
+| `sequence` | Lazy evaluation |
+| Delegation `by` | Reuse implementation without inheritance |
 
-## 避けるべきアンチパターン
+## Anti-Patterns to Avoid
 
 ```kotlin
-// 悪い例: null 可能型を強制アンラップ
+// Bad: Force-unwrapping nullable types
 val name = user!!.name
 
-// 悪い例: Java からのプラットフォーム型リーク
-fun getLength(s: String) = s.length // 安全
-fun getLength(s: String?) = s?.length ?: 0 // Java からの null を処理
+// Bad: Platform type leakage from Java
+fun getLength(s: String) = s.length // Safe
+fun getLength(s: String?) = s?.length ?: 0 // Handle nulls from Java
 
-// 悪い例: ミュータブルなデータクラス
+// Bad: Mutable data classes
 data class MutableUser(var name: String, var email: String)
 
-// 悪い例: 制御フローに例外を使用
+// Bad: Using exceptions for control flow
 try {
     val user = findUser(id)
 } catch (e: NotFoundException) {
-    // 期待されるケースに例外を使用しない
+    // Don't use exceptions for expected cases
 }
 
-// 良い例: null 可能な戻り値または Result を使用
+// Good: Use nullable return or Result
 val user: User? = findUserOrNull(id)
 
-// 悪い例: コルーチンスコープを無視
-GlobalScope.launch { /* GlobalScope を避ける */ }
+// Bad: Ignoring coroutine scope
+GlobalScope.launch { /* Avoid GlobalScope */ }
 
-// 良い例: 構造化並行性を使用
+// Good: Use structured concurrency
 coroutineScope {
-    launch { /* 適切にスコープ化 */ }
+    launch { /* Properly scoped */ }
 }
 
-// 悪い例: 深くネストされたスコープ関数
+// Bad: Deeply nested scope functions
 user?.let { u ->
     u.address?.let { a ->
         a.city?.let { c -> process(c) }
     }
 }
 
-// 良い例: 直接のセーフコールチェーン
+// Good: Direct null-safe chain
 user?.address?.city?.let { process(it) }
 ```
 
-**覚えておくこと**: Kotlin のコードは簡潔かつ読みやすくあるべきです。安全性のために型システムを活用し、イミュータビリティを優先し、並行性にはコルーチンを使用してください。迷ったときはコンパイラに助けてもらいましょう。
+**Remember**: Kotlin code should be concise but readable. Leverage the type system for safety, prefer immutability, and use coroutines for concurrency. When in doubt, let the compiler help you.

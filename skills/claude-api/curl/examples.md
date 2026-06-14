@@ -18,42 +18,13 @@ curl https://api.anthropic.com/v1/messages \
   -H "x-api-key: $ANTHROPIC_API_KEY" \
   -H "anthropic-version: 2023-06-01" \
   -d '{
-    "model": "claude-opus-4-8",
-    "max_tokens": 16000,
+    "model": "claude-opus-4-6",
+    "max_tokens": 1024,
     "messages": [
       {"role": "user", "content": "What is the capital of France?"}
     ]
   }'
 ```
-
-### Parsing the response
-
-Use `jq` to extract fields from the JSON response. Do not use `grep`/`sed` —
-JSON strings can contain any character and regex parsing will break on quotes,
-escapes, or multi-line content.
-
-```bash
-# Capture the response, then extract fields
-response=$(curl -s https://api.anthropic.com/v1/messages \
-  -H "Content-Type: application/json" \
-  -H "x-api-key: $ANTHROPIC_API_KEY" \
-  -H "anthropic-version: 2023-06-01" \
-  -d '{"model":"claude-opus-4-8","max_tokens":16000,"messages":[{"role":"user","content":"Hello"}]}')
-
-# Print the first text block (-r strips the JSON quotes)
-echo "$response" | jq -r '.content[0].text'
-
-# Read usage fields
-input_tokens=$(echo "$response" | jq -r '.usage.input_tokens')
-output_tokens=$(echo "$response" | jq -r '.usage.output_tokens')
-
-# Read stop reason (for tool-use loops)
-stop_reason=$(echo "$response" | jq -r '.stop_reason')
-
-# Extract all text blocks (content is an array; filter to type=="text")
-echo "$response" | jq -r '.content[] | select(.type == "text") | .text'
-```
-
 
 ---
 
@@ -65,8 +36,8 @@ curl https://api.anthropic.com/v1/messages \
   -H "x-api-key: $ANTHROPIC_API_KEY" \
   -H "anthropic-version: 2023-06-01" \
   -d '{
-    "model": "claude-opus-4-8",
-    "max_tokens": 64000,
+    "model": "claude-opus-4-6",
+    "max_tokens": 1024,
     "stream": true,
     "messages": [{"role": "user", "content": "Write a haiku"}]
   }'
@@ -104,8 +75,8 @@ curl https://api.anthropic.com/v1/messages \
   -H "x-api-key: $ANTHROPIC_API_KEY" \
   -H "anthropic-version: 2023-06-01" \
   -d '{
-    "model": "claude-opus-4-8",
-    "max_tokens": 16000,
+    "model": "claude-opus-4-6",
+    "max_tokens": 1024,
     "tools": [{
       "name": "get_weather",
       "description": "Get current weather for a location",
@@ -129,8 +100,8 @@ curl https://api.anthropic.com/v1/messages \
   -H "x-api-key: $ANTHROPIC_API_KEY" \
   -H "anthropic-version: 2023-06-01" \
   -d '{
-    "model": "claude-opus-4-8",
-    "max_tokens": 16000,
+    "model": "claude-opus-4-6",
+    "max_tokens": 1024,
     "tools": [{
       "name": "get_weather",
       "description": "Get current weather for a location",
@@ -157,42 +128,19 @@ curl https://api.anthropic.com/v1/messages \
 
 ---
 
-## Prompt Caching
-
-Put `cache_control` on the last block of the stable prefix. See `shared/prompt-caching.md` for placement patterns and the silent-invalidator audit checklist.
-
-```bash
-curl https://api.anthropic.com/v1/messages \
-  -H "Content-Type: application/json" \
-  -H "x-api-key: $ANTHROPIC_API_KEY" \
-  -H "anthropic-version: 2023-06-01" \
-  -d '{
-    "model": "claude-opus-4-8",
-    "max_tokens": 16000,
-    "system": [
-      {"type": "text", "text": "<large shared prompt...>", "cache_control": {"type": "ephemeral"}}
-    ],
-    "messages": [{"role": "user", "content": "Summarize the key points"}]
-  }'
-```
-
-For 1-hour TTL: `"cache_control": {"type": "ephemeral", "ttl": "1h"}`. Top-level `"cache_control"` on the request body auto-places on the last cacheable block. Verify hits via the response `usage.cache_creation_input_tokens` / `usage.cache_read_input_tokens` fields.
-
----
-
 ## Extended Thinking
 
-> **Fable 5, Opus 4.8, Opus 4.7, Opus 4.6, and Sonnet 4.6:** Use adaptive thinking. `budget_tokens` is removed on Fable 5, Opus 4.8, and 4.7 (400 if sent); deprecated on Opus 4.6 and Sonnet 4.6.
+> **Opus 4.6 and Sonnet 4.6:** Use adaptive thinking. `budget_tokens` is deprecated on both Opus 4.6 and Sonnet 4.6.
 > **Older models:** Use `"type": "enabled"` with `"budget_tokens": N` (must be < `max_tokens`, min 1024).
 
 ```bash
-# Fable 5 / Opus 4.8 / 4.7 / 4.6: adaptive thinking (recommended)
+# Opus 4.6: adaptive thinking (recommended)
 curl https://api.anthropic.com/v1/messages \
   -H "Content-Type: application/json" \
   -H "x-api-key: $ANTHROPIC_API_KEY" \
   -H "anthropic-version: 2023-06-01" \
   -d '{
-    "model": "claude-opus-4-8",
+    "model": "claude-opus-4-6",
     "max_tokens": 16000,
     "thinking": {
       "type": "adaptive"

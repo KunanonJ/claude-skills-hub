@@ -1,0 +1,48 @@
+{
+  "study": {
+    "title": "Finance close workflow discovery",
+    "outcome": "Reduce time-to-close from 14 days to 5 days",
+    "round": 1,
+    "interviewer": "PM Name",
+    "date_range": "2026-05-01 to 2026-05-15"
+  },
+  "interviews": [
+    {
+      "participant": "P1",
+      "role": "Senior Finance Lead",
+      "segment": "enterprise-50-200-employees",
+      "qa": [
+        {
+          "question": "Walk me through your last month-end close.",
+          "answer": "I started on the 28th. Pulled the bank feed Wednesday afternoon. Two transactions came in as duplicates from the prior period, so I spent four hours re-keying the ledger. By Friday I still wasn't sure the numbers reconciled."
+        },
+        {
+          "question": "What did you do when you saw the duplicates?",
+          "answer": "Exported everything to Excel and rebuilt the matches by hand. The automation flagged a conflict but didn't tell me which rule produced the match, so I couldn't trust it."
+        }
+      ]
+    },
+    {
+      "participant": "P2",
+      "role": "Controller",
+      "segment": "mid-market-200-500-employees",
+      "qa": [
+        {
+          "question": "How do you verify automated matches?",
+          "answer": "I check every single one for the first three weeks of a new integration. Then I sample. I'd love to trust it sooner, but I can't see why the system made each decision."
+        }
+      ]
+    },
+    {
+      "participant": "P3",
+      "role": "AP Specialist",
+      "segment": "enterprise-50-200-employees",
+      "qa": [
+        {
+          "question": "Tell me about a time the close went smoothly.",
+          "answer": "Last quarter we had no integration changes. Took 6 days end-to-end. The slow part is always reconciling exceptions when the rules change underneath us."
+        }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 ---
 name: kotlin-testing
-description: Kotlinテストフレームワーク、アサーション、モック、およびコルーチンテスト。
+description: Kotlin testing patterns with Kotest, MockK, coroutine testing, property-based testing, and Kover coverage. Follows TDD methodology with idiomatic Kotlin practices.
 origin: ECC
 ---
 

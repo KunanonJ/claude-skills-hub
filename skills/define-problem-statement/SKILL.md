@@ -4,8 +4,8 @@ description: Creates a clear problem framing document with user impact, business
 license: Apache-2.0
 metadata:
   phase: define
-  version: "2.0.0"
-  updated: 2026-01-26
+  version: "2.1.0"
+  updated: 2026-06-10
   category: problem-framing
   frameworks: [triple-diamond, lean-startup, design-thinking]
   author: product-on-purpose
@@ -23,12 +23,19 @@ A problem statement is a concise document that frames the problem you're solving
 - Evaluating whether a proposed solution actually addresses the core problem
 - Onboarding new team members to provide context
 
+## When NOT to Use
+
+- The problem is already agreed and engineering needs the spec -> use `deliver-prd`
+- You want to propose and compare solution approaches -> use `develop-solution-brief`
+- You are capturing customer motivation rather than a business problem -> use `define-jtbd-canvas`
+- The "problem" is really an unvalidated assumption -> frame it with `define-hypothesis` and test it before committing a team to it
+
 ## Instructions
 
 When asked to create a problem statement, follow these steps:
 
 1. **Identify the User Segment**
-   Ask who is experiencing this problem. Get specific about the user persona, role, or segment. Avoid vague descriptions like "users" . instead target "mobile shoppers completing checkout" or "enterprise admins managing 50+ users."
+   Ask who is experiencing this problem. Get specific about the user persona, role, or segment. Avoid vague descriptions like "users" - instead target "mobile shoppers completing checkout" or "enterprise admins managing 50+ users."
 
 2. **Understand the Pain Points**
    Explore what friction, frustration, or unmet need the user experiences. Ask probing questions to understand the severity and frequency of the problem. Look for evidence from user research, support tickets, or behavioral data.
@@ -47,7 +54,7 @@ When asked to create a problem statement, follow these steps:
 
 ## Output Format
 
-Use the template in `references/TEMPLATE.md` to structure the output.
+Use the template in `references/TEMPLATE.md` to structure the output. A complete problem statement fills every template section: Problem Summary; User Impact; Business Context; Success Criteria; Constraints & Considerations; and Open Questions.
 
 ## Quality Checklist
 

@@ -169,8 +169,15 @@ export class PostizAPI {
     });
   }
 
-  async listIntegrations() {
-    return this.request('/public/v1/integrations', {
+  async listIntegrations(group?: string) {
+    const query = group ? `?group=${encodeURIComponent(group)}` : '';
+    return this.request(`/public/v1/integrations${query}`, {
+      method: 'GET',
+    });
+  }
+
+  async listGroups() {
+    return this.request('/public/v1/groups', {
       method: 'GET',
     });
   }

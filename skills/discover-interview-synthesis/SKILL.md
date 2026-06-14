@@ -1,11 +1,11 @@
 ---
 name: discover-interview-synthesis
-description: Synthesizes user research interviews into actionable insights, patterns, and recommendations. Use after conducting user interviews, customer calls, or usability sessions to extract and communicate findings.
+description: Synthesizes user research interviews into actionable insights, patterns, and recommendations. Use after conducting user interviews, customer calls, or usability sessions to extract and communicate findings across participants. Distinct from foundation-meeting-recap, which summarizes one internal meeting for its attendees; this skill aggregates research conversations into evidence-backed findings.
 license: Apache-2.0
 metadata:
   phase: discover
-  version: "2.0.0"
-  updated: 2026-01-26
+  version: "2.1.0"
+  updated: 2026-06-10
   category: research
   frameworks: [triple-diamond, lean-startup, design-thinking]
   author: product-on-purpose
@@ -22,6 +22,13 @@ An interview synthesis transforms raw user research data into structured insight
 - After usability testing sessions to consolidate observations
 - When stakeholders need a summary of research findings
 - Before ideation sessions to ground the team in user reality
+
+## When NOT to Use
+
+- You are summarizing one internal meeting for its attendees -> use `foundation-meeting-recap`
+- You need patterns across multiple meetings over time -> use `foundation-meeting-synthesize`
+- Your data is survey responses rather than interviews -> use `measure-survey-analysis`
+- The findings are synthesized and you are ready to frame the problem -> use `define-problem-statement`
 
 ## Instructions
 
@@ -50,7 +57,7 @@ When asked to synthesize interview findings, follow these steps:
 
 ## Output Format
 
-Use the template in `references/TEMPLATE.md` to structure the output.
+Use the template in `references/TEMPLATE.md` to structure the output. A complete synthesis fills every template section: Research Overview; Key Themes; Notable Quotes; Insights; Recommendations; and Appendix.
 
 ## Quality Checklist
 

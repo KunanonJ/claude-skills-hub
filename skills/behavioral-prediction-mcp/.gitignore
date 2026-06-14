@@ -1,0 +1,26 @@
+# Local Claude Code config
+CLAUDE.local.md
+REGISTRY.local.md
+
+# Local draft files (not for source control)
+chainaware-website-llms.txt
+
+# Environment / secrets
+.env
+.env.*
+credentials.json
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+#Local vs code 
+.vscode

@@ -217,7 +217,7 @@ User: Produce the Growth Plan for Acme.
 
 Skill response:
 1. Verify pre-conditions: Parts 1-7 completed, Core Docs at v2 ✓
-2. Read all source docs (~95K words total)
+2. Pull from source docs ONE AT A TIME via targeted Read with offset+limit (grep first for the section you need, then Read just that range) — the full corpus is ~95K words, so bulk-reading every doc up front blows the per-skill 5K-token budget
 3. Synthesise into 11 sections, ~24 pages
 4. Apply three-scenario forecasting in Sections 7 + 11
 5. Apply 30/60/90 phasing in Section 8

@@ -1,223 +1,310 @@
 ---
 name: gemini
-description: Use when the user asks to run Gemini CLI for code review, plan review, or big context (>200k) processing. Ideal for comprehensive analysis requiring large context windows. Uses Gemini 3 Pro by default for state-of-the-art reasoning and coding.
+argument-hint: "'review', 'challenge', or 'consult' + optional context"
+description: >
+  Cross-model second opinion from Google Gemini — a different AI reviewing the
+  same changes, with deep Google ecosystem knowledge. Three modes: review
+  (pass/fail gate for Google Ads campaigns, SEO metadata, or code), challenge
+  (adversarial stress-test that tries to break your changes), and consult
+  (open Q&A with Gemini on Google Ads strategy, SEO best practices, or
+  implementation questions). Use when the user says "gemini review", "ask
+  gemini", "gemini challenge", "second opinion from gemini", "consult gemini",
+  "stress test with gemini", "what would gemini say", "cross-model review",
+  or "get another opinion". Voice aliases: "gem", "gemini check". Especially
+  useful for Google Ads changes, SEO metadata updates, campaign structure
+  decisions, keyword strategies, and bid/budget changes — Gemini has native
+  Google ecosystem knowledge that complements Claude's analysis.
+triggers:
+  - gemini
+  - gemini review
+  - gemini challenge
+  - gemini consult
+  - ask gemini
+  - second opinion gemini
+  - stress test gemini
+  - gem review
+  - gem consult
 ---
 
-# Gemini Skill Guide
+# Gemini — Cross-Model Second Opinion
 
-## When to Use Gemini
-- WHEN ASKED TO BE ACTIVATED
-- **Code Review**: Comprehensive code reviews across multiple files
-- **Plan Review**: Analyzing architectural plans, technical specifications, or project roadmaps
-- **Big Context Processing**: Tasks requiring >200k tokens of context (entire codebases, documentation sets)
-- **Multi-file Analysis**: Understanding relationships and patterns across many files
+You are orchestrating a cross-model review by launching Google's Gemini CLI as
+an independent reviewer. Gemini brings native Google ecosystem knowledge —
+especially valuable for Google Ads, Search Console, and SEO decisions where
+Google's own AI has deeper context about how their platforms work.
 
-## ⚠️ Critical: Background/Non-Interactive Mode Warning
+**Unlike the code-only review pattern**, this skill handles three types of
+changes:
 
-**NEVER use `--approval-mode default` in background or non-interactive shells** (like Claude Code tool calls). It will hang indefinitely waiting for approval prompts that cannot be provided.
+1. **Code changes** — diffs, new files, refactors
+2. **Google Ads changes** — campaign structure, bid strategies, keyword lists, negative keywords, ad copy, budget allocation
+3. **SEO metadata changes** — title tags, meta descriptions, schema markup, robots directives, sitemap updates, content rewrites
 
-**For automated/background reviews:**
-- ✅ Use `--approval-mode yolo` for fully automated execution
-- ✅ OR wrap with timeout: `timeout 300 gemini ...`
-- ❌ NEVER use `--approval-mode default` without interactive terminal
+---
 
-**Symptoms of hung Gemini:**
-- Process running 20+ minutes with 0% CPU usage
-- No network activity
-- Process state shows 'S' (sleeping)
+## Step 0 — Detect Gemini CLI
 
-**Fix hung process:**
 ```bash
-# Check if hung
-ps aux | grep gemini | grep -v grep
-
-# Kill if necessary
-pkill -9 -f "gemini.*gemini-3-pro-preview"
+command -v gemini >/dev/null 2>&1 && echo "GEMINI_FOUND" || echo "GEMINI_NOT_FOUND"
 ```
 
-## Running a Task
+**If `GEMINI_NOT_FOUND`:** Stop and tell the user:
 
-1. Ask the user (via `AskUserQuestion`) which model to use in a **single prompt**. Available models:
-   - `gemini-3-pro-preview` ⭐ (flagship model, best for coding & complex reasoning, 35% better at software engineering than 2.5 Pro)
-   - `gemini-3-flash` (sub-second latency, distilled from 3 Pro, best for speed-critical tasks)
-   - `gemini-2.5-pro` (legacy option, strong all-around performance)
-   - `gemini-2.5-flash` (legacy option, cost-efficient with thinking capabilities)
-   - `gemini-2.5-flash-lite` (legacy option, fastest processing)
+> Gemini CLI is not installed. Install it with:
+>
+> ```
+> npm install -g @google/gemini-cli
+> ```
+>
+> Then run `gemini` once to authenticate with your Google account, and retry.
 
-2. Select the approval mode based on the task:
-   - `default`: Prompt for approval (⚠️ ONLY for interactive terminal sessions)
-   - `auto_edit`: Auto-approve edit tools only (for code reviews with suggestions)
-   - `yolo`: Auto-approve all tools (✅ REQUIRED for background/automated tasks)
+**If `GEMINI_FOUND`:** continue silently.
 
-3. Assemble the command with appropriate options:
-   - `-m, --model <MODEL>` - Model selection
-   - `--approval-mode <default|auto_edit|yolo>` - Control tool approval
-   - `-y, --yolo` - Alternative to `--approval-mode yolo`
-   - `-i, --prompt-interactive "prompt"` - Execute prompt and continue interactively
-   - `--include-directories <DIR>` - Additional directories to include in workspace
-   - `-s, --sandbox` - Run in sandbox mode for isolation
+---
 
-4. **For background/automated tasks, ALWAYS use `--approval-mode yolo`** or add timeout wrapper. NEVER use `default` in non-interactive shells.
+## Step 1 — Detect Mode
 
-5. Run the command and capture the output. For background/automated mode:
-   ```bash
-   # Recommended: Use yolo for background tasks
-   gemini -m gemini-3-pro-preview --approval-mode yolo "Review this codebase for security issues"
+Parse the user's request to determine the mode. Match against these patterns:
 
-   # Or with timeout (5 min limit)
-   timeout 300 gemini -m gemini-3-pro-preview --approval-mode yolo "Review this codebase"
-   ```
+| Mode | Trigger phrases |
+|------|----------------|
+| **review** | "review", "check", "look at", "pass/fail", "gate", "approve" |
+| **challenge** | "challenge", "stress test", "break", "adversarial", "find holes", "poke holes" |
+| **consult** | "consult", "ask", "what does gemini think", "opinion", "advice", "strategy" |
 
-6. For interactive sessions with an initial prompt:
-   ```bash
-   gemini -m gemini-3-pro-preview -i "Review the authentication system" --approval-mode auto_edit
-   ```
+**If ambiguous:** default to **review** for changes that exist in the diff, or
+**consult** if the user is asking a question with no pending changes.
 
-7. **After Gemini completes**, inform the user: "The Gemini analysis is complete. You can start a new Gemini session for follow-up analysis or continue exploring the findings."
+---
 
-### Quick Reference
+## Step 2 — Detect Change Type
 
-| Use case | Approval mode | Key flags |
-| --- | --- | --- |
-| Background code review | `yolo` ✅ | `-m gemini-3-pro-preview --approval-mode yolo` |
-| Background analysis | `yolo` ✅ | `-m gemini-3-pro-preview --approval-mode yolo` |
-| Background with timeout | `yolo` ✅ | `timeout 300 gemini -m gemini-3-pro-preview --approval-mode yolo` |
-| Interactive code review | `default` | `-m gemini-3-pro-preview --approval-mode default` (interactive terminal only) |
-| Code review with auto-edits | `auto_edit` | `-m gemini-3-pro-preview --approval-mode auto_edit` |
-| Automated refactoring | `yolo` | `-m gemini-3-pro-preview --approval-mode yolo` |
-| Speed-critical background | `yolo` ✅ | `-m gemini-3-flash --approval-mode yolo` |
-| Cost-optimized background | `yolo` ✅ | `-m gemini-2.5-flash --approval-mode yolo` |
-| Multi-directory analysis | `yolo` (if background) | `--include-directories <DIR1> --include-directories <DIR2>` |
-| Interactive with prompt | `auto_edit` or `default` | `-i "prompt" --approval-mode <mode>` |
+Determine what kind of changes are being reviewed. Check in this order:
 
-### Model Selection Guide
+### 2a — Check for Google Ads changes
 
-| Model | Best for | Context window | Key features |
-| --- | --- | --- | --- |
-| `gemini-3-pro-preview` ⭐ | **Flagship model**: Complex reasoning, coding, agentic tasks | 1M input / 64k output | Vibe coding, 76.2% SWE-bench, $2-4/M input |
-| `gemini-3-flash` | Sub-second latency, speed-critical applications | 1M input / 64k output | Distilled from 3 Pro, TPU-optimized |
-| `gemini-2.5-pro` | Legacy: Strong all-around performance | 1M input / 65k output | Thinking mode, mature stability |
-| `gemini-2.5-flash` | Legacy: Cost-efficient, high-volume tasks | 1M input / 65k output | Best price ($0.15/M), thinking mode |
-| `gemini-2.5-flash-lite` | Legacy: Fastest processing, high throughput | 1M input / 65k output | Maximum speed, minimal latency |
+Look for signs of Ads-related work in the current conversation context:
+- Recent MCP tool calls to `mcp__notfair__*` or `mcp__google_ads_mcp__*`
+- Discussion of campaigns, keywords, bids, budgets, ad copy, negative keywords
+- Files like `.notfair/change-log.json` or Ads-related config changes
 
-**Gemini 3 Advantages**: 35% higher accuracy in software engineering, state-of-the-art on SWE-bench (76.2%), GPQA Diamond (91.9%), and WebDev Arena (1487 Elo). Knowledge cutoff: January 2025.
+If found, set `CHANGE_TYPE=google-ads`.
 
-**Coming Soon**: `gemini-3-deep-think` for ultra-complex reasoning with enhanced thinking capabilities.
+### 2b — Check for SEO metadata changes
 
-## Common Use Cases
+Look for:
+- Recent calls to SEO skills (seo-analysis, meta-tags-optimizer, schema-markup-generator)
+- Discussion of title tags, meta descriptions, schema markup, robots.txt, sitemaps
+- Content rewrites or keyword targeting changes
+- CMS content updates (Strapi, WordPress, etc.)
 
-### Code Review (Background/Automated)
+If found, set `CHANGE_TYPE=seo`.
+
+### 2c — Check for code changes
+
 ```bash
-# For background execution (Claude Code, CI/CD, etc.)
-gemini -m gemini-3-pro-preview --approval-mode yolo \
-  "Perform a comprehensive code review focusing on:
-   1. Security vulnerabilities
-   2. Performance issues
-   3. Code quality and maintainability
-   4. Best practices violations"
-
-# With timeout safety (5 minutes)
-timeout 300 gemini -m gemini-3-pro-preview --approval-mode yolo \
-  "Perform a comprehensive code review..."
+git diff --stat HEAD 2>/dev/null || echo "NO_GIT_DIFF"
 ```
 
-### Plan Review (Background/Automated)
-```bash
-# For background execution
-gemini -m gemini-3-pro-preview --approval-mode yolo \
-  "Review this architectural plan for:
-   1. Scalability concerns
-   2. Missing components
-   3. Integration challenges
-   4. Alternative approaches"
+If there's a diff, set `CHANGE_TYPE=code`.
+
+### 2d — Mixed or unclear
+
+If multiple types are present, set `CHANGE_TYPE=mixed`. If nothing is found and
+mode is **consult**, set `CHANGE_TYPE=consult-only`.
+
+---
+
+## Step 3 — Build the Context
+
+Assemble the context payload that Gemini will review. Tailor it to the change type.
+
+### For `google-ads` changes:
+
+Summarize the proposed Ads changes in a structured block:
+
+```
+GOOGLE ADS CHANGE SUMMARY
+==========================
+Account: [account name/ID if known]
+Change type: [campaign creation | bid adjustment | keyword changes | negative keywords | ad copy | budget | targeting | etc.]
+
+BEFORE (current state):
+[Describe current campaign/keyword/bid state]
+
+AFTER (proposed changes):
+[Describe what will change]
+
+BUSINESS CONTEXT:
+[Goal of the change — CPA target, ROAS goal, traffic objective, etc.]
 ```
 
-### Big Context Analysis (Background/Automated)
-```bash
-# For background execution
-gemini -m gemini-3-pro-preview --approval-mode yolo \
-  "Analyze the entire codebase to understand:
-   1. Overall architecture
-   2. Key patterns and conventions
-   3. Potential technical debt
-   4. Refactoring opportunities"
+### For `seo` changes:
+
+```
+SEO CHANGE SUMMARY
+==================
+Site: [URL]
+Change type: [title tags | meta descriptions | schema markup | content rewrite | robots.txt | sitemap | etc.]
+
+BEFORE (current state):
+[Current metadata/content]
+
+AFTER (proposed changes):
+[New metadata/content]
+
+TARGET KEYWORDS:
+[Keywords being targeted, if applicable]
+
+SEARCH INTENT:
+[Informational / navigational / commercial / transactional]
 ```
 
-### Interactive Code Review (Terminal Only)
+### For `code` changes:
+
 ```bash
-# ONLY use default mode in interactive terminal
-gemini -m gemini-3-pro-preview --approval-mode default \
-  "Review the authentication flow for security issues"
+BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "unknown")
+DIFF=$(git diff HEAD 2>/dev/null)
+STAT=$(git diff --stat HEAD 2>/dev/null)
 ```
 
-## Following Up
+Combine the diff stat and full diff into the context.
 
-- Gemini CLI sessions are typically one-shot or interactive. Unlike Codex, there's no built-in resume functionality.
-- For follow-up analysis, start a new Gemini session with context from previous findings.
-- When proposing follow-up actions, restate the chosen model and approval mode.
-- Use `AskUserQuestion` after each Gemini command to confirm next steps or gather clarifications.
+### For `mixed` changes:
 
-## Error Handling
+Combine all applicable sections above.
 
-- Stop and report failures whenever `gemini --version` or a Gemini command exits non-zero.
-- Request direction before retrying failed commands.
-- Before using high-impact flags (`--approval-mode yolo`, `-y`, `--sandbox`), ask the user for permission using `AskUserQuestion` unless already granted.
-- When output includes warnings or partial results, summarize them and ask how to adjust using `AskUserQuestion`.
+---
 
-## Troubleshooting Hung Gemini Processes
+## Step 4 — Run Gemini
 
-### Detection
+Build and execute the Gemini CLI command based on mode and change type.
+
+### Review Mode
+
 ```bash
-# Check for hung processes
-ps aux | grep -E "gemini.*gemini-3" | grep -v grep
+gemini -p "You are a senior reviewer with deep expertise in Google's advertising platform, Google Search, and SEO best practices. You are reviewing proposed changes for correctness, effectiveness, and potential risks.
 
-# Look for these symptoms:
-# - Process running 20+ minutes
-# - CPU usage at 0%
-# - Process state 'S' (sleeping)
-# - No network connections
+CHANGE TYPE: ${CHANGE_TYPE}
+
+${CONTEXT}
+
+Evaluate these changes and produce a structured review:
+
+1. VERDICT: PASS or FAIL (use FAIL if any blocking issue exists)
+
+2. BLOCKING ISSUES (if any):
+   - Issue, why it matters, and how to fix it
+
+3. WARNINGS (non-blocking but worth considering):
+   - Concern and recommendation
+
+4. STRENGTHS:
+   - What the changes do well
+
+For Google Ads changes, specifically check:
+- Policy compliance (disapprovals, trademark issues, restricted content)
+- Budget efficiency (is spend allocated to highest-intent keywords?)
+- Keyword conflicts (cannibalization, broad match pitfalls, missing negatives)
+- Landing page alignment (do ads match what the page delivers?)
+- Bid strategy fit (does the strategy match the campaign goal?)
+
+For SEO changes, specifically check:
+- Title tag length (under 60 chars) and keyword placement (front-loaded?)
+- Meta description length (under 160 chars) and call-to-action presence
+- Schema markup validity and completeness
+- Potential keyword cannibalization across pages
+- Search intent alignment (does the content match what users expect?)
+- E-E-A-T signals (expertise, experience, authoritativeness, trustworthiness)
+- Internal linking opportunities missed
+
+For code changes, check:
+- Correctness and edge cases
+- Security issues
+- Performance concerns
+- Breaking changes" 2>&1
 ```
 
-### Diagnosis
-```bash
-# Get detailed process info
-ps -o pid,etime,pcpu,stat,command -p <PID>
+Capture the output. If the exit code is non-zero, report the error to the user
+and suggest checking `gemini` authentication.
 
-# Check network activity
-lsof -p <PID> 2>/dev/null | grep -E "(TCP|ESTABLISHED)" | wc -l
-# If result is 0, process is hung
+### Challenge Mode
+
+```bash
+gemini -p "You are a seasoned and skeptical growth advisor who has managed eight-figure Google Ads budgets and scaled organic traffic for major brands. You have expert-level knowledge of Google's latest policies — Ads editorial standards, Performance Max behavior, broad match changes, Search quality guidelines, spam policies, Core Web Vitals thresholds, and structured data requirements.
+
+Your role is devil's advocate. The team is proposing changes and they want you to pressure-test them before committing. Do not be agreeable — your value is in catching what optimism misses. Evaluate based on evidence, data, and your experience with how Google's systems actually behave (not how documentation says they should).
+
+CHANGE TYPE: ${CHANGE_TYPE}
+
+${CONTEXT}
+
+For each proposed change:
+
+1. STATE THE ASSUMPTION — What is the team assuming will happen?
+2. CHALLENGE IT — Why might that assumption be wrong? Cite specific Google policy, algorithm behavior, or auction mechanics where relevant. Reference real patterns you'd expect to see in the data.
+3. WHAT DOES THE DATA SAY? — What metrics or signals should the team check before and after to validate this change? Be specific (e.g. 'compare impression share lost to rank before and 14 days after', not 'monitor performance').
+4. VERDICT — For each change: SOUND, RISKY, or RETHINK. One sentence explaining why.
+
+Finally, give an overall honest opinion: is this set of changes worth shipping as-is, or should the team pause and address specific concerns first? Be concise and professional — no filler, no hedging." 2>&1
 ```
 
-### Resolution
+### Consult Mode
+
 ```bash
-# Kill hung Gemini processes
-pkill -9 -f "gemini.*gemini-3-pro-preview"
+gemini -p "You are a Google Ads and SEO expert consultant with deep knowledge of Google's ecosystem — Search algorithms, Ads auction mechanics, Search Console, and web performance. The user wants your independent perspective.
 
-# Or kill specific PID
-kill -9 <PID>
+CONTEXT:
+${CONTEXT}
 
-# Verify cleanup
-ps aux | grep gemini | grep -v grep
+USER QUESTION:
+${USER_QUESTION}
+
+Provide a clear, opinionated answer. If you disagree with a proposed approach, say so directly and explain why. Draw on Google-specific knowledge — ad auction dynamics, search ranking factors, Quality Score mechanics, Core Web Vitals thresholds, etc." 2>&1
 ```
 
-### Prevention
-- **ALWAYS use `--approval-mode yolo` for background/automated tasks**
-- Add timeout wrapper for safety: `timeout 300 gemini ...`
-- Never use `--approval-mode default` in non-interactive shells
-- Monitor first run with `ps` to ensure process completes
+---
 
-## Tips for Large Context Processing
+## Step 5 — Present Results
 
-1. **Be specific**: Provide clear, structured prompts for what to analyze
-2. **Use include-directories**: Explicitly specify all relevant directories
-3. **Choose the right model**:
-   - Use `gemini-3-pro-preview` for complex reasoning, coding tasks, and maximum analysis quality (recommended default)
-   - Use `gemini-3-flash` for speed-critical tasks requiring sub-second response times
-   - Use `gemini-2.5-flash` for cost-optimized high-volume processing
-4. **Leverage Gemini 3's strengths**: 35% better at software engineering tasks, exceptional at agentic workflows and vibe coding
-5. **Break down complex tasks**: Even with large context, structured analysis is more effective
-6. **Save findings**: Ask Gemini to output structured reports that can be saved for reference
+### 5a — Format the Gemini output
 
-## CLI Version
+Present Gemini's response with a clear header:
 
-Requires Gemini CLI v0.16.0 or later for Gemini 3 model support. Check version: `gemini --version`
+> **Gemini Review** (`${CHANGE_TYPE}` | `${MODE}` mode)
+>
+> [Gemini's formatted output]
+
+### 5b — Cross-model analysis (if Claude already reviewed)
+
+If Claude has already reviewed the same changes (e.g., via `/notfair:seo-analysis`
+or `/notfair:google-ads-audit` earlier in the conversation), produce a cross-model
+comparison:
+
+> **Cross-Model Analysis: Claude vs Gemini**
+>
+> **Overlapping findings** (both flagged):
+> - [Finding 1]
+> - [Finding 2]
+>
+> **Claude-only findings:**
+> - [Finding that only Claude caught]
+>
+> **Gemini-only findings:**
+> - [Finding that only Gemini caught]
+>
+> **Disagreements** (if any):
+> - [Topic]: Claude says X, Gemini says Y
+
+Overlapping findings have higher confidence — they should be addressed first.
+Unique findings from either model are worth investigating. Disagreements should
+be flagged to the user for a judgment call.
+
+### 5c — Suggest next steps
+
+Based on the results:
+- **Review PASS:** "Gemini approved. Ready to ship."
+- **Review FAIL:** "Gemini flagged blocking issues. Address them, then re-run `/notfair:gemini review`."
+- **Challenge — HIGH risk:** "Stress test surfaced high-risk scenarios. Consider the mitigations before proceeding."
+- **Challenge — LOW risk:** "Gemini couldn't find major attack vectors. Changes look resilient."
+- **Consult:** "Want me to apply any of Gemini's suggestions?"
