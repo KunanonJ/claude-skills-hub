@@ -62,6 +62,7 @@ SOURCE_INPUTS = [
     {"kind": "repo", "repo": "forrestchang/andrej-karpathy-skills"},
     {"kind": "repo", "repo": "shanraisshan/claude-code-best-practice"},
     {"kind": "repo", "repo": "juliusbrussee/caveman"},
+    {"kind": "repo", "repo": "DietrichGebert/ponytail"},
     {"kind": "repo", "repo": "addyosmani/agent-skills"},
     {"kind": "repo", "repo": "expo/skills"},
     {"kind": "repo", "repo": "mattpocock/skills"},

@@ -4521,6 +4521,10 @@ polygon-automation
 polygon-io-automation
 polyphony
 pom
+ponytail
+ponytail-audit
+ponytail-help
+ponytail-review
 poptin-automation
 popular-api-fetcher
 popup-cro
