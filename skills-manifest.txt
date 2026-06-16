@@ -65,12 +65,15 @@ adapt-architecture
 adaptic
 adaptyv
 add-app-clip
+add-feature-flag
 add-integration
+add-mcp-server
 add-model-descriptions
 add-new-opc-skill
 add-puzzle-type
 add-rcpp-integration
 add-task
+add-telemetry
 address-github-comments
 address-sanitizer
 addresszen-automation
@@ -2067,6 +2070,7 @@ create-r-package
 create-segment-lists
 create-skill
 create-spatial-visualization
+create-tab-config
 create-team
 create-work-breakdown-structure
 creating-data-visualizations
@@ -2278,6 +2282,7 @@ decision-navigator
 deckset
 decode-minified-js-gates
 decommission-validated-system
+dedupe-issue-local
 deel-automation
 deep-reference
 deep-research
@@ -2515,6 +2520,7 @@ devrel-content
 dexpaprika-api
 dhdna-profiler
 diagnose
+diagnose-ci-failures
 diagnosis
 diagrammer
 diagramming-code
@@ -2687,6 +2693,7 @@ ecom
 ecommerce
 edgartools
 edit-article
+edit-figma-design
 edtech
 educational-presentation
 eeat-audit
@@ -2967,6 +2974,7 @@ featured-snippet-optimizer
 federation-audit
 federation-init
 federation-status
+feedback
 feedback-mastery
 feishu-notify
 felt-automation
@@ -2979,7 +2987,13 @@ fibery-automation
 fidel-api-automation
 figma
 figma-automation
+figma-code-connect-components
+figma-create-design-system-rules
+figma-create-new-file
+figma-generate-design
+figma-generate-library
 figma-implement-design
+figma-use
 figure-description
 figure-spec
 file-organizer
@@ -3033,6 +3047,7 @@ fit-hidden-markov-model
 fitbit-automation
 fitness-analyzer
 fix
+fix-errors
 fix-lifecycle-stages
 fix-review
 fixer-automation
@@ -3693,6 +3708,7 @@ implement-diffusion-network
 implement-electronic-signatures
 implement-gitops-workflow
 implement-pharma-serialisation
+implement-specs
 implement-task
 implementing-aes-encryption-for-data-at-rest
 implementing-alert-fatigue-reduction
@@ -4666,6 +4682,7 @@ model-routing
 modelry-automation
 modern-javascript-patterns
 modern-python
+modify-settings
 modular-scale-typography
 moe-training
 molecular-dynamics
@@ -5511,6 +5528,7 @@ pptx-processing-anthropic
 pptx-toolkit
 pptx_kw
 pr
+pr-comments
 pr-pitch
 pr-review
 pr-review-ci-fix
@@ -5628,6 +5646,7 @@ promo-director
 promo-reviewer
 promo-writer
 promote
+promote-feature
 promote-idea
 prompt-caching
 prompt-engineer
@@ -5922,6 +5941,7 @@ remotion-best-practices
 remotion-official
 remotion-video-creation
 remove-bg-automation
+remove-feature-flag
 rename
 render-automation
 render-blender-output
@@ -5987,6 +6007,7 @@ resend
 resend-automation
 resend-cli
 resolve-git-conflicts
+resolve-merge-conflicts
 respond-io-automation
 response-coordinator
 responsive-paradigms
@@ -6032,6 +6053,7 @@ review-implementing
 review-management
 review-plan
 review-pr
+review-pr-local
 review-pull-request
 review-renovate
 review-research
@@ -6106,6 +6128,7 @@ rust-engineer
 rust-patterns
 rust-pro
 rust-testing
+rust-unit-tests
 ruzzy
 rvf-manage
 rwkv
@@ -6870,6 +6893,7 @@ sparse-autoencoder-training
 spawn
 spec
 spec-driven-development
+spec-driven-implementation
 spec-driven-workflow
 spec-kit-vibe-compat
 spec-miner
@@ -7068,6 +7092,7 @@ system-profile
 systematic-debugging
 systems-paper-writing
 systems-programming-rust-project
+tab-configs
 tabular-document-review
 tabular-review-lawvable
 taggun-automation
@@ -7345,6 +7370,8 @@ treatment-plans
 tree-of-thoughts
 trello-automation
 triage
+triage-issue-local
+triage-vulnerabilities
 triaging-security-alerts-in-splunk
 triaging-security-incident
 triaging-security-incident-with-ir-playbook
@@ -7444,7 +7471,9 @@ unsloth
 unsplash-integration
 update-aegis
 update-deps
+update-skill
 update-skill-content
+update-tab-config
 update-threat-db
 updown-io-automation
 upgrading-expo
@@ -7685,6 +7714,8 @@ waboxapp-automation
 wachete-automation
 waiverfile-automation
 wakatime-automation
+warp-integration-test
+warp-ui-guidelines
 warren-buffett
 wasm-agent
 wasm-gallery
@@ -7821,8 +7852,10 @@ write-content
 write-continue-here
 write-helm-chart
 write-incident-runbook
+write-product-spec
 write-roxygen-docs
 write-standard-operating-procedure
+write-tech-spec
 write-testthat-tests
 write-validation-documentation
 write-vignette

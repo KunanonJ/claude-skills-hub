@@ -66,12 +66,15 @@ adapt-architecture	pjt222/agent-almanac	i18n/caveman/skills/adapt-architecture	h
 adaptic	pjt222/agent-almanac	i18n/caveman/skills/adaptic	https://awesomeclaude.ai/awesome-claude-skills
 adaptyv	foryourhealth111-pixel/Vibe-Skills	bundled/skills/adaptyv	https://github.com/VoltAgent/awesome-agent-skills
 add-app-clip	expo/skills	plugins/expo/skills/add-app-clip	https://github.com/expo/skills
+add-feature-flag	zerx-lab/zap	.agents/skills/add-feature-flag	https://github.com/zerx-lab/zap
 add-integration	indranilbanerjee/digital-marketing-pro	skills/add-integration	https://github.com/VoltAgent/awesome-agent-skills
+add-mcp-server	zerx-lab/zap	resources/bundled/skills/add-mcp-server	https://github.com/zerx-lab/zap
 add-model-descriptions	ruvnet/ruflo	ruflo/src/ruvocal/.claude/skills/add-model-descriptions	https://github.com/ruvnet/ruflo
 add-new-opc-skill	ReScienceLab/opc-skills	.factory/skills/add-new-opc-skill	https://github.com/VoltAgent/awesome-agent-skills
 add-puzzle-type	pjt222/agent-almanac	i18n/caveman/skills/add-puzzle-type	https://awesomeclaude.ai/awesome-claude-skills
 add-rcpp-integration	pjt222/agent-almanac	i18n/caveman/skills/add-rcpp-integration	https://awesomeclaude.ai/awesome-claude-skills
 add-task	NeoLabHQ/context-engineering-kit@master:plugins/sdd	plugins/sdd/skills/add-task	https://github.com/VoltAgent/awesome-agent-skills
+add-telemetry	zerx-lab/zap	.agents/skills/add-telemetry	https://github.com/zerx-lab/zap
 address-github-comments	sickn33/antigravity-awesome-skills	plugins/antigravity-awesome-skills/skills/address-github-comments	https://github.com/sickn33/antigravity-awesome-skills
 address-sanitizer	trailofbits/skills	plugins/testing-handbook-skills/skills/address-sanitizer	https://awesomeclaude.ai/awesome-claude-skills
 addresszen-automation	ComposioHQ/awesome-claude-skills	composio-skills/addresszen-automation	https://github.com/ComposioHQ/awesome-claude-skills
@@ -2068,6 +2071,7 @@ create-r-package	pjt222/agent-almanac	i18n/caveman/skills/create-r-package	https
 create-segment-lists	TomGranot/hubspot-admin-skills	skills/create-segment-lists	https://awesomeclaude.ai/awesome-claude-skills
 create-skill	pjt222/agent-almanac	i18n/caveman/skills/create-skill	https://awesomeclaude.ai/awesome-claude-skills
 create-spatial-visualization	pjt222/agent-almanac	i18n/caveman/skills/create-spatial-visualization	https://awesomeclaude.ai/awesome-claude-skills
+create-tab-config	zerx-lab/zap	resources/bundled/skills/create-tab-config	https://github.com/zerx-lab/zap
 create-team	pjt222/agent-almanac	i18n/caveman/skills/create-team	https://awesomeclaude.ai/awesome-claude-skills
 create-work-breakdown-structure	pjt222/agent-almanac	i18n/caveman/skills/create-work-breakdown-structure	https://awesomeclaude.ai/awesome-claude-skills
 creating-data-visualizations	foryourhealth111-pixel/Vibe-Skills	bundled/skills/creating-data-visualizations	https://github.com/VoltAgent/awesome-agent-skills
@@ -2279,6 +2283,7 @@ decision-navigator	sickn33/antigravity-awesome-skills	plugins/antigravity-awesom
 deckset	Joannis/claude-skills	deckset	https://github.com/VoltAgent/awesome-agent-skills
 decode-minified-js-gates	pjt222/agent-almanac	i18n/caveman/skills/decode-minified-js-gates	https://awesomeclaude.ai/awesome-claude-skills
 decommission-validated-system	pjt222/agent-almanac	i18n/caveman/skills/decommission-validated-system	https://awesomeclaude.ai/awesome-claude-skills
+dedupe-issue-local	zerx-lab/zap	.agents/skills/dedupe-issue-local	https://github.com/zerx-lab/zap
 deel-automation	ComposioHQ/awesome-claude-skills	composio-skills/deel-automation	https://github.com/ComposioHQ/awesome-claude-skills
 deep-reference	avifenesh/agnix	tests/fixtures/skills/deep-reference	https://awesomeclaude.ai/awesome-claude-skills
 deep-research	sickn33/antigravity-awesome-skills	plugins/antigravity-awesome-skills/skills/deep-research	https://github.com/sickn33/antigravity-awesome-skills
@@ -2516,6 +2521,7 @@ devrel-content	jonathimer/devmarketing-skills	skills/devrel-content	https://awes
 dexpaprika-api	coinpaprika/skills@main:dexpaprika-api	dexpaprika-api	https://awesomeclaude.ai/awesome-claude-skills
 dhdna-profiler	K-Dense-AI/claude-scientific-skills	skills/dhdna-profiler	https://github.com/VoltAgent/awesome-agent-skills
 diagnose	FlorianBruniaux/claude-code-ultimate-guide	examples/skills/diagnose	https://github.com/FlorianBruniaux/claude-code-ultimate-guide
+diagnose-ci-failures	zerx-lab/zap	.agents/skills/diagnose-ci-failures	https://github.com/zerx-lab/zap
 diagnosis	qdrant/skills	skills/qdrant-search-quality/diagnosis	https://github.com/VoltAgent/awesome-agent-skills
 diagrammer	davila7/claude-code-templates	cli-tool/components/skills/creative-design/diagrammer	https://www.aitmpl.com/
 diagramming-code	trailofbits/skills	plugins/trailmark/skills/diagramming-code	https://awesomeclaude.ai/awesome-claude-skills
@@ -2688,6 +2694,7 @@ ecom	takechanman1228/claude-ecom	skills/ecom	https://github.com/VoltAgent/awesom
 ecommerce	borghei/Claude-Skills	vertical-advisors/ecommerce	https://awesomeclaude.ai/awesome-claude-skills
 edgartools	foryourhealth111-pixel/Vibe-Skills	bundled/skills/edgartools	https://github.com/VoltAgent/awesome-agent-skills
 edit-article	mattpocock/skills	skills/personal/edit-article	https://github.com/mattpocock/skills
+edit-figma-design	zerx-lab/zap	resources/bundled/mcp_skills/figma/edit-figma-design	https://github.com/zerx-lab/zap
 edtech	borghei/Claude-Skills	vertical-advisors/edtech	https://awesomeclaude.ai/awesome-claude-skills
 educational-presentation	guia-matthieu/clawfu-skills	skills/content/educational-presentation	https://awesomeclaude.ai/awesome-claude-skills
 eeat-audit	inhouseseo/superseo-skills	skills/eeat-audit	https://awesomeclaude.ai/awesome-claude-skills
@@ -2968,6 +2975,7 @@ featured-snippet-optimizer	inhouseseo/superseo-skills	skills/featured-snippet-op
 federation-audit	ruvnet/ruflo	plugins/ruflo-federation/skills/federation-audit	https://github.com/ruvnet/ruflo
 federation-init	ruvnet/ruflo	plugins/ruflo-federation/skills/federation-init	https://github.com/ruvnet/ruflo
 federation-status	ruvnet/ruflo	plugins/ruflo-federation/skills/federation-status	https://github.com/ruvnet/ruflo
+feedback	zerx-lab/zap	resources/bundled/skills/feedback	https://github.com/zerx-lab/zap
 feedback-mastery	davila7/claude-code-templates	cli-tool/components/skills/enterprise-communication/feedback-mastery	https://www.aitmpl.com/
 feishu-notify	wanshuiyin/Auto-claude-code-research-in-sleep	skills/feishu-notify	https://github.com/VoltAgent/awesome-agent-skills
 felt-automation	ComposioHQ/awesome-claude-skills	composio-skills/felt-automation	https://github.com/ComposioHQ/awesome-claude-skills
@@ -2980,7 +2988,13 @@ fibery-automation	ComposioHQ/awesome-claude-skills	composio-skills/fibery-automa
 fidel-api-automation	ComposioHQ/awesome-claude-skills	composio-skills/fidel-api-automation	https://github.com/ComposioHQ/awesome-claude-skills
 figma	davila7/claude-code-templates	cli-tool/components/skills/creative-design/figma	https://www.aitmpl.com/
 figma-automation	sickn33/antigravity-awesome-skills	plugins/antigravity-awesome-skills/skills/figma-automation	https://github.com/sickn33/antigravity-awesome-skills
+figma-code-connect-components	zerx-lab/zap	resources/bundled/mcp_skills/figma/figma-code-connect-components	https://github.com/zerx-lab/zap
+figma-create-design-system-rules	zerx-lab/zap	resources/bundled/mcp_skills/figma/figma-create-design-system-rules	https://github.com/zerx-lab/zap
+figma-create-new-file	zerx-lab/zap	resources/bundled/mcp_skills/figma/figma-create-new-file	https://github.com/zerx-lab/zap
+figma-generate-design	zerx-lab/zap	resources/bundled/mcp_skills/figma/figma-generate-design	https://github.com/zerx-lab/zap
+figma-generate-library	zerx-lab/zap	resources/bundled/mcp_skills/figma/figma-generate-library	https://github.com/zerx-lab/zap
 figma-implement-design	foryourhealth111-pixel/Vibe-Skills	bundled/skills/figma-implement-design	https://github.com/VoltAgent/awesome-agent-skills
+figma-use	zerx-lab/zap	resources/bundled/mcp_skills/figma/figma-use	https://github.com/zerx-lab/zap
 figure-description	wanshuiyin/Auto-claude-code-research-in-sleep	skills/figure-description	https://github.com/VoltAgent/awesome-agent-skills
 figure-spec	wanshuiyin/Auto-claude-code-research-in-sleep	skills/figure-spec	https://github.com/VoltAgent/awesome-agent-skills
 file-organizer	ComposioHQ/awesome-claude-skills	file-organizer	https://github.com/ComposioHQ/awesome-claude-skills
@@ -3034,6 +3048,7 @@ fit-hidden-markov-model	pjt222/agent-almanac	i18n/caveman/skills/fit-hidden-mark
 fitbit-automation	ComposioHQ/awesome-claude-skills	composio-skills/fitbit-automation	https://github.com/ComposioHQ/awesome-claude-skills
 fitness-analyzer	sickn33/antigravity-awesome-skills	plugins/antigravity-awesome-skills/skills/fitness-analyzer	https://github.com/sickn33/antigravity-awesome-skills
 fix	alirezarezvani/claude-skills	.gemini/skills/fix	https://github.com/alirezarezvani/claude-skills
+fix-errors	zerx-lab/zap	.agents/skills/fix-errors	https://github.com/zerx-lab/zap
 fix-lifecycle-stages	TomGranot/hubspot-admin-skills	skills/fix-lifecycle-stages	https://awesomeclaude.ai/awesome-claude-skills
 fix-review	sickn33/antigravity-awesome-skills	plugins/antigravity-awesome-skills/skills/fix-review	https://github.com/sickn33/antigravity-awesome-skills
 fixer-automation	ComposioHQ/awesome-claude-skills	composio-skills/fixer-automation	https://github.com/ComposioHQ/awesome-claude-skills
@@ -3694,6 +3709,7 @@ implement-diffusion-network	pjt222/agent-almanac	i18n/caveman/skills/implement-d
 implement-electronic-signatures	pjt222/agent-almanac	i18n/caveman/skills/implement-electronic-signatures	https://awesomeclaude.ai/awesome-claude-skills
 implement-gitops-workflow	pjt222/agent-almanac	i18n/caveman/skills/implement-gitops-workflow	https://awesomeclaude.ai/awesome-claude-skills
 implement-pharma-serialisation	pjt222/agent-almanac	i18n/caveman/skills/implement-pharma-serialisation	https://awesomeclaude.ai/awesome-claude-skills
+implement-specs	zerx-lab/zap	.agents/skills/implement-specs	https://github.com/zerx-lab/zap
 implement-task	NeoLabHQ/context-engineering-kit@master:plugins/sdd	plugins/sdd/skills/implement-task	https://github.com/VoltAgent/awesome-agent-skills
 implementing-aes-encryption-for-data-at-rest	mukul975/Anthropic-Cybersecurity-Skills	skills/implementing-aes-encryption-for-data-at-rest	https://github.com/VoltAgent/awesome-agent-skills
 implementing-alert-fatigue-reduction	mukul975/Anthropic-Cybersecurity-Skills	skills/implementing-alert-fatigue-reduction	https://github.com/VoltAgent/awesome-agent-skills
@@ -4667,6 +4683,7 @@ model-routing	alinaqi/claude-bootstrap	skills/model-routing	https://github.com/V
 modelry-automation	ComposioHQ/awesome-claude-skills	composio-skills/modelry-automation	https://github.com/ComposioHQ/awesome-claude-skills
 modern-javascript-patterns	sickn33/antigravity-awesome-skills	plugins/antigravity-awesome-skills/skills/modern-javascript-patterns	https://github.com/sickn33/antigravity-awesome-skills
 modern-python	trailofbits/skills	plugins/modern-python/skills/modern-python	https://awesomeclaude.ai/awesome-claude-skills
+modify-settings	zerx-lab/zap	resources/bundled/skills/modify-settings	https://github.com/zerx-lab/zap
 modular-scale-typography	dembrandt/dembrandt-skills	skills/modular-scale-typography	https://github.com/VoltAgent/awesome-agent-skills
 moe-training	zechenzhangAGI/AI-research-SKILLs	19-emerging-techniques/moe-training	https://github.com/VoltAgent/awesome-agent-skills
 molecular-dynamics	K-Dense-AI/claude-scientific-skills	skills/molecular-dynamics	https://github.com/VoltAgent/awesome-agent-skills
@@ -5512,6 +5529,7 @@ pptx-processing-anthropic	lawvable/awesome-legal-skills	skills/pptx-processing-a
 pptx-toolkit	borghei/Claude-Skills	documents/pptx-toolkit	https://awesomeclaude.ai/awesome-claude-skills
 pptx_kw	yusufkaraaslan/Skill_Seekers	tests/golden/phase2/pptx_kw	https://github.com/VoltAgent/awesome-agent-skills
 pr	FlorianBruniaux/claude-code-ultimate-guide	examples/skills/pr	https://github.com/FlorianBruniaux/claude-code-ultimate-guide
+pr-comments	zerx-lab/zap	resources/bundled/skills/pr-comments	https://github.com/zerx-lab/zap
 pr-pitch	indranilbanerjee/digital-marketing-pro	skills/pr-pitch	https://github.com/VoltAgent/awesome-agent-skills
 pr-review	rtk-ai/rtk	.claude/skills/pr-review	https://github.com/rtk-ai/rtk
 pr-review-ci-fix	ComposioHQ/awesome-codex-skills	pr-review-ci-fix	https://github.com/ComposioHQ
@@ -5629,6 +5647,7 @@ promo-director	bitwize-music-studio/claude-ai-music-skills	skills/promo-director
 promo-reviewer	bitwize-music-studio/claude-ai-music-skills	skills/promo-reviewer	https://github.com/VoltAgent/awesome-agent-skills
 promo-writer	bitwize-music-studio/claude-ai-music-skills	skills/promo-writer	https://github.com/VoltAgent/awesome-agent-skills
 promote	alirezarezvani/claude-skills	.gemini/skills/promote	https://github.com/alirezarezvani/claude-skills
+promote-feature	zerx-lab/zap	.agents/skills/promote-feature	https://github.com/zerx-lab/zap
 promote-idea	bitwize-music-studio/claude-ai-music-skills	skills/promote-idea	https://github.com/VoltAgent/awesome-agent-skills
 prompt-caching	sickn33/antigravity-awesome-skills	plugins/antigravity-awesome-skills/skills/prompt-caching	https://github.com/sickn33/antigravity-awesome-skills
 prompt-engineer	sickn33/antigravity-awesome-skills	plugins/antigravity-awesome-skills/skills/prompt-engineer	https://github.com/sickn33/antigravity-awesome-skills
@@ -5923,6 +5942,7 @@ remotion-best-practices	sickn33/antigravity-awesome-skills	plugins/antigravity-a
 remotion-official	digitalsamba/claude-code-video-toolkit	.claude/skills/remotion-official	https://awesomeclaude.ai/awesome-claude-skills
 remotion-video-creation	affaan-m/everything-claude-code	docs/ja-JP/skills/remotion-video-creation	https://github.com/affaan-m/everything-claude-code
 remove-bg-automation	ComposioHQ/awesome-claude-skills	composio-skills/remove-bg-automation	https://github.com/ComposioHQ/awesome-claude-skills
+remove-feature-flag	zerx-lab/zap	.agents/skills/remove-feature-flag	https://github.com/zerx-lab/zap
 rename	bitwize-music-studio/claude-ai-music-skills	skills/rename	https://github.com/VoltAgent/awesome-agent-skills
 render-automation	sickn33/antigravity-awesome-skills	plugins/antigravity-awesome-skills/skills/render-automation	https://github.com/sickn33/antigravity-awesome-skills
 render-blender-output	pjt222/agent-almanac	i18n/caveman/skills/render-blender-output	https://awesomeclaude.ai/awesome-claude-skills
@@ -5988,6 +6008,7 @@ resend	resend/resend-skills@main:skills/resend	skills/resend	https://github.com/
 resend-automation	ComposioHQ/awesome-claude-skills	composio-skills/resend-automation	https://github.com/ComposioHQ/awesome-claude-skills
 resend-cli	resend/resend-skills@main:skills/resend-cli	skills/resend-cli	https://github.com/VoltAgent/awesome-agent-skills
 resolve-git-conflicts	pjt222/agent-almanac	i18n/caveman/skills/resolve-git-conflicts	https://awesomeclaude.ai/awesome-claude-skills
+resolve-merge-conflicts	zerx-lab/zap	.agents/skills/resolve-merge-conflicts	https://github.com/zerx-lab/zap
 respond-io-automation	ComposioHQ/awesome-claude-skills	composio-skills/respond-io-automation	https://github.com/ComposioHQ/awesome-claude-skills
 response-coordinator	guia-matthieu/clawfu-skills	skills/crisis/response-coordinator	https://awesomeclaude.ai/awesome-claude-skills
 responsive-paradigms	dembrandt/dembrandt-skills	skills/responsive-paradigms	https://github.com/VoltAgent/awesome-agent-skills
@@ -6033,6 +6054,7 @@ review-implementing	mhattingpete/claude-skills-marketplace@main:engineering-work
 review-management	Eronred/aso-skills	skills/review-management	https://github.com/VoltAgent/awesome-agent-skills
 review-plan	FlorianBruniaux/claude-code-ultimate-guide	examples/skills/review-plan	https://github.com/FlorianBruniaux/claude-code-ultimate-guide
 review-pr	FlorianBruniaux/claude-code-ultimate-guide	examples/skills/review-pr	https://github.com/FlorianBruniaux/claude-code-ultimate-guide
+review-pr-local	zerx-lab/zap	.agents/skills/review-pr-local	https://github.com/zerx-lab/zap
 review-pull-request	pjt222/agent-almanac	i18n/caveman/skills/review-pull-request	https://awesomeclaude.ai/awesome-claude-skills
 review-renovate	backnotprop/plannotator	.agents/skills/review-renovate	https://awesomeclaude.ai/awesome-claude-skills
 review-research	pjt222/agent-almanac	i18n/caveman/skills/review-research	https://awesomeclaude.ai/awesome-claude-skills
@@ -6107,6 +6129,7 @@ rust-engineer	jeffallan/claude-skills	skills/rust-engineer	https://awesomeclaude
 rust-patterns	affaan-m/everything-claude-code	.kiro/skills/rust-patterns	https://github.com/affaan-m/everything-claude-code
 rust-pro	sickn33/antigravity-awesome-skills	plugins/antigravity-awesome-skills/skills/rust-pro	https://github.com/sickn33/antigravity-awesome-skills
 rust-testing	affaan-m/everything-claude-code	.kiro/skills/rust-testing	https://github.com/affaan-m/everything-claude-code
+rust-unit-tests	zerx-lab/zap	.agents/skills/rust-unit-tests	https://github.com/zerx-lab/zap
 ruzzy	trailofbits/skills	plugins/testing-handbook-skills/skills/ruzzy	https://awesomeclaude.ai/awesome-claude-skills
 rvf-manage	ruvnet/ruflo	plugins/ruflo-rvf/skills/rvf-manage	https://github.com/ruvnet/ruflo
 rwkv	zechenzhangAGI/AI-research-SKILLs	01-model-architecture/rwkv	https://github.com/VoltAgent/awesome-agent-skills
@@ -6871,6 +6894,7 @@ sparse-autoencoder-training	foryourhealth111-pixel/Vibe-Skills	bundled/skills/sp
 spawn	alirezarezvani/claude-skills	.gemini/skills/spawn	https://github.com/alirezarezvani/claude-skills
 spec	JuliusBrussee/blueprint	skills/spec	https://awesomeclaude.ai/awesome-claude-skills
 spec-driven-development	addyosmani/agent-skills	skills/spec-driven-development	https://github.com/addyosmani/agent-skills
+spec-driven-implementation	zerx-lab/zap	.agents/skills/spec-driven-implementation	https://github.com/zerx-lab/zap
 spec-driven-workflow	alirezarezvani/claude-skills	.gemini/skills/spec-driven-workflow	https://github.com/alirezarezvani/claude-skills
 spec-kit-vibe-compat	foryourhealth111-pixel/Vibe-Skills	bundled/skills/spec-kit-vibe-compat	https://github.com/VoltAgent/awesome-agent-skills
 spec-miner	jeffallan/claude-skills	skills/spec-miner	https://awesomeclaude.ai/awesome-claude-skills
@@ -7069,6 +7093,7 @@ system-profile	wanshuiyin/Auto-claude-code-research-in-sleep	skills/skills-codex
 systematic-debugging	obra/superpowers	skills/systematic-debugging	https://github.com/obra/superpowers
 systems-paper-writing	zechenzhangAGI/AI-research-SKILLs	20-ml-paper-writing/systems-paper-writing	https://github.com/VoltAgent/awesome-agent-skills
 systems-programming-rust-project	sickn33/antigravity-awesome-skills	plugins/antigravity-awesome-skills/skills/systems-programming-rust-project	https://github.com/sickn33/antigravity-awesome-skills
+tab-configs	zerx-lab/zap	resources/bundled/skills/tab-configs	https://github.com/zerx-lab/zap
 tabular-document-review	borghei/Claude-Skills	legal/tabular-document-review	https://awesomeclaude.ai/awesome-claude-skills
 tabular-review-lawvable	lawvable/awesome-legal-skills	skills/tabular-review-lawvable	https://github.com/VoltAgent/awesome-agent-skills
 taggun-automation	ComposioHQ/awesome-claude-skills	composio-skills/taggun-automation	https://github.com/ComposioHQ/awesome-claude-skills
@@ -7346,6 +7371,8 @@ treatment-plans	foryourhealth111-pixel/Vibe-Skills	bundled/skills/treatment-plan
 tree-of-thoughts	NeoLabHQ/context-engineering-kit@master:plugins/sadd	plugins/sadd/skills/tree-of-thoughts	https://github.com/VoltAgent/awesome-agent-skills
 trello-automation	sickn33/antigravity-awesome-skills	plugins/antigravity-awesome-skills/skills/trello-automation	https://github.com/sickn33/antigravity-awesome-skills
 triage	mattpocock/skills	skills/engineering/triage	https://github.com/mattpocock/skills
+triage-issue-local	zerx-lab/zap	.agents/skills/triage-issue-local	https://github.com/zerx-lab/zap
+triage-vulnerabilities	zerx-lab/zap	resources/channel-gated-skills/dogfood/triage-vulnerabilities	https://github.com/zerx-lab/zap
 triaging-security-alerts-in-splunk	mukul975/Anthropic-Cybersecurity-Skills	skills/triaging-security-alerts-in-splunk	https://github.com/VoltAgent/awesome-agent-skills
 triaging-security-incident	mukul975/Anthropic-Cybersecurity-Skills	skills/triaging-security-incident	https://github.com/VoltAgent/awesome-agent-skills
 triaging-security-incident-with-ir-playbook	mukul975/Anthropic-Cybersecurity-Skills	skills/triaging-security-incident-with-ir-playbook	https://github.com/VoltAgent/awesome-agent-skills
@@ -7445,7 +7472,9 @@ unsloth	foryourhealth111-pixel/Vibe-Skills	bundled/skills/unsloth	https://github
 unsplash-integration	sickn33/antigravity-awesome-skills	plugins/antigravity-awesome-skills/skills/unsplash-integration	https://github.com/sickn33/antigravity-awesome-skills
 update-aegis	GanyuanRan/Aegis	skills/update-aegis	https://github.com/VoltAgent/awesome-agent-skills
 update-deps	backnotprop/plannotator	.agents/skills/update-deps	https://awesomeclaude.ai/awesome-claude-skills
+update-skill	zerx-lab/zap	.agents/skills/update-skill	https://github.com/zerx-lab/zap
 update-skill-content	pjt222/agent-almanac	i18n/caveman/skills/update-skill-content	https://awesomeclaude.ai/awesome-claude-skills
+update-tab-config	zerx-lab/zap	resources/bundled/skills/update-tab-config	https://github.com/zerx-lab/zap
 update-threat-db	FlorianBruniaux/claude-code-ultimate-guide	examples/skills/update-threat-db	https://github.com/FlorianBruniaux/claude-code-ultimate-guide
 updown-io-automation	ComposioHQ/awesome-claude-skills	composio-skills/updown-io-automation	https://github.com/ComposioHQ/awesome-claude-skills
 upgrading-expo	sickn33/antigravity-awesome-skills	plugins/antigravity-awesome-skills/skills/upgrading-expo	https://github.com/sickn33/antigravity-awesome-skills
@@ -7686,6 +7715,8 @@ waboxapp-automation	ComposioHQ/awesome-claude-skills	composio-skills/waboxapp-au
 wachete-automation	ComposioHQ/awesome-claude-skills	composio-skills/wachete-automation	https://github.com/ComposioHQ/awesome-claude-skills
 waiverfile-automation	ComposioHQ/awesome-claude-skills	composio-skills/waiverfile-automation	https://github.com/ComposioHQ/awesome-claude-skills
 wakatime-automation	ComposioHQ/awesome-claude-skills	composio-skills/wakatime-automation	https://github.com/ComposioHQ/awesome-claude-skills
+warp-integration-test	zerx-lab/zap	.agents/skills/warp-integration-test	https://github.com/zerx-lab/zap
+warp-ui-guidelines	zerx-lab/zap	.agents/skills/warp-ui-guidelines	https://github.com/zerx-lab/zap
 warren-buffett	sickn33/antigravity-awesome-skills	plugins/antigravity-awesome-skills/skills/warren-buffett	https://github.com/sickn33/antigravity-awesome-skills
 wasm-agent	ruvnet/ruflo	plugins/ruflo-agent/skills/wasm-agent	https://github.com/ruvnet/ruflo
 wasm-gallery	ruvnet/ruflo	plugins/ruflo-agent/skills/wasm-gallery	https://github.com/ruvnet/ruflo
@@ -7822,8 +7853,10 @@ write-content	inhouseseo/superseo-skills	skills/write-content	https://awesomecla
 write-continue-here	pjt222/agent-almanac	i18n/caveman/skills/write-continue-here	https://awesomeclaude.ai/awesome-claude-skills
 write-helm-chart	pjt222/agent-almanac	i18n/caveman/skills/write-helm-chart	https://awesomeclaude.ai/awesome-claude-skills
 write-incident-runbook	pjt222/agent-almanac	i18n/caveman/skills/write-incident-runbook	https://awesomeclaude.ai/awesome-claude-skills
+write-product-spec	zerx-lab/zap	.agents/skills/write-product-spec	https://github.com/zerx-lab/zap
 write-roxygen-docs	pjt222/agent-almanac	i18n/caveman/skills/write-roxygen-docs	https://awesomeclaude.ai/awesome-claude-skills
 write-standard-operating-procedure	pjt222/agent-almanac	i18n/caveman/skills/write-standard-operating-procedure	https://awesomeclaude.ai/awesome-claude-skills
+write-tech-spec	zerx-lab/zap	.agents/skills/write-tech-spec	https://github.com/zerx-lab/zap
 write-testthat-tests	pjt222/agent-almanac	i18n/caveman/skills/write-testthat-tests	https://awesomeclaude.ai/awesome-claude-skills
 write-validation-documentation	pjt222/agent-almanac	i18n/caveman/skills/write-validation-documentation	https://awesomeclaude.ai/awesome-claude-skills
 write-vignette	pjt222/agent-almanac	i18n/caveman/skills/write-vignette	https://awesomeclaude.ai/awesome-claude-skills
