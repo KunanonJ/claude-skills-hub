@@ -63,6 +63,7 @@ SOURCE_INPUTS = [
     {"kind": "repo", "repo": "shanraisshan/claude-code-best-practice"},
     {"kind": "repo", "repo": "juliusbrussee/caveman"},
     {"kind": "repo", "repo": "DietrichGebert/ponytail"},
+    {"kind": "repo", "repo": "withkynam/vibecode-pro-max-kit"},
     {"kind": "repo", "repo": "addyosmani/agent-skills"},
     {"kind": "repo", "repo": "expo/skills"},
     {"kind": "repo", "repo": "mattpocock/skills"},

@@ -1,0 +1,11 @@
+[
+  {
+    "path": ".",
+    "output": "repomix-local.md"
+  },
+  {
+    "path": "yamadashy/repomix",
+    "remote": true,
+    "output": "repomix-yamadashy-repomix.xml"
+  }
+]
