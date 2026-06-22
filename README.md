@@ -19,13 +19,6 @@ The default branch is intentionally small. Normal installs should receive exactl
 ### Claude Code
 
 ```bash
-# 🏗️ engineering
-npx skills add KunanonJ/claude-skills-hub/karpathy-guidelines -g -y
-npx skills add KunanonJ/claude-skills-hub/spec-driven-development -g -y
-npx skills add KunanonJ/claude-skills-hub/lighthouse-agentic-browsing -g -y
-npx skills add KunanonJ/claude-skills-hub/startup-cto -g -y
-npx skills add KunanonJ/claude-skills-hub/expo-observe -g -y
-```
 npx skills add KunanonJ/claude-skills-hub -g -a claude-code -s '*' --copy -y
 ```
 
