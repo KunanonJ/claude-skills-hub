@@ -1,10 +1,11 @@
-# claude-skills-hub
+# ai-skills-hub
 
-100 focused skills for coding agents.
+100 focused SKILL.md workflows for AI coding agents.
 
-This repository now ships a lean default set for code review, debugging, testing,
-frontend, backend, DevOps, security, documentation, Git/GitHub, MCP, and agent
-workflow tasks.
+This repository ships a lean default set for Cursor, Codex, Claude Code, Gemini
+CLI, Windsurf, and other AI developer platforms. The skills focus on code
+review, debugging, testing, frontend, backend, DevOps, security, documentation,
+Git/GitHub, MCP, and agent workflow tasks.
 
 The previous full corpus is preserved at:
 
@@ -19,20 +20,20 @@ The default branch is intentionally small. Normal installs should receive exactl
 ### Claude Code
 
 ```bash
-npx skills add KunanonJ/claude-skills-hub -g -a claude-code -s '*' --copy -y
+npx skills add KunanonJ/ai-skills-hub -g -a claude-code -s '*' --copy -y
 ```
 
 ### Codex
 
 ```bash
-npx skills add KunanonJ/claude-skills-hub -g -a codex -s '*' --copy -y
+npx skills add KunanonJ/ai-skills-hub -g -a codex -s '*' --copy -y
 ```
 
 ### Manual Copy
 
 ```bash
-git clone --depth 1 https://github.com/KunanonJ/claude-skills-hub.git /tmp/claude-skills-hub
-rsync -a /tmp/claude-skills-hub/skills/ ~/.codex/skills/
+git clone --depth 1 https://github.com/KunanonJ/ai-skills-hub.git /tmp/ai-skills-hub
+rsync -a /tmp/ai-skills-hub/skills/ ~/.codex/skills/
 ```
 
 Use the target skill directory for your agent, such as `~/.claude/skills/` or

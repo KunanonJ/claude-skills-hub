@@ -2,9 +2,10 @@
 
 ## Goal
 
-Make the main branch a focused distribution of exactly 100 coding-agent skills.
-The previous full corpus remains recoverable through an archive branch and tag,
-but default installs, docs, manifest, and source map expose only the lean set.
+Make the main branch a focused distribution of exactly 100 AI-coding-agent
+skills. The previous full corpus remains recoverable through an archive branch
+and tag, but default installs, docs, manifest, and source map expose only the
+lean set.
 
 ## Archive Point
 
@@ -48,7 +49,7 @@ blocks missing required fields and warns about weak descriptions.
 Default installs should receive exactly 100 skills:
 
 ```bash
-npx skills add KunanonJ/claude-skills-hub -g -a codex -s '*' --copy -y
+npx skills add KunanonJ/ai-skills-hub -g -a codex -s '*' --copy -y
 ```
 
 The README must not promote full-corpus bootstrap commands or `bash <(curl ...)`

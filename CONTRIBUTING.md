@@ -1,8 +1,9 @@
-# Contributing to claude-skills-hub
+# Contributing to ai-skills-hub
 
-The default branch is a lean 100-skill product for coding agents. Contributions
-should improve that focused set, not expand the repository back into a broad
-corpus.
+The default branch is a lean 100-skill product for AI coding agents across
+Cursor, Codex, Claude Code, Gemini CLI, Windsurf, and similar developer
+platforms. Contributions should improve that focused set, not expand the
+repository back into a broad corpus.
 
 ## Contribution Rules
 
@@ -25,9 +26,9 @@ an existing one.
 4. Update `skills-source-map.tsv`.
 5. Run the lean validation commands.
 
-Prefer skills that directly help coding agents with review, debugging, testing,
-frontend, backend, DevOps, security, documentation, Git/GitHub, MCP, or agent
-workflow.
+Prefer skills that directly help AI coding agents with review, debugging,
+testing, frontend, backend, DevOps, security, documentation, Git/GitHub, MCP, or
+agent workflow.
 
 ## Quality Bar
 

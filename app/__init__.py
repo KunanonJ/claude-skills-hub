@@ -1,1 +1,1 @@
-"""Claude skills hub maintenance package."""
+"""AI skills hub maintenance package."""

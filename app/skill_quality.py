@@ -1,4 +1,4 @@
-"""Quality checks for the lean claude-skills-hub corpus."""
+"""Quality checks for the lean ai-skills-hub corpus."""
 
 from __future__ import annotations
 
