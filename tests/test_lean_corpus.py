@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+import json
 from pathlib import Path
 
 from app.skill_quality import KEEP_SKILLS
@@ -73,3 +74,20 @@ def test_no_broken_symlinks_under_skills() -> None:
     ]
 
     assert broken == []
+
+
+def test_dependency_manifests_use_pinned_versions() -> None:
+    requirements = [
+        line.strip()
+        for line in (ROOT / "requirements.txt").read_text().splitlines()
+        if line.strip() and not line.startswith("#")
+    ]
+    assert requirements
+    assert all("==" in line for line in requirements)
+
+    package_json_paths = sorted((ROOT / "skills").rglob("package.json"))
+    for package_json_path in package_json_paths:
+        package_json = json.loads(package_json_path.read_text())
+        for section in ("dependencies", "devDependencies"):
+            for package_name, version in package_json.get(section, {}).items():
+                assert version not in {"*", "latest"}, f"{package_name} is floating in {package_json_path}"
