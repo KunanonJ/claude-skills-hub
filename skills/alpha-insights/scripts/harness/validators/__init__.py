@@ -1,1 +1,0 @@
-# Stage gate validators

@@ -1,1 +1,0 @@
-../../../plugin/skills/do/SKILL.md

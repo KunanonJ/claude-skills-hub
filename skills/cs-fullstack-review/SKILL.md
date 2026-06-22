@@ -1,1 +1,0 @@
-../../../commands/cs-fullstack-review.md

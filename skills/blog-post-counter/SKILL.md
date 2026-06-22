@@ -1,1 +1,0 @@
-../../../skills/blog-post-counter/SKILL.md

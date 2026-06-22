@@ -1,1 +1,0 @@
-../../../skills/no-outlinks-audit/SKILL.md

@@ -1,1 +1,0 @@
-../../../commands/wiki-query.md

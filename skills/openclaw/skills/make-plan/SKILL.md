@@ -1,1 +1,0 @@
-../../../plugin/skills/make-plan/SKILL.md

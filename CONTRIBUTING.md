@@ -1,86 +1,66 @@
 # Contributing to claude-skills-hub
 
-thanks for wanting to add to the corpus. this is how it works.
+The default branch is a lean 100-skill product for coding agents. Contributions
+should improve that focused set, not expand the repository back into a broad
+corpus.
 
----
+## Contribution Rules
 
-## ways to contribute
+- Keep exactly 100 top-level directories under `skills/`.
+- Keep `skills-manifest.txt` sorted and exactly 100 lines.
+- Keep `skills-source-map.tsv` aligned with the manifest.
+- Every retained skill must have `skills/<name>/SKILL.md`.
+- Every `SKILL.md` must have frontmatter with `name` and `description`.
+- Do not add secrets, credentials, or prompt-control instructions.
+- Do not restore full-corpus install instructions to the default README.
 
-### 1. add a new skill source repo
+## Adding Or Replacing A Skill
 
-found a repo full of `SKILL.md` files that isn't in the corpus yet?
+Because the main branch is capped at 100 skills, adding a skill means replacing
+an existing one.
 
-1. open `sync-listed-sources.sh`
-2. add your source to `SOURCE_INPUTS`:
-   ```python
-   {"kind": "repo", "repo": "owner/repo-name"},
-   ```
-3. run the sync:
-   ```bash
-   bash sync-listed-sources.sh
-   ```
-4. open a PR with:
-   - updated `skills/`
-   - updated `skills-manifest.txt`
-   - updated `skills-source-map.tsv`
+1. Add or update `skills/<skill-name>/SKILL.md`.
+2. Remove the displaced skill directory.
+3. Update `skills-manifest.txt`.
+4. Update `skills-source-map.tsv`.
+5. Run the lean validation commands.
 
-### 2. drop a single skill directly
+Prefer skills that directly help coding agents with review, debugging, testing,
+frontend, backend, DevOps, security, documentation, Git/GitHub, MCP, or agent
+workflow.
 
-1. create `skills/your-skill-name/SKILL.md`
-2. use this frontmatter:
-   ```yaml
-   ---
-   name: your-skill-name
-   description: one clear sentence — what it does and when to use it
-   ---
-   ```
-3. write the skill body (instructions, templates, examples)
-4. PR it in
+## Quality Bar
 
-look at [`skills/karpathy-guidelines/SKILL.md`](./skills/karpathy-guidelines/SKILL.md) or [`skills/business-strategy-planning/SKILL.md`](./skills/business-strategy-planning/SKILL.md) for format examples.
+A good skill has:
 
-### 3. fix a skill
+- One clear trigger for when the agent should use it.
+- Concrete workflow instructions.
+- Bounded references, scripts, or templates only when they help.
+- No broad persona text, vague encouragement, or stale external assumptions.
+- A description that starts with a clear activation phrase, ideally
+  `This skill should be used when ...`.
 
-see a skill that's outdated, broken, or missing frontmatter? just fix it and PR.
+## Validation
 
-### 4. flag an unsafe skill
+Run:
 
-add the skill name to `SKIP_SKILLS` in `sync-listed-sources.sh`:
-
-```python
-SKIP_SKILLS: set[str] = {
-    "agent-browser",   # Snyk High Risk
-    "your-skill",      # reason
-}
+```bash
+python -m app.skill_quality validate-lean
+python -m app.skill_quality normalize-metadata --check
+uv run --with pytest --with packaging pytest -q
+uv run --with ruff ruff check .
 ```
 
----
+`validate-lean` is blocking. `normalize-metadata --check` blocks missing
+frontmatter fields and reports weak descriptions as warnings.
 
-## PR checklist
+## Full Corpus
 
-- [ ] skill has valid `---` frontmatter with `name` and `description`
-- [ ] skill directory name matches the `name` field
-- [ ] `skills-manifest.txt` is updated (run `bash sync-local-skills.sh` or update manually)
-- [ ] `skills-source-map.tsv` has an entry for new skills
-- [ ] no secrets, credentials, or harmful instructions in skill content
+The old full corpus is recoverable from:
 
----
+- Branch: `archive/full-corpus-fa85915`
+- Tag: `full-corpus-fa85915`
 
-## what makes a good skill
-
-- **one clear trigger** — when should Claude activate this skill?
-- **concrete examples** — show inputs, outputs, templates
-- **action-first** — tell Claude what to do, not what it is
-- **no hallucination bait** — don't reference external URLs, APIs, or docs that might change
-
----
-
-## good first issues
-
-check the [open issues](https://github.com/KunanonJ/claude-skills-hub/issues?q=is%3Aopen+label%3A%22good+first+issue%22) — these are small, well-scoped tasks perfect for a first PR.
-
----
-
-## questions?
-
-open an issue. we'll get back to you fast.
+Do not use `sync-listed-sources.sh` or one-line shell bootstrap flows for normal
+main-branch contributions. Those workflows are archival and can reintroduce the
+large corpus.

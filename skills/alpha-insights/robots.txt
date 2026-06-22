@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://ericyoung-183.github.io/alpha-insights/sitemap.xml

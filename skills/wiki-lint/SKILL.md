@@ -1,1 +1,0 @@
-../../../commands/wiki-lint.md

@@ -1,1 +1,0 @@
-../../../commands/slo-design.md

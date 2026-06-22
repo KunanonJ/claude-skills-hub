@@ -1,1 +1,0 @@
-../../../commands/operator-audit.md

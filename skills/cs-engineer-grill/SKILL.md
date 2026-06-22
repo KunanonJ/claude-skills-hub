@@ -1,1 +1,0 @@
-../../../commands/cs-engineer-grill.md

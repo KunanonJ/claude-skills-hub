@@ -1,1 +1,0 @@
-../../../skills/docs-auditor/SKILL.md

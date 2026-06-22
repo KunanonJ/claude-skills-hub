@@ -1,1 +1,0 @@
-non-protected control asset for cleanup gate coverage

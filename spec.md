@@ -1,75 +1,62 @@
-# Install mattpocock/skills
+# Lean 100-Skill Contract
 
-## Requirements
+## Goal
 
-- Add `mattpocock/skills` as a managed source in `sync-listed-sources.sh`.
-- Regenerate `skills/`, `skills-manifest.txt`, and `skills-source-map.tsv` using the existing corpus sync flow.
-- Preserve existing first-source-wins behavior for skill name collisions.
-- Keep every installed skill traceable to its upstream repo and relative path.
-- Do not introduce secrets or environment variables.
+Make the main branch a focused distribution of exactly 100 coding-agent skills.
+The previous full corpus remains recoverable through an archive branch and tag,
+but default installs, docs, manifest, and source map expose only the lean set.
+
+## Archive Point
+
+- Branch: `archive/full-corpus-fa85915`
+- Tag: `full-corpus-fa85915`
+
+Both point at commit `fa85915`.
 
 ## Data Model
 
-- Source input: `{"kind": "repo", "repo": "mattpocock/skills"}`.
-- Skill artifact: a directory under `skills/<skill-name>/` containing `SKILL.md` and any supporting files.
-- Manifest row: one skill name per line in `skills-manifest.txt`.
-- Source map row: tab-separated `skill_name`, `repo_spec`, `relative_path`, and `discovered_from`.
+- Skill directory: `skills/<skill-name>/`
+- Skill entrypoint: `skills/<skill-name>/SKILL.md`
+- Manifest: `skills-manifest.txt`, one sorted skill name per line
+- Source map: `skills-source-map.tsv`, header plus one row per retained skill
 
-## Edge Cases
+## Invariants
 
-- If a Matt Pocock skill name collides with an earlier source, the earlier source remains authoritative.
-- Deprecated or in-progress upstream skills are included unless explicitly added to `SKIP_SKILLS`.
-- If the upstream repo is unavailable, the existing sync script skips it with a diagnostic rather than corrupting existing source-map format.
-- Supporting files inside upstream skill directories must be copied along with `SKILL.md`.
+- `skills-manifest.txt` has exactly 100 entries.
+- The manifest equals the approved lean keep list.
+- Every manifest entry has `skills/<name>/SKILL.md`.
+- No extra top-level directories exist under `skills/`.
+- `skills-source-map.tsv` has exactly 100 data rows.
+- Source-map skill names match the manifest.
+- No broken symlinks exist under `skills/`.
+- Each retained `SKILL.md` has `name` and `description` frontmatter.
 
-## Testing Strategy
+## Validation
 
-- Add focused pytest coverage for the new managed source and generated artifacts.
-- Verify that representative Matt Pocock skills are present in `skills/`, listed in `skills-manifest.txt`, and traced in `skills-source-map.tsv`.
-- Run the existing required checks: `ruff check .`, `pytest -v`, and `mypy app/ --strict`.
+```bash
+python -m app.skill_quality validate-lean
+python -m app.skill_quality normalize-metadata --check
+uv run --with pytest --with packaging pytest -q
+uv run --with ruff ruff check .
+```
 
-## Task Plan
+`validate-lean` enforces the repository contract. Metadata normalization check
+blocks missing required fields and warns about weak descriptions.
 
-### Task 1: Register and sync `mattpocock/skills`
+## Install Contract
 
-- Intended behavior: the corpus sync includes all non-colliding `SKILL.md` directories from `mattpocock/skills`.
-- Test names:
-  - `test_mattpocock_skills_source_is_registered`
-  - `test_mattpocock_skills_are_installed_and_traceable`
-- Affected files:
-  - `sync-listed-sources.sh`
-  - `skills/`
-  - `skills-manifest.txt`
-  - `skills-source-map.tsv`
-  - `tests/test_mattpocock_skills.py`
-- Risk tier: R2, because this is a reversible source-list and generated-corpus update.
-- Rollback strategy: remove the source entry, rerun `bash sync-listed-sources.sh`, delete the tests/spec if no longer needed, and recommit.
+Default installs should receive exactly 100 skills:
 
-### Task 2: Fix Dependabot alert #17 for `Pygments`
+```bash
+npx skills add KunanonJ/claude-skills-hub -g -a codex -s '*' --copy -y
+```
 
-- Intended behavior: `skills/markdown-to-epub/requirements.txt` pins `Pygments` to the patched version for GHSA-5239-wwwm-4pmq.
-- Test names:
-  - `test_markdown_to_epub_requirements_pins_pygments_to_patched_version`
-- Affected files:
-  - `skills/markdown-to-epub/requirements.txt`
-  - `tests/test_security_requirements.py`
-  - `spec.md`
-- Risk tier: R2, because this is a patch dependency bump inside a vendored skill requirements file.
-- Rollback strategy: revert the dependency line and remove the focused regression test if the upstream skill requires a different mitigation.
+The README must not promote full-corpus bootstrap commands or `bash <(curl ...)`
+setup as the default path.
 
-### Task 3: Register and install `millionco/react-doctor`
+## Changing The Set
 
-- Intended behavior: the corpus includes the unique skills published by `millionco/react-doctor` and preserves the canonical React Doctor workflow guidance.
-- Test names:
-  - `test_react_doctor_source_is_registered`
-  - `test_react_doctor_skills_are_installed_and_traceable`
-  - `test_react_doctor_skill_keeps_canonical_command_and_playbook`
-- Affected files:
-  - `sync-listed-sources.sh`
-  - `skills/`
-  - `skills-manifest.txt`
-  - `skills-source-map.tsv`
-  - `tests/test_react_doctor_skills.py`
-  - `spec.md`
-- Risk tier: R2, because this is a reversible source-list and generated-corpus update.
-- Rollback strategy: remove the source entry and React Doctor skill directories, remove their manifest/source-map rows and tests, then recommit.
+The main branch is capped at 100 skills. Adding one skill requires removing or
+replacing another skill and updating both manifest files. Use the archive branch
+or tag for full-corpus recovery instead of reintroducing broad sync behavior to
+main.

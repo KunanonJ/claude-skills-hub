@@ -1,1 +1,0 @@
-../../../skills/api-docs-quality-report/SKILL.md

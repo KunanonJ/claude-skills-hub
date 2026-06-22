@@ -1,1 +1,0 @@
-../../../commands/karpathy-check.md

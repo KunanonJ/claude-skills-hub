@@ -1,1 +1,0 @@
-../../../skills/clickup-cli/SKILL.md
