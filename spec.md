@@ -49,6 +49,7 @@ blocks missing required fields and warns about weak descriptions.
 Default installs should receive exactly 100 skills:
 
 ```bash
+npx skills add KunanonJ/ai-skills-hub -g -a cursor -s '*' --copy -y
 npx skills add KunanonJ/ai-skills-hub -g -a codex -s '*' --copy -y
 ```
 

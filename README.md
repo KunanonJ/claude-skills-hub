@@ -17,6 +17,12 @@ The default branch is intentionally small. Normal installs should receive exactl
 
 ## Install
 
+### Cursor
+
+```bash
+npx skills add KunanonJ/ai-skills-hub -g -a cursor -s '*' --copy -y
+```
+
 ### Claude Code
 
 ```bash
