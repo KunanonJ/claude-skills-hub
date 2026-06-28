@@ -1,0 +1,605 @@
+{
+  "version": 1,
+  "skills": {
+    "MCP Integration": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/mcp-integration/SKILL.md",
+      "computedHash": "99cfef49810cb80a39762a79dbb6a80d486ea56cfa1a81ed10cae0a5a296b496"
+    },
+    "analyze-codebase-for-mcp": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/analyze-codebase-for-mcp/SKILL.md",
+      "computedHash": "405efef6238e203251ad5ca3669d675d40252260b69a8707af72ac5ef391995c"
+    },
+    "api-analyzer": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/api-analyzer/SKILL.md",
+      "computedHash": "fef57b196a4b76be164249b56eda79c1bd38b453eb69c079a6be3e284c263a88"
+    },
+    "api-design-principles": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/api-design-principles/SKILL.md",
+      "computedHash": "853df00266999c9cddf8b6bbd563cf0fe822c1cf8463ef0c584c4af457d87b95"
+    },
+    "api-documentation-generator": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/api-documentation-generator/SKILL.md",
+      "computedHash": "aedba614a1b82f897a54b77322c26c8707a1c25ed374386b8a57cf3731a68c65"
+    },
+    "api-security-best-practices": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/api-security-best-practices/SKILL.md",
+      "computedHash": "5a088c5b84b75ed44955e7a153b4af20b5a70b6430e86d0f0398b824cc9efb20"
+    },
+    "architecture-decision-records": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/architecture-decision-records/SKILL.md",
+      "computedHash": "8b02a3fbfc6e87bbc9f58fdb9998364d25615f410f86df6154a253aac5fe1901"
+    },
+    "architecture-patterns": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/architecture-patterns/SKILL.md",
+      "computedHash": "df4b1173a32fe59a5da5a9cadd9bd23c21a9e944e3d26827d0d98f6b9afd5d11"
+    },
+    "backend-api-design": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/backend-api-design/SKILL.md",
+      "computedHash": "c4f760cc2400e1ca6b36fcf523c1fb733d7e4ccdceebd5b07033382d1665a8f2"
+    },
+    "backend-dev-guidelines": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/backend-dev-guidelines/SKILL.md",
+      "computedHash": "65fe3c053c8c1e790268293098a505ae02ae6997df82f6e9f74b0736dab0fc76"
+    },
+    "backend-security-coder": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/backend-security-coder/SKILL.md",
+      "computedHash": "b62655410aaea528433b7adda9f8fb971a5a7d7a6db3a365474c52061a703ca5"
+    },
+    "browser-screenshot-diff": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/browser-screenshot-diff/SKILL.md",
+      "computedHash": "49ab15a314580360802b70d9553b41555caf964f0fc50e9380f901fd55d27bb2"
+    },
+    "browser-testing-with-devtools": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/browser-testing-with-devtools/SKILL.md",
+      "computedHash": "a0211c49f6b842d264b46e37ba4bc803e0e1c13511909b8bb3801aa29d0917ee"
+    },
+    "bug-hunter": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/bug-hunter/SKILL.md",
+      "computedHash": "8a426c68b92d44bdfd5483c175f39fe61c7441fbe6abe5d83e7b9b087c584a91"
+    },
+    "build-custom-mcp-server": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/build-custom-mcp-server/SKILL.md",
+      "computedHash": "23f3f67aff9d53a34e4dc8c937db614b5e1c6b3d9dfe0eb82ef28390e6da6753"
+    },
+    "ci-cd-patterns": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/ci-cd-patterns/SKILL.md",
+      "computedHash": "5bb0ecd7fc445be50a2d91fd66f0ab94a5bcfa84adfd86e24fe23d22c5b064a1"
+    },
+    "clean-code": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/clean-code/SKILL.md",
+      "computedHash": "74bf6ded4f61ddcb593e7a29beb96c284f888cbe0639ad6e23710447c36ff19a"
+    },
+    "cloudflare-deploy": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/cloudflare-deploy/SKILL.md",
+      "computedHash": "aa52f27bb25b7af71c0a4372a84cbb79fe771391361098aad08a6dd3c806af44"
+    },
+    "code-deduplication": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/code-deduplication/SKILL.md",
+      "computedHash": "0516345ec2bd0bfe7abb910ff43b7565b2cd00893f4676c9b24af67ed528b4cd"
+    },
+    "code-documentation-code-explain": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/code-documentation-code-explain/SKILL.md",
+      "computedHash": "e0b73f19105624c791bd57c7285a22d12748e28d63bfa708e92c198cde1080ed"
+    },
+    "code-review": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/code-review/SKILL.md",
+      "computedHash": "6d117c3f8797e0c770c6b00a646a07028f3440b5d8042e8f841e88ed1116788f"
+    },
+    "codebase-cleanup-tech-debt": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/codebase-cleanup-tech-debt/SKILL.md",
+      "computedHash": "35afd556a583b5d1307bf332e200a3f5d05698b2c081f72f5ca026769244dcea"
+    },
+    "codebase-onboarding": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/codebase-onboarding/SKILL.md",
+      "computedHash": "eaeaadceb49f69cbc94983850276fedfa9472da952d1686649fa73550d3ec9ec"
+    },
+    "codeql": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/codeql/SKILL.md",
+      "computedHash": "3ebab0fa1c727cfbc83eda8780f814e50a6991d419e6d1a80000d4bc7ac5a762"
+    },
+    "commit": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/commit/SKILL.md",
+      "computedHash": "fbc877733f7e928730ac117d4b024afbc838d8e7454c36829520aca6e1066c75"
+    },
+    "commit-hygiene": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/commit-hygiene/SKILL.md",
+      "computedHash": "319c6b9e549faa32b54af8fe75473a4314a50f08adf64a6a275440805e3e4053"
+    },
+    "context7-auto-research": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/context7-auto-research/SKILL.md",
+      "computedHash": "f1391637f475291e78383aa2ab2662e737e3a5c697a25b7003e4ef4364e4b848"
+    },
+    "create-dockerfile": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/create-dockerfile/SKILL.md",
+      "computedHash": "29de162748d8642afb57d0763e07f5e188ef819c3d18135b1b6de5747edd9a9e"
+    },
+    "database-design": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/database-design/SKILL.md",
+      "computedHash": "9a4a5f3bd05183eb75e860261763fc75c0fc38d9b5ac0fa1a64e2cf6cceed2fc"
+    },
+    "debugging-toolkit-smart-debug": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/debugging-toolkit-smart-debug/SKILL.md",
+      "computedHash": "81d0328b6c7440a1a5cff9765d9225a3956c8e63bd286fe387623b4f2e815433"
+    },
+    "dependency-check": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/dependency-check/SKILL.md",
+      "computedHash": "b0860f076f12fb7fa9cbaac20a871196f1b9d634e0928b0c0213c7dc960810a0"
+    },
+    "deployment-patterns": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/deployment-patterns/SKILL.md",
+      "computedHash": "c99e7eea9dd8a3fb3a2a62df057821867eef7eef816e3a9cedaf399ca9031995"
+    },
+    "design-to-code": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/design-to-code/SKILL.md",
+      "computedHash": "ba02976bf1d7553747891170f6776ad34f5f4fdccee96fceb60a968f5e43a758"
+    },
+    "django-patterns": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/django-patterns/SKILL.md",
+      "computedHash": "b1477691a59a4ed4cc4fa2180cec057537857455c537ad6d87f6c68340ab07f3"
+    },
+    "docker-patterns": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/docker-patterns/SKILL.md",
+      "computedHash": "69d6989c084155626927944b56a51f78b7421340ac5e4c588a6aafff03fd5c55"
+    },
+    "documentation": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/documentation/SKILL.md",
+      "computedHash": "1aecbc6119310005ec0781d5c7b842898d448edf3e9817eba39561fcae91adf0"
+    },
+    "e2e-testing-patterns": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/e2e-testing-patterns/SKILL.md",
+      "computedHash": "f63849dd5d6d901e541a2d4fbbcb0d367877a86802b21c20b345272fd2c727d9"
+    },
+    "fastapi-pro": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/fastapi-pro/SKILL.md",
+      "computedHash": "744ab30f6fc99ac886b7cb8b50681e148c74573702c433470a18dfcb7ea840f5"
+    },
+    "frontend-a11y": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/frontend-a11y/SKILL.md",
+      "computedHash": "88a73b97a44c8234c2b2278f5f7befba74ff98852cd87644bb2eb3ed1a5d4cf6"
+    },
+    "frontend-design-direction": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/frontend-design-direction/SKILL.md",
+      "computedHash": "394f580f0ef4e3863090f19fedad554154d84c63edfb3a2ec99017584fa915a8"
+    },
+    "frontend-dev-guidelines": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/frontend-dev-guidelines/SKILL.md",
+      "computedHash": "b1f1183bb089490302eca16b1495988b19bb2d6418b6dabc585f64976c61704f"
+    },
+    "frontend-developer": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/frontend-developer/SKILL.md",
+      "computedHash": "11b1be7121aa1a5395a9838b34532d88025acb2853c306fd18de25065547699a"
+    },
+    "frontend-security-coder": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/frontend-security-coder/SKILL.md",
+      "computedHash": "6f7d6a582812d55da9a12d5fff7523501d1ec500c8fde77f6f7b04ce86d1c569"
+    },
+    "git-pr-review": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/git-pr-review/SKILL.md",
+      "computedHash": "24d083f404d78a3c2b52f8a73ed44fc1efd83027b8844315cfcde4f0c8d2d9d0"
+    },
+    "git-pr-workflows-onboard": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/git-pr-workflows-onboard/SKILL.md",
+      "computedHash": "b51595a925ebf2439723fbab3f4798cd34c2e727174e721e8d3d06706b86c3b3"
+    },
+    "git-worktree": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/git-worktree/SKILL.md",
+      "computedHash": "797c77353b1c3cea020205319badefd0f916a34b40d4533a39e0dc1e297b0eca"
+    },
+    "github-actions-advanced": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/github-actions-advanced/SKILL.md",
+      "computedHash": "5b366e68ef6f00b3168649964ec6f4f0abafcb65ef59f57222719de37efe8724"
+    },
+    "github-actions-creator": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/github-actions-creator/SKILL.md",
+      "computedHash": "33387361fa9cacdbcaa6de977e816ca4125e4398faf9bf11b9a0c9ea77a0f004"
+    },
+    "github-pr-review": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/github-pr-review/SKILL.md",
+      "computedHash": "87d8dd93708ec036af764b35406385f3ba1a85d78202be47200250552705ea13"
+    },
+    "golang-patterns": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/golang-patterns/SKILL.md",
+      "computedHash": "e0b4822a87397011fa73169c421d18aff7dd86c53941e467240eb479406eb186"
+    },
+    "implementing-secret-scanning-with-gitleaks": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/implementing-secret-scanning-with-gitleaks/SKILL.md",
+      "computedHash": "8b6aa18aee435d10744f430683cab4c7a2138118bc1efd0cd8ddb5335a747e67"
+    },
+    "javascript-mastery": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/javascript-mastery/SKILL.md",
+      "computedHash": "ac6d598ca4e8e2b988bd3e8d7dfb45845a0d8d4876e519e97c0116cefd323b8e"
+    },
+    "javascript-testing-patterns": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/javascript-testing-patterns/SKILL.md",
+      "computedHash": "6413ffd7e6949747c300eb0d739862574e724ece491630feb8c03780e85f7dc0"
+    },
+    "kubernetes-architect": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/kubernetes-architect/SKILL.md",
+      "computedHash": "f428f018d3989df322372c0b951c389c9ea0efd5d158a4d51e3945ff7745c132"
+    },
+    "kubernetes-patterns": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/kubernetes-patterns/SKILL.md",
+      "computedHash": "a2cffed00152af8a36a8d312800abb92900a5483c4c8a160ff4a07d7e49578d0"
+    },
+    "learn-codebase": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/learn-codebase/SKILL.md",
+      "computedHash": "9142aab8302123f63d8db49430d1f59e2ff2bdcb885d6b3f054f22f7d92f5791"
+    },
+    "mcp-server-patterns": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/mcp-server-patterns/SKILL.md",
+      "computedHash": "321896134054b84892192ce48c4c1ff714941603d194fca8c03e250c3c07fae3"
+    },
+    "modern-javascript-patterns": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/modern-javascript-patterns/SKILL.md",
+      "computedHash": "ee7414361412eeee5be6afc43d294e779eead04cdcc5b5799d335431c332f10d"
+    },
+    "mutation-testing": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/mutation-testing/SKILL.md",
+      "computedHash": "78ec6b2e0df518be1e4d458a92069e56cf579824425ccc25c95077742869baa4"
+    },
+    "nextjs-app-router-patterns": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/nextjs-app-router-patterns/SKILL.md",
+      "computedHash": "4f04dba37005276fc20139f95f9a5b64db6473131c8f930bf6143f34be2488e7"
+    },
+    "nextjs-best-practices": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/nextjs-best-practices/SKILL.md",
+      "computedHash": "5344522f15f544513456e77b858377368f24e680732af5efeb5a67bbab021bc1"
+    },
+    "nodejs-backend-patterns": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/nodejs-backend-patterns/SKILL.md",
+      "computedHash": "912fa183d031f99b16bfdf29bbedb3dd11e5a59aa48d880777e1497db1e16b5c"
+    },
+    "openai-docs": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/openai-docs/SKILL.md",
+      "computedHash": "6cf96d3409c4be85df34da0dea154fe482d168509d8f2ec694a18a19b358ee79"
+    },
+    "performance-optimizer": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/performance-optimizer/SKILL.md",
+      "computedHash": "3f9cc4b078de918e25ed258ca17eb526dfd4f0392f00553ed0c85fdb187b1682"
+    },
+    "playwright": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/playwright/SKILL.md",
+      "computedHash": "dce033cc94743979d6b8bb99c68ff8b09d9efb667ab10164107a40c0a9174966"
+    },
+    "playwright-cli": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/playwright-cli/SKILL.md",
+      "computedHash": "1fe798fc39c8cf7e147d5eaaaa802de210e80ae63abd18fc834d60bda2522bcd"
+    },
+    "postgresql": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/postgresql/SKILL.md",
+      "computedHash": "5907e76c03d10c92873d7b6f76f2e6cce8c183a8953affc000300c3c327aa2d3"
+    },
+    "property-based-testing": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/property-based-testing/SKILL.md",
+      "computedHash": "bde7505a6a269f833115ab92c6ce0aef68a57673344bccc7f02b86fd248df700"
+    },
+    "python-best-practices": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/python-best-practices/SKILL.md",
+      "computedHash": "cd97251ea3ad0913e0b98f7754bb0d2122566442a731b20aaa26402cb595d61a"
+    },
+    "python-packaging": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/python-packaging/SKILL.md",
+      "computedHash": "b76aa0da62130284f650c5940b0b3fe2d3368623fdd484e156530018bdf112e0"
+    },
+    "python-testing": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/python-testing/SKILL.md",
+      "computedHash": "41906384d722642cca5963e2e9bd262edd8c46992db51aca2190c789bceb0d81"
+    },
+    "python-testing-patterns": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/python-testing-patterns/SKILL.md",
+      "computedHash": "ba08b8aa3b75273d3ad3a883f05eade2aa24e89b4097c6b484d089f13d5d2857"
+    },
+    "react-best-practices": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/react-best-practices/SKILL.md",
+      "computedHash": "6a2573cea01069776bcd23a4c3834e47c2ac5f15a6071df85edd2702ca576b57"
+    },
+    "react-doctor": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/react-doctor/SKILL.md",
+      "computedHash": "fa180e84006740f0ad139f3d11bc9b1ba43de91b376e73d4e40b5e09e37fa9ed"
+    },
+    "react-patterns": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/react-patterns/SKILL.md",
+      "computedHash": "af8463c224dc911e56233db2c67bceb944099f764d77e34600cd951e85558081"
+    },
+    "react-testing": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/react-testing/SKILL.md",
+      "computedHash": "a8f8968a72f47ae5a8d4f52b940b68ed8f23739982687c5cd48ac93b8526d1db"
+    },
+    "refactoring-patterns": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/refactoring-patterns/SKILL.md",
+      "computedHash": "0f1cb41c01f98264cbf8a32a82f47129f7f5daac65149e8ee06752af09026193"
+    },
+    "rust-pro": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/rust-pro/SKILL.md",
+      "computedHash": "d6c417eaf1d57ffc2a6760ed5f2486b206ed3c5a547fa7857555c1643ad2095e"
+    },
+    "rust-testing": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/rust-testing/SKILL.md",
+      "computedHash": "8f6cab4bcbdc5bd8c19f179e893ca5d502604a03e4e443bd27ba7c3a88a93add"
+    },
+    "secrets-management": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/secrets-management/SKILL.md",
+      "computedHash": "bdf148b586f59d8bf02f403bad303ebcbd2eba2ab6d24722e561a1b5a728bfdb"
+    },
+    "security-auditor": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/security-auditor/SKILL.md",
+      "computedHash": "771d0b237eb7557818e4350488f266faf35c883b643c9ab375d14e19141882f8"
+    },
+    "security-review": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/security-review/SKILL.md",
+      "computedHash": "226f86f5d3ec4184232202a72086b6fb2c047db7cb5f1aeedc8a45ed3ad82b70"
+    },
+    "setup-github-actions-ci": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/setup-github-actions-ci/SKILL.md",
+      "computedHash": "0648c01ff790da5d23ebbf3015d6814c53cdf79ccbaacae16f79ceee5dfaf228"
+    },
+    "setup-pre-commit": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/setup-pre-commit/SKILL.md",
+      "computedHash": "f9aeedf0a1f560ec465c3939c54434c2d949ac8b958a0493db52216f688a0366"
+    },
+    "software-architecture": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/software-architecture/SKILL.md",
+      "computedHash": "19ee028010077ff687e3fcf9613b4f9b9d6c839a15396007d9ba263f6930ec6a"
+    },
+    "springboot-patterns": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/springboot-patterns/SKILL.md",
+      "computedHash": "601a22c3752ce7da2ebe963e6d09a7bfe0594c40ecaf29a191572682323614f0"
+    },
+    "sql-optimization-patterns": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/sql-optimization-patterns/SKILL.md",
+      "computedHash": "45e7aa6aebd2b6fdd349b0970d76e63c8011959915aaaba425454dcbb50ad179"
+    },
+    "systematic-debugging": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/systematic-debugging/SKILL.md",
+      "computedHash": "7246fdd3a795fc3daff0af72044ca99bf836e4e6a46844742858786fdfb86488"
+    },
+    "tailwind-patterns": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/tailwind-patterns/SKILL.md",
+      "computedHash": "54ea413749acbfadc152864d73e16e6cf5d13f8c88c7fbf8f84693988789c30a"
+    },
+    "terraform-best-practices": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/terraform-best-practices/SKILL.md",
+      "computedHash": "6aa85f99c07d0b8cc771f6886cee71f7d667db9246ddc9b3ea8a957cf16e3a3e"
+    },
+    "terraform-specialist": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/terraform-specialist/SKILL.md",
+      "computedHash": "fca06dbedbdf6fb65ff725b8f57b2217e760963adb8d298cd01a79f4b705ba46"
+    },
+    "test-driven-development": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/test-driven-development/SKILL.md",
+      "computedHash": "126f1ebf6ccd414f42544f6e83d8cc5adb089e1108eaffb7c400701e37eecd9f"
+    },
+    "testing-patterns": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/testing-patterns/SKILL.md",
+      "computedHash": "028a768cc83e90ef6dcd96bc067dcc5d271eaca44d4f86ecf28bf39e5e32b8a6"
+    },
+    "typescript-advanced-types": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/typescript-advanced-types/SKILL.md",
+      "computedHash": "73556f974c748e2294304a9471ea60727f1c7d2ed35ee59a3a5a5e61423e6701"
+    },
+    "typescript-expert": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/typescript-expert/SKILL.md",
+      "computedHash": "525e74a7220ed67832001ca89b46deae8f2bab1abc9d25c56c8716d6550c795f"
+    },
+    "ui-review": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/ui-review/SKILL.md",
+      "computedHash": "d3771b6916c25bac66cfb0abf17692af8763ace1c1a858c6e960b78d2f9a5f74"
+    },
+    "unit-testing-test-generate": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/unit-testing-test-generate/SKILL.md",
+      "computedHash": "60b0c33801210bd79b53f05c6466cc32e77fbbfd9538b1d1ba2958ed78c723e3"
+    },
+    "using-git-worktrees": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/using-git-worktrees/SKILL.md",
+      "computedHash": "bd10bc57c23040630b17c877a9bc7b4be40c35161a2e2f110d770d78e3b0a4ff"
+    },
+    "vercel-deployment": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/vercel-deployment/SKILL.md",
+      "computedHash": "5ec751a3485d545bb0eb259b0a624cd84738e69298380f46dd9bbb52fd814e06"
+    },
+    "web-performance-optimization": {
+      "source": "KunanonJ/ai-skills-hub",
+      "sourceType": "github",
+      "skillPath": "skills/web-performance-optimization/SKILL.md",
+      "computedHash": "b1f46c736054422a4854c7d5fbbe3397e8ac48dddb81da05ade5d83cef2cfb73"
+    }
+  }
+}
