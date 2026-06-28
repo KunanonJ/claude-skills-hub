@@ -65,3 +65,10 @@ The old full corpus is recoverable from:
 Do not use `sync-listed-sources.sh` or one-line shell bootstrap flows for normal
 main-branch contributions. Those workflows are archival and can reintroduce the
 large corpus.
+
+## Legacy GitHub Issues
+
+Issues opened before the lean 100-skill pivot may reference the old full corpus,
+marketing skills, or README cherry-pick flows. See
+[docs/legacy-issue-guidance.md](docs/legacy-issue-guidance.md) for triage notes
+and resolution status.
