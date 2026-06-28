@@ -85,7 +85,11 @@ def test_dependency_manifests_use_pinned_versions() -> None:
     assert requirements
     assert all("==" in line for line in requirements)
 
-    package_json_paths = sorted((ROOT / "skills").rglob("package.json"))
+    package_json_paths = sorted(
+        path
+        for path in (ROOT / "skills").rglob("package.json")
+        if "node_modules" not in path.parts
+    )
     for package_json_path in package_json_paths:
         package_json = json.loads(package_json_path.read_text())
         for section in ("dependencies", "devDependencies"):
